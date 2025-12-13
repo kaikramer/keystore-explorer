@@ -19,8 +19,11 @@
  */
 package org.kse.gui.dialogs.importexport;
 
+import static org.kse.gui.FileChooserFactory.*;
+
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Window;
 import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -30,15 +33,13 @@ import javax.swing.*;
 
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
 import net.miginfocom.swing.MigLayout;
-
-import static org.kse.gui.FileChooserFactory.*;
 
 /**
  * Dialog used to display options to export a public key from a KeyStore entry
@@ -49,7 +50,7 @@ public class DExportPublicKey extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
-    public static final String FULL_PEM_FILE_EXT = "." + PUBLIC_KEY_EXT + "." + PEM_EXT;
+    private static final String FULL_PEM_FILE_EXT = "." + PUBLIC_KEY_EXT + "." + PEM_EXT;
     private boolean isKeyExportableAsJWK;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -73,10 +74,11 @@ public class DExportPublicKey extends JEscDialog {
     /**
      * Creates a new DExportPublicKey dialog.
      *
-     * @param parent     The parent frame
-     * @param entryAlias The KeyStore entry to export private key from
+     * @param parent               The parent frame or dialog
+     * @param entryAlias           The KeyStore entry to export public key from
+     * @param isKeyExportableAsJWK The JWK support for the public key
      */
-    public DExportPublicKey(JFrame parent, String entryAlias, boolean isKeyExportableAsJWK) {
+    public DExportPublicKey(Window parent, String entryAlias, boolean isKeyExportableAsJWK) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.entryAlias = entryAlias;
         this.isKeyExportableAsJWK = isKeyExportableAsJWK;
@@ -244,6 +246,9 @@ public class DExportPublicKey extends JEscDialog {
         return selectedPubKeyFormat == PubkeyFormat.OPENSSL_PEM;
     }
 
+    /**
+     * @return The selected public key format.
+     */
     public PubkeyFormat getSelectedPubKeyFormat() {
         return selectedPubKeyFormat;
     }

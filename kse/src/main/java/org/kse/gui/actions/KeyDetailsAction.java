@@ -130,7 +130,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
                 PublicKey publicKey = (PublicKey) key;
 
                 DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-                        res.getString("KeyDetailsAction.PublicKeyDetailsEntry.Title"), alias), publicKey);
+                        res.getString("KeyDetailsAction.PublicKeyDetailsEntry.Title"), alias), alias, publicKey);
                 dViewPublicKey.setLocationRelativeTo(frame);
                 dViewPublicKey.setVisible(true);
             }

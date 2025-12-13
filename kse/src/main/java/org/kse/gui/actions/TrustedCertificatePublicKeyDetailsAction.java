@@ -79,7 +79,7 @@ public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAc
             PublicKey pubKey = keyStore.getCertificate(alias).getPublicKey();
 
             DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-                    res.getString("TrustedCertificatePublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), pubKey);
+                    res.getString("TrustedCertificatePublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), alias, pubKey);
             dViewPublicKey.setLocationRelativeTo(frame);
             dViewPublicKey.setVisible(true);
         } catch (Exception ex) {

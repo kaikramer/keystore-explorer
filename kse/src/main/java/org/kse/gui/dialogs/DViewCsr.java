@@ -27,7 +27,6 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PublicKey;
@@ -47,16 +46,15 @@ import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
-import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
@@ -98,6 +96,9 @@ public class DViewCsr extends JEscDialog {
 
     private PKCS10CertificationRequest pkcs10Csr;
     private Spkac spkacCsr;
+
+    private X500Name csrSubjectDN;
+    private PublicKey csrPublicKey;
 
     /**
      * Creates a new DViewCsr dialog for a PKCS #10 formatted CSR.
@@ -284,7 +285,8 @@ public class DViewCsr extends JEscDialog {
         jtfFormat.setText(res.getString("DViewCsr.jtfFormat.Pkcs10.text"));
         jtfFormat.setCaretPosition(0);
 
-        jdnSubject.setDistinguishedName(pkcs10Csr.getSubject());
+        csrSubjectDN = pkcs10Csr.getSubject();
+        jdnSubject.setDistinguishedName(csrSubjectDN);
 
         jbPem.setEnabled(true);
         jbAsn1.setEnabled(true);
@@ -299,7 +301,8 @@ public class DViewCsr extends JEscDialog {
         DialogHelper.populatePkcs10Challenge(pkcs10Csr.getAttributes(), jtfChallenge);
         DialogHelper.populatePkcs10UnstructuredName(pkcs10Csr.getAttributes(), jtfUnstructuredName);
 
-        populatePublicKey(getPkcs10PublicKey());
+        csrPublicKey = Pkcs10Util.getPkcs10PublicKey(pkcs10Csr);
+        populatePublicKey();
 
         String sigAlgId = pkcs10Csr.getSignatureAlgorithm().getAlgorithm().getId();
         byte[] sigAlgParamsEncoded = extractSigAlgParams();
@@ -331,10 +334,11 @@ public class DViewCsr extends JEscDialog {
         jbPem.setEnabled(false);
         jbAsn1.setEnabled(true);
 
-        SpkacSubject subject = spkacCsr.getSubject();
-        jdnSubject.setDistinguishedName(subject.getName());
+        csrSubjectDN = spkacCsr.getSubject().getName();
+        jdnSubject.setDistinguishedName(csrSubjectDN);
 
-        populatePublicKey(spkacCsr.getPublicKey());
+        csrPublicKey = spkacCsr.getPublicKey();
+        populatePublicKey();
 
         jtfSignatureAlgorithm.setText(spkacCsr.getSignatureAlgorithm().friendly());
         jtfSignatureAlgorithm.setCaretPosition(0);
@@ -343,7 +347,7 @@ public class DViewCsr extends JEscDialog {
         jtfChallenge.setCaretPosition(0);
     }
 
-    private void populatePublicKey(PublicKey csrPublicKey) throws CryptoException {
+    private void populatePublicKey() throws CryptoException {
         KeyInfo keyInfo = KeyPairUtil.getKeyInfo(csrPublicKey);
 
         jtfPublicKey.setText(keyInfo.getAlgorithm());
@@ -359,14 +363,6 @@ public class DViewCsr extends JEscDialog {
         }
 
         jtfPublicKey.setCaretPosition(0);
-    }
-
-    private PublicKey getPkcs10PublicKey() throws CryptoException {
-        try {
-            return new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
-        } catch (GeneralSecurityException ex) {
-            throw new CryptoException(res.getString("DViewCsr.NoGetPublicKey.message"), ex);
-        }
     }
 
     private void verifyPressed() {
@@ -407,16 +403,9 @@ public class DViewCsr extends JEscDialog {
 
     private void pubKeyDetailsPressed() {
         try {
-            PublicKey publicKey = null;
-
-            if (pkcs10Csr != null) {
-                publicKey = getPkcs10PublicKey();
-            } else {
-                publicKey = spkacCsr.getPublicKey();
-            }
-
             DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DViewCsr.PubKeyDetails.Title"),
-                                                               publicKey);
+                                                               X500NameUtils.extractCN(csrSubjectDN),
+                                                               csrPublicKey);
             dViewPublicKey.setLocationRelativeTo(this);
             dViewPublicKey.setVisible(true);
         } catch (CryptoException e) {

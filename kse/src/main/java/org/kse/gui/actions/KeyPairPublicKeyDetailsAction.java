@@ -80,7 +80,7 @@ public class KeyPairPublicKeyDetailsAction extends KeyStoreExplorerAction {
                     X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)))[0].getPublicKey();
 
             DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-                    res.getString("KeyPairPublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), pubKey);
+                    res.getString("KeyPairPublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), alias, pubKey);
             dViewPublicKey.setLocationRelativeTo(frame);
             dViewPublicKey.setVisible(true);
         } catch (Exception ex) {

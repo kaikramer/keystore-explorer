@@ -322,7 +322,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         PublicKey publicKey = OpenSslPubUtil.load(data);
 
         DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, res.getString(
-                "ExamineClipboardAction.PublicKeyDetails.Title"), publicKey);
+                "ExamineClipboardAction.PublicKeyDetails.Title"), "", publicKey);
         dViewPublicKey.setLocationRelativeTo(frame);
         dViewPublicKey.setVisible(true);
     }

@@ -271,4 +271,19 @@ public class Pkcs10Util {
         return x509ExtensionSet;
     }
 
+    /**
+     * Gets the public key from a CSR
+     *
+     * @param pkcs10Csr The CSR
+     * @return The public key from CSR
+     * @throws CryptoException If a problem occurs getting the public key
+     */
+    public static PublicKey getPkcs10PublicKey(PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
+        try {
+            return new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
+        } catch (InvalidKeyException | NoSuchAlgorithmException ex) {
+            throw new CryptoException(res.getString("NoGetCsrPublicKey.exception.message"), ex);
+        }
+    }
+
 }
