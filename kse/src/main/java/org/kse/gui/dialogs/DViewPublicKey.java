@@ -19,6 +19,8 @@
  */
 package org.kse.gui.dialogs;
 
+import static org.kse.gui.MiGUtil.addButtonSeparator;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Font;
@@ -212,8 +214,9 @@ public class DViewPublicKey extends JEscDialog {
         pane.add(jlFingerprint, "");
         pane.add(jcfFingerprint, "wrap");
         pane.add(jbExport, "spanx, split");
-        pane.add(jbPem, "");
+        addButtonSeparator(pane, jbExport.isVisible());
         pane.add(jbFields, "");
+        pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jbOK, "spanx, tag ok");

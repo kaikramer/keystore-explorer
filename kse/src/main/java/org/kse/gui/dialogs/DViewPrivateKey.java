@@ -19,6 +19,8 @@
  */
 package org.kse.gui.dialogs;
 
+import static org.kse.gui.MiGUtil.addButtonSeparator;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Font;
@@ -203,8 +205,9 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
 
         pane.add(jbExport, "spanx, split");
-        pane.add(jbPem, "");
+        addButtonSeparator(pane, jbExport.isVisible());
         pane.add(jbFields, "");
+        pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
         pane.add(jbOK, "spanx, tag ok");

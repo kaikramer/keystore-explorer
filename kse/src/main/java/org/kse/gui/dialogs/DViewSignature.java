@@ -601,7 +601,11 @@ public class DViewSignature extends JEscDialog {
                         Hex.decode("0011223344556677889900112233445566778899")));
 
         X509Certificate[] certs = new X509Certificate[] { eeCert, caCert };
-        CMSSignedData signedData = CmsSigner.sign(new File("build.gradle"), eeKeyPair.getPrivate(), certs, false,
+
+        File tempFile = File.createTempFile("kse-test-", ".tmp");
+        tempFile.deleteOnExit();
+
+        CMSSignedData signedData = CmsSigner.sign(tempFile, eeKeyPair.getPrivate(), certs, false,
                 SignatureType.SHA256_RSA, null, null);
         @SuppressWarnings("unchecked")
         List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signedData.getSignerInfos().getSigners(),

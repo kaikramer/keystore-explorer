@@ -19,6 +19,8 @@
  */
 package org.kse.gui.dialogs;
 
+import static org.kse.gui.MiGUtil.addButtonSeparator;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -76,6 +78,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
@@ -105,6 +108,8 @@ public class DViewCertificate extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private KsePreferences preferences = PreferencesManager.getPreferences();
+
+    public static final int TEXT_FIELD_WIDTH = 50;
 
     public static final int NONE = 0;
     public static final int IMPORT = 1;
@@ -193,43 +198,43 @@ public class DViewCertificate extends JEscDialog {
 
         jlVersion = new JLabel(res.getString("DViewCertificate.jlVersion.text"));
 
-        jtfVersion = new JTextField(40);
+        jtfVersion = new JTextField(TEXT_FIELD_WIDTH);
         jtfVersion.setEditable(false);
         jtfVersion.setToolTipText(res.getString("DViewCertificate.jtfVersion.tooltip"));
 
         jlSubject = new JLabel(res.getString("DViewCertificate.jlSubject.text"));
 
-        jdnSubject = new JDistinguishedName(res.getString("DViewCertificate.Subject.Title"), 40, false);
+        jdnSubject = new JDistinguishedName(res.getString("DViewCertificate.Subject.Title"), TEXT_FIELD_WIDTH, false);
         jdnSubject.setToolTipText(res.getString("DViewCertificate.jdnSubject.tooltip"));
 
         jlIssuer = new JLabel(res.getString("DViewCertificate.jlIssuer.text"));
 
-        jdnIssuer = new JDistinguishedName(res.getString("DViewCertificate.Issuer.Title"), 40, false);
+        jdnIssuer = new JDistinguishedName(res.getString("DViewCertificate.Issuer.Title"), TEXT_FIELD_WIDTH, false);
         jdnIssuer.setToolTipText(res.getString("DViewCertificate.jdnIssuer.tooltip"));
 
         jlSerialNumberHex = new JLabel(res.getString("DViewCertificate.jlSerialNumberHex.text"));
 
-        jtfSerialNumberHex = new JTextField(40);
+        jtfSerialNumberHex = new JTextField(TEXT_FIELD_WIDTH);
         jtfSerialNumberHex.setEditable(false);
         jtfSerialNumberHex.setToolTipText(res.getString("DViewCertificate.jtfSerialNumberHex.tooltip"));
         jtfSerialNumberHex.setCaretPosition(0);
 
         jlSerialNumberDec = new JLabel(res.getString("DViewCertificate.jlSerialNumberDec.text"));
 
-        jtfSerialNumberDec = new JTextField(40);
+        jtfSerialNumberDec = new JTextField(TEXT_FIELD_WIDTH);
         jtfSerialNumberDec.setEditable(false);
         jtfSerialNumberDec.setToolTipText(res.getString("DViewCertificate.jtfSerialNumberDec.tooltip"));
         jtfSerialNumberDec.setCaretPosition(0);
 
         jlValidFrom = new JLabel(res.getString("DViewCertificate.jlValidFrom.text"));
 
-        jtfValidFrom = new JTextField(40);
+        jtfValidFrom = new JTextField(TEXT_FIELD_WIDTH);
         jtfValidFrom.setEditable(false);
         jtfValidFrom.setToolTipText(res.getString("DViewCertificate.jtfValidFrom.tooltip"));
 
         jlValidUntil = new JLabel(res.getString("DViewCertificate.jlValidUntil.text"));
 
-        jtfValidUntil = new JTextField(40);
+        jtfValidUntil = new JTextField(TEXT_FIELD_WIDTH);
         jtfValidUntil.setEditable(false);
         jtfValidUntil.setToolTipText(res.getString("DViewCertificate.jtfValidUntil.tooltip"));
 
@@ -239,13 +244,13 @@ public class DViewCertificate extends JEscDialog {
         jpbValidityProgress.setStringPainted(true);
 
         jlValidityDays = new JLabel(res.getString("DViewCertificate.jlValidityDays.text"));
-        jtfValidityDays = new JTextField(40);
+        jtfValidityDays = new JTextField(TEXT_FIELD_WIDTH);
         jtfValidityDays.setToolTipText(res.getString("DViewCertificate.jtfValidityDays.tooltip"));
         jtfValidityDays.setEditable(false);
 
         jlPublicKey = new JLabel(res.getString("DViewCertificate.jlPublicKey.text"));
 
-        jtfPublicKey = new JTextField(40);
+        jtfPublicKey = new JTextField(TEXT_FIELD_WIDTH);
         jtfPublicKey.setEditable(false);
         jtfPublicKey.setToolTipText(res.getString("DViewCertificate.jtfPublicKey.tooltip"));
 
@@ -256,13 +261,13 @@ public class DViewCertificate extends JEscDialog {
 
         jlSignatureAlgorithm = new JLabel(res.getString("DViewCertificate.jlSignatureAlgorithm.text"));
 
-        jtfSignatureAlgorithm = new JTextField(40);
+        jtfSignatureAlgorithm = new JTextField(TEXT_FIELD_WIDTH);
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCertificate.jtfSignatureAlgorithm.tooltip"));
 
         jlFingerprint = new JLabel(res.getString("DViewCertificate.jlFingerprint.text"));
 
-        jcfFingerprint = new JCertificateFingerprint(30);
+        jcfFingerprint = new JCertificateFingerprint(40);
 
         jbExtensions = new JButton(res.getString("DViewCertificate.jbExtensions.text"));
         jbExtensions.setToolTipText(res.getString("DViewCertificate.jbExtensions.tooltip"));
@@ -321,12 +326,14 @@ public class DViewCertificate extends JEscDialog {
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
         pane.add(jlFingerprint, "");
-        pane.add(jcfFingerprint, "spanx, growx, wrap");
+        pane.add(jcfFingerprint, "spanx, growx, wrap para");
         pane.add(jbImport, "hidemode 1, spanx, split");
         pane.add(jbExport, "hidemode 1");
+        addButtonSeparator(pane, jbImport.isVisible() || jbExport.isVisible());
+        pane.add(jbVerify, "hidemode 1");
+        addButtonSeparator(pane, jbVerify.isVisible());
         pane.add(jbExtensions, "");
         pane.add(jbPem, "");
-        pane.add(jbVerify, "hidemode 1");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");

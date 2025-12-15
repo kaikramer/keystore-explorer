@@ -20,6 +20,7 @@
 package org.kse.gui.dialogs;
 
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
+import static org.kse.gui.MiGUtil.addButtonSeparator;
 
 import java.awt.Container;
 import java.awt.Dialog;
@@ -204,6 +205,7 @@ public class DViewCsr extends JEscDialog {
         pane.add(jlUnstructuredName, "");
         pane.add(jtfUnstructuredName, "wrap para");
         pane.add(jbVerify, "spanx, split");
+        addButtonSeparator(pane, jbVerify.isVisible());
         pane.add(jbExtensions, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");

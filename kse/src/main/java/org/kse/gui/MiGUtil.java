@@ -20,6 +20,7 @@
 package org.kse.gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
@@ -30,10 +31,39 @@ public class MiGUtil {
     private MiGUtil() {
     }
 
+    /**
+     * Adds a labeled horizontal separator to the specified container.
+     *
+     * @param container Container to add separator to
+     * @param text      Separator label text
+     */
     public static void addSeparator(Container container, String text) {
         JLabel l = new JLabel(text, SwingConstants.LEADING);
 
         container.add(l, "gapbottom 1, span, split 2, aligny center");
         container.add(new JSeparator(), "gapleft rel, growx, wrap unrel");
+    }
+
+    /**
+     * Adds a vertical separator with some additional space to the left and right to the specified container.
+     *
+     * @param container Container to add separator to
+     * @param visible   Whether the separator is visible
+     */
+    public static void addButtonSeparator(Container container, boolean visible) {
+        container.add(createButtonSeparator(visible), "gapleft unrel, gapright unrel, hidemode 3");
+    }
+
+    /**
+     * Creates a vertical separator for use between buttons.
+     *
+     * @return Button separator
+     */
+    public static JSeparator createButtonSeparator(boolean visible) {
+        JSeparator jSeparator = new JSeparator(JSeparator.VERTICAL);
+        jSeparator.setPreferredSize(new Dimension(3, 20));
+        jSeparator.setVisible(visible);
+
+        return jSeparator;
     }
 }
