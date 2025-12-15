@@ -1594,8 +1594,14 @@ public final class KseFrame implements StatusBar {
         jtbToolBar.add(jbGenerateSecretKey);
         jtbToolBar.add(jbImportTrustedCertificate);
         jtbToolBar.add(jbImportKeyPair);
+
+        jtbToolBar.addSeparator();
+
         jtbToolBar.add(jbVerifySignature);
         jtbToolBar.add(jbVerifyJar);
+
+        jtbToolBar.addSeparator();
+
         jtbToolBar.add(jbSetPassword);
         jtbToolBar.add(jbProperties);
         jtbToolBar.add(jbExportCsv);
