@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
@@ -82,6 +83,8 @@ public class RenameTrustedCertificateAction extends KeyStoreExplorerAction imple
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
+
             String alias = kseFrame.getSelectedEntryAlias();
 
             DGetAlias dGetAlias = new DGetAlias(frame,
@@ -95,7 +98,7 @@ public class RenameTrustedCertificateAction extends KeyStoreExplorerAction imple
                 return;
             }
 
-            if (newAlias.equalsIgnoreCase(alias)) {
+            if (keyStoreType.getAliasComparator().compare(alias, newAlias) == 0) {
                 JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                       res.getString("RenameTrustedCertificateAction" +
                                                                     ".RenameAliasIdentical.message"), alias),

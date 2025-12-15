@@ -108,13 +108,14 @@ public class StorePassphraseAction extends KeyStoreExplorerAction implements His
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             DGetAlias dGetAlias = new DGetAlias(frame,
                                                 res.getString("StorePassphraseAction.NewPassphraseEntryAlias.Title"),
                                                 null);
             dGetAlias.setLocationRelativeTo(frame);
             dGetAlias.setVisible(true);
-            String alias = dGetAlias.getAlias();
+            String alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
 
             if (alias == null) {
                 return;
@@ -130,8 +131,6 @@ public class StorePassphraseAction extends KeyStoreExplorerAction implements His
                     return;
                 }
             }
-
-            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             Password password = getNewEntryPassword(keyStoreType,
                     res.getString("StorePassphraseAction.NewPassphraseEntryPassword.Title"), currentState, newState);

@@ -177,13 +177,14 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             DGetAlias dGetAlias = new DGetAlias(frame,
                                                 res.getString("GenerateKeyPairAction.NewKeyPairEntryAlias.Title"),
                                                 X509CertUtil.getCertificateAlias(certificate));
             dGetAlias.setLocationRelativeTo(frame);
             dGetAlias.setVisible(true);
-            alias = dGetAlias.getAlias();
+            alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
 
             if (alias == null) {
                 return "";

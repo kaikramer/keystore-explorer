@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
@@ -93,6 +94,7 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             Key privateKey = keyStore.getKey(alias, password.toCharArray());
 
@@ -108,7 +110,7 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
                 return;
             }
 
-            if (newAlias.equalsIgnoreCase(alias)) {
+            if (keyStoreType.getAliasComparator().compare(alias, newAlias) == 0) {
                 JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                       res.getString("RenameKeyPairAction.RenameAliasIdentical" +
                                                                     ".message"), alias),

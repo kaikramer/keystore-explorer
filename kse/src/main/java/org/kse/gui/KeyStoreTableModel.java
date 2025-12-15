@@ -33,7 +33,6 @@ import java.text.MessageFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -156,6 +155,9 @@ public class KeyStoreTableModel extends ToolTipTableModel {
 
     /**
      * Construct a new KeyStoreTableModel with a variable layout.
+     *
+     * @param keyStoreTableColumns The key store table columns to display from preferences.
+     * @param expiryWarnDays       The number of days for expiration warning from preferences.
      */
     public KeyStoreTableModel(KeyStoreTableColumns keyStoreTableColumns, int expiryWarnDays) {
         super(res, COLUMN_TOOL_TIPS);
@@ -182,7 +184,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
 
         Enumeration<String> aliases = keyStore.aliases();
 
-        TreeMap<String, String> sortedAliases = new TreeMap<>(new AliasComparator());
+        TreeMap<String, String> sortedAliases = new TreeMap<>(type.getAliasComparator());
 
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
@@ -745,14 +747,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         return false;
     }
 
-    public KeyStoreHistory getHistory() {
+    KeyStoreHistory getHistory() {
         return history;
-    }
-
-    private class AliasComparator implements Comparator<String> {
-        @Override
-        public int compare(String name1, String name2) {
-            return name1.compareToIgnoreCase(name2);
-        }
     }
 }
