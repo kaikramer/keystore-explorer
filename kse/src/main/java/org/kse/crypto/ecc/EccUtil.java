@@ -37,6 +37,7 @@ import java.util.List;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -153,6 +154,9 @@ public class EccUtil {
             if (curveName == null) {
                 curveName = GMNamedCurves.getName(curveId);
             }
+            if (curveName == null) {
+                curveName = ECGOST3410NamedCurves.getName(curveId);
+            }
 
             if (curveName != null) {
                 return curveName;
@@ -189,6 +193,11 @@ public class EccUtil {
         // BC provides all curves
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName) ||
             EdDSACurves.ED448.jce().equalsIgnoreCase(curveName)) {
+            return true;
+        }
+
+        // ECGOST works with all key store types.
+        if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
             return true;
         }
 

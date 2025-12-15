@@ -22,6 +22,9 @@ package org.kse.crypto.signing;
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_RSASSA_PSS;
 import static org.kse.crypto.digest.DigestType.MD5;
 import static org.kse.crypto.digest.DigestType.RIPEMD160;
+import static org.kse.crypto.digest.DigestType.GOST3411;
+import static org.kse.crypto.digest.DigestType.GOST3411_2012_256;
+import static org.kse.crypto.digest.DigestType.GOST3411_2012_512;
 import static org.kse.crypto.digest.DigestType.SHA1;
 import static org.kse.crypto.digest.DigestType.SHA224;
 import static org.kse.crypto.digest.DigestType.SHA256;
@@ -123,6 +126,11 @@ public enum SignatureType {
     SLHDSA_SHAKE_192F("SLHDSA_SHAKE_192F", "2.16.840.1.101.3.4.3.29", SHAKE256, "SignatureType.SlhDsaShake192f"),
     SLHDSA_SHAKE_256S("SLHDSA_SHAKE_256S", "2.16.840.1.101.3.4.3.30", SHAKE256, "SignatureType.SlhDsaShake256s"),
     SLHDSA_SHAKE_256F("SLHDSA_SHAKE_256F", "2.16.840.1.101.3.4.3.31", SHAKE256, "SignatureType.SlhDsaShake256f"),
+
+    // ECGOST R 34.10
+    GOST3411_GOST3410("GOST3411withECGOST3410", "1.2.643.2.2.3", GOST3411, "SignatureType.Gost3411"),
+    GOST3411_2012_256_GOST3410_2012("GOST3411-2012-256withECGOST3410-2012-256", "1.2.643.7.1.1.3.2", GOST3411_2012_256, "SignatureType.Gost3411-2012-256"),
+    GOST3411_2012_512_GOST3410_2012("GOST3411-2012-512withECGOST3410-2012-512", "1.2.643.7.1.1.3.3", GOST3411_2012_512, "SignatureType.Gost3411-2012-512"),
 
     // SM2
     SHA256_SM2("SHA256withSM2", "1.2.156.10197.1.503", SHA256, "SignatureType.Sha256withSm2"),

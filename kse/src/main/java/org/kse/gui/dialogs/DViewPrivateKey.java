@@ -200,7 +200,8 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jlFormat, "");
         pane.add(jtfFormat, "growx, pushx, wrap");
         pane.add(jlEncoded, "");
-        pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
+        // ECGOST curve names are very long. Grow up to 400 pixels
+        pane.add(jspEncoded, "growx, width 300lp:300lp:400lp, height 100lp:100lp:100lp, wrap");
 
         pane.add(jbExport, "spanx, split");
         pane.add(jbPem, "");

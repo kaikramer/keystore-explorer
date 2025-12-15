@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
@@ -36,22 +37,26 @@ import org.kse.crypto.keystore.KeyStoreType;
  */
 public enum CurveSet {
 
-    ANSI_X9_62("ANSI X9.62"),
-    NIST("NIST"),
-    SEC("SEC"),
-    TELETRUST("Brainpool"),
-    SM2("SM2"),
-    ED("Edwards");
+    ANSI_X9_62("ANSI X9.62", X962NamedCurves.getNames()),
+    NIST("NIST", NISTNamedCurves.getNames()),
+    SEC("SEC", SECNamedCurves.getNames()),
+    TELETRUST("Brainpool", TeleTrusTNamedCurves.getNames()),
+    SM2("SM2", GMNamedCurves.getNames()),
+    ECGOST("ECGOST", ECGOST3410NamedCurves.getNames()),
+    ED("Edwards", EdDSACurves.getNames());
 
     private String visibleName;
+    private List<String> curveNames;
 
-    CurveSet(String visibleName) {
+    CurveSet(String visibleName, Enumeration<String> curveNames) {
         this.visibleName = visibleName;
+        this.curveNames = Collections.list(curveNames);
     }
 
     /**
      * Return list with all curve set name that are available for the given KeyStoreType.
      *
+     * @param keyStoreType The key store type
      * @return All available sets of named curves
      */
     public static String[] getAvailableSetNames(KeyStoreType keyStoreType) {
@@ -60,6 +65,7 @@ public enum CurveSet {
         sets.add(NIST.visibleName);
         sets.add(SEC.visibleName);
         sets.add(ED.visibleName);
+        sets.add(ECGOST.visibleName);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(TELETRUST.visibleName);
             sets.add(SM2.visibleName);
@@ -70,6 +76,7 @@ public enum CurveSet {
     /**
      * Return list with all curve sets that are available for the given KeyStoreType.
      *
+     * @param keyStoreType The key store type
      * @return All available sets of named curves
      */
     public static List<CurveSet> getAvailableSets(KeyStoreType keyStoreType) {
@@ -78,6 +85,7 @@ public enum CurveSet {
         sets.add(NIST);
         sets.add(SEC);
         sets.add(ED);
+        sets.add(ECGOST);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(TELETRUST);
             sets.add(SM2);
@@ -86,8 +94,9 @@ public enum CurveSet {
     }
 
     /**
-     * Return the list of available curve names for this set.
+     * Return the list of available curve names for this set supported by the KeyStoreType.
      *
+     * @param keyStoreType The key store type
      * @return The named curves that belong to this set
      */
     public List<String> getAvailableCurveNames(KeyStoreType keyStoreType) {
@@ -104,36 +113,8 @@ public enum CurveSet {
      *
      * @return The named curves that belong to this set
      */
-    @SuppressWarnings("unchecked")
     public List<String> getAllCurveNames() {
-        Enumeration<String> en = null;
-
-        switch (this) {
-        case ANSI_X9_62:
-            en = X962NamedCurves.getNames();
-            break;
-        case TELETRUST:
-            en = TeleTrusTNamedCurves.getNames();
-            break;
-        case NIST:
-            en = NISTNamedCurves.getNames();
-            break;
-        case SEC:
-            en = SECNamedCurves.getNames();
-            break;
-        case ED:
-            en = EdDSACurves.getNames();
-            break;
-        case SM2:
-            en = GMNamedCurves.getNames();
-            break;
-        }
-
-        if (en == null) {
-            return new ArrayList<>();
-        }
-
-        return Collections.list(en);
+        return curveNames;
     }
 
     /**
@@ -159,6 +140,8 @@ public enum CurveSet {
             return ED;
         } else if (curveSetName.equals(SM2.visibleName)) {
             return SM2;
+        } else if (curveSetName.equals(ECGOST.visibleName)) {
+            return ECGOST;
         }
 
         return null;

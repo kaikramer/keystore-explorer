@@ -59,7 +59,6 @@ import javax.swing.event.DocumentListener;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.KeyInfo;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.keypair.KeyPairType;
@@ -614,9 +613,8 @@ public class DImportKeyPair extends JEscDialog {
 
     private X509Certificate[] generateCertificate(PrivateKey privateKey) {
         try {
-            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
-            KeyPair keyPair = KeyPairUtil.generateKeyPair(privateKey, keyInfo);
+            KeyPair keyPair = KeyPairUtil.generateKeyPair(privateKey);
 
             DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert((JFrame) this.getParent(), null,
                     res.getString("DImportKeyPair.GenerateKeyPairCert.Title"), keyPair,
@@ -627,8 +625,8 @@ public class DImportKeyPair extends JEscDialog {
             if (certificate != null) {
                 return new X509Certificate[] { certificate };
             }
-        } catch (Exception ex) {
-            DError.displayError((JFrame) this.getParent(), ex);
+        } catch (CryptoException ex) {
+            DError.displayError(this, ex);
         }
         return null;
     }

@@ -19,6 +19,8 @@
  */
 package org.kse.crypto.digest;
 
+import java.util.List;
+
 /**
  * Enumeration of Digest Types supported by the DigestUtil class.
  */
@@ -27,6 +29,10 @@ public enum DigestType {
     // @formatter:off
 
     MD5("MD5", "1.2.840.113549.2.5", "MD5"),
+
+    GOST3411("GOST3411", "1.2.643.2.2.9", "GOST-3411"),
+    GOST3411_2012_256("GOST3411-2012-256", "1.2.643.7.1.1.2.2", "GOST-3411-2012-256"),
+    GOST3411_2012_512("GOST3411-2012-512", "1.2.643.7.1.1.2.3", "GOST-3411-2012-512"),
 
     RIPEMD160("RIPEMD160", "1.3.36.3.2.1", "RIPEMD-160"),
 
@@ -48,6 +54,14 @@ public enum DigestType {
     SM3("SM3", "1.2.156.10197.1.401", "SM3");
 
     // @formatter:on
+
+    /**
+     * List of fingerprint algorithms. GOST, SHAKE, and SM3 are not typically used.
+     * If GOST is added to this list then the DViewCertificate layout will need to be
+     * adjusted to account for the additional width of the GOST algorithm names.
+     */
+    public static final List<DigestType> FINGERPRINT_ALGS = List.of(MD5, RIPEMD160, SHA1, SHA224, SHA256, SHA384,
+            SHA512, SHA3_224, SHA3_256, SHA3_384, SHA3_512);
 
     private String jce;
     private String oid;

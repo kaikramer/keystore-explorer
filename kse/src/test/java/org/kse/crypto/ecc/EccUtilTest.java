@@ -88,6 +88,7 @@ public class EccUtilTest extends CryptoTestsBase {
             "sm2p256v1", "wapi192v1", "wapip192v1"
             // NIST curves are a subset of SEC curves (not explicitly tested here)
             // Edwards curves are not EC curves (not tested here)
+            // GOST curves are EC curves, but GOST is not treated the same as EC (not tested here)
     })
     // @formatter:on
     void convertToECPrivateKeyStructure(String curveName) throws Exception {
@@ -138,12 +139,28 @@ public class EccUtilTest extends CryptoTestsBase {
         assertThat(resolvedCurveName).containsIgnoringCase(curveName);
     }
 
-    @Test
-    void getNamedCurve() throws Exception {
-        KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("secp384r1", KSE.BC);
+    @ParameterizedTest
+    // @formatter:off
+    // Only one representative curve is needed to test the getNamedCurve methods.
+    @ValueSource(strings = {
+            // NIST curve
+            "P-384",
+            // SEC curve
+            "secp160k1", // chosen to not overlap with NIST
+            // ANSI X9.62 curve
+            "c2pnb163v1", // chosen to not overlap with NIST or SEC
+            // Brainpool curve
+            "brainpoolP256r1",
+            // SM2 curve
+            "sm2p256v1",
+            // ECGOST curve (not tested here) is handled differently
+    })
+    // @formatter:on
+    void getNamedCurve(String curveName) throws Exception {
+        KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
 
-        assertEquals("secp384r1", EccUtil.getNamedCurve(ecKeyPair.getPrivate()));
-//        assertEquals("secp384r1", EccUtil.getNamedCurve(ecKeyPair.getPublic()));
+        assertEquals(curveName, EccUtil.getNamedCurve(ecKeyPair.getPrivate()));
+        assertEquals(curveName, EccUtil.getNamedCurve(ecKeyPair.getPublic()));
 
         KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, KSE.BC);
         assertThrows(InvalidParameterException.class, () -> EccUtil.getNamedCurve(rsaKeyPair.getPublic()));

@@ -35,6 +35,9 @@ public class DigestUtilTest extends CryptoTestsBase {
     // @formatter:off
     @CsvSource({
             "MD5",
+            "GOST3411",
+            "GOST3411_2012_256",
+            "GOST3411_2012_512",
             "SHA1",
             "SHA224",
             "SHA256",
@@ -50,7 +53,7 @@ public class DigestUtilTest extends CryptoTestsBase {
             "RIPEMD160",
     })
     // @formatter:on
-    public void testMessageDigests(DigestType digestType) throws Exception {
+    void testMessageDigests(DigestType digestType) throws Exception {
         String digest = DigestUtil.getFriendlyMessageDigest(MESSAGE.getBytes(), digestType);
         assertThat(digest).isNotEqualTo(MESSAGE);
     }

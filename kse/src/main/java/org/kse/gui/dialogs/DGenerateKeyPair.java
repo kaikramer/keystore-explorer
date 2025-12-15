@@ -426,12 +426,19 @@ public class DGenerateKeyPair extends JEscDialog {
             return slhDsaKeySelector.getKeyPairType();
         }
 
-        // handle Ed25519 and Ed448
-        if (jrbEC.isSelected() && CurveSet.ED.getVisibleName().equals(jcbECCurveSet.getModel().getSelectedItem())) {
-            if (EdDSACurves.ED25519.jce().equals(jcbECCurve.getModel().getSelectedItem())) {
-                return KeyPairType.ED25519;
-            } else {
-                return KeyPairType.ED448;
+        if (jrbEC.isSelected()) {
+            String selectedCurveSet = (String) jcbECCurveSet.getModel().getSelectedItem();
+            String selectedCurve = (String) jcbECCurve.getModel().getSelectedItem();
+            // handle Ed25519 and Ed448
+            if (CurveSet.ED.getVisibleName().equals(selectedCurveSet)) {
+                if (EdDSACurves.ED25519.jce().equals(selectedCurve)) {
+                    return KeyPairType.ED25519;
+                } else {
+                    return KeyPairType.ED448;
+                }
+            // handle ECGOST3410 and ECGOST3410-2012
+            } else if (CurveSet.ECGOST.getVisibleName().equals(selectedCurveSet)) {
+                return KeyPairType.getGostTypeFromCurve(selectedCurve);
             }
         }
 

@@ -56,6 +56,10 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.BERTaggedObject;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -465,6 +469,37 @@ public class DViewSignature extends JEscDialog {
         } else {
             signatureType = SignatureType.resolveOid(signerInfo.getEncryptionAlgOID(),
                     signerInfo.getEncryptionAlgParams());
+            if (signatureType == null) {
+                // lookup using ASN.1 for ECGOST
+                signatureType = lookupSignatureType(signerInfo.getSignedData());
+            }
+        }
+
+        return signatureType;
+    }
+
+    // BC doesn't expose the signature algorithm via CMSSignedData. Usually,
+    // the encryption algorithm contains the signature algorithm, but for ECGOST
+    // the encryption algorithm is the key type not the signature algorithm.
+    // Rather than manually constructing the signature algorithm string by
+    // combining the digest algorithm with the key algorithm, look it up using
+    // the ASN.1.
+    private static SignatureType lookupSignatureType(CMSSignedData cmsSignedData) {
+        SignatureType signatureType = null;
+
+        try {
+            ASN1Sequence cmsData = (ASN1Sequence) ASN1Primitive.fromByteArray(cmsSignedData.getEncoded());
+            BERTaggedObject signedData = (BERTaggedObject) cmsData.getObjectAt(1);
+            ASN1Sequence seq1 = (ASN1Sequence) signedData.getExplicitBaseObject();
+            BERTaggedObject data = (BERTaggedObject) seq1.getObjectAt(3);
+            ASN1Sequence seq2 = (ASN1Sequence) data.getExplicitBaseObject();
+            ASN1Sequence seq3 = (ASN1Sequence) seq2.getObjectAt(0);
+            ASN1Sequence sigAlgSeq = (ASN1Sequence) seq3.getObjectAt(2);
+            ASN1ObjectIdentifier sigAlgId = (ASN1ObjectIdentifier) sigAlgSeq.getObjectAt(0);
+            signatureType = SignatureType.resolveOid(sigAlgId.getId(), null);
+        } catch (IOException e) {
+            // Do nothing for now -- this is a fallback for ECGOST.
+            // The dialog will display a blank value for the signature algorithm.
         }
 
         return signatureType;
