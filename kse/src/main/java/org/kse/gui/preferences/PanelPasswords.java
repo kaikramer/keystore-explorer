@@ -22,10 +22,18 @@ package org.kse.gui.preferences;
 import static java.text.MessageFormat.format;
 import static org.kse.gui.preferences.data.PasswordGeneratorSettings.PWD_GEN_MAX_LENGTH;
 import static org.kse.gui.preferences.data.PasswordGeneratorSettings.PWD_GEN_MIN_LENGTH;
+import static org.kse.gui.util.FontAwesomeGlyph.CIRCLE_CHECK;
+import static org.kse.gui.util.FontAwesomeGlyph.CIRCLE_MINUS;
+import static org.kse.gui.util.FontAwesomeGlyph.LOCK;
+import static org.kse.gui.util.FontAwesomeGlyph.LOCK_OPEN;
+import static org.kse.gui.util.FontAwesomeGlyph.UNLOCK;
+import static org.kse.gui.util.KseColor.GREEN;
+import static org.kse.gui.util.KseColor.GREY;
 import static org.kse.utilities.PRNG.SPECIAL_CHARACTERS;
 import static org.kse.utilities.StringUtils.shortenString;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.io.File;
 import java.util.ResourceBundle;
 
@@ -50,6 +58,9 @@ import org.kse.gui.passwordmanager.DUnlockPasswordManager;
 import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
+import org.kse.gui.util.FontAwesomeGlyph;
+import org.kse.gui.util.FontAwesomeIcon;
+import org.kse.gui.util.KseColor;
 import org.kse.utilities.PRNG;
 
 import net.miginfocom.swing.MigLayout;
@@ -118,6 +129,21 @@ class PanelPasswords {
         JButton jbUnlock = new JButton(res.getString("DPreferences.jbUnlock.text"));
         jbUnlock.setEnabled(initialized && !unlocked);
 
+        int lineHeight = jpPasswords.getFontMetrics(jpPasswords.getFont()).getHeight();
+
+        JLabel jlStatusInitialized = new JLabel(initialized ?
+                                                res.getString("DPreferences.passwordManagerStatusInitialized.text") :
+                                                res.getString("DPreferences.passwordManagerStatusNotInitialized.text"));
+        JLabel jlStatusInitializedIcon = initialized ?
+                                         FontAwesomeIcon.getLabel(CIRCLE_CHECK, lineHeight, GREEN.getColor()) :
+                                         FontAwesomeIcon.getLabel(CIRCLE_MINUS, lineHeight, GREY.getColor());
+        JLabel jlStatusLocked = new JLabel(unlocked ?
+                                           res.getString("DPreferences.passwordManagerStatusUnlocked.text") :
+                                           res.getString("DPreferences.passwordManagerStatusLocked.text"));
+        JLabel jlStatusLockedIcon = unlocked ?
+                                    FontAwesomeIcon.getLabel(LOCK_OPEN, lineHeight, KseColor.YELLOW.getColor()) :
+                                    FontAwesomeIcon.getLabel(LOCK, lineHeight, KseColor.YELLOW.getColor());
+
         // layout
         jpPasswords.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
         MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.passwordGenerator.separator"));
@@ -130,13 +156,11 @@ class PanelPasswords {
         jpPasswords.add(jcbIncludeSpecialCharacters, "spanx, wrap unrel");
         jpPasswords.add(jlExamplePassword, "gapx indent, spanx, wrap para");
         MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.passwordManagerStatus.separator"));
-        jpPasswords.add(new JLabel(initialized ? res.getString("DPreferences.passwordManagerStatusInitialized.text")
-                                               : res.getString("DPreferences.passwordManagerStatusNotInitialized.text")),
-                        "gapx indent");
+        jpPasswords.add(jlStatusInitializedIcon, "gapx indent, right");
+        jpPasswords.add(jlStatusInitialized, "");
         jpPasswords.add(jbInitialize, "sg status, wrap");
-        jpPasswords.add(new JLabel(unlocked ? res.getString("DPreferences.passwordManagerStatusUnlocked.text")
-                                            : res.getString("DPreferences.passwordManagerStatusLocked.text")),
-                        "gapx indent");
+        jpPasswords.add(jlStatusLockedIcon, "gapx indent, right");
+        jpPasswords.add(jlStatusLocked, "");
         jpPasswords.add(jbUnlock, "sg status, wrap para");
         MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.storedPasswords.separator"));
         listKeyStoresInPasswordManager(passwordManager, unlocked);

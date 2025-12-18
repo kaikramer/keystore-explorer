@@ -487,6 +487,7 @@ public class DPreferences extends JEscDialog {
      * Quick UI testing
      */
     public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
         DPreferences dialog = new DPreferences(new JFrame(), new KsePreferences());
         DialogViewer.run(dialog);
     }
