@@ -91,13 +91,14 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
                                                 X509CertUtil.getCertificateAlias(certs[0]));
 
             dGetAlias.setLocationRelativeTo(frame);
             dGetAlias.setVisible(true);
-            String alias = dGetAlias.getAlias();
+            String alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
 
             if (alias == null) {
                 return;
@@ -113,8 +114,6 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
                     return;
                 }
             }
-
-            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             Password password = getNewEntryPassword(keyStoreType,
                     res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), currentState, newState);

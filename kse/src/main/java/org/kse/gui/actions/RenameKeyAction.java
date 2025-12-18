@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
@@ -91,6 +92,7 @@ public class RenameKeyAction extends KeyStoreExplorerAction implements HistoryAc
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             Key key = keyStore.getKey(alias, password.toCharArray());
 
@@ -103,7 +105,7 @@ public class RenameKeyAction extends KeyStoreExplorerAction implements HistoryAc
                 return;
             }
 
-            if (newAlias.equalsIgnoreCase(alias)) {
+            if (keyStoreType.getAliasComparator().compare(alias, newAlias) == 0) {
                 JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                       res.getString("RenameKeyAction.RenameAliasIdentical.message"),
                                                       alias),

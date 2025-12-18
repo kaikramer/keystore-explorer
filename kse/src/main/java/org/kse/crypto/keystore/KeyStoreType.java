@@ -26,8 +26,10 @@ import static org.kse.crypto.filetype.CryptoFileType.JKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.PKCS12_KS;
 import static org.kse.crypto.filetype.CryptoFileType.UBER_KS;
 
+import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.filetype.CryptoFileType;
@@ -39,17 +41,17 @@ import org.kse.crypto.secretkey.SecretKeyType;
  */
 public enum KeyStoreType {
 
-    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS),
-    JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
-    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12, PasswordType.PASSWORD_PKCS12),
-    BKS("BKS", "KeyStoreType.Bks", true, BKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
-    UBER("UBER", "KeyStoreType.Uber", true, UBER_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
-    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
-    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
-    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
-    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
-    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
-    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null);
+    JKS("JKS", "KeyStoreType.Jks", true, false, JKS_KS),
+    JCEKS("JCEKS", "KeyStoreType.Jceks", true, false, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, false, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12, PasswordType.PASSWORD_PKCS12),
+    BKS("BKS", "KeyStoreType.Bks", true, true, BKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    UBER("UBER", "KeyStoreType.Uber", true, true, UBER_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, true, null),
+    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, true, null),
+    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, true, null),
+    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, true, null),
+    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
+    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, false, null);
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
     private String jce;
@@ -59,16 +61,14 @@ public enum KeyStoreType {
     private Set<SecretKeyType> supportedKeyTypes;
     private Set<PasswordType> supportedPasswordTypes;
 
-    KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType) {
-        this.jce = jce;
-        this.friendlyKey = friendlyKey;
-        this.fileBased = fileBased;
-        this.cryptoFileType = cryptoFileType;
-        this.supportedKeyTypes = SecretKeyType.SECRET_KEY_NONE;
-        this.supportedPasswordTypes = PasswordType.PASSWORD_NONE;
+    private Comparator<String> aliasComparator;
+    private Function<String, String> normalizer;
+
+    KeyStoreType(String jce, String friendlyKey, boolean fileBased, boolean caseSensitive, CryptoFileType cryptoFileType) {
+        this(jce, friendlyKey, fileBased, caseSensitive, cryptoFileType, SecretKeyType.SECRET_KEY_NONE, PasswordType.PASSWORD_NONE);
     }
 
-    KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType,
+    KeyStoreType(String jce, String friendlyKey, boolean fileBased, boolean caseSensitive, CryptoFileType cryptoFileType,
             Set<SecretKeyType> supportedKeyTypes, Set<PasswordType> supportedPasswordTypes) {
         this.jce = jce;
         this.friendlyKey = friendlyKey;
@@ -76,6 +76,14 @@ public enum KeyStoreType {
         this.cryptoFileType = cryptoFileType;
         this.supportedKeyTypes = supportedKeyTypes;
         this.supportedPasswordTypes = supportedPasswordTypes;
+
+        if (caseSensitive) {
+            aliasComparator = KeyStoreType::compareCaseSensitive;
+            normalizer = KeyStoreType::noop;
+        } else {
+            aliasComparator = KeyStoreType::compareCaseInsensitive;
+            normalizer = KeyStoreType::toLowerCase;
+        }
     }
 
     /**
@@ -208,6 +216,23 @@ public enum KeyStoreType {
     }
 
     /**
+     * @return the alias comparator
+     */
+    public Comparator<String> getAliasComparator() {
+        return aliasComparator;
+    }
+
+    /**
+     * Normalizes an alias for the key store type.
+     *
+     * @param alias The alias to normalize.
+     * @return The normalized alias.
+     */
+    public String normalizeAlias(String alias) {
+        return normalizer.apply(alias);
+    }
+
+    /**
      * Returns JCE name.
      *
      * @return JCE name
@@ -215,5 +240,21 @@ public enum KeyStoreType {
     @Override
     public String toString() {
         return jce();
+    }
+
+    private static int compareCaseSensitive(String s1, String s2) {
+        return s1.compareTo(s2);
+    }
+
+    private static int compareCaseInsensitive(String s1, String s2) {
+        return s1.compareToIgnoreCase(s2);
+    }
+
+    private static String noop(String s) {
+        return s;
+    }
+
+    private static String toLowerCase(String s) {
+        return s != null ? s.toLowerCase() : null;
     }
 }

@@ -31,6 +31,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
@@ -107,6 +108,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             // use either cert that was passed to c-tor or the one from file selection dialog
             X509Certificate trustCert = null;
@@ -190,7 +192,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
                                                 X509CertUtil.getCertificateAlias(trustCert));
             dGetAlias.setLocationRelativeTo(frame);
             dGetAlias.setVisible(true);
-            String alias = dGetAlias.getAlias();
+            String alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
 
             if (alias == null) {
                 return;

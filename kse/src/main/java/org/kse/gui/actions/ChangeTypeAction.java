@@ -27,6 +27,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -52,6 +54,8 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     private boolean warnNoChangeKey;
     private boolean warnNoECC;
     private boolean warnUnsupportedKey;
+    private boolean warnDuplicateAlias;
+    private Map<String, Integer> aliasSuffixes;
 
     /**
      * Construct action.
@@ -87,6 +91,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             return;
         }
 
+        aliasSuffixes = new HashMap<>();
         boolean changeResult = changeKeyStoreType(newType);
 
         if (!changeResult) {
@@ -113,6 +118,12 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
                 if (KeyStoreUtil.isTrustedCertificateEntry(alias, currentKeyStore)) {
                     Certificate trustedCertificate = currentKeyStore.getCertificate(alias);
+
+                    if (newKeyStore.containsAlias(alias)) {
+                        showNoticeDuplicateAlias();
+                        alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+                    }
+
                     newKeyStore.setCertificateEntry(alias, trustedCertificate);
                 } else if (KeyStoreUtil.isKeyPairEntry(alias, currentKeyStore)) {
                     if (!copyKeyPairEntry(newKeyStoreType, currentState, currentKeyStore, newKeyStore, alias)) {
@@ -147,6 +158,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         warnNoChangeKey = false;
         warnNoECC = false;
         warnUnsupportedKey = false;
+        warnDuplicateAlias = false;
     }
 
     private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState, KeyStore currentKeyStore,
@@ -163,8 +175,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
         Key privateKey = currentKeyStore.getKey(alias, password.toCharArray());
 
-        currentState.setEntryPassword(alias, password);
-
         // EC key pair? => might not be supported in target key store type
         if (KeyStoreUtil.isECKeyPair(alias, currentKeyStore)) {
 
@@ -177,6 +187,13 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
                 return showWarnNoECC();
             }
         }
+
+        if (newKeyStore.containsAlias(alias)) {
+          showNoticeDuplicateAlias();
+          alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+        }
+
+        currentState.setEntryPassword(alias, password);
 
         newKeyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
         return true;
@@ -200,6 +217,11 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
                 return showWarnUnsupportedKey();
             }
 
+            if (newKeyStore.containsAlias(alias)) {
+                showNoticeDuplicateAlias();
+                alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+            }
+
             currentState.setEntryPassword(alias, password);
 
             newKeyStore.setKeyEntry(alias, secretKey, password.toCharArray(), null);
@@ -209,6 +231,12 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         }
 
         return true;
+    }
+
+    private String renameAlias(String alias) {
+        int suffix = aliasSuffixes.getOrDefault(alias, 0);
+        aliasSuffixes.put(alias, ++suffix);
+        return alias + "-" + String.valueOf(suffix);
     }
 
     private boolean showWarnNoECC() {
@@ -253,5 +281,15 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             }
         }
         return true;
+    }
+
+    private void showNoticeDuplicateAlias() {
+        if (!warnDuplicateAlias) {
+            warnDuplicateAlias = true;
+            JOptionPane.showMessageDialog(frame,
+                    res.getString("ChangeTypeAction.NotifyDuplicateAlias.message"),
+                    res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }
