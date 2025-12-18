@@ -20,11 +20,11 @@
 package org.kse.crypto.signing;
 
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_RSASSA_PSS;
-import static org.kse.crypto.digest.DigestType.MD5;
-import static org.kse.crypto.digest.DigestType.RIPEMD160;
 import static org.kse.crypto.digest.DigestType.GOST3411;
 import static org.kse.crypto.digest.DigestType.GOST3411_2012_256;
 import static org.kse.crypto.digest.DigestType.GOST3411_2012_512;
+import static org.kse.crypto.digest.DigestType.MD5;
+import static org.kse.crypto.digest.DigestType.RIPEMD160;
 import static org.kse.crypto.digest.DigestType.SHA1;
 import static org.kse.crypto.digest.DigestType.SHA224;
 import static org.kse.crypto.digest.DigestType.SHA256;
@@ -39,10 +39,14 @@ import static org.kse.crypto.digest.DigestType.SHAKE256;
 import static org.kse.crypto.digest.DigestType.SM3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.version.JavaVersion;
@@ -139,6 +143,7 @@ public enum SignatureType {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
     private static final String RSASSA_PSS_OID = id_RSASSA_PSS.getId();
+    private static final Map<String, SignatureType> ADDITIONAL_OIDS = new HashMap<>();
 
     private String jce;
     private String oid;
@@ -150,6 +155,14 @@ public enum SignatureType {
         this.oid = oid;
         this.digestType = digestType;
         this.friendlyKey = friendlyKey;
+    }
+
+    static {
+        // Map the gost key algorithm oids to the gost signature type.
+        // Used to lookup the signature type based on the key algorithm.
+        ADDITIONAL_OIDS.put(CryptoProObjectIdentifiers.gostR3410_2001.getId(), GOST3411_GOST3410);
+        ADDITIONAL_OIDS.put(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256.getId(), GOST3411_2012_256_GOST3410_2012);
+        ADDITIONAL_OIDS.put(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_512.getId(), GOST3411_2012_512_GOST3410_2012);
     }
 
     /**
@@ -357,7 +370,7 @@ public enum SignatureType {
             }
         }
 
-        return null;
+        return ADDITIONAL_OIDS.get(oid);
     }
 
     private static DigestType detectHashAlg(byte[] sigAlgParams) {
