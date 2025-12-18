@@ -113,7 +113,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
 #      - uses: actions/download-artifact@v4.1.7
 #        with:
@@ -144,7 +144,7 @@ jobs:
           MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
         run: |
           chmod +x .github/scripts/macos-build.sh
-          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_mac_hotspot_21.0.5_11.tar.gz"
+          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.1_8.tar.gz"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
@@ -167,7 +167,7 @@ jobs:
           MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
         run: |
           chmod +x .github/scripts/macos-build.sh
-          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.5_11.tar.gz"
+          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.1_8.tar.gz"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
