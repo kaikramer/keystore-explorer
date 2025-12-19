@@ -36,7 +36,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id "com.netflix.nebula.ospackage" version "11.11.2"
+	id "com.netflix.nebula.ospackage" version "12.1.1"
 }
 
 defaultTasks 'zip'
