@@ -131,8 +131,8 @@ jobs:
           compression-level: 0
 
   macos:
-    name: Create artifacts on macOS
-    runs-on: macos-13
+    name: Create artifacts on macOS for x86_64 architecture (runner available until August 2027)
+    runs-on: macos-15-intel
     steps:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
@@ -155,7 +155,7 @@ jobs:
 
   macos-arm:
     name: Create artifacts on macOS for ARM architecture
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
