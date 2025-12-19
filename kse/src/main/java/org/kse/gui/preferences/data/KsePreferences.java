@@ -47,6 +47,7 @@ public class KsePreferences {
     private PublicKeyFingerprintAlgorithm publicKeyFingerprintAlgorithm = PublicKeyFingerprintAlgorithm.SKI_METHOD1;
     private PasswordQualityConfig passwordQualityConfig = new PasswordQualityConfig(false, false, 60);
     private PasswordGeneratorSettings passwordGeneratorSettings = new PasswordGeneratorSettings();
+    private PasswordManagerSettings passwordManagerSettings = new PasswordManagerSettings();
     private ProxySettings proxySettings = new ProxySettings();
     private Rectangle mainWindowSizeAndPosition = new Rectangle(0, 0, KseFrame.DEFAULT_WIDTH, KseFrame.DEFAULT_HEIGHT);
     private boolean showToolBar = true;
@@ -365,5 +366,13 @@ public class KsePreferences {
 
     public void setSignatureTypes(Map<String, SignatureType> signatureTypes) {
         this.signatureTypes = signatureTypes;
+    }
+
+    public PasswordManagerSettings getPasswordManagerSettings() {
+        return passwordManagerSettings;
+    }
+
+    public void setPasswordManagerSettings(PasswordManagerSettings passwordManagerSettings) {
+        this.passwordManagerSettings = passwordManagerSettings;
     }
 }

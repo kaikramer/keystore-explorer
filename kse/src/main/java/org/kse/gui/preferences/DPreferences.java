@@ -57,6 +57,7 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.password.PasswordQualityConfig;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
+import org.kse.gui.preferences.data.PasswordManagerSettings;
 import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
 import org.kse.utilities.DialogViewer;
 
@@ -312,6 +313,16 @@ public class DPreferences extends JEscDialog {
         pwdGeneratorSettings.setIncludeDigits(panelPasswords.getJcbIncludeDigits().isSelected());
         pwdGeneratorSettings.setIncludeSpecialCharacters(panelPasswords.getJcbIncludeSpecialCharacters().isSelected());
         return pwdGeneratorSettings;
+    }
+
+    public PasswordManagerSettings getPasswordManagerSettings() {
+        PasswordManagerSettings passwordManagerSettings = new PasswordManagerSettings();
+        passwordManagerSettings.setKeyDerivationAlgorithm(
+                (org.kse.gui.passwordmanager.KeyDerivationAlgorithm) panelPasswords.getJcbKeyDerivationAlgorithm()
+                                                                                  .getSelectedItem());
+        passwordManagerSettings.setIterations(
+                ((Number) panelPasswords.getJsKeyDerivationIterations().getValue()).intValue());
+        return passwordManagerSettings;
     }
 
     /**

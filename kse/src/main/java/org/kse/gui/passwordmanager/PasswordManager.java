@@ -37,6 +37,8 @@ import javax.crypto.SecretKey;
 
 import org.kse.crypto.encryption.AES;
 import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.preferences.data.PasswordManagerSettings;
 import org.kse.gui.preferences.passwordmanager.EncryptedKeyStorePasswordData;
 import org.kse.gui.preferences.passwordmanager.EncryptedKeyStorePasswords;
 import org.kse.gui.preferences.passwordmanager.KeyDerivationSettings;
@@ -49,7 +51,6 @@ import org.kse.utilities.PRNG;
  */
 public class PasswordManager {
     public static final int KEY_LENGTH_BITS = 256;
-    public static final int KDF_ITERATIONS = 600_000;
     public static final int SALT_LENGTH_BYTES = 16;
     public static final int IV_LENGTH_GCM_BYTES = 12;
     public static final int IV_LENGTH_CBC_BYTES = 16;
@@ -287,13 +288,14 @@ public class PasswordManager {
      */
     @SuppressWarnings("ConstantValue")
     public void save() {
-        // use recommendations for PBKDF2 from NIST SP 800-132 for now and maybe make this configurable later
-        int iterations = KDF_ITERATIONS;
+        KsePreferences preferences = PreferencesManager.getPreferences();
+        PasswordManagerSettings passwordManagerSettings = preferences.getPasswordManagerSettings();
+        int parallelism = Runtime.getRuntime().availableProcessors() * 2; // Argon2 recommendation
         int keyLengthInBits = KEY_LENGTH_BITS;
         byte[] salt = PRNG.generate(SALT_LENGTH_BYTES);
         EncryptionAlgorithm encrAlgorithm = AES_GCM;
 
-        SecretKey kek = deriveKeyWithPbkdf2(mainPassword, salt, iterations, keyLengthInBits);
+        SecretKey kek = deriveKey(mainPassword, salt, parallelism, passwordManagerSettings, keyLengthInBits);
 
         // generate new AES key for encryption of passwords
         SecretKey key = AES.generateKey(KEY_LENGTH_BITS);
@@ -301,9 +303,11 @@ public class PasswordManager {
         byte[] encryptedEncryptionKey = encryptKey(key, iv, kek, encrAlgorithm);
 
         var keyDerivationSettings = new KeyDerivationSettings();
-        keyDerivationSettings.setKeyDerivationAlgorithm(PBKDF2);
+        keyDerivationSettings.setKeyDerivationAlgorithm(passwordManagerSettings.getKeyDerivationAlgorithm());
         keyDerivationSettings.setSalt(salt);
-        keyDerivationSettings.setIterations(iterations);
+        keyDerivationSettings.setIterations(passwordManagerSettings.getIterations());
+        keyDerivationSettings.setMemLimitInMB(passwordManagerSettings.getMemLimitInMB());
+        keyDerivationSettings.setParallelism(parallelism);
         keyDerivationSettings.setDerivedKeyLength(keyLengthInBits);
 
         EncryptedKeyStorePasswords encryptedKeyStorePasswords = PreferencesManager.getKeyStorePasswords();
@@ -368,6 +372,18 @@ public class PasswordManager {
                               AES.decryptAesGcm(encryptedKey, iv, kek) :
                               AES.decryptAesCbc(encryptedKey, iv, kek);
         return AES.createKey(decryptedKey);
+    }
+
+    private SecretKey deriveKey(char[] mainPassword, byte[] salt, int parallelism,
+                                PasswordManagerSettings passwordManagerSettings, int keyLengthInBits) {
+        int iterations = passwordManagerSettings.getIterations();
+
+        if (passwordManagerSettings.getKeyDerivationAlgorithm() == PBKDF2) {
+            return deriveKeyWithPbkdf2(mainPassword, salt, iterations, keyLengthInBits);
+        } else {
+            int memLimitInMB = passwordManagerSettings.getMemLimitInMB();
+            return deriveKeyWithArgon2id(mainPassword, salt, iterations, memLimitInMB, parallelism, keyLengthInBits);
+        }
     }
 
     private static SecretKey deriveKey(EncryptedKeyStorePasswords encryptedKeyStorePasswords, char[] mainPassword) {

@@ -26,19 +26,18 @@ import static org.kse.gui.util.FontAwesomeGlyph.CIRCLE_CHECK;
 import static org.kse.gui.util.FontAwesomeGlyph.CIRCLE_MINUS;
 import static org.kse.gui.util.FontAwesomeGlyph.LOCK;
 import static org.kse.gui.util.FontAwesomeGlyph.LOCK_OPEN;
-import static org.kse.gui.util.FontAwesomeGlyph.UNLOCK;
 import static org.kse.gui.util.KseColor.GREEN;
 import static org.kse.gui.util.KseColor.GREY;
 import static org.kse.utilities.PRNG.SPECIAL_CHARACTERS;
 import static org.kse.utilities.StringUtils.shortenString;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.io.File;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -55,10 +54,11 @@ import org.kse.gui.dialogs.DUnlockingPasswords;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.DInitPasswordManager;
 import org.kse.gui.passwordmanager.DUnlockPasswordManager;
+import org.kse.gui.passwordmanager.KeyDerivationAlgorithm;
 import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
-import org.kse.gui.util.FontAwesomeGlyph;
+import org.kse.gui.preferences.data.PasswordManagerSettings;
 import org.kse.gui.util.FontAwesomeIcon;
 import org.kse.gui.util.KseColor;
 import org.kse.utilities.PRNG;
@@ -68,10 +68,14 @@ import net.miginfocom.swing.MigLayout;
 class PanelPasswords {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
 
+    private static final int ITERATIONS_MIN = 1_000;
+    private static final int ITERATIONS_MAX = 100_000_000;
+    private static final int ITERATIONS_STEP = 1_000;
+
     private final DPreferences parent;
     private final KsePreferences preferences;
 
-    private final JPanel jpPasswords= new JPanel();
+    private final JPanel jpPasswords = new JPanel();
     private JCheckBox jcbPasswordGeneratorEnabled;
     private JLabel jlLengthOfGeneratedPasswords;
     private JSpinner jsPasswordLength;
@@ -80,6 +84,9 @@ class PanelPasswords {
     private JCheckBox jcbIncludeDigits;
     private JCheckBox jcbIncludeSpecialCharacters;
     private JLabel jlExamplePassword;
+
+    private JComboBox<KeyDerivationAlgorithm> jcbKeyDerivationAlgorithm;
+    private JSpinner jsKeyDerivationIterations;
 
     PanelPasswords(DPreferences parent, KsePreferences preferences) {
         this.parent = parent;
@@ -91,6 +98,7 @@ class PanelPasswords {
         boolean unlocked = passwordManager.isUnlocked();
         boolean initialized = passwordManager.isInitialized();
         PasswordGeneratorSettings pwdGeneratorSettings = preferences.getPasswordGeneratorSettings();
+        PasswordManagerSettings passwordManagerSettings = preferences.getPasswordManagerSettings();
 
         jcbPasswordGeneratorEnabled = new JCheckBox();
         jcbPasswordGeneratorEnabled.setText(res.getString("DPreferences.jcbPasswordGeneratorEnabled.text"));
@@ -144,6 +152,20 @@ class PanelPasswords {
                                     FontAwesomeIcon.getLabel(LOCK_OPEN, lineHeight, KseColor.YELLOW.getColor()) :
                                     FontAwesomeIcon.getLabel(LOCK, lineHeight, KseColor.YELLOW.getColor());
 
+        JLabel jlKeyDerivationAlgorithm = new JLabel(res.getString("DPreferences.passwordManagerKdfAlgorithm.text"));
+        jcbKeyDerivationAlgorithm = new JComboBox<>(KeyDerivationAlgorithm.values());
+        jcbKeyDerivationAlgorithm.setSelectedItem(passwordManagerSettings.getKeyDerivationAlgorithm());
+        jcbKeyDerivationAlgorithm.setEnabled(false);
+        jcbKeyDerivationAlgorithm.setToolTipText(res.getString("DPreferences.passwordManagerKdfAlgorithm.tooltip"));
+
+        JLabel jlKeyDerivationIterations = new JLabel(res.getString("DPreferences.passwordManagerIterations.text"));
+        jsKeyDerivationIterations = new JSpinner(new SpinnerNumberModel(passwordManagerSettings.getIterations(),
+                                                                        ITERATIONS_MIN,
+                                                                        ITERATIONS_MAX,
+                                                                        ITERATIONS_STEP));
+        jsKeyDerivationIterations.setToolTipText(res.getString("DPreferences.passwordManagerIterations.tooltip"));
+        ((JSpinner.NumberEditor) jsKeyDerivationIterations.getEditor()).getTextField().setColumns(7);
+
         // layout
         jpPasswords.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
         MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.passwordGenerator.separator"));
@@ -156,12 +178,17 @@ class PanelPasswords {
         jpPasswords.add(jcbIncludeSpecialCharacters, "spanx, wrap unrel");
         jpPasswords.add(jlExamplePassword, "gapx indent, spanx, wrap para");
         MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.passwordManagerStatus.separator"));
-        jpPasswords.add(jlStatusInitializedIcon, "gapx indent, right");
-        jpPasswords.add(jlStatusInitialized, "");
+        jpPasswords.add(jlStatusInitialized, "gapx indent, left");
+        jpPasswords.add(jlStatusInitializedIcon, "");
         jpPasswords.add(jbInitialize, "sg status, wrap");
-        jpPasswords.add(jlStatusLockedIcon, "gapx indent, right");
-        jpPasswords.add(jlStatusLocked, "");
+        jpPasswords.add(jlStatusLocked, "gapx indent, left");
+        jpPasswords.add(jlStatusLockedIcon, "");
         jpPasswords.add(jbUnlock, "sg status, wrap para");
+        MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.passwordManagerSettings.separator"));
+        jpPasswords.add(jlKeyDerivationAlgorithm, "gapx indent");
+        jpPasswords.add(jcbKeyDerivationAlgorithm, "sg settings, spanx, wrap");
+        jpPasswords.add(jlKeyDerivationIterations, "gapx indent");
+        jpPasswords.add(jsKeyDerivationIterations, "sg settings, spanx, wrap para");
         MiGUtil.addSeparator(jpPasswords, res.getString("DPreferences.storedPasswords.separator"));
         listKeyStoresInPasswordManager(passwordManager, unlocked);
 
@@ -363,5 +390,13 @@ class PanelPasswords {
 
     public JCheckBox getJcbIncludeSpecialCharacters() {
         return jcbIncludeSpecialCharacters;
+    }
+
+    public JComboBox<KeyDerivationAlgorithm> getJcbKeyDerivationAlgorithm() {
+        return jcbKeyDerivationAlgorithm;
+    }
+
+    public JSpinner getJsKeyDerivationIterations() {
+        return jsKeyDerivationIterations;
     }
 }
