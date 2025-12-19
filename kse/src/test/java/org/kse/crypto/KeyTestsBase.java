@@ -51,27 +51,23 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
     protected static ECPublicKey ecPublicKey;
     protected static PublicKey mldsaPublicKey;
     /**
-     * MLDSA private keys come with different types of encoding
-     * and each should be handled by KSE
+     * MLDSA private keys come with different types of encoding, but for now only the combined form is
+     * supported by KSE.
      * <p>
      * {@link org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey#getPrivateKey}
-     * </p>
      */
-    protected static PrivateKey mldsaPrivateKeySeedOnly;
-    protected static PrivateKey mldsaPrivateKeyExpandedOnly;
     protected static PrivateKey mldsaPrivateKeySeedAndExpanded;
     protected static PublicKey slhDsaPublicKey;
     protected static PrivateKey slhDsaPrivateKey;
 
 
     protected static List<PrivateKey> privateKeys() {
-        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey,
-                mldsaPrivateKeySeedAndExpanded, mldsaPrivateKeySeedOnly,
-                mldsaPrivateKeyExpandedOnly);
+        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey, mldsaPrivateKeySeedAndExpanded,
+                             slhDsaPrivateKey);
     }
 
     protected static List<PublicKey> publicKeys() {
-        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey);
+        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey, slhDsaPublicKey);
     }
 
     @BeforeAll
@@ -100,8 +96,6 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
             mldsaPublicKey = mldsaKeyPair.getPublic();
             MLDSAPrivateKey privateKey = (MLDSAPrivateKey) mldsaKeyPair.getPrivate();
             mldsaPrivateKeySeedAndExpanded = privateKey;
-            mldsaPrivateKeySeedOnly = privateKey.getPrivateKey(true);
-            mldsaPrivateKeyExpandedOnly = privateKey.getPrivateKey(false);
         }
 
         if (slhDsaPublicKey == null) {

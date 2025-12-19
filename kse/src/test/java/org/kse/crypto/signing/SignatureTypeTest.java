@@ -40,15 +40,19 @@ import static org.kse.crypto.signing.SignatureType.SHA384WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA384_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA384_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA384_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA3_224WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA3_224_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_224_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_224_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA3_256WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA3_256_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_256_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_256_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA3_384WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA3_384_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_384_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_384_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA3_512WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA3_512_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_512_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA3_512_RSA;
@@ -97,7 +101,11 @@ class SignatureTypeTest {
                                 SHA224WITHRSAANDMGF1,
                                 SHA256WITHRSAANDMGF1,
                                 SHA384WITHRSAANDMGF1,
-                                SHA512WITHRSAANDMGF1
+                                SHA512WITHRSAANDMGF1,
+                                SHA3_224WITHRSAANDMGF1,
+                                SHA3_256WITHRSAANDMGF1,
+                                SHA3_384WITHRSAANDMGF1,
+                                SHA3_512WITHRSAANDMGF1
                         )
                 ),
                 Arguments.of(

@@ -271,8 +271,7 @@ public class KeyPairUtilTest extends CryptoTestsBase {
     }
 
     @ParameterizedTest
-    // Fails for SUN when using Java 25
-    @ValueSource(strings = {"SUN", "SunJCE"})
+    @ValueSource(strings = { "SunJCE" }) // "SUN" provider works when using Java 25
     void shouldThrowOnWrongProviderForMLDSA(String providerName) {
         Provider provider = Security.getProvider(providerName);
         assumeTrue(provider != null, "Provider " + providerName + " not available");
