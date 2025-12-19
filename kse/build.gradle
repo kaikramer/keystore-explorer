@@ -112,45 +112,45 @@ configurations {
 dependencies {
 	implementation('org.bouncycastle:bcpkix-jdk18on:1.83')
 	implementation('com.miglayout:miglayout-swing:11.4.2')
-	implementation('com.formdev:flatlaf:3.5.4:no-natives')
-	implementation('com.formdev:flatlaf:3.5.4:linux-x86_64@so')
-	implementation('com.formdev:flatlaf:3.5.4:macos-arm64@dylib')
-	implementation('com.formdev:flatlaf:3.5.4:macos-x86_64@dylib')
-	implementation('com.formdev:flatlaf:3.5.4:windows-x86_64@dll')
-	implementation('com.formdev:flatlaf:3.5.4:windows-x86@dll')
-	implementation('com.formdev:flatlaf:3.5.4:windows-arm64@dll')
-	implementation('com.formdev:flatlaf-extras:3.5.4') {
+	implementation('com.formdev:flatlaf:3.7:no-natives')
+	implementation('com.formdev:flatlaf:3.7:linux-x86_64@so')
+	implementation('com.formdev:flatlaf:3.7:macos-arm64@dylib')
+	implementation('com.formdev:flatlaf:3.7:macos-x86_64@dylib')
+	implementation('com.formdev:flatlaf:3.7:windows-x86_64@dll')
+	implementation('com.formdev:flatlaf:3.7:windows-x86@dll')
+	implementation('com.formdev:flatlaf:3.7:windows-arm64@dll')
+	implementation('com.formdev:flatlaf-extras:3.7') {
 		exclude group: 'com.formdev', module: 'flatlaf'
 	}
-	implementation('com.nimbusds:nimbus-jose-jwt:10.3')
-	implementation('com.google.crypto.tink:tink:1.17.0') // nimbus-jose-jwt optional dep for ed25519
+	implementation('com.nimbusds:nimbus-jose-jwt:10.6')
+	implementation('com.google.crypto.tink:tink:1.20.0') // nimbus-jose-jwt optional dep for ed25519
 
 	implementation('org.violetlib:vaqua:13')
 
 	implementation('io.github.java-diff-utils:java-diff-utils:4.15')
-	implementation('org.openjdk.nashorn:nashorn-core:15.6')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.18.3')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.18.3')
+	implementation('org.openjdk.nashorn:nashorn-core:15.7')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.20.1')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.20.1')
 
 	if (gradle.startParameter.taskNames.any { ['innosetup', 'zip'].contains(it) }) {
-		implementation('org.openjfx:javafx-base:17.0.9:win')
-		implementation('org.openjfx:javafx-graphics:17.0.9:win')
-		implementation('org.openjfx:javafx-swing:17.0.9:win')
+		implementation('org.openjfx:javafx-base:17.0.17:win')
+		implementation('org.openjfx:javafx-graphics:17.0.17:win')
+		implementation('org.openjfx:javafx-swing:17.0.17:win')
 	}
 	if (gradle.startParameter.taskNames.any { ['buildDeb', 'buildRpm', 'zip'].contains(it) }) {
-		implementation('org.openjfx:javafx-swing:17.0.9:linux')
-		implementation('org.openjfx:javafx-base:17.0.9:linux')
-		implementation('org.openjfx:javafx-graphics:17.0.9:linux')
+		implementation('org.openjfx:javafx-swing:17.0.17:linux')
+		implementation('org.openjfx:javafx-base:17.0.17:linux')
+		implementation('org.openjfx:javafx-graphics:17.0.17:linux')
 	}
 	if (gradle.startParameter.taskNames.any { ['appbundler', 'dmg'].contains(it) }) {
 		if (System.getProperty("os.arch") == "aarch64") {
-			implementation('org.openjfx:javafx-base:17.0.9:mac-aarch64')
-			implementation('org.openjfx:javafx-graphics:17.0.9:mac-aarch64')
-			implementation('org.openjfx:javafx-swing:17.0.9:mac-aarch64')
+			implementation('org.openjfx:javafx-base:17.0.17:mac-aarch64')
+			implementation('org.openjfx:javafx-graphics:17.0.17:mac-aarch64')
+			implementation('org.openjfx:javafx-swing:17.0.17:mac-aarch64')
 		} else {
-			implementation('org.openjfx:javafx-base:17.0.9:mac')
-			implementation('org.openjfx:javafx-graphics:17.0.9:mac')
-			implementation('org.openjfx:javafx-swing:17.0.9:mac')
+			implementation('org.openjfx:javafx-base:17.0.17:mac')
+			implementation('org.openjfx:javafx-graphics:17.0.17:mac')
+			implementation('org.openjfx:javafx-swing:17.0.17:mac')
 		}
 
 		// don't include jar in app bundle because of Apple notarization failing due to unsigned native libraries
@@ -160,24 +160,25 @@ dependencies {
 		implementation('net.java.dev.jna:jna:5.17.0')
 	}
 	if (gradle.startParameter.taskNames.any { ['zip'].contains(it) }) {
-		implementation('org.openjfx:javafx-base:17.0.9:mac')
-		implementation('org.openjfx:javafx-graphics:17.0.9:mac')
-		implementation('org.openjfx:javafx-swing:17.0.9:mac')
+		implementation('org.openjfx:javafx-base:17.0.17:mac')
+		implementation('org.openjfx:javafx-graphics:17.0.17:mac')
+		implementation('org.openjfx:javafx-swing:17.0.17:mac')
 	}
 
 	appbundler('com.evolvedbinary.appbundler:appbundler:1.3.1')
 
-	testImplementation('org.assertj:assertj-core:3.26.3')
-	testImplementation('org.junit.jupiter:junit-jupiter-api:5.10.1')
-	testImplementation('org.junit.jupiter:junit-jupiter-params:5.10.1')
+	testImplementation('org.assertj:assertj-core:3.27.6')
+	testImplementation('org.junit.jupiter:junit-jupiter-api:5.14.1')
+	testImplementation('org.junit.jupiter:junit-jupiter-params:5.14.1')
 	testImplementation('org.skyscreamer:jsonassert:1.5.3')
-	testImplementation('org.mockito:mockito-core:5.14.2')
-	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.10.1')
+	testImplementation('org.mockito:mockito-core:5.21.0')
+	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.14.1')
 	testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 test {
 	useJUnitPlatform()
+	jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}"
 }
 
 jar {
