@@ -25,6 +25,8 @@ import static org.kse.crypto.ecc.EdDSACurves.ED448;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
+import static org.kse.crypto.keypair.KeyPairType.ECGOST3410;
+import static org.kse.crypto.keypair.KeyPairType.ECGOST3410_2012;
 import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlDSA;
@@ -62,11 +64,13 @@ import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.math.ec.ECPoint;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
 
@@ -135,6 +139,10 @@ public final class KeyPairUtil {
 
             if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
                 keyPairGen = KeyPairGenerator.getInstance(curveName, KSE.BC);
+            } else if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
+                KeyPairType keyPairType = KeyPairType.getGostTypeFromCurve(curveName);
+                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
             } else if (provider != null) {
                 keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
@@ -257,6 +265,13 @@ public final class KeyPairUtil {
             } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
                 EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
                 return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
+            } else if (ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
+                // ECGOST parameters are ASN1Sequence so use ECNamedCurveSpec to get the curve name
+                ECPublicKey pubk = (ECPublicKey) publicKey;
+                ECParameterSpec spec = pubk.getParams();
+                int size = spec.getOrder().bitLength();
+                String curveName = ((ECNamedCurveSpec) spec).getName();
+                return new KeyInfo(ASYMMETRIC, algorithm, size, curveName);
             } else if (isMlDSA(getKeyPairType(publicKey)) || isSlhDsa(getKeyPairType(publicKey))) {
                 KeyPairType keyPairType = getKeyPairType(publicKey);
                 return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
@@ -298,7 +313,8 @@ public final class KeyPairUtil {
                 DSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
                 BigInteger prime = keySpec.getP();
                 return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-            } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)) {
+            } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)
+                    || ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
                 ECPrivateKey privk = (ECPrivateKey) privateKey;
                 ECParameterSpec spec = privk.getParams();
                 int size = spec.getOrder().bitLength();
@@ -365,7 +381,8 @@ public final class KeyPairUtil {
                 String signatureAlgorithm = "SHA1withDSA";
                 byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
                 return verify(toSign, signature, publicKey, signatureAlgorithm);
-            } else if (privateAlgorithm.equals(EC.jce()) || privateAlgorithm.equals(ECDSA.jce())) {
+            } else if (privateAlgorithm.equals(EC.jce()) || privateAlgorithm.equals(ECDSA.jce())
+                    || privateAlgorithm.equals(ECGOST3410.jce()) || privateAlgorithm.equals(ECGOST3410_2012.jce())) {
                 String signatureAlgorithm = "SHA256withECDSA";
                 byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
                 return verify(toSign, signature, publicKey, signatureAlgorithm);
@@ -412,61 +429,65 @@ public final class KeyPairUtil {
     /**
      * The function generates a key pair (public-private) from a given private key
      * @param privateKey Private key
-     * @param keyInfo Holds information about a key
      * @return Key Pair or null if the private key is not of a supported type
-     * @throws CryptoException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws CryptoException If there was an error constructing the key pair
      */
-    public static KeyPair generateKeyPair(PrivateKey privateKey, KeyInfo keyInfo)
-            throws CryptoException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static KeyPair generateKeyPair(PrivateKey privateKey) throws CryptoException {
         KeyPair keyPair = null;
 
-        if (privateKey instanceof RSAPrivateKey) {
-            RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
-            RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
-                    rsaPrivate.getPublicExponent());
-            KeyFactory kf = KeyFactory.getInstance(RSA.jce(), KSE.BC);
-            PublicKey publicKey = kf.generatePublic(publicSpec);
-            keyPair = new KeyPair(publicKey, privateKey);
+        try {
+            if (privateKey instanceof RSAPrivateKey) {
+                RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
+                RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
+                        rsaPrivate.getPublicExponent());
+                KeyFactory kf = KeyFactory.getInstance(RSA.jce(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(publicSpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof ECPrivateKey) {
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+                ECPrivateKey ecPrivate = (ECPrivateKey) privateKey;
+                BigInteger d = ecPrivate.getS();
+                org.bouncycastle.jce.spec.ECParameterSpec ecSpec = ECNamedCurveTable
+                        .getParameterSpec(keyInfo.getDetailedAlgorithm());
+                ECPoint Q = ecSpec.getG().multiply(d).normalize();
+                ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
+                // Use the pk algorithm since ECGOST, while being an instance of ECPrivateKey,
+                // needs to use the ECGOST3410 key factory.
+                KeyFactory keyFactory = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
+                PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof DSAPrivateKey) {
+                DSAPrivateKey dsaPrivate = (DSAPrivateKey) privateKey;
+                DSAParams params = dsaPrivate.getParams();
+                BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
+                DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
+                KeyFactory kf = KeyFactory.getInstance(DSA.jce(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(publicSpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (EccUtil.isEdPrivateKey(privateKey)) {
+                EdDSAPrivateKey edPrivate = EccUtil.getEdPrivateKey(privateKey);
+                byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
+                KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof MLDSAPrivateKey) {
+                MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
+                PublicKey publicKey = mldsaPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof SLHDSAPrivateKey) {
+                SLHDSAPrivateKey slhDsaPrivate = (SLHDSAPrivateKey) privateKey;
+                PublicKey publicKey = slhDsaPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            return keyPair;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            throw new CryptoException(MessageFormat.format(
+                    res.getString("NoGenerateKeyPairFromPrivateKey.exception.message"), privateKey.getAlgorithm()));
         }
-        if (privateKey instanceof ECPrivateKey) {
-            ECPrivateKey ecPrivate = (ECPrivateKey) privateKey;
-            BigInteger d = ecPrivate.getS();
-            org.bouncycastle.jce.spec.ECParameterSpec ecSpec = ECNamedCurveTable
-                    .getParameterSpec(keyInfo.getDetailedAlgorithm());
-            ECPoint Q = ecSpec.getG().multiply(d).normalize();
-            ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
-            KeyFactory keyFactory = KeyFactory.getInstance(EC.jce(), KSE.BC);
-            PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
-            keyPair = new KeyPair(publicKey, privateKey);
-        }
-        if (privateKey instanceof DSAPrivateKey) {
-            DSAPrivateKey dsaPrivate = (DSAPrivateKey) privateKey;
-            DSAParams params = dsaPrivate.getParams();
-            BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
-            DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
-            KeyFactory kf = KeyFactory.getInstance(DSA.jce(), KSE.BC);
-            PublicKey publicKey = kf.generatePublic(publicSpec);
-            keyPair = new KeyPair(publicKey, privateKey);
-        }
-        if (privateKey instanceof EdDSAPrivateKey) {
-            EdDSAPrivateKey edPrivate = (EdDSAPrivateKey) privateKey;
-            byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
-            KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
-            PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
-            keyPair = new KeyPair(publicKey, privateKey);
-        }
-        if (privateKey instanceof MLDSAPrivateKey) {
-            MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
-            PublicKey publicKey = mldsaPrivate.getPublicKey();
-            keyPair = new KeyPair(publicKey, privateKey);
-        }
-        if (privateKey instanceof SLHDSAPrivateKey) {
-            SLHDSAPrivateKey slhDsaPrivate = (SLHDSAPrivateKey) privateKey;
-            PublicKey publicKey = slhDsaPrivate.getPublicKey();
-            keyPair = new KeyPair(publicKey, privateKey);
-        }
-        return keyPair;
     }
 }

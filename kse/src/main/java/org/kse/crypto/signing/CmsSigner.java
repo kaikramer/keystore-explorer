@@ -19,6 +19,14 @@
  */
 package org.kse.crypto.signing;
 
+import static org.kse.crypto.digest.DigestType.GOST3411;
+import static org.kse.crypto.digest.DigestType.GOST3411_2012_256;
+import static org.kse.crypto.digest.DigestType.GOST3411_2012_512;
+import static org.kse.crypto.digest.DigestType.SHA256;
+import static org.kse.crypto.digest.DigestType.SHA512;
+import static org.kse.crypto.digest.DigestType.SHAKE128;
+import static org.kse.crypto.digest.DigestType.SHAKE256;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -72,8 +80,9 @@ public class CmsSigner {
      * @param signatureType     The signature type to use for signing.
      * @param tsaUrl            An optional TSA URL for adding a time stamp token to
      *                          the signature.
-     * @param provider
+     * @param provider          The security provider to use.
      * @return The signature in a CMSSignedData object.
+     * @throws CryptoException If an error occurs when signing the file.
      */
     public static CMSSignedData sign(File inputFile, PrivateKey privateKey, X509Certificate[] certificateChain,
             boolean detachedSignature, SignatureType signatureType, String tsaUrl, Provider provider)
@@ -118,8 +127,9 @@ public class CmsSigner {
      * @param signatureType     The signature type to use for signing.
      * @param tsaUrl            An optional TSA URL for adding a time stamp token to
      *                          the signature.
-     * @param provider
+     * @param provider          The security provider to use.
      * @return The counter signed signature in a CMSSignedData object.
+     * @throws CryptoException If an error occurs when counter signing the signature.
      */
     public static CMSSignedData counterSign(CMSSignedData signedData, PrivateKey privateKey,
             X509Certificate[] certificateChain, boolean detachedSignature, SignatureType signatureType, String tsaUrl,
@@ -170,6 +180,7 @@ public class CmsSigner {
      * @param signerInfos The signer information to time stamp.
      * @param digestType  The digest type to use for the time stamp.
      * @return <b>SignerInformation</b> with time stamp token.
+     * @throws IOException If an error occurs with contacting the TS server.
      */
     public static SignerInformationStore addTimestamp(String tsaUrl, SignerInformationStore signerInfos,
             DigestType digestType) throws IOException {
@@ -179,9 +190,11 @@ public class CmsSigner {
         for (SignerInformation si : signerInfos.getSigners()) {
             byte[] signature = si.getSignature();
 
-            // Ed448 uses digest type of SHAKE256-512, which is not currently supported by the TSAs.
-            if (DigestType.SHAKE256 == digestType) {
-                digestType = DigestType.SHA512;
+            // Some signatures use SHAKE or GOST3411, which are not currently supported by the TSAs.
+            if (SHAKE128 == digestType || GOST3411 == digestType || GOST3411_2012_256 == digestType) {
+                digestType = SHA256;
+            } else  if (SHAKE256 == digestType || GOST3411_2012_512 == digestType) {
+                digestType = SHA512;
             }
 
             // send request to TSA

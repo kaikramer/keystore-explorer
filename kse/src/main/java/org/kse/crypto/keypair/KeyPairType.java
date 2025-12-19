@@ -33,6 +33,8 @@ public enum KeyPairType {
     EDDSA("EdDSA", "", 256, 456, 200), // for Java >= 15 (there is no specific OID for EdDSA)
     ED25519("Ed25519", "1.3.101.112", 256, 256, 0), // BC has separate key pair types for the two EdDSA types
     ED448("Ed448", "1.3.101.113", 456, 456, 0),
+    ECGOST3410("ECGOST3410", "1.2.643.2.2.19", 256, 256, 0),
+    ECGOST3410_2012("ECGOST3410-2012", "", 256, 512, 256), // There are two OIDs: One for 256-bit, one for 512-bit.
 
     MLDSA44("ML-DSA-44", "2.16.840.1.101.3.4.3.17", 10_496, 10_496, 0),
     MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", 15_616, 15_616, 0),
@@ -54,7 +56,7 @@ public enum KeyPairType {
     /**
      * Set of all EC key pair types (EC, ECDSA, EDDSA, ED25519, ED448)
      */
-    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448);
+    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448, ECGOST3410, ECGOST3410_2012);
 
     /**
      * Set of all ML-DSA key pair types
@@ -159,6 +161,20 @@ public enum KeyPairType {
      */
     public static boolean isSlhDsa(KeyPairType keyPairType) {
         return SLHDSA_TYPES_SET.contains(keyPairType);
+    }
+
+    /**
+     * Gets the ECGOST key pair type for the given curve name.
+     *
+     * @param curveName The ECGOST curve name.
+     * @return The ECGOST key pair type.
+     */
+    public static KeyPairType getGostTypeFromCurve(String curveName) {
+        if (curveName.startsWith("Tc26")) {
+            return KeyPairType.ECGOST3410_2012;
+        } else {
+            return KeyPairType.ECGOST3410;
+        }
     }
 
     /**

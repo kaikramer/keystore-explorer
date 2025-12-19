@@ -81,6 +81,7 @@ public class DGeneratingKeyPair extends JEscDialog {
      * @param parent      The parent frame
      * @param keyPairType The key pair generation type
      * @param keySize     The key size to generate
+     * @param provider    The security provider to use
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, int keySize, Provider provider) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -95,6 +96,7 @@ public class DGeneratingKeyPair extends JEscDialog {
      *
      * @param parent      The parent frame
      * @param keyPairType The key pair generation type
+     * @param provider    The security provider to use
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, Provider provider) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -110,6 +112,7 @@ public class DGeneratingKeyPair extends JEscDialog {
      * @param parent      The parent frame
      * @param keyPairType The key pair generation type
      * @param curveName   The name of the curve to create
+     * @param provider    The security provider to use
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName, Provider provider) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);

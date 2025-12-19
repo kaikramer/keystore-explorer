@@ -172,6 +172,63 @@ public class KeyPairUtilTest extends CryptoTestsBase {
         assertEquals("-", pubKeyInfo.getDetailedAlgorithm());
     }
 
+    @ParameterizedTest
+    // @formatter:off
+    @ValueSource(strings = {
+            // GOST 3410 curves
+            "GostR3410-2001-CryptoPro-A", "GostR3410-2001-CryptoPro-B", "GostR3410-2001-CryptoPro-C",
+            "GostR3410-2001-CryptoPro-XchA", "GostR3410-2001-CryptoPro-XchB"
+    })
+    // @formatter:on
+    void generateGost3410Keys(String curveName) throws Exception {
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
+        assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(KeyPairType.ECGOST3410.jce(), privKeyInfo.getAlgorithm());
+        assertEquals(KeyPairType.ECGOST3410.maxSize(), privKeyInfo.getSize());
+        assertEquals(curveName, privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(KeyPairType.ECGOST3410.jce(), pubKeyInfo.getAlgorithm());
+        assertEquals(KeyPairType.ECGOST3410.maxSize(), pubKeyInfo.getSize());
+        assertEquals(curveName, pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(KeyPairType.ECGOST3410, KeyPairUtil.getKeyPairType(keyPair.getPrivate()));
+        assertEquals(KeyPairType.ECGOST3410, KeyPairUtil.getKeyPairType(keyPair.getPublic()));
+    }
+
+    @ParameterizedTest
+    // @formatter:off
+    @ValueSource(strings = {
+            // GOST 3410-2012 curves
+            "Tc26-Gost-3410-12-256-paramSetA", "Tc26-Gost-3410-12-256-paramSetB", "Tc26-Gost-3410-12-256-paramSetC",
+            "Tc26-Gost-3410-12-256-paramSetD", "Tc26-Gost-3410-12-512-paramSetA", "Tc26-Gost-3410-12-512-paramSetB",
+            "Tc26-Gost-3410-12-512-paramSetC",
+    })
+    // @formatter:on
+    void generate3410_2012Keys(String curveName) throws Exception {
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
+        assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(KeyPairType.ECGOST3410_2012.jce(), privKeyInfo.getAlgorithm());
+//        assertEquals(keySize, privKeyInfo.getSize());
+        assertEquals(curveName, privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(KeyPairType.ECGOST3410_2012.jce(), pubKeyInfo.getAlgorithm());
+//        assertEquals(keySize, pubKeyInfo.getSize());
+        assertEquals(curveName, pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(KeyPairType.ECGOST3410_2012, KeyPairUtil.getKeyPairType(keyPair.getPrivate()));
+        assertEquals(KeyPairType.ECGOST3410_2012, KeyPairUtil.getKeyPairType(keyPair.getPublic()));
+    }
+
     @Test
     void testValidKeyPairWithDifferentAlgorithmNames()
             throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, CryptoException,

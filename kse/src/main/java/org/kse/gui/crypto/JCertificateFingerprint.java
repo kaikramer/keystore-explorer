@@ -96,9 +96,7 @@ public class JCertificateFingerprint extends JPanel {
     }
 
     private void populateFingerprintAlgs() {
-        DigestType[] digestAlgs = DigestType.values();
-
-        for (DigestType digestAlg : digestAlgs) {
+        for (DigestType digestAlg : DigestType.FINGERPRINT_ALGS) {
             jcbFingerprintAlg.addItem(digestAlg);
         }
 
@@ -115,10 +113,19 @@ public class JCertificateFingerprint extends JPanel {
         populateFingerprint();
     }
 
+    /**
+     * Set the fingerprint algorithm.
+     *
+     * @param fingerprintAlg The fingerprint algorithm.
+     */
     public void setFingerprintAlg(DigestType fingerprintAlg) {
         jcbFingerprintAlg.setSelectedItem(fingerprintAlg);
     }
 
+    /**
+     *
+     * @return The selected fingerprint algorithm.
+     */
     public DigestType getSelectedFingerprintAlg() {
         return (DigestType) jcbFingerprintAlg.getSelectedItem();
     }

@@ -263,6 +263,8 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         case EDDSA:
         case ED25519:
         case ED448:
+        case ECGOST3410:
+        case ECGOST3410_2012:
         default:
             dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName, provider);
             break;

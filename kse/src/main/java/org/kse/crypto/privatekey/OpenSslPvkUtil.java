@@ -626,7 +626,7 @@ public class OpenSslPvkUtil {
     }
 
     /**
-     * Legacy format only supported for RSA, DSA, and EC curves (except Edwards)
+     * Legacy format only supported for RSA, DSA, and EC curves (except Edwards and ECGOST)
      */
     public static boolean isOpenSSLFormatSupported(PrivateKey privateKey) {
         KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);

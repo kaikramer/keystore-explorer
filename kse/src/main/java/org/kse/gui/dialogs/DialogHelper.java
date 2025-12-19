@@ -20,6 +20,7 @@
 package org.kse.gui.dialogs;
 
 import java.security.PrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,8 +70,11 @@ public class DialogHelper {
         case DSA:
             sigAlgs = SignatureType.dsaSignatureTypes();
             break;
-        case EC:
         case ECDSA:
+            // map ECDSA to EC for consistency
+            prefsKey = KeyPairType.EC.name();
+            // fall-through
+        case EC:
             // SM2 is an EC curve, but it is used with a different set of signature algorithms
             String curve = EccUtil.getNamedCurve(privateKey);
             if (CurveSet.SM2.getAllCurveNames().contains(curve)) {
@@ -93,6 +97,17 @@ public class DialogHelper {
             break;
         case ED448:
             sigAlgs = Collections.singletonList(SignatureType.ED448);
+            break;
+        case ECGOST3410:
+            sigAlgs = Collections.singletonList(SignatureType.GOST3411_GOST3410);
+            break;
+        case ECGOST3410_2012:
+            ECPrivateKey privk = (ECPrivateKey) privateKey;
+            if (privk.getParams().getOrder().bitLength() > 256) {
+                sigAlgs = Collections.singletonList(SignatureType.GOST3411_2012_512_GOST3410_2012);
+            } else {
+                sigAlgs = Collections.singletonList(SignatureType.GOST3411_2012_256_GOST3410_2012);
+            }
             break;
         case MLDSA44:
             sigAlgs = Collections.singletonList(SignatureType.MLDSA44);
@@ -166,8 +181,11 @@ public class DialogHelper {
         String prefsKey = keyPairType.name();
 
         switch (keyPairType) {
-        case EC:
         case ECDSA:
+            // map ECDSA to EC for consistency
+            prefsKey = KeyPairType.EC.name();
+            // fall-through
+        case EC:
             // SM2 is an EC curve, but it is used with a different set of signature algorithms
             String curve = EccUtil.getNamedCurve(privateKey);
             if (CurveSet.SM2.getAllCurveNames().contains(curve)) {
