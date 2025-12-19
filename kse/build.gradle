@@ -99,8 +99,8 @@ application {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_11
-	targetCompatibility = JavaVersion.VERSION_11
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
@@ -304,7 +304,7 @@ tasks.register('jlink', Exec) {
 	delete "$jlinkOutDir/jre"
 
 	onlyIf {
-		JavaVersion.current() != JavaVersion.VERSION_11
+		JavaVersion.current() != JavaVersion.VERSION_17
 	}
 
 	workingDir layout.buildDirectory
@@ -354,7 +354,7 @@ tasks.register('innosetup') {
 					LIB_DIR              : dependenciesDir.toString(),
 					LAUNCHER             : "$launcherOutDir\\$appExe".toString(),
 					JAVA_INFO_DLL        : "$resDir\\JavaInfo.dll".toString(),
-					NO_JRE               : (JavaVersion.current() != JavaVersion.VERSION_11) ? "" : "-no-jre",
+					NO_JRE               : (JavaVersion.current() != JavaVersion.VERSION_17) ? "" : "-no-jre",
 					ICONS_DIR            : iconsDir.toString(),
 					RES_DIR              : resDir.toString(),
 					JRE_DIR              : "$jlinkOutDir\\jre".toString(),
@@ -646,13 +646,13 @@ ospackage {
 buildRpm {
 	release = '1' // for spacewalk/satellite because they require a release field
 	arch = NOARCH
-	requires('jre', '11', GREATER | EQUAL)
+	requires('jre', '17', GREATER | EQUAL)
 	postInstall('update-desktop-database; touch /usr/share/icons/hicolor/')
 }
 
 buildDeb {
 	arch = "all"
-	requires("default-jre").or("java11-runtime")
+	requires("default-jre").or("java17-runtime")
 }
 
 idea {
