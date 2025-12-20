@@ -49,7 +49,6 @@ import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.ecc.EdDSACurves;
-import org.kse.version.JavaVersion;
 
 /**
  * Enumeration of Signature Types supported by the X509CertUtil class.
@@ -269,14 +268,10 @@ public enum SignatureType {
         signatureTypes.add(SHA384WITHRSAANDMGF1);
         signatureTypes.add(SHA512WITHRSAANDMGF1);
 
-        // SHA3 signatures cause problems when reading certificates with standard providers (e.g. in P12 keystore)
-        // because at least up to Java 15 there is no support for SHA3 signatures (see http://openjdk.java.net/jeps/287)
-        if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_17)) {
-            signatureTypes.add(SHA3_224WITHRSAANDMGF1);
-            signatureTypes.add(SHA3_256WITHRSAANDMGF1);
-            signatureTypes.add(SHA3_384WITHRSAANDMGF1);
-            signatureTypes.add(SHA3_512WITHRSAANDMGF1);
-        }
+        signatureTypes.add(SHA3_224WITHRSAANDMGF1);
+        signatureTypes.add(SHA3_256WITHRSAANDMGF1);
+        signatureTypes.add(SHA3_384WITHRSAANDMGF1);
+        signatureTypes.add(SHA3_512WITHRSAANDMGF1);
 
         return signatureTypes;
     }

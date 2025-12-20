@@ -22,10 +22,8 @@ package org.kse.crypto.ecc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 import java.security.InvalidParameterException;
@@ -184,11 +182,4 @@ public class EccUtilTest extends CryptoTestsBase {
         assertThrows(InvalidParameterException.class, () -> EccUtil.detectEdDSACurve(ecKeyPair.getPublic()));
     }
 
-    @Test
-    void isEdPrivateKey() throws Exception {
-        KeyPair edKeyPair = KeyPairUtil.generateECKeyPair("Ed448", KSE.BC);
-        assertTrue(EccUtil.isEdPrivateKey(edKeyPair.getPrivate()));
-        assertFalse(EccUtil.isEdPrivateKey(edKeyPair.getPublic()));
-        assertFalse(EccUtil.isEdPrivateKey(KeyPairUtil.generateECKeyPair("secp384r1", KSE.BC).getPrivate()));
-    }
 }

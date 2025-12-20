@@ -47,6 +47,7 @@ import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.EdECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
@@ -467,7 +468,7 @@ public final class KeyPairUtil {
                 PublicKey publicKey = kf.generatePublic(publicSpec);
                 keyPair = new KeyPair(publicKey, privateKey);
             }
-            if (EccUtil.isEdPrivateKey(privateKey)) {
+            if (privateKey instanceof EdECPrivateKey) {
                 EdDSAPrivateKey edPrivate = EccUtil.getEdPrivateKey(privateKey);
                 byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
                 KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
