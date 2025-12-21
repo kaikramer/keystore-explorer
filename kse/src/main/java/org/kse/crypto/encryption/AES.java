@@ -22,7 +22,6 @@ package org.kse.crypto.encryption;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -42,7 +41,7 @@ import org.kse.utilities.rng.RNG;
  */
 public final class AES {
 
-    public static final int GCM_TAG_LEN = 128;
+    private static final int GCM_TAG_LEN = 128;
 
     private AES() {
     }

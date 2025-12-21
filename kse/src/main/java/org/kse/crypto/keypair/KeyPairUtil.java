@@ -138,18 +138,19 @@ public final class KeyPairUtil {
             // Get a key pair generator
             KeyPairGenerator keyPairGen;
 
+            if (provider == null) {
+                provider = KSE.BC;
+            }
+
             if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
-                keyPairGen = KeyPairGenerator.getInstance(curveName, KSE.BC);
+                keyPairGen = KeyPairGenerator.getInstance(curveName, provider);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             } else if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
                 KeyPairType keyPairType = KeyPairType.getGostTypeFromCurve(curveName);
                 keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
-            } else if (provider != null) {
-                keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
-                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             } else {
-                keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), KSE.BC);
+                keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             }
 
@@ -173,13 +174,11 @@ public final class KeyPairUtil {
     public static KeyPair generateKeyPair(KeyPairType keyPairType, Provider provider)
             throws CryptoException {
         try {
-            KeyPairGenerator keyPairGen;
-
-            if (provider != null) {
-                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
-            } else {
-                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
+            if (provider == null) {
+                provider = KSE.BC;
             }
+
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
             keyPairGen.initialize(new NamedParameterSpec(keyPairType.jce()), RNG.newInstanceForLongLivedSecrets());
 
             return keyPairGen.generateKeyPair();

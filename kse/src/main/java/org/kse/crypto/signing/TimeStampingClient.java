@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
@@ -60,8 +62,9 @@ public class TimeStampingClient {
      * @param hashAlg The algorithm used for generating a hash value of the data to be time-stamped
      * @return encoded, TSA signed data of the timeStampToken
      * @throws IOException when request to TSA server fails
+     * @throws URISyntaxException If there is an error in the URL syntax.
      */
-    public static byte[] getTimeStampToken(String tsaUrl, byte[] data, DigestType hashAlg) throws IOException {
+    public static byte[] getTimeStampToken(String tsaUrl, byte[] data, DigestType hashAlg) throws IOException, URISyntaxException {
 
         TimeStampResponse response = null;
         try {
@@ -108,8 +111,9 @@ public class TimeStampingClient {
      *
      * @return TSA response, raw bytes (RFC 3161 encoded)
      * @throws IOException when request to TSA server fails
+     * @throws URISyntaxException If there is an error in the URL syntax.
      */
-    private static byte[] queryServer(String tsaUrl, byte[] requestBytes) throws IOException {
+    private static byte[] queryServer(String tsaUrl, byte[] requestBytes) throws IOException, URISyntaxException {
 
         // Install the all-trusting trust manager
         SSLContext sc;
@@ -136,7 +140,7 @@ public class TimeStampingClient {
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
         try {
-            URL url = new URL(tsaUrl);
+            URL url = new URI(tsaUrl).toURL();
             URLConnection con = url.openConnection();
             con.setDoInput(true);
             con.setDoOutput(true);

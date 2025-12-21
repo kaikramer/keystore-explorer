@@ -29,9 +29,9 @@ import static org.kse.crypto.digest.DigestType.SHAKE256;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.PrivateKey;
 import java.security.Provider;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,6 @@ import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
@@ -53,7 +52,6 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.kse.KSE;
@@ -164,17 +162,16 @@ public class CmsSigner {
 
                 // addCounterSigners does not replace existing counter signers. It creates a new
                 // counter signer vector if it does not already exist, and then it adds the counter signer.
-                signer = SignerInformation.addCounterSigners(signer, counterSigners);
-
-                generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
-                generator.addSigners(new SignerInformationStore(signer));
+                generator.addSigners(
+                        new SignerInformationStore(SignerInformation.addCounterSigners(signer, counterSigners)));
             }
+            generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
             generator.addCertificates(signedData.getCertificates());
 
             CMSSignedData counterSignedData = generator.generate(signedData.getSignedContent(), !detachedSignature);
 
             return counterSignedData;
-        } catch (CertificateEncodingException | OperatorCreationException | CMSException | IOException e) {
+        } catch (Exception e) {
             throw new CryptoException(res.getString("CmsCounterSignatureFailed.exception.message"), e);
         }
     }
@@ -187,9 +184,10 @@ public class CmsSigner {
      * @param digestType  The digest type to use for the time stamp.
      * @return <b>SignerInformation</b> with time stamp token.
      * @throws IOException If an error occurs with contacting the TS server.
+     * @throws URISyntaxException If there is an error in the URL syntax.
      */
-    public static SignerInformationStore addTimestamp(String tsaUrl, SignerInformationStore signerInfos,
-            DigestType digestType) throws IOException {
+    private static SignerInformationStore addTimestamp(String tsaUrl, SignerInformationStore signerInfos,
+            DigestType digestType) throws IOException, URISyntaxException {
 
         Collection<SignerInformation> newSignerInfos = new ArrayList<>();
 

@@ -23,6 +23,7 @@ import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -84,8 +85,9 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
      * Perform update check if enabled and if the last check was outside the configured time interval
      *
      * @throws IOException if fetching the version file from the website failed
+     * @throws URISyntaxException If there is an error in the URL syntax.
      */
-    public void doAutoUpdateCheck() throws IOException {
+    public void doAutoUpdateCheck() throws IOException, URISyntaxException {
         // abort auto update check if not enabled
         if (!preferences.getAutoUpdateCheckSettings().isEnabled()) {
             return;

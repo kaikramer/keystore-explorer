@@ -98,7 +98,7 @@ public class X509ExtensionSetUpdater {
         // extract old AKI data
         byte[] extensionValue = X509Ext.unwrapExtension(extensionSet.getExtensionValue(extensionOid));
         AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(extensionValue);
-        byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
+        byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifierOctets();
         BigInteger authorityCertSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
 
         // generate new values

@@ -32,13 +32,8 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
 import java.security.cert.X509Extension;
-import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.ResourceBundle;
 
@@ -62,7 +57,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
@@ -70,10 +64,9 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.actions.ExamineClipboardAction;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.dialogs.DViewAsn1Dump;
-import org.kse.gui.dialogs.DViewCertificate;
-import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.error.DError;
 import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.DialogViewer;
@@ -400,67 +393,15 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
                     String path = url.getPath();
                     if (path.endsWith(".cer") || path.endsWith(".crt") || path.endsWith(".pem")
                             || path.endsWith(".der")) {
-                        downloadCert(url);
+                        ExamineClipboardAction.downloadCert(url, this, kseFrame);
                     } else if (url.getPath().endsWith(".crl")) {
-                        downloadCrl(url);
+                        ExamineClipboardAction.downloadCrl(url, this);
                     } else {
                         Desktop.getDesktop().browse(url.toURI());
                     }
                 }
             } catch (Exception ex) {
                 DError.displayError(this, ex);
-            }
-        }
-    }
-
-    private boolean isRedirect(int status) {
-        // normally, 3xx is redirect
-        if (status != HttpURLConnection.HTTP_OK) {
-            if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-                    || status == HttpURLConnection.HTTP_SEE_OTHER)
-                return true;
-        }
-        return false;
-    }
-
-    private void downloadCrl(URL url) throws IOException, CryptoException {
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        int status = urlConn.getResponseCode();
-        if (isRedirect(status)) {
-            String newUrl = urlConn.getHeaderField("Location");
-            url = new URL(newUrl);
-            urlConn = (HttpURLConnection) url.openConnection();
-        }
-        try (InputStream is = urlConn.getInputStream()) {
-            X509CRL crl = X509CertUtil.loadCRL(is.readAllBytes());
-            if (crl != null) {
-                DViewCrl dViewCrl = new DViewCrl(this,
-                                                 MessageFormat.format(res.getString("DViewExtensions.ViewCrl.Title"),
-                                                                      url.toString()), ModalityType.DOCUMENT_MODAL,
-                                                 crl);
-                dViewCrl.setLocationRelativeTo(this);
-                dViewCrl.setVisible(true);
-            }
-        }
-    }
-
-    private void downloadCert(URL url) throws IOException, CryptoException {
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        int status = urlConn.getResponseCode();
-        if (isRedirect(status)) {
-            String newUrl = urlConn.getHeaderField("Location");
-            url = new URL(newUrl);
-            urlConn = (HttpURLConnection) url.openConnection();
-        }
-        try (InputStream is = urlConn.getInputStream()) {
-            X509Certificate[] certs = X509CertUtil.loadCertificates(is.readAllBytes());
-            if (certs != null && certs.length > 0) {
-                int importExport = kseFrame == null ? DViewCertificate.NONE : DViewCertificate.IMPORT_EXPORT;
-                DViewCertificate dViewCertificate = new DViewCertificate(this,
-                        MessageFormat.format(res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
-                        kseFrame, importExport);
-                dViewCertificate.setLocationRelativeTo(this);
-                dViewCertificate.setVisible(true);
             }
         }
     }

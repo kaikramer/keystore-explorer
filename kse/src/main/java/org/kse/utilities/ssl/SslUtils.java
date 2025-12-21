@@ -20,6 +20,8 @@
 package org.kse.utilities.ssl;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
@@ -59,12 +61,13 @@ public class SslUtils {
      * @return SSL infos
      * @throws CryptoException Problem encountered while loading the certificate(s)
      * @throws IOException     An I/O error occurred
+     * @throws URISyntaxException If there is an error in the URL syntax.
      */
     @SuppressWarnings("deprecation") // for KseKeyStore.getKeyStore()
     public static SslConnectionInfos readSSLConnectionInfos(String host, int port, KseKeyStore keyStore, char[] password)
-            throws CryptoException, IOException {
+            throws CryptoException, IOException, URISyntaxException {
 
-        URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
+        URL url = new URI(MessageFormat.format("https://{0}:{1}/", host, "" + port)).toURL();
         HttpsURLConnection connection = null;
 
         System.setProperty("javax.net.debug", "ssl");

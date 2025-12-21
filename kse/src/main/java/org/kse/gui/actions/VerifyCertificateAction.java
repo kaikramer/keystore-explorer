@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -184,8 +185,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private void verifyChain(KeyStoreHistory keyStoreHistory, String alias)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
+                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException {
         if (verify(false, false, keyStoreHistory, null, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.ChainSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
@@ -195,8 +195,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private void verifyStatusOCSP(KeyStoreHistory keyStoreHistory, String alias)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
+                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException {
         if (verify(false, true, keyStoreHistory, null, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
@@ -207,7 +206,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
     private void verifyStatusOcspUrl(KeyStoreHistory keyStoreHistory, String alias, String ocspUrl, OcspDigestAlgorithm ocspDigestAlgorithm, boolean ocspIncludeNonce)
             throws OperatorCreationException, OCSPException, IOException, HeadlessException, CertPathValidatorException,
                    KeyStoreException, NoSuchAlgorithmException, CertificateException,
-                   InvalidAlgorithmParameterException, IllegalStateException, CryptoException {
+                   InvalidAlgorithmParameterException, IllegalStateException, URISyntaxException {
 
         if (verify(false, false, keyStoreHistory, null, alias)) {
             // search issuer
@@ -264,10 +263,10 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         return gen.build();
     }
 
-    private OCSPResp requestOCSPResponse(String url, OCSPReq ocspReq) throws IOException {
+    private OCSPResp requestOCSPResponse(String url, OCSPReq ocspReq) throws IOException, URISyntaxException {
         byte[] ocspReqData = ocspReq.getEncoded();
 
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection con = (HttpURLConnection) new URI(url).toURL().openConnection();
         try {
             con.setRequestProperty("Content-Type", "application/ocsp-request");
             con.setRequestProperty("Accept", "application/ocsp-response");
@@ -345,8 +344,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private void verifyStatusCrlFile(KeyStoreHistory keyStoreHistory, String alias, String crlFile)
             throws HeadlessException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, IOException,
-                   CryptoException {
+                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, IOException {
         File file = new File(crlFile);
         X509CRL crl = null;
         try {
@@ -376,8 +374,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private void verifyStatusCrl(KeyStoreHistory keyStoreHistory, String alias)
             throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
+                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException {
         if (verify(true, false, keyStoreHistory, null, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
@@ -387,8 +384,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private boolean verify(boolean crl, boolean ocsp, KeyStoreHistory keyStoreHistory, X509CRL xCrl, String alias)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
+                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException {
 
         KeyStore trustStore = getKeyStore(keyStoreHistory);
 

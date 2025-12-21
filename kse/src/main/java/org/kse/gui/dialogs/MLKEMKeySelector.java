@@ -21,19 +21,12 @@
 
 package org.kse.gui.dialogs;
 
-import java.awt.Container;
-import java.awt.event.ItemListener;
-import java.io.Serializable;
+import java.util.Collection;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 
 import org.kse.crypto.keypair.KeyPairType;
-import org.kse.gui.PlatformUtil;
 
 /**
  * UI elements used by {@link  org.kse.gui.dialogs.DGenerateKeyPair}
@@ -54,14 +47,10 @@ import org.kse.gui.PlatformUtil;
  * }
  * </pre>
  */
-public class MLKEMKeySelector implements Serializable {
+public class MLKEMKeySelector extends KeySelector {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private static final long serialVersionUID = 1998L;
-
-    protected JRadioButton jRadioButton;
-    protected JLabel jLabelKeyType;
-    protected JComboBox<String> jComboBoxKeyType;
 
     /**
      * Constructs a new ML-KEM key selector UI elements.
@@ -70,103 +59,18 @@ public class MLKEMKeySelector implements Serializable {
      * @param enabled     ML-KEM should only be enabled when key pair will not be self-signed.
      */
     public MLKEMKeySelector(ButtonGroup buttonGroup, boolean enabled) {
+        super(buttonGroup, "MLKEMKeySelector");
 
-        jRadioButton = new JRadioButton(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.text"));
+        jrbKeyType.setEnabled(enabled);
         if (enabled) {
-            jRadioButton.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.tooltip"));
+            jrbKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jrbKeyType.tooltip"));
         } else {
-            jRadioButton.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.na.tooltip"));
-        }
-        PlatformUtil.setMnemonic(
-                jRadioButton, RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.mnemonic").charAt(0));
-
-        jLabelKeyType = new JLabel(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jLabelKeyType.tooltip"));
-        jLabelKeyType.setDisplayedMnemonic(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jLabelKeyType.mnemonic").charAt(0));
-
-        jComboBoxKeyType = new JComboBox<>();
-        jComboBoxKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jComboBoxKeyType.tooltip"));
-        jLabelKeyType.setLabelFor(jComboBoxKeyType);
-
-        String[] names = KeyPairType.MLKEM_TYPES_SET.stream()
-                .map(type -> DialogHelper.formatNameWithSize(type.jce(), type.maxSize()))
-                .toArray(String[]::new);
-
-        jComboBoxKeyType.setModel(new DefaultComboBoxModel<>(names));
-        jRadioButton.setEnabled(enabled);
-        jRadioButton.addItemListener(event -> enableDisableElements());
-        setSelected(true);
-        if (buttonGroup != null) {
-            buttonGroup.add(jRadioButton);
+            jrbKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jrbKeyType.na.tooltip"));
         }
     }
 
-    /**
-     * Adds the ML-KEM controls the pane.
-     *
-     * @param pane The pane to add the controls to.
-     */
-    public void add(Container pane) {
-        if (pane == null) {
-            return;
-        }
-        pane.add(jRadioButton, "");
-        pane.add(jLabelKeyType, "");
-        pane.add(jComboBoxKeyType, "growx, wrap");
+    @Override
+    protected Collection<KeyPairType> keyPairTypes() {
+        return KeyPairType.MLKEM_TYPES_SET;
     }
-
-    /**
-     * Enable and disable the selector elements.
-     */
-    public void enableDisableElements() {
-        jComboBoxKeyType.setEnabled(jRadioButton.isSelected());
-    }
-
-    /**
-     * The preferred parameter set to use.
-     *
-     * @param keyType The KeyPairType.
-     */
-    public void setPreferredParameterSet(KeyPairType keyType) {
-        if (KeyPairType.isMlKEM(keyType)) {
-            jComboBoxKeyType.setSelectedItem(DialogHelper.formatNameWithSize(keyType.jce(), keyType.maxSize()));
-        }
-    }
-
-    /**
-     * Adds an item listener to the ML-KEM radio button. Allows the parent
-     * panel to update controls when the ML-KEM radio button is selected.
-     *
-     * @param itemListener The item listener to add.
-     */
-    public void addItemListener(ItemListener itemListener) {
-        jRadioButton.addItemListener(itemListener);
-    }
-
-    /**
-     *
-     * @return True if the ML-KEM radio button is selected. False if not.
-     */
-    public boolean isSelected() {
-        return jRadioButton.isSelected();
-    }
-
-    /**
-     * Selects the selected state of the ML-KEM radio button.
-     *
-     * @param selected The selected state.
-     */
-    public void setSelected(boolean selected) {
-        jRadioButton.setSelected(selected);
-        enableDisableElements();
-    }
-
-    /**
-     *
-     * @return The KeyPairType of the ML-KEM parameter set.
-     */
-    public KeyPairType getKeyPairType() {
-        return KeyPairType
-                .resolveJce(DialogHelper.extractNameFromFormatted((String) jComboBoxKeyType.getSelectedItem()));
-    }
-
 }
