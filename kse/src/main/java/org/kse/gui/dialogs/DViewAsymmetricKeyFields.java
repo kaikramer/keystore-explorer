@@ -36,6 +36,7 @@ import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.EdECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -132,7 +133,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "EC");
         } else if (key instanceof EdDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), getEdAlg(key));
-        } else if (EccUtil.isEdPrivateKey(key)) {
+        } else if (key instanceof EdECPrivateKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), getEdAlg(key));
         } else if (key instanceof MLDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
@@ -239,7 +240,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             fields = getEcPrivateFields();
         } else if (key instanceof EdDSAPublicKey) {
             fields = getEdPubFields();
-        } else if (EccUtil.isEdPrivateKey(key)) {
+        } else if (key instanceof EdECPrivateKey) {
             fields = getEdPrivateFields();
         } else if (key instanceof MLDSAPublicKey) {
             fields = getMLDSAPublicFields();

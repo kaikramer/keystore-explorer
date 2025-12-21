@@ -30,6 +30,7 @@ import java.security.Security;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.EdECPrivateKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.List;
@@ -310,9 +311,11 @@ public class EccUtil {
     }
 
     /**
-     * Converts an Ed25519 or Ed448 PrivateKey object to a BC EdDSAPrivateKey.
+     * Converts an Ed25519 or Ed448 PrivateKey object to a BC EdDSAPrivateKey. This method is
+     * usually used to determine the Edwards curve since the BC EdDSAPrivatey provides
+     * "Ed25519" or "Ed448" in the algorithm, whereas the JDK EdECPrivateKey only says "EdDSA".
      * <br>
-     * If the given privateKey is a JDK EdDSA key (Java 15+), convert it to a BouncyCastle EdDSA key.
+     * If the given privateKey is a JDK EdDSA key, convert it to a BouncyCastle EdDSA key.
      * If the given privateKey is already a BouncyCastle EdDSA key, return it as-is.
      * Otherwise (no known implementation class) return null.
      *
@@ -325,12 +328,9 @@ public class EccUtil {
         }
 
         try {
-            // Use reflection so that KSE can still compile with JDK 11.
-            Class<?> c = Class.forName("java.security.interfaces.EdECPrivateKey");
-            if (c.isAssignableFrom(privateKey.getClass())) {
-                // Quickest way to convert to a BC EdDSA key. Doesn't require importing any
-                // Ed25519 or Ed448 specific classes, and it doesn't require using reflection
-                // to access the JDK 15+ EC crypto provider.
+            if (privateKey instanceof EdECPrivateKey) {
+                // Shortest way to convert to a BC EdDSA key. Doesn't require importing any
+                // Ed25519 or Ed448 specific classes.
                 KeyFactory kf = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
                 PrivateKey bcPrivateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKey.getEncoded()));
                 return (EdDSAPrivateKey) bcPrivateKey;
@@ -339,15 +339,5 @@ public class EccUtil {
             // ignore -- not a JDK EdDSA key
         }
         return null;
-    }
-
-    /**
-     * Checks if the given privateKey is an EdDSA private key (Ed25519 or Ed448).
-     *
-     *  @param key A key
-     * @return True, if the given key is an EdDSA private key
-     */
-    public static boolean isEdPrivateKey(Key key) {
-        return key instanceof PrivateKey && getEdPrivateKey((PrivateKey) key) != null;
     }
 }

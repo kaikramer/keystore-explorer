@@ -33,6 +33,7 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.EdECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.Optional;
@@ -54,7 +55,6 @@ import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
@@ -311,7 +311,7 @@ public class DViewPrivateKey extends JEscDialog {
         jtaEncoded.setCaretPosition(0);
 
         jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)
-                || (privateKey instanceof ECPrivateKey) || (EccUtil.isEdPrivateKey(privateKey))
+                || (privateKey instanceof ECPrivateKey) || (privateKey instanceof EdECPrivateKey)
                 || (privateKey instanceof MLDSAPrivateKey) || (privateKey instanceof SLHDSAPrivateKey));
     }
 
