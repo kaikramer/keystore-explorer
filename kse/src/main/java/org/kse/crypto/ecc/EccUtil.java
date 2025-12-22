@@ -71,13 +71,10 @@ public final class EccUtil {
         if (sunECProvider != null) {
             availableSunCurves.addAll(Arrays.asList(sunECProvider.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("\\|")));
         }
-        Provider bcProvider = Security.getProvider("BC");
-        if (bcProvider != null) {
-            String[] bcCurves = bcProvider.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("[|,\\[\\]]");
-            for (String bcCurve : bcCurves) {
-                if (TeleTrusTNamedCurves.getByName(bcCurve) != null) {
-                    availableBcBrainpoolCurves.add(bcCurve);
-                }
+        String[] bcCurves = KSE.BC.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("[|,\\[\\]]");
+        for (String bcCurve : bcCurves) {
+            if (TeleTrusTNamedCurves.getByName(bcCurve) != null) {
+                availableBcBrainpoolCurves.add(bcCurve);
             }
         }
     }
