@@ -530,8 +530,8 @@ public class DImportKeyPair extends JEscDialog {
                 }
             }
 
-            // No key pair entries found - look for certificate entries
-            if (certsList.isEmpty()) {
+            // No key pair entries found, but a key entry was found, look for certificate entries
+            if (privKey != null && certsList.isEmpty()) {
                 for (Enumeration<String> aliases = pkcs12.aliases(); aliases.hasMoreElements(); ) {
                     String alias = aliases.nextElement();
 
