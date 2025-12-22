@@ -20,6 +20,7 @@
 package org.kse.crypto.keypair;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -64,11 +65,11 @@ public enum KeyPairType {
     public static final Set<KeyPairType> MLDSA_TYPES_SET = EnumSet.of(MLDSA44, MLDSA65, MLDSA87);
 
     /**
-     * Set of all SLH-DSA key pair types
+     * List of all SLH-DSA key pair types ordered by their OIDs (.3.20 to .3.31)
      */
-    public static final Set<KeyPairType> SLHDSA_TYPES_SET = EnumSet.of(SLHDSA_SHA2_128F, SLHDSA_SHA2_128S,
-            SLHDSA_SHA2_192F, SLHDSA_SHA2_192S, SLHDSA_SHA2_256F, SLHDSA_SHA2_256S, SLHDSA_SHAKE_128F,
-            SLHDSA_SHAKE_128S, SLHDSA_SHAKE_192F, SLHDSA_SHAKE_192S, SLHDSA_SHAKE_256F, SLHDSA_SHAKE_256S);
+    public static final List<KeyPairType> SLHDSA_TYPES_SET = List.of(SLHDSA_SHA2_128S, SLHDSA_SHA2_128F,
+            SLHDSA_SHA2_192S, SLHDSA_SHA2_192F, SLHDSA_SHA2_256S, SLHDSA_SHA2_256F, SLHDSA_SHAKE_128S,
+            SLHDSA_SHAKE_128F, SLHDSA_SHAKE_192S, SLHDSA_SHAKE_192F, SLHDSA_SHAKE_256S, SLHDSA_SHAKE_256F);
 
     private final String jce;
     private final String oid;

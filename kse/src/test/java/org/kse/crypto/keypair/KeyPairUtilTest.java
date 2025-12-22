@@ -38,6 +38,7 @@ import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -317,7 +318,7 @@ public class KeyPairUtilTest extends CryptoTestsBase {
         assertThrows(CryptoException.class, () -> KeyPairUtil.generateKeyPair(KeyPairType.SLHDSA_SHA2_128F, provider));
     }
 
-    private static Set<KeyPairType> slhDsaVariants() {
+    private static List<KeyPairType> slhDsaVariants() {
         return KeyPairType.SLHDSA_TYPES_SET;
     }
 
