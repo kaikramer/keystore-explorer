@@ -66,9 +66,7 @@ public enum CurveSet {
         sets.add(SEC.visibleName);
         sets.add(ED.visibleName);
         sets.add(ECGOST.visibleName);
-        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || keyStoreType == KeyStoreType.PKCS12) {
-            sets.add(TELETRUST.visibleName);
-        }
+        sets.add(TELETRUST.visibleName);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(SM2.visibleName);
         }
@@ -88,9 +86,7 @@ public enum CurveSet {
         sets.add(SEC);
         sets.add(ED);
         sets.add(ECGOST);
-        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || keyStoreType == KeyStoreType.PKCS12) {
-            sets.add(TELETRUST);
-        }
+        sets.add(TELETRUST);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(SM2);
         }
