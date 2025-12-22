@@ -33,7 +33,10 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.EdECPrivateKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -55,18 +58,27 @@ import org.kse.crypto.keystore.KeyStoreType;
 /**
  * Static helper methods for ECC stuff, mainly detection of available ECC algorithms.
  */
-public class EccUtil {
+public final class EccUtil {
 
-    private static boolean sunECProviderAvailable = true;
-    private static String[] availableSunCurves = new String[0];
+    private static final Set<String> availableSunCurves = new HashSet<>();
+    private static final Set<String> availableBcBrainpoolCurves = new HashSet<>();
+
+    private static final String PROVIDER_SUPPORTED_CURVES_KEY = "AlgorithmParameters.EC SupportedCurves";
 
     static {
         // read available curves provided by SunEC
         Provider sunECProvider = Security.getProvider("SunEC");
         if (sunECProvider != null) {
-            availableSunCurves = sunECProvider.getProperty("AlgorithmParameters.EC SupportedCurves").split("\\|");
-        } else {
-            sunECProviderAvailable = false;
+            availableSunCurves.addAll(Arrays.asList(sunECProvider.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("\\|")));
+        }
+        Provider bcProvider = Security.getProvider("BC");
+        if (bcProvider != null) {
+            String[] bcCurves = bcProvider.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("[|,\\[\\]]");
+            for (String bcCurve : bcCurves) {
+                if (TeleTrusTNamedCurves.getByName(bcCurve) != null) {
+                    availableBcBrainpoolCurves.add(bcCurve);
+                }
+            }
         }
     }
 
@@ -172,17 +184,6 @@ public class EccUtil {
     }
 
     /**
-     * Checks if EC curves are available for the given keyStoreType
-     * (i.e. either BC key store type or at least Java 7)
-     *
-     * @param keyStoreType Availability depends on store type
-     * @return True, if there are EC curves available
-     */
-    public static boolean isECAvailable(KeyStoreType keyStoreType) {
-        return (sunECProviderAvailable) || KeyStoreType.isBouncyCastleKeyStore(keyStoreType);
-    }
-
-    /**
      * Checks if the given named curve is known by the provider backing the KeyStoreType.
      *
      * @param curveName    Name of the curve
@@ -202,13 +203,15 @@ public class EccUtil {
             return true;
         }
 
-        // no SunEC provider found?
-        if (availableSunCurves.length == 0) {
-            return false;
-        }
-
         // is curve among SunEC curves?
         for (String curve : availableSunCurves) {
+            if (curve.contains(curveName)) {
+                return true;
+            }
+        }
+
+        // is Brainpool curve from BC?
+        for (String curve : availableBcBrainpoolCurves) {
             if (curve.contains(curveName)) {
                 return true;
             }

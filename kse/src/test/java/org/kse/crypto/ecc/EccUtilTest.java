@@ -43,26 +43,12 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.utilities.oid.ObjectIdUtil;
 
 /**
  * Unit tests for EccUtil.
  */
 public class EccUtilTest extends CryptoTestsBase {
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "JKS",
-            "JCEKS",
-            "PKCS12",
-            "BKS",
-            "UBER",
-            "PKCS11"
-    })
-    void testIsEcAvailable(KeyStoreType keyStoreType) {
-        assertThat(EccUtil.isECAvailable(keyStoreType)).isTrue();
-    }
 
     @ParameterizedTest
     // @formatter:off

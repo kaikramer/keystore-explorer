@@ -61,7 +61,7 @@ import com.sun.jna.WString;
 public class KSE {
     private static final ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
 
-    public static Provider BC = new BouncyCastleProvider();
+    public static final Provider BC = new BouncyCastleProvider();
 
     /**
      * Captures the system locale for identifying locale specific formatting
