@@ -172,15 +172,6 @@ public enum KeyStoreType {
     }
 
     /**
-     * Does this KeyStore type support ECC key pair entries?
-     *
-     * @return True, if ECC is supported
-     */
-    public boolean supportsECC() {
-        return EccUtil.isECAvailable(this);
-    }
-
-    /**
      * Does this KeyStore type support a certain named curve?
      *
      * @param curveName The curve name to check for support.

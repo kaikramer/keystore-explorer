@@ -144,15 +144,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
         jrbEC = new JRadioButton(res.getString("DGenerateKeyPair.jrbEC.text"), true);
         PlatformUtil.setMnemonic(jrbEC, res.getString("DGenerateKeyPair.jrbEC.mnemonic").charAt(0));
-
-        // EC available?
-        if (EccUtil.isECAvailable(keyStoreType)) {
-            jrbEC.setEnabled(true);
-            jrbEC.setToolTipText(res.getString("DGenerateKeyPair.jrbEC.tooltip"));
-        } else {
-            jrbEC.setEnabled(false);
-            jrbEC.setToolTipText(res.getString("DGenerateKeyPair.jrbEC.na.tooltip"));
-        }
+        jrbEC.setToolTipText(res.getString("DGenerateKeyPair.jrbEC.tooltip"));
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(jrbRSA);

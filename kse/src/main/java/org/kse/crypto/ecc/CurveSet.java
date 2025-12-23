@@ -45,8 +45,8 @@ public enum CurveSet {
     ECGOST("ECGOST", ECGOST3410NamedCurves.getNames()),
     ED("Edwards", EdDSACurves.getNames());
 
-    private String visibleName;
-    private List<String> curveNames;
+    private final String visibleName;
+    private final List<String> curveNames;
 
     CurveSet(String visibleName, Enumeration<String> curveNames) {
         this.visibleName = visibleName;
@@ -66,8 +66,8 @@ public enum CurveSet {
         sets.add(SEC.visibleName);
         sets.add(ED.visibleName);
         sets.add(ECGOST.visibleName);
+        sets.add(TELETRUST.visibleName);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
-            sets.add(TELETRUST.visibleName);
             sets.add(SM2.visibleName);
         }
         return sets.toArray(String[]::new);
@@ -86,8 +86,8 @@ public enum CurveSet {
         sets.add(SEC);
         sets.add(ED);
         sets.add(ECGOST);
+        sets.add(TELETRUST);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
-            sets.add(TELETRUST);
             sets.add(SM2);
         }
         return sets;
