@@ -350,8 +350,39 @@ public class DImportKeyPair extends JEscDialog {
                 return;
             }
 
+            switch (fileType) {
+            case ENC_PKCS8_PVK:
+            case UNENC_PKCS8_PVK:
+            case ENC_OPENSSL_PVK:
+            case UNENC_OPENSSL_PVK:
+                // check for certs in the private key file
+                try {
+                    certificateChain = X509CertUtil.loadCertificates(Files.readAllBytes(chosenFile.toPath()));
+                } catch (CryptoException e) {
+                    // ignore since a failure likely means that there
+                    // are no certificates, which is ok.
+
+                    // Need to reset certificateChain in case the user chose a file that
+                    // had certificates, and then decided to choose a different file that
+                    // does not have certificates.
+                    certificateChain = null;
+                }
+                break;
+            default:
+                // PKCS #12 or MS PVK -- just reset the certificateChain
+
+                // Need to reset certificateChain in case the user chose a file that
+                // had certificates, and then decided to choose a different file that
+                // does not have certificates.
+                certificateChain = null;
+                break;
+            }
+
+            boolean isSelectCertificateFile = fileType != CryptoFileType.PKCS12_KS && (certificateChain == null
+                    || certificateChain.length == 0);
+
             setEnabledPassword(encrypted);
-            setEnabledCertificate(fileType != CryptoFileType.PKCS12_KS);
+            setEnabledCertificate(isSelectCertificateFile);
         } catch (FileNotFoundException | NoSuchFileException e) {
             JOptionPane.showMessageDialog(this,
                     MessageFormat.format(res.getString("DImportKeyPair.NoReadFile.message"),
@@ -395,7 +426,10 @@ public class DImportKeyPair extends JEscDialog {
 
             if (privateKey != null) {
                 JDialog dViewDetails;
-                if (fileType == CryptoFileType.PKCS12_KS) {
+                // This condition covers these cases:
+                // 1. The file type is PKCS #12
+                // 2. The file type is PEM with a certificate chain in it
+                if (!jtfCertificatePath.isEnabled() && certificateChain != null && certificateChain.length > 0) {
                     dViewDetails = new DViewKeyPair(this, MessageFormat.format(
                             res.getString("DImportKeyPair.ViewKeyPairDetails.Title"), path), privateKey,
                             certificateChain);
