@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -517,22 +518,27 @@ public class DImportKeyPair extends JEscDialog {
                 String alias = aliases.nextElement();
 
                 if (pkcs12.isKeyEntry(alias)) {
-                    privKey = (PrivateKey) pkcs12.getKey(alias, password.toCharArray());
-                    Certificate[] certs = pkcs12.getCertificateChain(alias);
-                    if ((certs != null) && (certs.length > 0)) {
-                        Collections.addAll(certsList, certs);
-                        break;
+                    Key key = pkcs12.getKey(alias, password.toCharArray());
+                    if (key instanceof PrivateKey) {
+                        privKey = (PrivateKey) key;
+                        Certificate[] certs = pkcs12.getCertificateChain(alias);
+                        if ((certs != null) && (certs.length > 0)) {
+                            Collections.addAll(certsList, certs);
+                            break;
+                        }
                     }
                 }
             }
 
-            // No key pair entries found - look for a key entry and certificate
-            // entries
-            if (privKey == null || certsList.isEmpty()) {
+            // No key pair entries found, but a key entry was found, look for certificate entries
+            if (privKey != null && certsList.isEmpty()) {
                 for (Enumeration<String> aliases = pkcs12.aliases(); aliases.hasMoreElements(); ) {
                     String alias = aliases.nextElement();
 
-                    certsList.add(pkcs12.getCertificate(alias));
+                    Certificate certificate = pkcs12.getCertificate(alias);
+                    if (certificate != null) {
+                        certsList.add(certificate);
+                    }
                 }
             }
 
