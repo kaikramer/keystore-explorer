@@ -138,7 +138,6 @@ public class DViewPrivateKey extends JEscDialog {
         this.privateKey = privateKey;
         this.format = format;
         initComponents();
-        jbExport.setVisible(false);
     }
 
     private void initComponents() throws CryptoException {
@@ -177,6 +176,9 @@ public class DViewPrivateKey extends JEscDialog {
         jbExport = new JButton(res.getString("DViewPrivateKey.jbExport.text"));
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewPrivateKey.jbExport.mnemonic").charAt(0));
         jbExport.setToolTipText(res.getString("DViewPrivateKey.jbExport.tooltip"));
+        // The constructor that does not set the alias is currently (Dec 2025) only used during
+        // key pair import. No alias means no export. No preferences also means no export.
+        jbExport.setVisible(alias != null);
 
         jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
