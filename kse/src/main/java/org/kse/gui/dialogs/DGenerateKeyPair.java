@@ -199,7 +199,7 @@ public class DGenerateKeyPair extends JEscDialog {
         pane.add(jlECCurveSet, "");
         pane.add(jcbECCurveSet, "growx, wrap");
         pane.add(jlECCurve, "skip");
-        pane.add(jcbECCurve, "growx, wrap para");
+        pane.add(jcbECCurve, "growx, wrap");
         mldsaKeySelector.add(pane);
         slhDsaKeySelector.add(pane);
         pane.add(new JSeparator(), "spanx, growx, wrap");
