@@ -427,7 +427,6 @@ public final class KseFrame implements StatusBar {
     //
 
     private JPopupMenu jpmTableHeader;
-    private JCheckBoxMenuItem jcbmiHeaderEntryName;
     private JCheckBoxMenuItem jcbmiHeaderAlgorithm;
     private JCheckBoxMenuItem jcbmiHeaderKeySize;
     private JCheckBoxMenuItem jcbmiHeaderCurve;
@@ -3460,11 +3459,6 @@ public final class KseFrame implements StatusBar {
         jpmTableHeader = new JPopupMenu();
 
         // Create checkbox menu items for each column
-        jcbmiHeaderEntryName = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.NameColumn"));
-        jcbmiHeaderEntryName.setSelected(keyStoreTableColumns.getEnableEntryName());
-        jcbmiHeaderEntryName.addActionListener(e -> toggleColumnVisibility("EntryName"));
-        jpmTableHeader.add(jcbmiHeaderEntryName);
-
         jcbmiHeaderAlgorithm = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.AlgorithmColumn"));
         jcbmiHeaderAlgorithm.setSelected(keyStoreTableColumns.getEnableAlgorithm());
         jcbmiHeaderAlgorithm.addActionListener(e -> toggleColumnVisibility("Algorithm"));
@@ -3551,7 +3545,6 @@ public final class KseFrame implements StatusBar {
     }
 
     private void updateTableHeaderPopupMenu() {
-        jcbmiHeaderEntryName.setSelected(keyStoreTableColumns.getEnableEntryName());
         jcbmiHeaderAlgorithm.setSelected(keyStoreTableColumns.getEnableAlgorithm());
         jcbmiHeaderKeySize.setSelected(keyStoreTableColumns.getEnableKeySize());
         jcbmiHeaderCurve.setSelected(keyStoreTableColumns.getEnableCurve());
@@ -3572,9 +3565,6 @@ public final class KseFrame implements StatusBar {
 
     private void toggleColumnVisibility(String columnType) {
         switch (columnType) {
-        case "EntryName":
-            keyStoreTableColumns.setEnableEntryName(jcbmiHeaderEntryName.isSelected());
-            break;
         case "Algorithm":
             keyStoreTableColumns.setEnableAlgorithm(jcbmiHeaderAlgorithm.isSelected());
             break;
