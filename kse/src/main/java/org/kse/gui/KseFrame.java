@@ -443,6 +443,7 @@ public final class KseFrame implements StatusBar {
     private JCheckBoxMenuItem jcbmiHeaderSubjectO;
     private JCheckBoxMenuItem jcbmiHeaderSerialNumberHex;
     private JCheckBoxMenuItem jcbmiHeaderSerialNumberDec;
+    private JCheckBoxMenuItem jcbmiHeaderFingerprint;
 
     //
     // Main display controls
@@ -3542,6 +3543,16 @@ public final class KseFrame implements StatusBar {
         jcbmiHeaderSerialNumberDec.setSelected(keyStoreTableColumns.getEnableSerialNumberDec());
         jcbmiHeaderSerialNumberDec.addActionListener(e -> toggleColumnVisibility("SerialNumberDec"));
         jpmTableHeader.add(jcbmiHeaderSerialNumberDec);
+
+        if (keyStoreTableColumns.getFingerprintAlg() == null) {
+            keyStoreTableColumns.setFingerprintAlg(preferences.getCertificateFingerprintAlgorithm());
+        }
+        jcbmiHeaderFingerprint = new JCheckBoxMenuItem(
+                MessageFormat.format(res.getString("KeyStoreTableModel.Fingerprint"),
+                                     keyStoreTableColumns.getFingerprintAlg()));
+        jcbmiHeaderFingerprint.setSelected(keyStoreTableColumns.getEnableFingerprint());
+        jcbmiHeaderFingerprint.addActionListener(e -> toggleColumnVisibility("Fingerprint"));
+        jpmTableHeader.add(jcbmiHeaderFingerprint);
     }
 
     private void updateTableHeaderPopupMenu() {
@@ -3561,6 +3572,9 @@ public final class KseFrame implements StatusBar {
         jcbmiHeaderSubjectO.setSelected(keyStoreTableColumns.getEnableSubjectO());
         jcbmiHeaderSerialNumberHex.setSelected(keyStoreTableColumns.getEnableSerialNumberHex());
         jcbmiHeaderSerialNumberDec.setSelected(keyStoreTableColumns.getEnableSerialNumberDec());
+        jcbmiHeaderFingerprint.setSelected(keyStoreTableColumns.getEnableFingerprint());
+        jcbmiHeaderFingerprint.setText(MessageFormat.format(res.getString("KeyStoreTableModel.Fingerprint"),
+                                                                     keyStoreTableColumns.getFingerprintAlg()));
     }
 
     private void toggleColumnVisibility(String columnType) {
@@ -3613,6 +3627,8 @@ public final class KseFrame implements StatusBar {
         case "SerialNumberDec":
             keyStoreTableColumns.setEnableSerialNumberDec(jcbmiHeaderSerialNumberDec.isSelected());
             break;
+        case "Fingerprint":
+            keyStoreTableColumns.setEnableFingerprint(jcbmiHeaderFingerprint.isSelected());
         }
 
         preferences.setKeyStoreTableColumns(keyStoreTableColumns);
