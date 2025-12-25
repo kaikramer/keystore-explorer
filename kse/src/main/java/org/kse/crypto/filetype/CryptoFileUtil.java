@@ -49,7 +49,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -69,6 +71,7 @@ import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 
 import com.nimbusds.jwt.JWTParser;
+import org.kse.utilities.pem.PemUtil;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
@@ -98,6 +101,32 @@ public class CryptoFileUtil {
         return detectFileType(Files.readAllBytes(file.toPath()));
     }
 
+    /** Attempts to decode Base64 encoded file and for PEM files, remove excessive indentations from each line
+     * @param data Cryptographic data
+     * @return a byte array of either decoded data or PEM file without excessive indentations
+     */
+    public static byte[] decodeIfBase64sanitizeIfPem(byte[] data) {
+        if (data == null) {
+            return null;
+        }
+        String input = new String(data, StandardCharsets.US_ASCII).trim();
+        // data may be a PEM
+        if (PemUtil.isPemFormat(input.getBytes())) {
+            // remove whitespaces between lines
+            return Arrays.stream(input.split("\\R"))
+                    .map(String::trim)
+                    .collect(Collectors.joining(System.lineSeparator()))
+                    .getBytes();
+        } else {
+            try {
+                // handle base64 encoded binary data
+                return Base64.getDecoder().decode(new String(data, StandardCharsets.US_ASCII).trim());
+            } catch(IllegalArgumentException e) {
+                return data;
+            }
+        }
+    }
+
     /**
      * Detect the cryptographic file type of the supplied input stream.
      *
@@ -109,7 +138,7 @@ public class CryptoFileUtil {
 
         // first handle base64 encoded binary data
         try {
-            data = Base64.getDecoder().decode(new String(data, StandardCharsets.US_ASCII).trim());
+            data =  decodeIfBase64sanitizeIfPem(data);
         } catch(IllegalArgumentException e) {
             // was not valid b64
         }

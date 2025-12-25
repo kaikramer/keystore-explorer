@@ -29,15 +29,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -72,6 +70,8 @@ import org.kse.gui.passwordmanager.Password;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
+
+import static org.kse.crypto.filetype.CryptoFileUtil.decodeIfBase64sanitizeIfPem;
 
 /**
  * Action to examine a certificate.
@@ -149,7 +149,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         }
 
         try {
-            byte[] dataAsBytes = decodeIfBase64(data);
+            byte[] dataAsBytes = decodeIfBase64sanitizeIfPem(data.getBytes(StandardCharsets.US_ASCII));
 
             CryptoFileType fileType = CryptoFileUtil.detectFileType(dataAsBytes);
 
@@ -198,17 +198,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         }
     }
 
-    private static byte[] decodeIfBase64(String data) {
-        byte[] dataAsBytes = data.getBytes();
 
-        // first handle base64 encoded binary data
-        try {
-            dataAsBytes = Base64.getDecoder().decode(data.trim());
-        } catch(IllegalArgumentException e) {
-            // was not valid b64
-        }
-        return dataAsBytes;
-    }
 
     private boolean isRedirect(int status) {
         // normally, 3xx is redirect

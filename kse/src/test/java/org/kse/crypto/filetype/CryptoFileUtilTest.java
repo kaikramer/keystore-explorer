@@ -109,6 +109,7 @@ class CryptoFileUtilTest {
             "problematic-pem3.crl, CRL",
             "problematic-pem4.p10, PKCS10_CSR",
             "problematic-pem5.cer, CERT",
+            "problematic-cert.indentations.pem, CERT", // PEM with indentations
 
             // text file without any cryptographic content
             "unknown.txt, UNKNOWN",
