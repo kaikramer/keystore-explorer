@@ -19,6 +19,8 @@
  */
 package org.kse.crypto.x509;
 
+import static org.kse.crypto.filetype.CryptoFileUtil.decodeIfBase64sanitizeIfPem;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -95,6 +97,8 @@ public final class X509CertUtil {
     public static X509Certificate[] loadCertificates(byte[] certsBytes) throws CryptoException {
         try {
             CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+
+            certsBytes = decodeIfBase64sanitizeIfPem(certsBytes);
 
             // try to parse data as PEM encoded
             List<X509Certificate> loadedCerts = loadAsPEM(certsBytes, cf);
