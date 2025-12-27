@@ -2877,7 +2877,8 @@ public final class KseFrame implements StatusBar {
                     return null;
                 }
 
-                PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+                PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias,
+                        password != null ? password.toCharArray() : null);
                 Certificate[] certificateChain = keyStore.getCertificateChain(alias);
 
                 return new DragKeyPairEntry(alias, privateKey, password, certificateChain);

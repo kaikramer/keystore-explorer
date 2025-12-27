@@ -401,7 +401,7 @@ public class DViewCrl extends JEscDialog {
                 }
             }
 
-            if (x509CrlEntry.hasExtensions()) {
+            if (x509CrlEntry != null && x509CrlEntry.hasExtensions()) {
                 jbCrlEntryExtensions.setEnabled(true);
                 return;
             }
@@ -475,10 +475,10 @@ public class DViewCrl extends JEscDialog {
                 }
             }
 
-            if (x509CrlEntry.hasExtensions()) {
+            if (x509CrlEntry != null && x509CrlEntry.hasExtensions()) {
                 DViewExtensions dViewExtensions = new DViewExtensions(this,
-                                                                      res.getString("DViewCrl.EntryExtensions.Title"),
-                                                                      x509CrlEntry);
+                        res.getString("DViewCrl.EntryExtensions.Title"),
+                        x509CrlEntry);
                 dViewExtensions.setLocationRelativeTo(this);
                 dViewExtensions.setVisible(true);
             }
@@ -498,18 +498,17 @@ public class DViewCrl extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
 
-        String crl = "-----BEGIN X509 CRL-----\n" +
-                     "MIIBtTCBngIBATANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdzbiB0ZXN0Fw0y\n" +
-                     "MzEwMjgxNzA3NTNaFw0yMzExMjcxNzA3NTNaMCcwJQIUSXX6U4SXixlXQ1f2L/sB\n" +
-                     "i3dBWaUXDTIzMTAyODE3MDc1OFqgLzAtMB8GA1UdIwQYMBaAFIxZhDgaOqA0MAui\n" +
-                     "yg21310lZe5LMAoGA1UdFAQDAgECMA0GCSqGSIb3DQEBCwUAA4IBAQCP86Weka+q\n" +
-                     "+RHsqKAh2qswKY6fMkCnKGg6ru0wC7sDWBTxl6+ycgJNrhiTDIWciMR+aPWOz0lC\n" +
-                     "ktyU6UwwtFuXUmPSFYtAoqGN5k6yXI5bYwIlQG7eJ5emawxKbvUGwhS1etJA0BCN\n" +
-                     "mYwQEYNvoiOmSmbQyhP7sUz6mIPqSwGokHrfCl2hG3xGOjeSN/SbwG5bAGcmWUie\n" +
-                     "xKzh538xuGi49tJoIn51u4lZGHytM1KGInCKbs8zqqcJJJIFAc3PgeJv2VdUFJ2O\n" +
-                     "vUqtA1loeTXTzHRvjE0PgyfSiIeKRdcvJ4rLvdYz11utUmq9PEICkExWZdR/7CY8\n" +
-                     "NnDBrnJ3rf7k\n" +
-                     "-----END X509 CRL-----";
+        String crl = """
+                -----BEGIN X509 CRL-----
+                MIIBQTCB5wIBATAKBggqhkjOPQQDAjASMRAwDgYDVQQDDAdDQSBUZXN0Fw0yNTAx
+                MDEwNDAwMDBaFw0zMjAxMDEwNDAwMDBaMHMwGwIKZiBf7wGbYG0XWRcNMjUxMjI3
+                MTUyOTMyWjApAgpkJwR2AZtgbZSNFw0yNTEyMjcxNTI5NTZaMAwwCgYDVR0VBAMK
+                AQUwKQIKbsAE0wGbYG1cexcNMjUxMjI3MTUyOTQzWjAMMAoGA1UdFQQDCgEBoC8w
+                LTAfBgNVHSMEGDAWgBRreHs3BqwjsNMMtGRqu4U4gO0o1zAKBgNVHRQEAwIBATAK
+                BggqhkjOPQQDAgNJADBGAiEA9eYuUd31z+WyZKogCruyiKlE5sZA8sjylWJoYJaB
+                jwoCIQD5G9jzitnI6VhtPxeOK7D020XfaCp0+jBqwNNb/aIYOg==
+                -----END X509 CRL-----
+                                """;
 
         DialogViewer.run(new DViewCrl(new JFrame(), "CRL", X509CertUtil.loadCRL(crl.getBytes())));
     }

@@ -465,10 +465,10 @@ public class DPkcs12Info extends JEscDialog {
                     attr = (ASN1Primitive) attrSet.getObjectAt(0);
                 }
 
-                if (aOid.equals(pkcs_9_at_friendlyName)) {
+                if (aOid.equals(pkcs_9_at_friendlyName) && attr != null) {
                     String alias = ((DERBMPString) attr).getString();
                     addNode(attributesNode, "DPkcs12Info.content.FriendlyName", alias);
-                } else if (aOid.equals(pkcs_9_at_localKeyId)) {
+                } else if (aOid.equals(pkcs_9_at_localKeyId) && attr != null) {
                     ASN1OctetString localId = (ASN1OctetString) attr;
                     String localIdString = new String(Hex.encode(localId.getOctets()));
                     addNode(attributesNode, "DPkcs12Info.content.LocalId", localIdString);

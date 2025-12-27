@@ -79,7 +79,7 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         putValue(NAME, res.getString("SignJwtAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("SignJwtAction.tooltip"));
         putValue(SMALL_ICON,
-                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signcrl.png"))));
+                new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signcrl.png"))));
     }
 
     @Override
@@ -131,18 +131,18 @@ public class SignJwtAction extends KeyStoreExplorerAction {
                     .createKey(privateKey.getEncoded());
             OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
                     Base64URL.encode(params.generatePublicKey().getEncoded())).d(Base64URL.encode(params.getEncoded()))
-                            .build();
+                    .build();
             signer = new Ed25519Signer(okp);
         }
-        if (provider != null) {
+        if (provider != null && signer != null) {
             signer.getJCAContext().setProvider(provider);
         }
 
         Builder builder = new JWTClaimsSet.Builder().jwtID(dSignJwt.getId()).subject(dSignJwt.getSubject())
-                                                    .issuer(dSignJwt.getIssuer()).issueTime(dSignJwt.getIssuedAt())
-                                                    .notBeforeTime(dSignJwt.getNotBefore())
-                                                    .audience(dSignJwt.getAudience())
-                                                    .expirationTime(dSignJwt.getExpiration());
+                .issuer(dSignJwt.getIssuer()).issueTime(dSignJwt.getIssuedAt())
+                .notBeforeTime(dSignJwt.getNotBefore())
+                .audience(dSignJwt.getAudience())
+                .expirationTime(dSignJwt.getExpiration());
 
         for (CustomClaim claim : dSignJwt.getCustomClaims()) {
             builder.claim(claim.getName(), claim.getValue());
