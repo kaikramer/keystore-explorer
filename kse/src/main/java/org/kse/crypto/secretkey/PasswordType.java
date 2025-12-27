@@ -21,53 +21,57 @@
 package org.kse.crypto.secretkey;
 
 import java.util.EnumSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
  * An enumeration of the PBE (password based encryption) secret key factories.
  */
 public enum PasswordType {
-    PBEWITHHMACGOST3411("PBEWITHHMACGOST3411", "PBE with HMac-GOST3411"),
-    PBEWITHHMACRIPEMD160("PBEWITHHMACRIPEMD160", "PBE with HMac-RipeMD160"),
-    PBEWITHHMACSHA1("PBEWITHHMACSHA1", "PBE with HMac-SHA-1"),
-    PBEWithHmacSHA1AndAES_128("PBEWithHmacSHA1AndAES_128", "PBE with HMac-SHA-1 and AES-128"),
-    PBEWithHmacSHA1AndAES_256("PBEWithHmacSHA1AndAES_256", "PBE with HMac-SHA-1 and AES-256"),
-    PBEWithHmacSHA224AndAES_128("PBEWithHmacSHA224AndAES_128", "PBE with HMac-SHA-224 and AES-128"),
-    PBEWithHmacSHA224AndAES_256("PBEWithHmacSHA224AndAES_256", "PBE with HMac-SHA-224 and AES-256"),
-    PBEWITHHMACSHA256("PBEWITHHMACSHA256", "PBE with HMac-SHA-256"),
-    PBEWithHmacSHA256AndAES_128("PBEWithHmacSHA256AndAES_128", "PBE with HMac-SHA-256 and AES-128"),
-    PBEWithHmacSHA256AndAES_256("PBEWithHmacSHA256AndAES_256", "PBE with HMac-SHA-256 and AES-256"),
-    PBEWithHmacSHA384AndAES_128("PBEWithHmacSHA384AndAES_128", "PBE with HMac-SHA-384 and AES-128"),
-    PBEWithHmacSHA384AndAES_256("PBEWithHmacSHA384AndAES_256", "PBE with HMac-SHA-384 and AES-256"),
-    PBEWithHmacSHA512AndAES_128("PBEWithHmacSHA512AndAES_128", "PBE with HMac-SHA-512 and AES-128"),
-    PBEWithHmacSHA512AndAES_256("PBEWithHmacSHA512AndAES_256", "PBE with HMac-SHA-512 and AES-256"),
-    PBEWITHHMACTIGER("PBEWITHHMACTIGER", "PBE with HMac-TIGER"),
-    PBEWITHMD2ANDDES("PBEWITHMD2ANDDES", "PBE with MD2 and DES"),
-    PBEWITHMD2ANDRC2("PBEWITHMD2ANDRC2", "PBE with MD2 and RC2"),
-    PBEWITHMD5AND128BITAES_CBC_OPENSSL("PBEWITHMD5AND128BITAES-CBC-OPENSSL", "PBE with MD5 and AES-128 CBC OpenSSL"),
-    PBEWITHMD5AND192BITAES_CBC_OPENSSL("PBEWITHMD5AND192BITAES-CBC-OPENSSL", "PBE with MD5 and AES-192 CBC OpenSSL"),
-    PBEWITHMD5AND256BITAES_CBC_OPENSSL("PBEWITHMD5AND256BITAES-CBC-OPENSSL", "PBE with MD5 and AES-256 CBC OpenSSL"),
-    PBEWithMD5AndDES("PBEWithMD5AndDES", "PBE with MD5 and DES"),
-    PBEWithMD5AndTripleDES("PBEWithMD5AndTripleDES", "PBE with MD5 and DESede"),
-    PBEWITHMD5ANDRC2("PBEWITHMD5ANDRC2", "PBE with MD5 and RC2"),
-    PBEWITHSHAAND2_KEYTRIPLEDES_CBC("PBEWITHSHAAND2-KEYTRIPLEDES-CBC", "PBE with SHA-1 and 2-key TripleDES CBC"),
-    PBEWITHSHAAND3_KEYTRIPLEDES_CBC("PBEWITHSHAAND3-KEYTRIPLEDES-CBC", "PBE with SHA-1 and 3-key TripleDES CBC"),
-    PBEWITHSHAAND128BITAES_CBC_BC("PBEWITHSHAAND128BITAES-CBC-BC", "PBE with SHA-1 and AES-128 CBC BC"),
-    PBEWITHSHAAND192BITAES_CBC_BC("PBEWITHSHAAND192BITAES-CBC-BC", "PBE with SHA-1 and AES-192 CBC BC"),
-    PBEWITHSHAAND256BITAES_CBC_BC("PBEWITHSHAAND256BITAES-CBC-BC", "PBE with SHA-1 and AES-256 CBC BC"),
-    PBEWITHSHA1ANDDES("PBEWITHSHA1ANDDES", "PBE with SHA-1 and DES"),
-    PBEWithSHA1AndDESede("PBEWithSHA1AndDESede", "PBE with SHA-1 and DESede"),
-    PBEWITHSHAANDIDEA_CBC("PBEWITHSHAANDIDEA-CBC", "PBE with SHA-1 and IDEA CBC"),
-    PBEWITHSHA1ANDRC2("PBEWITHSHA1ANDRC2", "PBE with SHA-1 and RC2"),
-    PBEWithSHA1AndRC2_128("PBEWithSHA1AndRC2_128", "PBE with SHA-1 and RC2-128"),
-    PBEWithSHA1AndRC2_40("PBEWithSHA1AndRC2_40", "PBE with SHA-1 and RC2-40"),
-    PBEWithSHA1AndRC4_128("PBEWithSHA1AndRC4_128", "PBE with SHA-1 and RC4-128"),
-    PBEWITHSHAAND128BITRC4("PBEWITHSHAAND128BITRC4", "PBE with SHA-1 and RC4-128 CBC"),
-    PBEWithSHA1AndRC4_40("PBEWithSHA1AndRC4_40", "PBE with SHA-1 and RC4-40"),
-    PBEWITHSHAANDTWOFISH_CBC("PBEWITHSHAANDTWOFISH-CBC", "PBE with SHA-1 and Twofish CBC"),
-    PBEWITHSHA256AND128BITAES_CBC_BC("PBEWITHSHA256AND128BITAES-CBC-BC", "PBE with SHA-256 and AES-128 CBC BC"),
-    PBEWITHSHA256AND192BITAES_CBC_BC("PBEWITHSHA256AND192BITAES-CBC-BC", "PBE with SHA-256 and AES-192 CBC BC"),
-    PBEWITHSHA256AND256BITAES_CBC_BC("PBEWITHSHA256AND256BITAES-CBC-BC", "PBE with SHA-256 and AES-256 CBC BC");
+
+    PBEWITHHMACGOST3411("PBEWITHHMACGOST3411", "PasswordType.PbeWithHmacGost3411"),
+    PBEWITHHMACRIPEMD160("PBEWITHHMACRIPEMD160", "PasswordType.PbeWithHmacRipemd160"),
+    PBEWITHHMACSHA1("PBEWITHHMACSHA1", "PasswordType.PbeWithHmacSha1"),
+    PBEWithHmacSHA1AndAES_128("PBEWithHmacSHA1AndAES_128", "PasswordType.PbeWithHmacSha1AndAes128"),
+    PBEWithHmacSHA1AndAES_256("PBEWithHmacSHA1AndAES_256", "PasswordType.PbeWithHmacSha1AndAes256"),
+    PBEWithHmacSHA224AndAES_128("PBEWithHmacSHA224AndAES_128", "PasswordType.PbeWithHmacSha224AndAes128"),
+    PBEWithHmacSHA224AndAES_256("PBEWithHmacSHA224AndAES_256", "PasswordType.PbeWithHmacSha224AndAes256"),
+    PBEWITHHMACSHA256("PBEWITHHMACSHA256", "PasswordType.PbeWithHmacSha256"),
+    PBEWithHmacSHA256AndAES_128("PBEWithHmacSHA256AndAES_128", "PasswordType.PbeWithHmacSha256AndAes128"),
+    PBEWithHmacSHA256AndAES_256("PBEWithHmacSHA256AndAES_256", "PasswordType.PbeWithHmacSha256AndAes256"),
+    PBEWithHmacSHA384AndAES_128("PBEWithHmacSHA384AndAES_128", "PasswordType.PbeWithHmacSha384AndAes128"),
+    PBEWithHmacSHA384AndAES_256("PBEWithHmacSHA384AndAES_256", "PasswordType.PbeWithHmacSha384AndAes256"),
+    PBEWithHmacSHA512AndAES_128("PBEWithHmacSHA512AndAES_128", "PasswordType.PbeWithHmacSha512AndAes128"),
+    PBEWithHmacSHA512AndAES_256("PBEWithHmacSHA512AndAES_256", "PasswordType.PbeWithHmacSha512AndAes256"),
+    PBEWITHHMACTIGER("PBEWITHHMACTIGER", "PasswordType.PbeWithHmacTiger"),
+    PBEWITHMD2ANDDES("PBEWITHMD2ANDDES", "PasswordType.PbeWithMD2AndDes"),
+    PBEWITHMD2ANDRC2("PBEWITHMD2ANDRC2", "PasswordType.PbeWithMD2AndRC2"),
+    PBEWITHMD5AND128BITAES_CBC_OPENSSL("PBEWITHMD5AND128BITAES-CBC-OPENSSL", "PasswordType.PbeWithMD5And128bitAesCbcOpenssl"),
+    PBEWITHMD5AND192BITAES_CBC_OPENSSL("PBEWITHMD5AND192BITAES-CBC-OPENSSL", "PasswordType.PbeWithMD5And192bitAesCbcOpenssl"),
+    PBEWITHMD5AND256BITAES_CBC_OPENSSL("PBEWITHMD5AND256BITAES-CBC-OPENSSL", "PasswordType.PbeWithMD5And256bitAesCbcOpenssl"),
+    PBEWithMD5AndDES("PBEWithMD5AndDES", "PasswordType.PbeWithMD5AndDes"),
+    PBEWithMD5AndTripleDES("PBEWithMD5AndTripleDES", "PasswordType.PbeWithMD5AndTripleDes"),
+    PBEWITHMD5ANDRC2("PBEWITHMD5ANDRC2", "PasswordType.PbeWithMD5AndRC2"),
+    PBEWITHSHAAND2_KEYTRIPLEDES_CBC("PBEWITHSHAAND2-KEYTRIPLEDES-CBC", "PasswordType.PbeWithShaAnd2KeyTripleDesCbc"),
+    PBEWITHSHAAND3_KEYTRIPLEDES_CBC("PBEWITHSHAAND3-KEYTRIPLEDES-CBC", "PasswordType.PbeWithShaAnd3KeyTripleDesCbc"),
+    PBEWITHSHAAND128BITAES_CBC_BC("PBEWITHSHAAND128BITAES-CBC-BC", "PasswordType.PbeWithShaAnd128bitAesCbcBC"),
+    PBEWITHSHAAND192BITAES_CBC_BC("PBEWITHSHAAND192BITAES-CBC-BC", "PasswordType.PbeWithShaAnd192bitAesCbcBC"),
+    PBEWITHSHAAND256BITAES_CBC_BC("PBEWITHSHAAND256BITAES-CBC-BC", "PasswordType.PbeWithShaAnd256bitAesCbcBC"),
+    PBEWITHSHA1ANDDES("PBEWITHSHA1ANDDES", "PasswordType.PbeWithSha1AndDes"),
+    PBEWithSHA1AndDESede("PBEWithSHA1AndDESede", "PasswordType.PbeWithSha1AndDesede"),
+    PBEWITHSHAANDIDEA_CBC("PBEWITHSHAANDIDEA-CBC", "PasswordType.PbeWithShaAndIdeaCbc"),
+    PBEWITHSHA1ANDRC2("PBEWITHSHA1ANDRC2", "PasswordType.PbeWithSha1AndRC2"),
+    PBEWithSHA1AndRC2_128("PBEWithSHA1AndRC2_128", "PasswordType.PbeWithSha1AndRC2128"),
+    PBEWithSHA1AndRC2_40("PBEWithSHA1AndRC2_40", "PasswordType.PbeWithSha1AndRC240"),
+    PBEWithSHA1AndRC4_128("PBEWithSHA1AndRC4_128", "PasswordType.PbeWithSha1AndRC4128"),
+    PBEWITHSHAAND128BITRC4("PBEWITHSHAAND128BITRC4", "PasswordType.PbeWithShaAnd128bitRC4"),
+    PBEWithSHA1AndRC4_40("PBEWithSHA1AndRC4_40", "PasswordType.PbeWithSha1AndRC440"),
+    PBEWITHSHAANDTWOFISH_CBC("PBEWITHSHAANDTWOFISH-CBC", "PasswordType.PbeWithShaAndTwofishCbc"),
+    PBEWITHSHA256AND128BITAES_CBC_BC("PBEWITHSHA256AND128BITAES-CBC-BC", "PasswordType.PbeWithSha256And128bitAesCbcBC"),
+    PBEWITHSHA256AND192BITAES_CBC_BC("PBEWITHSHA256AND192BITAES-CBC-BC", "PasswordType.PbeWithSha256And192bitAesCbcBC"),
+    PBEWITHSHA256AND256BITAES_CBC_BC("PBEWITHSHA256AND256BITAES-CBC-BC", "PasswordType.PbeWithSha256And256bitAesCbcBC");
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/secretkey/resources");
 
     // Supported sets of password algorithms. Located here so that they can be
     // referenced by the KeyStoreType enum.
@@ -88,15 +92,15 @@ public enum PasswordType {
             PBEWITHSHA256AND128BITAES_CBC_BC, PBEWITHSHA256AND192BITAES_CBC_BC, PBEWITHSHA256AND256BITAES_CBC_BC);
 
     private String jce;
-    private String friendly;
+    private String friendlyKey;
 
     PasswordType(String jce, String friendly) {
         this.jce = jce;
-        this.friendly = friendly;
+        this.friendlyKey = friendly;
     }
 
     /**
-     * Get secret key type JCE name.
+     * Get password type JCE name.
      *
      * @return JCE name
      */
@@ -105,12 +109,12 @@ public enum PasswordType {
     }
 
     /**
-     * Get secret key type friendly name.
+     * Get password type friendly name.
      *
      * @return Friendly name
      */
     public String friendly() {
-        return friendly;
+        return res.getString(friendlyKey);
     }
 
     /**
