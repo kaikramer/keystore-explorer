@@ -21,6 +21,7 @@
 package org.kse.gui.dialogs;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -29,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.kse.gui.LnfUtil;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.HexUtil;
 
@@ -52,19 +54,22 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
      */
     @Override
     public Component getTableCellRendererComponent(JTable jtRevokedCerts, Object value, boolean isSelected,
-                                                   boolean hasFocus, int row, int col) {
+            boolean hasFocus, int row, int col) {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
-                                                                   col);
+                col);
 
         switch (col) {
             case RevokedCertsTableModel.COL_SERIAL_NUMBER:
                 cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
+                cell.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
                 break;
             case RevokedCertsTableModel.COL_REVOCATION_DATE:
                 cell.setText(StringUtils.formatDate((Date) value));
+                cell.setFont(jtRevokedCerts.getFont());
                 break;
             case RevokedCertsTableModel.COL_REASON:
                 cell.setText((String) value);
+                cell.setFont(jtRevokedCerts.getFont());
                 break;
         }
 

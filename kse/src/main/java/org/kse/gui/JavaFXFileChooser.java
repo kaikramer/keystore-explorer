@@ -425,8 +425,10 @@ public class JavaFXFileChooser extends JFileChooser {
                 System.out.println(e);
             }
             // checks if the extension list matches the set file filter
-            if (refExt.equals(difExt)) {
-                index = i;
+            if (refExt != null) {
+                if (refExt.equals(difExt)) {
+                    index = i;
+                }
             }
         }
         return index;
