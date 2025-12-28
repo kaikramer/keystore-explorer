@@ -251,7 +251,7 @@ public enum X509ExtensionType {
 
 
     // ////////////////////////////////
-    // RFC3739 QC PRIVATE EXTENSIONS
+    // RFC 3739 QC PRIVATE EXTENSIONS
     // ////////////////////////////////
 
     /** Stores biometric information for authentication purposes. */
@@ -260,9 +260,20 @@ public enum X509ExtensionType {
     /** Indicates that the certificate is a Qualified Certificate in accordance with a particular legal system. */
     QC_STATEMENTS("1.3.6.1.5.5.7.1.3", "QCStatements"),
 
+    // ////////////////////////////////
+    // RFC 3709 Logotypes
+    // ////////////////////////////////
+
+    LOGO_TYPE("1.3.6.1.5.5.7.1.12", "LogoType"),
 
     // ////////////////////////////////
-    // RFC2560 PRIVATE EXTENSIONS
+    // RFC 8995 Bootstrapping Remote Secure Key Infrastructure (BRSKI)
+    // ////////////////////////////////
+
+    MASA_URL("1.3.6.1.5.5.7.1.32", "MasaURL"),
+
+    // ////////////////////////////////
+    // RFC 2560 Online Certificate Status Protocol (OCSP) PRIVATE EXTENSIONS
     // ////////////////////////////////
 
     /** A CA specifies by including this extension in the certificate of an OCSP responder that the requester can trust
@@ -306,17 +317,10 @@ public enum X509ExtensionType {
 
 
     // ////////////////////////////////
-    // RFC 3851
+    // RFC 3851 S/MIME
     // ////////////////////////////////
 
     SMIME_CAPABILITIES("1.2.840.113549.1.9.15", "SMIMECapabilities"),
-
-
-    // ////////////////////////////////
-    // RFC 3709
-    // ////////////////////////////////
-
-    LOGO_TYPE("1.3.6.1.5.5.7.1.12", "LogoType"),
 
 
     // ////////////////////////////////
