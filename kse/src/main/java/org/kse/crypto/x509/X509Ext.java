@@ -276,6 +276,8 @@ public class X509Ext {
             return getBiometricInfoStringValue(octets);
         case QC_STATEMENTS:
             return getQcStatementsStringValue(octets);
+        case MASA_URL:
+            return getIA5String(octets);
         case OCSP_NO_CHECK:
             return getOcspNoCheckStringValue();
         case LIABILITY_LIMITATION_FLAG:

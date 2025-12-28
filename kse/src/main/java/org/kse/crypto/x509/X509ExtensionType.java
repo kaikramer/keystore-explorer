@@ -260,6 +260,11 @@ public enum X509ExtensionType {
     /** Indicates that the certificate is a Qualified Certificate in accordance with a particular legal system. */
     QC_STATEMENTS("1.3.6.1.5.5.7.1.3", "QCStatements"),
 
+    // ////////////////////////////////
+    // RFC 8995 - Bootstrapping Remote Secure Key Infrastructure (BRSKI)
+    // ////////////////////////////////
+
+    MASA_URL("1.3.6.1.5.5.7.1.32", "MasaURL"),
 
     // ////////////////////////////////
     // RFC2560 PRIVATE EXTENSIONS
