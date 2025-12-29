@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.utilities;
+package org.kse.utilities.rng;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
 
-public class PRNGTest {
+class PasswordGeneratorTest {
 
     @Test
-    public void testGeneratePasswordWithAllCharacterTypes() {
+    void testGeneratePasswordWithAllCharacterTypes() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, true, true, true, true, 20);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(20, password.length);
@@ -45,7 +45,7 @@ public class PRNGTest {
             if (Character.isLowerCase(c)) hasLowerCase = true;
             if (Character.isUpperCase(c)) hasUpperCase = true;
             if (Character.isDigit(c)) hasDigit = true;
-            if (PRNG.SPECIAL_CHARACTERS.indexOf(c) >= 0) hasSpecialChar = true;
+            if (PasswordGenerator.SPECIAL_CHARACTERS.indexOf(c) >= 0) hasSpecialChar = true;
         }
 
         assertTrue(hasLowerCase);
@@ -55,9 +55,9 @@ public class PRNGTest {
     }
 
     @Test
-    public void testGeneratePasswordWithOnlyLowerCase() {
+    void testGeneratePasswordWithOnlyLowerCase() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, true, false, false, false, 20);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(20, password.length);
@@ -68,9 +68,9 @@ public class PRNGTest {
     }
 
     @Test
-    public void testGeneratePasswordWithOnlyUpperCase() {
+    void testGeneratePasswordWithOnlyUpperCase() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, false, true, false, false, 20);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(20, password.length);
@@ -81,9 +81,9 @@ public class PRNGTest {
     }
 
     @Test
-    public void testGeneratePasswordWithOnlyDigits() {
+    void testGeneratePasswordWithOnlyDigits() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, false, false, true, false, 20);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(20, password.length);
@@ -94,33 +94,33 @@ public class PRNGTest {
     }
 
     @Test
-    public void testGeneratePasswordWithOnlySpecialCharacters() {
+    void testGeneratePasswordWithOnlySpecialCharacters() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, false, false, false, true, 20);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(20, password.length);
 
         for (char c : password) {
-            assertTrue(PRNG.SPECIAL_CHARACTERS.indexOf(c) >= 0);
+            assertTrue(PasswordGenerator.SPECIAL_CHARACTERS.indexOf(c) >= 0);
         }
     }
 
     @Test
-    public void testGeneratePasswordWithMinLength() {
+    void testGeneratePasswordWithMinLength() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, true, true, true, true,
                                                                            PasswordGeneratorSettings.PWD_GEN_MIN_LENGTH);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(PasswordGeneratorSettings.PWD_GEN_MIN_LENGTH, password.length);
     }
 
     @Test
-    public void testGeneratePasswordWithMaxLength() {
+    void testGeneratePasswordWithMaxLength() {
         PasswordGeneratorSettings settings = new PasswordGeneratorSettings(true, true, true, true, true,
                                                                            PasswordGeneratorSettings.PWD_GEN_MAX_LENGTH);
-        char[] password = PRNG.generatePassword(settings);
+        char[] password = PasswordGenerator.generatePassword(settings);
 
         assertNotNull(password);
         assertEquals(PasswordGeneratorSettings.PWD_GEN_MAX_LENGTH, password.length);

@@ -28,7 +28,7 @@ import static org.kse.gui.util.FontAwesomeGlyph.LOCK;
 import static org.kse.gui.util.FontAwesomeGlyph.LOCK_OPEN;
 import static org.kse.gui.util.KseColor.GREEN;
 import static org.kse.gui.util.KseColor.GREY;
-import static org.kse.utilities.PRNG.SPECIAL_CHARACTERS;
+import static org.kse.utilities.rng.PasswordGenerator.SPECIAL_CHARACTERS;
 import static org.kse.utilities.StringUtils.shortenString;
 
 import java.awt.Color;
@@ -61,7 +61,7 @@ import org.kse.gui.preferences.data.PasswordGeneratorSettings;
 import org.kse.gui.preferences.data.PasswordManagerSettings;
 import org.kse.gui.util.FontAwesomeIcon;
 import org.kse.gui.util.KseColor;
-import org.kse.utilities.PRNG;
+import org.kse.utilities.rng.PasswordGenerator;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -282,7 +282,7 @@ class PanelPasswords {
         pwdGeneratorSettings.setIncludeDigits(jcbIncludeDigits.isSelected());
         pwdGeneratorSettings.setIncludeSpecialCharacters(jcbIncludeSpecialCharacters.isSelected());
         return format(res.getString("DPreferences.passwordGenerator.example.text"),
-                                    new String(PRNG.generatePassword(pwdGeneratorSettings)));
+                                    new String(PasswordGenerator.generatePassword(pwdGeneratorSettings)));
     }
 
     private void unlockPasswordManager(PasswordManager passwordManager) {

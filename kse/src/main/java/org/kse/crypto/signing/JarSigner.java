@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.PrivateKey;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -74,6 +73,7 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
+import org.kse.utilities.rng.StrongRNG;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -685,8 +685,7 @@ public class JarSigner {
             Collections.addAll(certList, certificateChain);
 
             DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(KSE.BC).build();
-            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce()).setSecureRandom(
-                    SecureRandom.getInstance("SHA1PRNG"));
+            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce()).setSecureRandom(StrongRNG.newInstance());
             if (provider != null) {
                 csb.setProvider(provider);
             }

@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.utilities;
+package org.kse.utilities.rng;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -26,28 +26,19 @@ import java.util.List;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
 
 /**
- * Pseudo random number generator for purposes where no special requirements have to be met.
+ * Password generator for purposes where no special requirements have to be met.
  * <p>
  * Seeded once per application run.
  */
-public class PRNG {
+public final class PasswordGenerator {
     public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
     public static final String UPPER_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String DIGITS = "0123456789";
     public static final String SPECIAL_CHARACTERS = "+-,.;:!#()[]{}<>|/@%=^";
 
-    private static final SecureRandom random = new SecureRandom();
+    private static final SecureRandom random = StrongRNG.newInstance();
 
-    /**
-     * Generate random bytes
-     *
-     * @param numberOfBytes Number of random bytes to generate
-     * @return Byte array with random bytes
-     */
-    public static byte[] generate(int numberOfBytes) {
-        byte[] randomBytes = new byte[numberOfBytes];
-        random.nextBytes(randomBytes);
-        return randomBytes;
+    private PasswordGenerator(){
     }
 
     /**
