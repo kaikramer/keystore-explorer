@@ -47,7 +47,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.io.UnsignedUtil;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 // @formatter:off
 /**
@@ -913,7 +913,7 @@ public class MsPvkUtil {
     }
 
     private static byte[] generate16ByteSalt() {
-        return StrongRNG.generate(ENCRYPTED_SALT_LENGTH);
+        return RNG.generate(ENCRYPTED_SALT_LENGTH);
     }
 
     private static byte[] getBufferBytes(ByteBuffer bb) {

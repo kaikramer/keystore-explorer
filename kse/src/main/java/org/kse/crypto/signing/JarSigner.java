@@ -73,7 +73,7 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -685,7 +685,7 @@ public class JarSigner {
             Collections.addAll(certList, certificateChain);
 
             DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(KSE.BC).build();
-            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce()).setSecureRandom(StrongRNG.newInstance());
+            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce()).setSecureRandom(RNG.newInstanceForLongLivedSecrets());
             if (provider != null) {
                 csb.setProvider(provider);
             }

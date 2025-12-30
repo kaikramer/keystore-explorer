@@ -75,7 +75,7 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
@@ -114,7 +114,7 @@ public final class KeyPairUtil {
             }
 
             // Initialise key pair generator with key strength and randomness
-            keyPairGen.initialize(keySize, StrongRNG.newInstance());
+            keyPairGen.initialize(keySize, RNG.newInstanceForLongLivedSecrets());
 
             // Generate and return the key pair
             return keyPairGen.generateKeyPair();
@@ -139,17 +139,17 @@ public final class KeyPairUtil {
 
             if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
                 keyPairGen = KeyPairGenerator.getInstance(curveName, KSE.BC);
-                keyPairGen.initialize(new ECGenParameterSpec(curveName), StrongRNG.newInstance());
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             } else if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
                 KeyPairType keyPairType = KeyPairType.getGostTypeFromCurve(curveName);
                 keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
-                keyPairGen.initialize(new ECGenParameterSpec(curveName), StrongRNG.newInstance());
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             } else if (provider != null) {
                 keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
-                keyPairGen.initialize(new ECGenParameterSpec(curveName), StrongRNG.newInstance());
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             } else {
                 keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), KSE.BC);
-                keyPairGen.initialize(new ECGenParameterSpec(curveName), StrongRNG.newInstance());
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             }
 
             // Generate and return the key pair
@@ -179,7 +179,7 @@ public final class KeyPairUtil {
             } else {
                 keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
             }
-            keyPairGen.initialize(new NamedParameterSpec(keyPairType.jce()), SecureRandom.getInstanceStrong());
+            keyPairGen.initialize(new NamedParameterSpec(keyPairType.jce()), RNG.newInstanceForLongLivedSecrets());
 
             return keyPairGen.generateKeyPair();
         } catch (GeneralSecurityException ex) {

@@ -52,7 +52,7 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 /**
  * <h1>DH Parameters generation</h1> The class DGeneratingDHParameters initiates
@@ -192,7 +192,7 @@ public class DGeneratingDHParameters extends JEscDialog {
         public void run() {
             try {
                 AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", KSE.BC);
-                algGen.init(keySize, StrongRNG.newInstance());
+                algGen.init(keySize, RNG.newInstanceForLongLivedSecrets());
                 AlgorithmParameters dhParams = algGen.generateParameters();
                 DHParameterSpec dhSpec = dhParams.getParameterSpec(DHParameterSpec.class);
 

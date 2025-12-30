@@ -43,7 +43,7 @@ import org.kse.gui.preferences.passwordmanager.EncryptedKeyStorePasswordData;
 import org.kse.gui.preferences.passwordmanager.EncryptedKeyStorePasswords;
 import org.kse.gui.preferences.passwordmanager.KeyDerivationSettings;
 import org.kse.gui.preferences.passwordmanager.KeyStoreEntryPassword;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 /**
  * This class is responsible for encrypting and decrypting keystore and keystore entry passwords, storing them and
@@ -292,14 +292,14 @@ public class PasswordManager {
         PasswordManagerSettings passwordManagerSettings = preferences.getPasswordManagerSettings();
         int parallelism = Runtime.getRuntime().availableProcessors() * 2; // Argon2 recommendation
         int keyLengthInBits = KEY_LENGTH_BITS;
-        byte[] salt = StrongRNG.generate(SALT_LENGTH_BYTES);
+        byte[] salt = RNG.generate(SALT_LENGTH_BYTES);
         EncryptionAlgorithm encrAlgorithm = AES_GCM;
 
         SecretKey kek = deriveKey(mainPassword, salt, parallelism, passwordManagerSettings, keyLengthInBits);
 
         // generate new AES key for encryption of passwords
         SecretKey key = AES.generateKey(KEY_LENGTH_BITS);
-        byte[] iv = StrongRNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
+        byte[] iv = RNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
         byte[] encryptedEncryptionKey = encryptKey(key, iv, kek, encrAlgorithm);
 
         var keyDerivationSettings = new KeyDerivationSettings();
@@ -424,7 +424,7 @@ public class PasswordManager {
                                                                               SecretKey key,
                                                                               EncryptionAlgorithm encrAlgorithm) {
 
-        byte[] iv = StrongRNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
+        byte[] iv = RNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
         byte[] encryptedKeyStorePwd = encrAlgorithm == AES_GCM ?
                                       AES.encryptAesGcm(new String(pwdData.getKeyStorePassword()).getBytes(), iv, key) :
                                       AES.encryptAesCbc(new String(pwdData.getKeyStorePassword()).getBytes(), iv, key);
@@ -445,7 +445,7 @@ public class PasswordManager {
 
     private KeyStoreEntryPassword createEncryptedEntryPwd(String alias, char[] password, SecretKey key,
                                                           EncryptionAlgorithm encrAlgorithm) {
-        byte[] iv = StrongRNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
+        byte[] iv = RNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
         byte[] encryptedEntryPwd = encrAlgorithm == AES_GCM ?
                                    AES.encryptAesGcm(new String(password).getBytes(), iv, key) :
                                    AES.encryptAesCbc(new String(password).getBytes(), iv, key);

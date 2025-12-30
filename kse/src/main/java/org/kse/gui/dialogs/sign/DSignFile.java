@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -68,6 +67,7 @@ import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
 import net.miginfocom.swing.MigLayout;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Dialog that displays the presents JAR signing options.
@@ -533,7 +533,7 @@ public class DSignFile extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), KSE.BC);
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(1024, RNG.newInstanceDefault());
         KeyPair kp = kpg.generateKeyPair();
 
         DSignFile dialog = new DSignFile(new JFrame(), kp.getPrivate(), KeyPairType.RSA);

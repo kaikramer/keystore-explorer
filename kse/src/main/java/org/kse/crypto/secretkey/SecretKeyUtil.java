@@ -32,7 +32,7 @@ import javax.crypto.SecretKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 public final class SecretKeyUtil {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/secretkey/resources");
@@ -51,7 +51,7 @@ public final class SecretKeyUtil {
     public static SecretKey generateSecretKey(SecretKeyType secretKeyType, int keySize) throws CryptoException {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(secretKeyType.jce(), KSE.BC);
-            keyGenerator.init(keySize, StrongRNG.newInstance());
+            keyGenerator.init(keySize, RNG.newInstanceForLongLivedSecrets());
 
             return keyGenerator.generateKey();
         } catch (GeneralSecurityException ex) {

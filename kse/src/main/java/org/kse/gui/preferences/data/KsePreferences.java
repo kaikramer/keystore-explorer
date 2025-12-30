@@ -70,6 +70,7 @@ public class KsePreferences {
     private boolean showHiddenFilesEnabled = true;
     private boolean nativeFileChooserEnabled = false;
     private Pkcs12EncryptionSetting pkcs12EncryptionSetting = Pkcs12EncryptionSetting.strong;
+    private RngTypeSetting rngTypeSetting = RngTypeSetting.strong;
     private int serialNumberLengthInBytes = 20;
     private Map<String, String> properties = new HashMap<>() {{
         put("sun.java2d.d3d.onscreen", "false");
@@ -250,6 +251,14 @@ public class KsePreferences {
 
     public void setPkcs12EncryptionSetting(Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
         this.pkcs12EncryptionSetting = pkcs12EncryptionSetting;
+    }
+
+    public RngTypeSetting getRngTypeSetting() {
+        return rngTypeSetting;
+    }
+
+    public void setRngTypeSetting(RngTypeSetting rngTypeSetting) {
+        this.rngTypeSetting = rngTypeSetting;
     }
 
     public int getSerialNumberLengthInBytes() {

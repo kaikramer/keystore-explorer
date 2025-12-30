@@ -35,6 +35,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.kse.gui.passwordmanager.EncryptionAlgorithm;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Simplify AES encryption and decryption by wrapping the JCE calls
@@ -133,7 +134,7 @@ public final class AES {
     public static SecretKey generateKey(int keyLength) {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(keyLength, SecureRandom.getInstanceStrong());
+            keyGen.init(keyLength, RNG.newInstanceForLongLivedSecrets());
             return keyGen.generateKey();
         } catch (NoSuchAlgorithmException e) {
             throw new EncryptionException("AES algorithm not available", e);

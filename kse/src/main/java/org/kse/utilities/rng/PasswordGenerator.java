@@ -36,7 +36,7 @@ public final class PasswordGenerator {
     public static final String DIGITS = "0123456789";
     public static final String SPECIAL_CHARACTERS = "+-,.;:!#()[]{}<>|/@%=^";
 
-    private static final SecureRandom random = StrongRNG.newInstance();
+    private static final SecureRandom random = RNG.newInstanceDefault();
 
     private PasswordGenerator(){
     }

@@ -68,7 +68,7 @@ import org.kse.utilities.pem.PemAttribute;
 import org.kse.utilities.pem.PemAttributes;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
-import org.kse.utilities.rng.StrongRNG;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Provides utility methods relating to OpenSSL (= PKCS#1 for RSA) encoded private keys.
@@ -537,7 +537,7 @@ public class OpenSslPvkUtil {
     }
 
     private static byte[] generateSalt(int size) {
-        return StrongRNG.generate(size);
+        return RNG.generate(size);
     }
 
     private static byte[] deriveKeyFromPassword(Password password, byte[] salt, int keySize) throws CryptoException {
