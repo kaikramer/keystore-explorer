@@ -23,10 +23,11 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import org.bouncycastle.util.Arrays;
+import org.kse.utilities.rng.RNG;
 
-public class SerialNumbers {
+public final class SerialNumbers {
 
-    static final SecureRandom rng = new SecureRandom();
+    private static final SecureRandom rng = RNG.newInstanceDefault();
 
     private SerialNumbers() {
     }

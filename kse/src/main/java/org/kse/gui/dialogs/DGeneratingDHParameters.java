@@ -29,7 +29,6 @@ import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
-import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
 import javax.crypto.spec.DHParameterSpec;
@@ -53,6 +52,7 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;
+import org.kse.utilities.rng.RNG;
 
 /**
  * <h1>DH Parameters generation</h1> The class DGeneratingDHParameters initiates
@@ -192,7 +192,7 @@ public class DGeneratingDHParameters extends JEscDialog {
         public void run() {
             try {
                 AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", KSE.BC);
-                algGen.init(keySize, new SecureRandom());
+                algGen.init(keySize, RNG.newInstanceForLongLivedSecrets());
                 AlgorithmParameters dhParams = algGen.generateParameters();
                 DHParameterSpec dhSpec = dhParams.getParameterSpec(DHParameterSpec.class);
 

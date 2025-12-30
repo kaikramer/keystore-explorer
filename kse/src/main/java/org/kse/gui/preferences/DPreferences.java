@@ -59,6 +59,7 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
 import org.kse.gui.preferences.data.PasswordManagerSettings;
 import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
+import org.kse.gui.preferences.data.RngTypeSetting;
 import org.kse.utilities.DialogViewer;
 
 /**
@@ -440,6 +441,14 @@ public class DPreferences extends JEscDialog {
      */
     public Pkcs12EncryptionSetting getPkcs12EncryptionSetting() {
         return (Pkcs12EncryptionSetting) panelUserInterface.getJcbPkcs12Encryption().getSelectedItem();
+    }
+
+    /**
+     * Get rng type settings
+     * @return rng type settings
+     */
+    public RngTypeSetting getRngTypeSetting() {
+        return (RngTypeSetting) panelUserInterface.getJcbRngType().getSelectedItem();
     }
 
     /**

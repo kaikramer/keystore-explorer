@@ -42,6 +42,7 @@ import org.kse.gui.preferences.data.LanguageItem;
 import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
 
 import net.miginfocom.swing.MigLayout;
+import org.kse.gui.preferences.data.RngTypeSetting;
 
 class PanelUserInterface {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
@@ -61,6 +62,7 @@ class PanelUserInterface {
     private JCheckBox jcbShowNativeFileChooser;
     private JCheckBox jcbLookFeelDecorated;
     private JComboBox<Pkcs12EncryptionSetting> jcbPkcs12Encryption;
+    private JComboBox<RngTypeSetting> jcbRngType;
     private JSpinner jspSnRandomBytes;
 
     private JCheckBox jcbEnableAutoUpdateChecks;
@@ -148,6 +150,12 @@ class PanelUserInterface {
         jcbPkcs12Encryption.setSelectedItem(preferences.getPkcs12EncryptionSetting());
         jcbPkcs12Encryption.setToolTipText(res.getString("DPreferences.jcbPkcs12Encryption.tooltip"));
 
+        JLabel jlRngType  = new JLabel(res.getString("DPreferences.jlRngType.text"));
+        RngTypeSetting.setResourceBundle(res);
+        jcbRngType = new JComboBox<>(RngTypeSetting.values());
+        jcbRngType.setSelectedItem(preferences.getRngTypeSetting());
+        jcbRngType.setToolTipText(res.getString("DPreferences.jcbRngType.tooltip"));
+
         JLabel jlSnRandomBytes = new JLabel(res.getString("DPreferences.jlSnRandomBytes.text"));
         var snSpinnerModel = new SpinnerNumberModel(preferences.getSerialNumberLengthInBytes(), 8.0, 20.0, 1.0);
         jspSnRandomBytes = new JSpinner(snSpinnerModel);
@@ -179,6 +187,8 @@ class PanelUserInterface {
         jpUI.add(jcbShowNativeFileChooser, "spanx, gapx indent, wrap unrel");
         MiGUtil.addSeparator(jpUI, jlPkcs12Encryption.getText());
         jpUI.add(jcbPkcs12Encryption, "gapx indent, spanx, wrap unrel");
+        MiGUtil.addSeparator(jpUI, jlRngType.getText());
+        jpUI.add(jcbRngType, "gapx indent, spanx, wrap unrel");
         MiGUtil.addSeparator(jpUI, jlSnRandomBytes.getText());
         jpUI.add(jspSnRandomBytes, "gapx indent, split 2");
         jpUI.add(jlSnRandomBytesPostfix, "");
@@ -283,6 +293,10 @@ class PanelUserInterface {
 
     JComboBox<Pkcs12EncryptionSetting> getJcbPkcs12Encryption() {
         return jcbPkcs12Encryption;
+    }
+
+    JComboBox<RngTypeSetting> getJcbRngType() {
+        return jcbRngType;
     }
 
     JSpinner getJspSnRandomBytes() {

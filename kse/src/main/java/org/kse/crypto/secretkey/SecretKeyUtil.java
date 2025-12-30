@@ -23,7 +23,6 @@ package org.kse.crypto.secretkey;
 import static org.kse.crypto.KeyType.SYMMETRIC;
 
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -33,8 +32,9 @@ import javax.crypto.SecretKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.utilities.rng.RNG;
 
-public class SecretKeyUtil {
+public final class SecretKeyUtil {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/secretkey/resources");
 
     private SecretKeyUtil() {
@@ -51,7 +51,7 @@ public class SecretKeyUtil {
     public static SecretKey generateSecretKey(SecretKeyType secretKeyType, int keySize) throws CryptoException {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(secretKeyType.jce(), KSE.BC);
-            keyGenerator.init(keySize, SecureRandom.getInstance("SHA1PRNG"));
+            keyGenerator.init(keySize, RNG.newInstanceForLongLivedSecrets());
 
             return keyGenerator.generateKey();
         } catch (GeneralSecurityException ex) {

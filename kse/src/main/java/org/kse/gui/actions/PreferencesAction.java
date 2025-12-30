@@ -37,6 +37,7 @@ import org.kse.gui.preferences.DPreferences;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Action to show preferences.
@@ -109,6 +110,9 @@ public class PreferencesAction extends ExitAction {
 
         preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
         Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
+
+        preferences.setRngTypeSetting(dPreferences.getRngTypeSetting());
+        RNG.setType(preferences.getRngTypeSetting());
 
         preferences.setLookAndFeelClass(dPreferences.getLookFeelInfo().getClassName());
         preferences.setLookAndFeelDecorated(dPreferences.getLookFeelDecoration());

@@ -35,7 +35,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertPath;
@@ -96,6 +95,7 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.rng.RNG;
 
 public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
@@ -241,7 +241,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         gen.addRequest(certId);
         if (includeNonce) {
             byte[] nonce = new byte[16];
-            new SecureRandom().nextBytes(nonce);
+            RNG.newInstanceDefault().nextBytes(nonce);
             ExtensionsGenerator extGen = new ExtensionsGenerator();
             extGen.addExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(nonce));
             gen.setRequestExtensions(extGen.generate());

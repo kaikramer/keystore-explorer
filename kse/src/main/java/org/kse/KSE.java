@@ -48,6 +48,7 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.LanguageItem;
 import org.kse.utilities.net.ProxySettingsUpdater;
 import org.kse.utilities.os.OperatingSystem;
+import org.kse.utilities.rng.RNG;
 import org.kse.version.Version;
 
 import com.sun.jna.Library;
@@ -118,6 +119,7 @@ public class KSE {
             Security.addProvider(BC);
 
             Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
+            RNG.setType(preferences.getRngTypeSetting());
 
             setProperties(preferences.getProperties());
 

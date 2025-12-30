@@ -22,6 +22,7 @@ package org.kse.crypto.encryption;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -34,13 +35,17 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.kse.gui.passwordmanager.EncryptionAlgorithm;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Simplify AES encryption and decryption by wrapping the JCE calls
  */
-public class AES {
+public final class AES {
 
     public static final int GCM_TAG_LEN = 128;
+
+    private AES() {
+    }
 
     /**
      * Encrypt with AES in CBC mode
@@ -129,7 +134,7 @@ public class AES {
     public static SecretKey generateKey(int keyLength) {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(keyLength);
+            keyGen.init(keyLength, RNG.newInstanceForLongLivedSecrets());
             return keyGen.generateKey();
         } catch (NoSuchAlgorithmException e) {
             throw new EncryptionException("AES algorithm not available", e);

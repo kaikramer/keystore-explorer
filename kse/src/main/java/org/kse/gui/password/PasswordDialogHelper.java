@@ -23,7 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 
 import org.kse.gui.preferences.PreferencesManager;
-import org.kse.utilities.PRNG;
+import org.kse.utilities.rng.PasswordGenerator;
 
 public class PasswordDialogHelper {
     private PasswordDialogHelper() {
@@ -40,7 +40,7 @@ public class PasswordDialogHelper {
      */
     public static void preFillPasswordFields(JComponent jpfFirst, JPasswordField jpfConfirm) {
         var generatorSettings = PreferencesManager.getPreferences().getPasswordGeneratorSettings();
-        char[] generatedPassword = PRNG.generatePassword(generatorSettings);
+        char[] generatedPassword = PasswordGenerator.generatePassword(generatorSettings);
         if (jpfFirst instanceof JPasswordQualityField) {
             ((JPasswordQualityField) jpfFirst).setPassword(generatedPassword);
         } else {

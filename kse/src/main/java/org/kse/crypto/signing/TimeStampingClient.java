@@ -45,6 +45,7 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.digest.DigestType;
+import org.kse.utilities.rng.RNG;
 
 public class TimeStampingClient {
 
@@ -127,7 +128,7 @@ public class TimeStampingClient {
                 @Override
                 public void checkServerTrusted(X509Certificate[] certs, String authType) {
                 }
-            } }, new java.security.SecureRandom());
+            } }, RNG.newInstanceDefault());
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new IOException(e);
         }
