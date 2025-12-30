@@ -26,6 +26,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -36,6 +39,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509Extension;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -72,6 +76,7 @@ import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.error.DError;
 import org.kse.gui.table.ToolTipTable;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 import org.kse.utilities.oid.ObjectIdComparator;
 
@@ -94,6 +99,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     private JEditorPane jepExtensionValue;
     private JPanel jpExtensionActionPanel;
     private JButton jbAsn1;
+    private JButton jbCopy;
     private JPanel jpOK;
     private JButton jbOK;
 
@@ -244,9 +250,26 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             }
         });
 
-        jpExtensionActionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        jpExtensionActionPanel.add(jbSaveTemplate);
-        jpExtensionActionPanel.add(jbAsn1);
+        jbCopy = new JButton(res.getString("DViewExtensions.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DViewExtensions.jbCopy.mnemonic").charAt(0));
+        jbCopy.setToolTipText(res.getString("DViewExtensions.jbCopy.tooltip"));
+        jbCopy.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewExtensions.this);
+                copyPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewExtensions.this);
+            }
+        });
+
+        jpExtensionActionPanel = new JPanel(new BorderLayout());
+        jpExtensionActionPanel.add(jbCopy, BorderLayout.WEST);
+
+        JPanel jpOtherActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        jpOtherActions.add(jbSaveTemplate);
+        jpOtherActions.add(jbAsn1);
+
+        jpExtensionActionPanel.add(jpOtherActions, BorderLayout.EAST);
 
         jpExtensionValue.add(jpExtensionActionPanel, BorderLayout.SOUTH);
 
@@ -293,6 +316,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
         if (selectedRow == -1) {
             jepExtensionValue.setText("");
             jbAsn1.setEnabled(false);
+            jbCopy.setEnabled(false);
         } else {
             String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
             byte[] value = extensions.getExtensionValue(oid);
@@ -312,6 +336,27 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             jepExtensionValue.setCaretPosition(0);
 
             jbAsn1.setEnabled(true);
+            jbCopy.setEnabled(true);
+        }
+    }
+
+    private void copyPressed() {
+        int selectedRow = jtExtensions.getSelectedRow();
+
+        if (selectedRow == -1) {
+            return;
+        }
+        String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
+        byte[] value = extensions.getExtensionValue(oid);
+        boolean criticality = (Boolean) jtExtensions.getValueAt(selectedRow, 0);
+        X509Ext ext = new X509Ext(oid, value, criticality);
+        try {
+            String textToCopy = ext.getStringValue();
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection copy = new StringSelection(textToCopy);
+            clipboard.setContents(copy, copy);
+        } catch (Exception e) {
+            DError.displayError(this, e);
         }
     }
 
@@ -418,5 +463,43 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
                 dViewCertificate.setVisible(true);
             }
         }
+    }
+
+    // for quick UI testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+        var certificate = """
+                MIIEajCCA1KgAwIBAgIRAPlDctrt0uCOCqtIlYaBmxcwDQYJKoZIhvcNAQELBQAw
+                OzELMAkGA1UEBhMCVVMxHjAcBgNVBAoTFUdvb2dsZSBUcnVzdCBTZXJ2aWNlczEM
+                MAoGA1UEAxMDV1IyMB4XDTI1MTIwMzE1NTcyMFoXDTI2MDIyNTE1NTcxOVowGjEY
+                MBYGA1UEAxMPbWFpbC5nb29nbGUuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD
+                QgAEoa7utvkspmyzC/UYQPCowD0Y/ge6q4/VWHyMKyfgs8aOIxauvYf+AHzaGRfb
+                5d/EqlU+PJFCjejFizj+hha9LKOCAlMwggJPMA4GA1UdDwEB/wQEAwIHgDATBgNV
+                HSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQzM6sVCQ6s
+                xcsWTzYhF03xpmOEXDAfBgNVHSMEGDAWgBTeGx7teRXUPjckwyG77DQ5bUKyMDBY
+                BggrBgEFBQcBAQRMMEowIQYIKwYBBQUHMAGGFWh0dHA6Ly9vLnBraS5nb29nL3dy
+                MjAlBggrBgEFBQcwAoYZaHR0cDovL2kucGtpLmdvb2cvd3IyLmNydDAsBgNVHREE
+                JTAjgg9tYWlsLmdvb2dsZS5jb22CEGluYm94Lmdvb2dsZS5jb20wEwYDVR0gBAww
+                CjAIBgZngQwBAgEwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2MucGtpLmdvb2cv
+                d3IyLzlVVmJOMHc1RTZZLmNybDCCAQMGCisGAQQB1nkCBAIEgfQEgfEA7wB2AJaX
+                ZL9VWJet90OHaDcIQnfp8DrV9qTzNm5GpD8PyqnGAAABmuUlvPMAAAQDAEcwRQIg
+                BS94nYjo4M0AgoW0mgcuBubRQ2TWqw7WgK2AGqppzqsCIQCNvArbVIKGNJv5ay/F
+                te9Gw14JJKJF3PhVlACpS+AmEQB1AEmcm2neHXzs/DbezYdkprhbrwqHgBnRVVL7
+                6esp3fjDAAABmuUlvNMAAAQDAEYwRAIgASh/cqHpgvgYpk1/VLNd3UTiFtGSf6D3
+                oY932hLDLWoCIF9J5t4B/Cag35eCFHR4VzHdKRRR0HTlDSH2yXxq39FPMA0GCSqG
+                SIb3DQEBCwUAA4IBAQBZhL/S63sBv/voTYw0yDmPqY8NUObiG16Ia71uJEGjFgVs
+                FleNfbTFfNQWfBJ4Ob/BwP80bNlc91yG7y8AC0edrIvbirTeo/mn48LOSZh9CuFL
+                R/06LpgiAW386BwgllFhjnmpbmKno7dO1++aMTCnWWJsshBoq+M+xMHjlAQswA+x
+                //D+ybrJ3IWJTmDa6evvMZx6upiSO1ktFHdBOMR3exlrBQdd520RV/mdb5FRuI0W
+                po8ClaVBy3h3HYfGq89TmIBJpbqpndgz7VOfDbF8j2vnpc4cvmymafI6zLz+zrrJ
+                NVVzq7BOadfFBF8LDwx8UWeLRAbacAc+3ab2bi9a
+                """;
+        var data = Base64.getDecoder().decode(certificate.replace("\n", ""));
+        var cert = X509CertUtil.loadCertificates(data)[0];
+        var res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+        DViewExtensions dViewExtensions = new DViewExtensions(new javax.swing.JDialog(),
+                res.getString("DViewCertificate.Extensions.Title"),
+                cert, new KseFrame());
+        DialogViewer.run(dViewExtensions);
     }
 }
