@@ -27,7 +27,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 
 /**
- * This class holds the mapping between the OIDs and the display names of RDN components.
+ * This class holds the mapping between the OIDs and the display names of RDN
+ * components.
  */
 public class OidDisplayNameMapping {
 
@@ -54,6 +55,7 @@ public class OidDisplayNameMapping {
     private static final String GENERATION = res.getString("DistinguishedNameChooser.jlGeneration.text");
     private static final String ORG_ID = res.getString("DistinguishedNameChooser.jlOrganizationIdentifier.text");
     private static final String DESCRIPTION = res.getString("DistinguishedNameChooser.jlDescription.text");
+    private static final String ROLE = res.getString("DistinguishedNameChooser.jlRole.text");
 
     private static Map<String, ASN1ObjectIdentifier> displayNameToOID = new HashMap<>();
 
@@ -81,6 +83,7 @@ public class OidDisplayNameMapping {
         displayNameToOID.put(GENERATION, BCStyle.GENERATION);
         displayNameToOID.put(ORG_ID, BCStyle.ORGANIZATION_IDENTIFIER);
         displayNameToOID.put(DESCRIPTION, BCStyle.DESCRIPTION);
+        displayNameToOID.put(ROLE, BCStyle.ROLE);
     }
 
     private static Map<String, String> oidToDisplayName = new HashMap<>();
@@ -109,11 +112,12 @@ public class OidDisplayNameMapping {
         oidToDisplayName.put(BCStyle.GENERATION.getId(), GENERATION);
         oidToDisplayName.put(BCStyle.ORGANIZATION_IDENTIFIER.getId(), ORG_ID);
         oidToDisplayName.put(BCStyle.DESCRIPTION.getId(), DESCRIPTION);
+        oidToDisplayName.put(BCStyle.ROLE.getId(), ROLE);
     }
 
     public static String[] getDisplayNames() {
         return new String[] { CN, OU, O, L, ST, C, E, SN, GIVENNAME, SURNAME, DC, UID, NAME, STREET, TITLE, INITIALS,
-                              PSEUDONYM, DN_QUALIFIER, GENERATION, ORG_ID, DESCRIPTION };
+                PSEUDONYM, DN_QUALIFIER, GENERATION, ORG_ID, DESCRIPTION, ROLE };
     }
 
     public static ASN1ObjectIdentifier getOidForDisplayName(String displayName) {
