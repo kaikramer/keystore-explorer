@@ -118,7 +118,7 @@ public class RevokedCertsTableModel extends ToolTipTableModel {
     private String getReasonString(CRLReason reason) {
         String reasonString = "";
         if (reason != null) {
-            final String txt = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+            final String text = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
             reasonString = MessageFormat.format(resCryptoX509.getString("CrlReason.format.column"), text, reason.ordinal());
         }
         return reasonString;
