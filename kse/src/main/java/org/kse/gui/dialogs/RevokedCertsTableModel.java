@@ -23,6 +23,7 @@ package org.kse.gui.dialogs;
 import java.math.BigInteger;
 import java.security.cert.CRLReason;
 import java.security.cert.X509CRLEntry;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -117,7 +118,8 @@ public class RevokedCertsTableModel extends ToolTipTableModel {
     private String getReasonString(CRLReason reason) {
         String reasonString = "";
         if (reason != null) {
-            reasonString = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+            final String txt = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+            reasonString = MessageFormat.format(resCryptoX509.getString("CrlReason.format.column"), text, reason.ordinal());
         }
         return reasonString;
     }
