@@ -22,7 +22,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -158,19 +157,10 @@ public class SignJwtAction extends KeyStoreExplorerAction {
     /**
      * Determines if the public key algorithm is supported.
      *
-     * @param selectedAlias The selected alias.
+     * @param publicKey The public key of the selected alias.
      * @return True if the selected alias is supported. False, if not.
      */
-    public boolean isKeySupported(String selectedAlias) {
-        PublicKey publicKey;
-        try {
-            Certificate cert = kseFrame.getActiveKeyStore().getCertificate(selectedAlias);
-            publicKey = cert.getPublicKey();
-        } catch (KeyStoreException e) {
-            // Not possible to sign if there is a keystore exception.
-            return false;
-        }
-
+    public boolean isKeySupported(PublicKey publicKey) {
         tooltip = null;
         boolean isSupported = true;
         if (publicKey instanceof ECPublicKey) {
@@ -179,8 +169,8 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         }
         // Nimbus-JOSE does not support signing a JWT with Ed448, ML-DSA, SLH-DSA.
         boolean isEd448 = EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm());
-        boolean isMlDSA = KeyPairType.isMlDSA(KeyPairType.resolveJce(publicKey.getAlgorithm()));
-        boolean isSlhDsa = KeyPairType.isSlhDsa(KeyPairType.resolveJce(publicKey.getAlgorithm()));
+        boolean isMlDSA = KeyPairType.isMlDSA(KeyPairUtil.getKeyPairType(publicKey));
+        boolean isSlhDsa = KeyPairType.isSlhDsa(KeyPairUtil.getKeyPairType(publicKey));
         isSupported = isSupported && !isEd448 && !isMlDSA && !isSlhDsa;
         if (!isSupported) {
             tooltip = res.getString("SignJwtAction.NotSupported.message");

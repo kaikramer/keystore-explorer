@@ -66,10 +66,14 @@ import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPublicKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.mlkem.MLKEMPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
@@ -139,6 +143,10 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
         } else if (key instanceof MLDSAPrivateKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "ML-DSA");
+        } else if (key instanceof MLKEMPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-KEM");
+        } else if (key instanceof MLKEMPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "ML-KEM");
         } else if (key instanceof SLHDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "SLH-DSA");
         } else if (key instanceof SLHDSAPrivateKey) {
@@ -246,6 +254,10 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             fields = getMLDSAPublicFields();
         } else if (key instanceof MLDSAPrivateKey) {
             fields = getMLDSAPrivateFields();
+        } else if (key instanceof MLKEMPublicKey) {
+            fields = getMLKEMPublicFields();
+        } else if (key instanceof MLKEMPrivateKey) {
+            fields = getMLKEMPrivateFields();
         } else if (key instanceof SLHDSAPublicKey) {
             fields = getSlhDsaPublicFields();
         } else if (key instanceof SLHDSAPrivateKey) {
@@ -434,6 +446,59 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaTr.text", privParams.getTr());
             fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaS1.text", privParams.getS1());
             fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaS2.text", privParams.getS2());
+
+            List<Field> fields = new ArrayList<>();
+            fieldValues.forEach((resourceKey, data) -> {
+                if (data != null) {
+                    fields.add(new Field(res.getString(resourceKey), getHexString(data)));
+                }
+            });
+
+            return fields.toArray(Field[]::new);
+        } finally {
+        }
+    }
+
+    private Field[] getMLKEMPublicFields() throws IOException {
+        SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(key.getEncoded());
+
+        try {
+            MLKEMPublicKeyParameters pkParams = (MLKEMPublicKeyParameters) PublicKeyFactory.createKey(keyInfo);
+
+            List<Field> fields = new ArrayList<>();
+            fields.add(new Field(
+                    res.getString("DViewAsymmetricKeyFields.jltFields.PublicKey.text"),
+                    getHexString(keyInfo.getPublicKeyData().getBytes())));
+
+            Map<String, byte[]> fieldValues = new LinkedHashMap<>();
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMlkemRho.text", pkParams.getRho());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMlkemT.text", pkParams.getT());
+
+            fieldValues.forEach((resourceKey, data) -> {
+                if (data != null) {
+                    fields.add(new Field(res.getString(resourceKey), getHexString(data)));
+                }
+            });
+
+            return fields.toArray(Field[]::new);
+        } finally {
+        }
+    }
+
+    private Field[] getMLKEMPrivateFields() throws IOException {
+        PrivateKeyInfo keyInfo = PrivateKeyInfo.getInstance(key.getEncoded());
+
+        try {
+            MLKEMPrivateKeyParameters privParams = (MLKEMPrivateKeyParameters) PrivateKeyFactory.createKey(keyInfo);
+
+            Map<String, byte[]> fieldValues = new LinkedHashMap<>();
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivateSeed.text", privParams.getSeed());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivateExpanded.text", privParams.getEncoded());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMlkemT.text", privParams.getT());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMlkemRho.text", privParams.getRho());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMlkemS.text", privParams.getS());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMlkemHpk.text", privParams.getHPK());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMlkemNonce.text", privParams.getNonce());
 
             List<Field> fields = new ArrayList<>();
             fieldValues.forEach((resourceKey, data) -> {

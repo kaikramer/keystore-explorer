@@ -118,6 +118,12 @@ public class DialogHelper {
         case MLDSA87:
             sigAlgs = Collections.singletonList(SignatureType.MLDSA87);
             break;
+        case MLKEM512:
+        case MLKEM768:
+        case MLKEM1024:
+            // ML-KEM is for key exchange not signing
+            sigAlgs = Collections.EMPTY_LIST;
+            break;
         case SLHDSA_SHA2_128S:
         case SLHDSA_SHA2_128F:
         case SLHDSA_SHA2_192S:

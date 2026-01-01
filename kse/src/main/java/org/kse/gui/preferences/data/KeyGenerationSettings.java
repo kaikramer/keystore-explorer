@@ -35,6 +35,7 @@ public class KeyGenerationSettings {
     private String ecCurveSet = "";
     private String ecCurveName = "";
     private KeyPairType mlDSAParameterSet = KeyPairType.MLDSA44;
+    private KeyPairType mlKEMParameterSet = KeyPairType.MLKEM768; // NIST recommended default
     private KeyPairType slhDsaParameterSet = KeyPairType.SLHDSA_SHA2_128F;
 
     private SecretKeyType secretKeyType = SecretKeyType.AES;
@@ -114,6 +115,16 @@ public class KeyGenerationSettings {
     public void setMLDSAParameterSet(KeyPairType keyPairType) {
         if (KeyPairType.isMlDSA(keyPairType)) {
             mlDSAParameterSet = keyPairType;
+        }
+    }
+
+    public KeyPairType getMLKEMParameterSet() {
+        return mlKEMParameterSet;
+    }
+
+    public void setMLKEMParameterSet(KeyPairType keyPairType) {
+        if (KeyPairType.isMlKEM(keyPairType)) {
+            mlKEMParameterSet = keyPairType;
         }
     }
 

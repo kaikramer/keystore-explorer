@@ -37,26 +37,25 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * UI elements used by {@link  org.kse.gui.dialogs.DGenerateKeyPair}
- * to generate MLDSA key pairs
+ * to generate ML-KEM key pairs
  * <p>
- * Holds a radio button and combo box for picking an ML-DSA {@link KeyPairType},
+ * Holds a radio button and combo box for picking an ML-KEM {@link KeyPairType},
  * enabling/disabling the combo automatically.
  * </p>
  *
  * <pre>
  * {@code
- * MLDSAKeySelector mlDsa = new MLDSAKeySelector(group);
- * mlDsa.add(contentPane);
+ * MLKEMKeySelector mlKem = new MLKEMKeySelector(group);
+ * mlKem.add(contentPane);
  *
- * if (mlDsa.isSelected()) { // later, when OK pressed
- *     KeyPairType type = mlDsa.getKeyPairType();
+ * if (mlKem.isSelected()) { // later, when OK pressed
+ *     KeyPairType type = mlKem.getKeyPairType();
  * }
  * }
  * </pre>
  */
-public class MLDSAKeySelector implements Serializable {
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(
-            "org/kse/gui/dialogs/resources");
+public class MLKEMKeySelector implements Serializable {
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private static final long serialVersionUID = 1998L;
 
@@ -65,37 +64,42 @@ public class MLDSAKeySelector implements Serializable {
     protected JComboBox<String> jComboBoxKeyType;
 
     /**
-     * Constructs a new ML-DSA key selector UI elements.
+     * Constructs a new ML-KEM key selector UI elements.
      *
-     * @param buttonGroup The button group to use for the ML-DSA radio button.
+     * @param buttonGroup The button group to use for the ML-KEM radio button.
+     * @param enabled     ML-KEM should only be enabled when key pair will not be self-signed.
      */
-    public MLDSAKeySelector(ButtonGroup buttonGroup) {
+    public MLKEMKeySelector(ButtonGroup buttonGroup, boolean enabled) {
 
-        jRadioButton = new JRadioButton(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jRadioButton.text"));
-        jRadioButton.setToolTipText(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jRadioButton.tooltip"));
+        jRadioButton = new JRadioButton(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.text"));
+        if (enabled) {
+            jRadioButton.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.tooltip"));
+        } else {
+            jRadioButton.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.na.tooltip"));
+        }
         PlatformUtil.setMnemonic(
-                jRadioButton, RESOURCE_BUNDLE.getString("MLDSAKeySelector.jRadioButton.mnemonic").charAt(0));
+                jRadioButton, RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.mnemonic").charAt(0));
 
-        jLabelKeyType = new JLabel(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jLabelKeyType.tooltip"));
+        jLabelKeyType = new JLabel(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jLabelKeyType.tooltip"));
 
         jComboBoxKeyType = new JComboBox<>();
-        jComboBoxKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jComboBoxKeyType.tooltip"));
+        jComboBoxKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jComboBoxKeyType.tooltip"));
 
-        String[] names = KeyPairType.MLDSA_TYPES_SET.stream()
+        String[] names = KeyPairType.MLKEM_TYPES_SET.stream()
                 .map(KeyPairType::jce)
                 .toArray(String[]::new);
 
         jComboBoxKeyType.setModel(new DefaultComboBoxModel<>(names));
-        jRadioButton.setEnabled(true);
+        jRadioButton.setEnabled(enabled);
         jRadioButton.addItemListener(event -> enableDisableElements());
-        this.setSelected(true);
+        setSelected(true);
         if (buttonGroup != null) {
             buttonGroup.add(jRadioButton);
         }
     }
 
     /**
-     * Adds the ML-DSA controls the pane.
+     * Adds the ML-KEM controls the pane.
      *
      * @param pane The pane to add the controls to.
      */
@@ -121,14 +125,14 @@ public class MLDSAKeySelector implements Serializable {
      * @param keyType The KeyPairType.
      */
     public void setPreferredParameterSet(KeyPairType keyType) {
-        if (KeyPairType.isMlDSA(keyType)) {
+        if (KeyPairType.isMlKEM(keyType)) {
             jComboBoxKeyType.setSelectedItem(keyType.jce());
         }
     }
 
     /**
-     * Adds an item listener to the ML-DSA radio button. Allows the parent
-     * panel to update controls when the ML-DSA radio button is selected.
+     * Adds an item listener to the ML-KEM radio button. Allows the parent
+     * panel to update controls when the ML-KEM radio button is selected.
      *
      * @param itemListener The item listener to add.
      */
@@ -138,14 +142,14 @@ public class MLDSAKeySelector implements Serializable {
 
     /**
      *
-     * @return True if the ML-DSA radio button is selected. False if not.
+     * @return True if the ML-KEM radio button is selected. False if not.
      */
     public boolean isSelected() {
         return jRadioButton.isSelected();
     }
 
     /**
-     * Selects the selected state of the ML-DSA radio button.
+     * Selects the selected state of the ML-KEM radio button.
      *
      * @param selected The selected state.
      */
@@ -156,7 +160,7 @@ public class MLDSAKeySelector implements Serializable {
 
     /**
      *
-     * @return The KeyPairType of the ML-DSA parameter set.
+     * @return The KeyPairType of the ML-KEM parameter set.
      */
     public KeyPairType getKeyPairType() {
         return KeyPairType.resolveJce((String) jComboBoxKeyType.getSelectedItem());

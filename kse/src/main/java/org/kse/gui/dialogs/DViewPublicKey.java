@@ -56,6 +56,7 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPublicKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
@@ -299,7 +300,8 @@ public class DViewPublicKey extends JEscDialog {
 
         jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)
                 || (publicKey instanceof ECPublicKey) || (publicKey instanceof EdDSAPublicKey)
-                || publicKey instanceof MLDSAPublicKey || publicKey instanceof SLHDSAPublicKey);
+                || publicKey instanceof MLDSAPublicKey || publicKey instanceof MLKEMPublicKey
+                || publicKey instanceof SLHDSAPublicKey);
     }
 
     private void exportPressed() {

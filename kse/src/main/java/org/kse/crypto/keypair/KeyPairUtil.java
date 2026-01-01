@@ -30,6 +30,7 @@ import static org.kse.crypto.keypair.KeyPairType.ECGOST3410_2012;
 import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlDSA;
+import static org.kse.crypto.keypair.KeyPairType.isMlKEM;
 import static org.kse.crypto.keypair.KeyPairType.isSlhDsa;
 
 import java.math.BigInteger;
@@ -41,7 +42,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
@@ -64,6 +64,7 @@ import java.util.ResourceBundle;
 
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
@@ -274,7 +275,8 @@ public final class KeyPairUtil {
                 int size = spec.getOrder().bitLength();
                 String curveName = ((ECNamedCurveSpec) spec).getName();
                 return new KeyInfo(ASYMMETRIC, algorithm, size, curveName);
-            } else if (isMlDSA(getKeyPairType(publicKey)) || isSlhDsa(getKeyPairType(publicKey))) {
+            } else if (isMlDSA(getKeyPairType(publicKey)) || isMlKEM(getKeyPairType(publicKey))
+                    || isSlhDsa(getKeyPairType(publicKey))) {
                 KeyPairType keyPairType = getKeyPairType(publicKey);
                 return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
             }
@@ -328,7 +330,8 @@ public final class KeyPairUtil {
             } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
                 EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
                 return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
-            } else if (isMlDSA(getKeyPairType(privateKey)) || isSlhDsa(getKeyPairType(privateKey))) {
+            } else if (isMlDSA(getKeyPairType(privateKey)) || isMlKEM(getKeyPairType(privateKey))
+                    || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
                 return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
             }
@@ -402,6 +405,11 @@ public final class KeyPairUtil {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
                 byte[] signature = sign(toSign, privateKey, keyPairType.jce());
                 return verify(toSign, signature, publicKey, keyPairType.jce());
+            } else if (isMlKEM(getKeyPairType(publicKey))) {
+                // ML-KEM keys cannot be used for signing. Derive the public key
+                // and compare with the certificate public key.
+                MLKEMPrivateKey privKey = (MLKEMPrivateKey) privateKey;
+                return privKey.getPublicKey().equals(publicKey);
             } else {
                 throw new CryptoException(
                         MessageFormat.format(res.getString("NoCheckCompriseValidKeypairAlg.exception.message"),
@@ -479,6 +487,11 @@ public final class KeyPairUtil {
             if (privateKey instanceof MLDSAPrivateKey) {
                 MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
                 PublicKey publicKey = mldsaPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof MLKEMPrivateKey) {
+                MLKEMPrivateKey mlkemPrivate = (MLKEMPrivateKey) privateKey;
+                PublicKey publicKey = mlkemPrivate.getPublicKey();
                 keyPair = new KeyPair(publicKey, privateKey);
             }
             if (privateKey instanceof SLHDSAPrivateKey) {

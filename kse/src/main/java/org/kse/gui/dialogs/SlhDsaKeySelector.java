@@ -145,16 +145,6 @@ public class SlhDsaKeySelector implements Serializable {
     }
 
     /**
-     * Enables the SLH-DSA controls.
-     *
-     * @param enabled The enabled state.
-     */
-    public void setEnabled(boolean enabled) {
-        jrbKeyType.setEnabled(enabled);
-        enableDisableElements();
-    }
-
-    /**
      * Selects the selected state of the SLH-DSA radio button.
      *
      * @param selected The selected state.
