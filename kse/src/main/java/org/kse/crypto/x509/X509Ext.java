@@ -904,8 +904,9 @@ public class X509Ext {
         CRLReason crlReason = CRLReason.getInstance(value);
 
         long crlReasonLong = crlReason.getValue().longValue();
+        String text = res.getString("CrlReason." + crlReasonLong + ".text");
 
-        sb.append(res.getString("CrlReason." + crlReasonLong + ".text"));
+        sb.append(MessageFormat.format(res.getString("CrlReason.format"), text, crlReasonLong));
 
         sb.append(NEWLINE);
 

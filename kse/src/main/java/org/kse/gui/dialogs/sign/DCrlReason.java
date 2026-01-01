@@ -29,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.cert.CRLReason;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -213,7 +214,8 @@ public class DCrlReason extends JEscDialog {
     }
 
     private String getCrlReasonText(CRLReason reason) {
-        return resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+        final String text = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+        return MessageFormat.format(resCryptoX509.getString("CrlReason.format"), text, reason.ordinal());
     }
 
     private String getCrlReasonTooltip(CRLReason reason) {
