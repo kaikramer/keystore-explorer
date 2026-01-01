@@ -75,6 +75,8 @@ public class KseX500NameStyle extends BCStyle {
         DEFAULT_SYMBOLS.put(TELEPHONE_NUMBER, "TelephoneNumber");
         DEFAULT_SYMBOLS.put(NAME, "Name");
         DEFAULT_SYMBOLS.put(ORGANIZATION_IDENTIFIER, "organizationIdentifier");
+        DEFAULT_SYMBOLS.put(DESCRIPTION, "Description");
+        DEFAULT_SYMBOLS.put(ROLE, "Role");
 
         DEFAULT_LOOKUP.put("c", C);
         DEFAULT_LOOKUP.put("o", O);

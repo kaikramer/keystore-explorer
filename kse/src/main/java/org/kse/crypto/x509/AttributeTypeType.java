@@ -44,6 +44,9 @@ public enum AttributeTypeType {
     MAIL("0.9.2342.19200300.100.1.3", "MailAttributeType"),
     DOMAIN_COMPONENT("0.9.2342.19200300.100.1.2.25", "DomainComponentAttributeType"),
 
+    DESCRIPTION("2.5.4.13", "DescriptionAttributeType"),
+    ROLE("2.5.4.72", "RoleAttributeType"),
+
     DATE_OF_BIRTH("1.3.6.1.5.5.7.9.1", "DateOfBirth"),
     PLACE_OF_BIRTH("1.3.6.1.5.5.7.9.2", "PlaceOfBirth"),
     GENDER("1.3.6.1.5.5.7.9.3", "Gender"),
