@@ -76,6 +76,8 @@ import net.miginfocom.swing.MigLayout;
 public class DViewCrl extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
+    public static final int TEXT_FIELD_WIDTH = 40;
+
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private JButton jbOK;
@@ -129,30 +131,30 @@ public class DViewCrl extends JEscDialog {
     private void initComponents() {
         jlVersion = new JLabel(res.getString("DViewCrl.jlVersion.text"));
 
-        jtfVersion = new JTextField(30);
+        jtfVersion = new JTextField(TEXT_FIELD_WIDTH);
         jtfVersion.setEditable(false);
         jtfVersion.setToolTipText(res.getString("DViewCrl.jtfVersion.tooltip"));
 
         jlIssuer = new JLabel(res.getString("DViewCrl.jlIssuer.text"));
 
-        jdnIssuer = new JDistinguishedName(res.getString("DViewCrl.Issuer.Title"), 30, false);
+        jdnIssuer = new JDistinguishedName(res.getString("DViewCrl.Issuer.Title"), TEXT_FIELD_WIDTH, false);
         jdnIssuer.setToolTipText(res.getString("DViewCrl.jdnIssuer.tooltip"));
 
         jlEffectiveDate = new JLabel(res.getString("DViewCrl.jlEffectiveDate.text"));
 
-        jtfEffectiveDate = new JTextField(30);
+        jtfEffectiveDate = new JTextField(TEXT_FIELD_WIDTH);
         jtfEffectiveDate.setEditable(false);
         jtfEffectiveDate.setToolTipText(res.getString("DViewCrl.jtfEffectiveDate.tooltip"));
 
         jlNextUpdate = new JLabel(res.getString("DViewCrl.jlNextUpdate.text"));
 
-        jtfNextUpdate = new JTextField(30);
+        jtfNextUpdate = new JTextField(TEXT_FIELD_WIDTH);
         jtfNextUpdate.setEditable(false);
         jtfNextUpdate.setToolTipText(res.getString("DViewCrl.jtfNextUpdate.tooltip"));
 
         jlSignatureAlgorithm = new JLabel(res.getString("DViewCrl.jlSignatureAlgorithm.text"));
 
-        jtfSignatureAlgorithm = new JTextField(30);
+        jtfSignatureAlgorithm = new JTextField(TEXT_FIELD_WIDTH);
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCrl.jtfSignatureAlgorithm.tooltip"));
 
@@ -244,7 +246,7 @@ public class DViewCrl extends JEscDialog {
                                                              ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                              ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspRevokedCertsTable.getViewport().setBackground(jtRevokedCerts.getBackground());
-        jspRevokedCertsTable.setPreferredSize(new Dimension(300, 200));
+        jspRevokedCertsTable.setPreferredSize(new Dimension(400, 200));
 
         jbCrlEntryExtensions = new JButton(res.getString("DViewCrl.jbCrlEntryExtensions.text"));
 
