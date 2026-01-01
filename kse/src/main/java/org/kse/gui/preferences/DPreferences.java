@@ -102,7 +102,7 @@ public class DPreferences extends JEscDialog {
     public DPreferences(JFrame parent, KsePreferences preferences) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(true);
-        setPreferredSize(new Dimension(900, 600));
+        setPreferredSize(new Dimension(1000, 600));
         this.preferences = preferences;
         initComponents();
     }
