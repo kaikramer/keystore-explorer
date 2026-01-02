@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2025 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -49,39 +49,39 @@ public class PolicyInformationUtil {
             policyIdentifier CertPolicyId,
             policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
         }
-        
+
         CertPolicyId ::= OBJECT IDENTIFIER
-        
+
         PolicyQualifierInfo ::= ASN1Sequence {
             policyQualifierId PolicyQualifierId,
             qualifier ANY DEFINED BY policyQualifierId
         }
-        
+
         -- policyQualifierIds for Internet policy qualifiers
-        
+
         id-qt OBJECT IDENTIFIER ::= { id-pkix 2 }
         id-qt-cps OBJECT IDENTIFIER ::= { id-qt 1 }
         id-qt-unotice OBJECT IDENTIFIER ::= { id-qt 2 }
-        
+
         PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-        
+
         Qualifier ::= CHOICE {
             cPSuri CPSuri,
             userNotice UserNotice
         }
-        
+
         CPSuri ::= DERIA5String
-        
+
         UserNotice ::= ASN1Sequence {
             noticeRef NoticeReference OPTIONAL,
             explicitText DisplayText OPTIONAL
         }
-        
+
         NoticeReference ::= ASN1Sequence {
             organization DisplayText,
             noticeNumbers ASN1Sequence OF ASN1Integer
         }
-        
+
         DisplayText ::= CHOICE {
             ia5String DERIA5String (SIZE (1..200)),
             visibleString VisibleString (SIZE (1..200)),

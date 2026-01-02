@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2025 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -419,14 +419,14 @@ public class X509Ext {
         // @formatter:off
         /*
             EntrustVersInfoSyntax ::= OCTET STRING
-            
+
             entrustVersInfo EXTENSION ::= { SYNTAX EntrustVersInfoSyntax IDENTIFIED BY {id-entrust 0} }
-            
+
             EntrustVersInfoSyntax ::= ASN1Sequence {
                 entrustVers GeneralString,
                 entrustInfoFlags EntrustInfoFlags
             }
-            
+
             EntrustInfoFlags ::= BIT STRING {
                 keyUpdateAllowed newExtensions (1),
                 pKIXCertificate (2)
@@ -453,7 +453,7 @@ public class X509Ext {
         // @formatter:off
         /*
             AuthorityInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF AccessDescription
-            
+
             AccessDescription ::= ASN1Sequence {
                 accessMethod OBJECT IDENTIFIER,
                 accessLocation GeneralName
@@ -508,7 +508,7 @@ public class X509Ext {
         // @formatter:off
         /*
             SubjectInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF AccessDescription
-            
+
             AccessDescription ::= ASN1Sequence {
                 accessMethod OBJECT IDENTIFIER,
                 accessLocation GeneralName
@@ -563,13 +563,13 @@ public class X509Ext {
         // @formatter:off
         /*
             SubjectDirectoryAttributes ::= ASN1Sequence SIZE (1..MAX) OF Attribute
-            
+
             Attribute ::= ASN1Sequence
             {
                 type AttributeType,
                 values SET OF AttributeValue
             }
-            
+
             RFC 3739: "Compliant implementations SHALL be able to interpret the following attributes:"
                 DateOfBirth (1.3.6.1.5.5.7.9.1) ::= GeneralizedTime
                 PlaceOfBirth (1.3.6.1.5.5.7.9.2) ::= DirectoryString
@@ -607,7 +607,7 @@ public class X509Ext {
         // @formatter:off
         /*
             SubjectKeyIdentifier ::= KeyIdentifier
-            
+
             KeyIdentifier ::= OCTET STRING
          */
         // @formatter:on
@@ -634,11 +634,11 @@ public class X509Ext {
                 authorityCertIssuer [1] GeneralNames OPTIONAL,
                 authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL
             }
-            
+
             KeyIdentifier ::= OCTET STRING
-            
+
             GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-            
+
             CertificateSerialNumber ::= ASN1Integer
          */
         // @formatter:on
@@ -786,7 +786,7 @@ public class X509Ext {
         // @formatter:off
         /*
             SubjectAltName ::= GeneralNames
-            
+
             GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
          */
         // @formatter:on
@@ -807,7 +807,7 @@ public class X509Ext {
         // @formatter:off
         /*
             IssuerAltName ::= GeneralNames
-            
+
             GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
          */
         // @formatter:on
@@ -883,7 +883,7 @@ public class X509Ext {
         // @formatter:off
         /*
             ReasonCode ::= { CRLReason }
-            
+
             CRLReason ::= ASN1Enumerated {
                 unspecified (0),
                 keyCompromise (1),
@@ -952,9 +952,9 @@ public class X509Ext {
         // @formatter:off
         /*
             deltaCRLIndicator EXTENSION ::= { SYNTAX BaseCRLNumber IDENTIFIED BY id-ce-deltaCRLIndicator }
-            
+
             BaseCRLNumber ::= CRLNumber
-            
+
             CRLNumber ::= ASN1Integer (0..MAX)
          */
         // @formatter:on
@@ -1031,7 +1031,7 @@ public class X509Ext {
         // @formatter:off
         /*
             certificateIssuer ::= GeneralNames
-            
+
             GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
          */
         // @formatter:on
@@ -1056,15 +1056,15 @@ public class X509Ext {
                 GeneralSubtrees OPTIONAL,
                 excludedSubtrees [1] GeneralSubtrees OPTIONAL
             }
-            
+
             GeneralSubtrees ::= ASN1Sequence SIZE (1..MAX) OF GeneralSubtree
-            
+
             GeneralSubtree ::= ASN1Sequence {
                 base GeneralName,
                 minimum [0] BaseDistance DEFAULT nodistance,
                 maximum [1] BaseDistance OPTIONAL
             }
-            
+
             BaseDistance ::= ASN1Integer {nodistance(0) } (0..MAX)
          */
         // @formatter:on
@@ -1211,43 +1211,43 @@ public class X509Ext {
         // @formatter:off
         /*
             CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
-            
+
             PolicyInformation ::= ASN1Sequence
             {
                 policyIdentifier CertPolicyId,
                 policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
             }
-            
+
             CertPolicyId ::= OBJECT IDENTIFIER
-            
+
             PolicyQualifierInfo ::= ASN1Sequence
             {
                 policyQualifierId PolicyQualifierId,
                 qualifier ANY DEFINED BY policyQualifierId
             }
-            
+
             PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-            
+
             Qualifier ::= CHOICE
             {
                 cPSuri CPSuri,
                 userNotice UserNotice
             }
-            
+
             CPSuri ::= DERIA5String
-            
+
             UserNotice ::= ASN1Sequence
             {
                 noticeRef NoticeReference OPTIONAL,
                 explicitText DisplayText OPTIONAL
             }
-            
+
             NoticeReference ::= ASN1Sequence
             {
                 organization DisplayText,
                 noticeNumbers ASN1Sequence OF ASN1Integer
             }
-            
+
             DisplayText ::= CHOICE
             {
                 ia5String DERIA5String (SIZE (1..200)),
@@ -1369,12 +1369,12 @@ public class X509Ext {
         // @formatter:off
         /*
             PolicyMappings ::= ASN1Sequence SIZE (1..MAX) OF PolicyMappings
-            
+
             PolicyMappings ::= ASN1Sequence {
                 issuerDomainPolicy CertPolicyId,
                 subjectDomainPolicy CertPolicyId
             }
-            
+
             CertPolicyId ::= OBJECT IDENTIFIER
          */
         // @formatter:on
@@ -1418,7 +1418,7 @@ public class X509Ext {
                 requireExplicitPolicy [0] SkipCerts OPTIONAL,
                 inhibitPolicyMapping [1] SkipCerts OPTIONAL
             }
-            
+
             SkipCerts ::= ASN1Integer (0..MAX)
          */
         // @formatter:on
@@ -1447,7 +1447,7 @@ public class X509Ext {
         // @formatter:off
         /*
             ExtendedKeyUsage ::= ASN1Sequence SIZE (1..MAX) OF KeyPurposeId
-            
+
             KeyPurposeId ::= OBJECT IDENTIFIER
          */
         // @formatter:on
@@ -1477,7 +1477,7 @@ public class X509Ext {
         // @formatter:off
         /*
             FreshestCRL ::= CRLDistributionPoints
-            
+
             CRLDistributionPoints ::= ASN1Sequence SIZE (1..MAX) OF DistributionPoint
          */
         // @formatter:on
@@ -1635,7 +1635,7 @@ public class X509Ext {
                 reasons [1] ReasonFlags OPTIONAL,
                 cRLIssuer [2] GeneralNames OPTIONAL
             }
-            
+
             GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
          */
         // @formatter:on
@@ -1689,9 +1689,9 @@ public class X509Ext {
                 fullname [0] GeneralNames,
                 nameRelativeToCRLIssuer [1] RelativeDistinguishedName
             }
-            
+
             RelativeDistinguishedName ::= SET SIZE (1 .. MAX) OF AttributeTypeAndValue
-            
+
             AttributeTypeAndValue ::= ASN1Sequence {
                 type AttributeType,
                 value AttributeValue
@@ -2596,12 +2596,12 @@ public class X509Ext {
         // @formatter:off
         /*
             MsApplicationPolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
-            
+
             PolicyInformation ::= ASN1Sequence
             {
                 policyIdentifier KeyPurposeId
             }
-            
+
             KeyPurposeId ::= OBJECT IDENTIFIER
          */
         // @formatter:on

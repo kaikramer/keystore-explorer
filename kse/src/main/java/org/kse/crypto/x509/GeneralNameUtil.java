@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2025 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -68,19 +68,19 @@ public class GeneralNameUtil {
             iPAddress [7] OCTET STRING,
             registeredID [8] OBJECT IDENTIFIER
         }
-        
+
         AnotherName ::= ASN1Sequence
         {
             type-id OBJECT IDENTIFIER,
             value [0] EXPLICIT ANY DEFINED BY type-id
         }
-        
+
         EDIPartyName ::= ASN1Sequence
         {
             nameAssigner [0] DirectoryString OPTIONAL,
             partyName [1] DirectoryString
         }
-        
+
         DirectoryString ::= CHOICE
         {
             teletexString TeletexString (SIZE (1..MAX),

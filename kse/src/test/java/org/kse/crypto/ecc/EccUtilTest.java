@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2025 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -85,14 +85,14 @@ public class EccUtilTest extends CryptoTestsBase {
         // @formatter:off
         /*
             verify ASN.1 structure "ECPrivateKey" from RFC 5915:
-        
+
             ECPrivateKey ::= SEQUENCE {
                 version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
                 privateKey     OCTET STRING,
                 parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
                 publicKey  [1] BIT STRING OPTIONAL
             }
-        
+
             ECParameters ::= CHOICE {
                 namedCurve         OBJECT IDENTIFIER
                 -- implicitCurve   NULL

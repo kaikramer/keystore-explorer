@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright 2004 - 2013 Wayne Grant
-#           2013 - 2025 Kai Kramer
+#           2013 - 2026 Kai Kramer
 #
 # This file is part of KeyStore Explorer.
 #

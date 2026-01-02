@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2025 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -344,7 +344,7 @@ public class CryptoFileUtil {
         // @formatter:off
         /*
             Test for PKCS #12. ASN.1 should look like this:
-            
+
             PFX ::= ASN1Sequence {
                 version ASN1Integer {v3(3)}(v3,...),
                 authSafe ContentInfo,

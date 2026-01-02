@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2025 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -289,7 +289,7 @@ public class Pkcs8Util {
                     // @formatter:off
                     /*
                         Unencrypted PKCS #8 Private Key:
-                        
+
                         PrivateKeyInfo ::= OneAsymmetricKey
                         OneAsymmetricKey ::= ASN1Sequence {
                             version Version,
@@ -298,7 +298,7 @@ public class Pkcs8Util {
                             attributes [0] IMPLICIT Attributes OPTIONAL
                             publicKey  [1] BIT STRING OPTIONAL
                         }
-                        
+
                         Version ::= ASN1Integer
                         PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
                         PrivateKey ::= OCTET STRING
@@ -337,12 +337,12 @@ public class Pkcs8Util {
                     // @formatter:off
                     /*
                         Encrypted PKCS #8 Private Key:
-                        
+
                         EncryptedPrivateKeyInfo ::= ASN1Sequence {
                             encryptionAlgorithm EncryptionAlgorithmIdentifier,
                             encryptedData EncryptedData
                         }
-                        
+
                         EncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
                         EncryptedData ::= OCTET STRING
                      */
@@ -399,16 +399,16 @@ public class Pkcs8Util {
         // @formatter:off
         /*
             Get private key algorithm from unencrypted PKCS #8 bytes:
-            
+
             PrivateKeyInfo ::= ASN1Sequence {
                 version Version,
                 privateKeyAlgorithm PrivateKeyAlgorithmIdentifier,
                 privateKey PrivateKey,
                 attributes [0] IMPLICIT Attributes OPTIONAL
             }
-            
+
             PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
-            
+
             AlgorithmIdentifier ::= ASN1Sequence {
                 algorithm OBJECT IDENTIFIER,
                 parameters ANY DEFINED BY algorithm OPTIONAL
