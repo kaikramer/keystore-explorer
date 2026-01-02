@@ -48,6 +48,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -91,8 +92,11 @@ import javax.swing.table.TableRowSorter;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.AppendToCertificateChainAction;
 import org.kse.gui.actions.ChangeTypeAction;
@@ -2600,11 +2604,39 @@ public final class KseFrame implements StatusBar {
                         unlockKeyPairAction.setEnabled(locked);
                     }
 
-                    signMidletAction.setEnabled(signMidletAction.isKeySupported(getSelectedEntryAlias()));
-                    jmiKeyPairSignMidlet.setToolTipText(signMidletAction.getToolTip());
+                    PublicKey publicKey = null;
+                    try {
+                        Certificate cert = getActiveKeyStore().getCertificate(getSelectedEntryAlias());
+                        // Convert to BC provider implementation (Java 25 returns ML-DSA or ML-KEM) rather
+                        // specific algorithm names like ML-DSA-44 or ML-KEM-512.
+                        publicKey = OpenSslPubUtil.load(cert.getPublicKey().getEncoded());
+                    } catch (KeyStoreException | CryptoException e) {
+                        // Not possible to sign if there is a keystore exception.
+                    }
 
-                    signJwtAction.setEnabled(signJwtAction.isKeySupported(getSelectedEntryAlias()));
-                    jmiKeyPairSignJwt.setToolTipText(signJwtAction.getToolTip());
+                    boolean isSignAvailable = publicKey != null && !KeyPairType.isMlKEM(KeyPairUtil.getKeyPairType(publicKey));
+                    if (isSignAvailable) {
+                        jmiKeyPairGenerateCsr.setEnabled(true);
+                        jmiKeyPairGenerateCsr.setToolTipText(null);
+
+                        jmKeyPairSign.setEnabled(true);
+                        jmKeyPairSign.setToolTipText(null);
+
+                        signMidletAction.setEnabled(signMidletAction.isKeySupported(publicKey));
+                        jmiKeyPairSignMidlet.setToolTipText(signMidletAction.getToolTip());
+
+                        signJwtAction.setEnabled(signJwtAction.isKeySupported(publicKey));
+                        jmiKeyPairSignJwt.setToolTipText(signJwtAction.getToolTip());
+                    } else {
+                        // Cannot request PKCS#10 CSR for ML-KEM since a signature is required for proof of possession
+                        // Generating a CSR can be re-enabled once CRMF is supported
+                        jmiKeyPairGenerateCsr.setEnabled(false);
+                        jmiKeyPairGenerateCsr.setToolTipText(res.getString("KseFrame.jmiKeyPairGenerateCsr.tooltip"));
+
+                        // Signing is not possible.
+                        jmKeyPairSign.setEnabled(false);
+                        jmKeyPairSign.setToolTipText(res.getString("KseFrame.jmKeyPairSign.tooltip"));
+                    }
 
                     jpmKeyPair.show(jtKeyStore, x, y);
 

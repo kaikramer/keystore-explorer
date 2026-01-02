@@ -216,6 +216,9 @@ public class DGeneratingKeyPair extends JEscDialog {
                 case MLDSA44:
                 case MLDSA65:
                 case MLDSA87:
+                case MLKEM512:
+                case MLKEM768:
+                case MLKEM1024:
                 case SLHDSA_SHA2_128F:
                 case SLHDSA_SHA2_128S:
                 case SLHDSA_SHA2_192F:

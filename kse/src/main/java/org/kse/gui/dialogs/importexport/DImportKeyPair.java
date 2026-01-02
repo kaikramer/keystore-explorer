@@ -675,20 +675,22 @@ public class DImportKeyPair extends JEscDialog {
         String certificatePath = jtfCertificatePath.getText().trim();
 
         if (certificatePath.isEmpty()) {
-            if (privateKey == null) {
+            // ML-KEM certs cannot be self-signed -- so a cert cannot be generated
+            boolean isSelfSignPossible = privateKey != null && !KeyPairType.isMlKEM(KeyPairUtil.getKeyPairType(privateKey));
+            if (!isSelfSignPossible) {
                 JOptionPane.showMessageDialog(this, res.getString("DImportKeyPair.CertificateRequired.message"),
                         getTitle(), JOptionPane.WARNING_MESSAGE);
                 return null;
-            } else {
-                int selected = JOptionPane.showConfirmDialog(this,
-                        res.getString("DImportKeyPair.ConfirmGenerateCert.message"),
-                        res.getString("DImportKeyPair.ConfirmGenerateCert.Title"), JOptionPane.YES_NO_OPTION);
-
-                if (selected != JOptionPane.YES_OPTION) {
-                    return null;
-                }
-                return generateCertificate(privateKey);
             }
+
+            int selected = JOptionPane.showConfirmDialog(this,
+                    res.getString("DImportKeyPair.ConfirmGenerateCert.message"),
+                    res.getString("DImportKeyPair.ConfirmGenerateCert.Title"), JOptionPane.YES_NO_OPTION);
+
+            if (selected != JOptionPane.YES_OPTION) {
+                return null;
+            }
+            return generateCertificate(privateKey);
         }
 
         File certificateFile = new File(certificatePath);

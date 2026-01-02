@@ -85,6 +85,7 @@ public class DGenerateKeyPair extends JEscDialog {
     private JComboBox<String> jcbECCurve;
 
     private MLDSAKeySelector mldsaKeySelector;
+    private MLKEMKeySelector mlkemKeySelector;
     private SlhDsaKeySelector slhDsaKeySelector;
 
     private final KeyPairType keyPairType;
@@ -93,8 +94,10 @@ public class DGenerateKeyPair extends JEscDialog {
     private final String keyPairCurveSet;
     private final String keyPairCurveName;
     private final KeyPairType mldsaParameterSet;
+    private final KeyPairType mlkemParameterSet;
     private final KeyPairType slhDsaParameterSet;
     private final KeyStoreType keyStoreType;
+    private final boolean isSelfSigned;
 
     private boolean success = false;
 
@@ -102,10 +105,12 @@ public class DGenerateKeyPair extends JEscDialog {
      * Creates a new DGenerateKeyPair dialog.
      *
      * @param parent           The parent frame
-     * @param keyStoreType     Type of the key store for the new ke pair
+     * @param keyStoreType     Type of the key store for the new key pair
      * @param defaults         Initial key pair type and parameters
+     * @param isSelfSigned     Indicates if the key pair is intended for a self signed certificate.
      */
-    public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyGenerationSettings defaults) {
+    public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyGenerationSettings defaults,
+            boolean isSelfSigned) {
 
         super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
@@ -115,8 +120,10 @@ public class DGenerateKeyPair extends JEscDialog {
         this.keyPairCurveSet = defaults.getEcCurveSet();
         this.keyPairCurveName = defaults.getEcCurveName();
         this.mldsaParameterSet = defaults.getMLDSAParameterSet();
+        this.mlkemParameterSet = defaults.getMLKEMParameterSet();
         this.slhDsaParameterSet = defaults.getSlhDsaParameterSet();
         this.keyStoreType = keyStoreType;
+        this.isSelfSigned = isSelfSigned;
 
         initComponents();
     }
@@ -173,6 +180,7 @@ public class DGenerateKeyPair extends JEscDialog {
         jbOK = new JButton(res.getString("DGenerateKeyPair.jbOK.text"));
 
         mldsaKeySelector = new MLDSAKeySelector(buttonGroup);
+        mlkemKeySelector = new MLKEMKeySelector(buttonGroup, !isSelfSigned);
         slhDsaKeySelector = new SlhDsaKeySelector(buttonGroup);
 
         focusKeyPair();
@@ -180,6 +188,7 @@ public class DGenerateKeyPair extends JEscDialog {
         loadKeySizes(keyPairSizeRSA, keyPairSizeDSA);
         loadECNamedCurves(keyPairCurveSet, keyPairCurveName);
         mldsaKeySelector.setPreferredParameterSet(mldsaParameterSet);
+        mlkemKeySelector.setPreferredParameterSet(mlkemParameterSet);
         slhDsaKeySelector.setPreferredParameterSet(slhDsaParameterSet);
         enableDisableElements();
 
@@ -201,11 +210,13 @@ public class DGenerateKeyPair extends JEscDialog {
         pane.add(jlECCurve, "skip");
         pane.add(jcbECCurve, "growx, wrap");
         mldsaKeySelector.add(pane);
+        mlkemKeySelector.add(pane);
         slhDsaKeySelector.add(pane);
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jpButtons, "right, spanx");
 
         mldsaKeySelector.addItemListener(evt -> enableDisableElements());
+        mlkemKeySelector.addItemListener(evt -> enableDisableElements());
         slhDsaKeySelector.addItemListener(evt -> enableDisableElements());
 
         jcbECCurveSet.addItemListener(
@@ -245,17 +256,17 @@ public class DGenerateKeyPair extends JEscDialog {
             jrbRSA.setSelected(true);
         } else if (keyPairType == KeyPairType.DSA) {
             jrbDSA.setSelected(true);
+        } else if (keyPairType == KeyPairType.EC) {
+            jrbEC.setSelected(true);
         } else if (KeyPairType.isMlDSA(keyPairType)) {
             mldsaKeySelector.setSelected(true);
+        } else if (KeyPairType.isMlKEM(keyPairType) && !isSelfSigned) {
+            // fall back to the default (RSA) for a self-signed key pair certificate
+            mlkemKeySelector.setSelected(true);
         } else if (KeyPairType.isSlhDsa(keyPairType)) {
             slhDsaKeySelector.setSelected(true);
         } else {
-            if (jrbEC.isEnabled()) {
-                jrbEC.setSelected(true);
-            } else {
-                // EC not available => fall back to RSA
-                jrbRSA.setSelected(true);
-            }
+            jrbRSA.setSelected(true);
         }
     }
 
@@ -297,6 +308,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
         // Selectors manage their own internal state
         mldsaKeySelector.enableDisableElements();
+        mlkemKeySelector.enableDisableElements();
         slhDsaKeySelector.enableDisableElements();
     }
 
@@ -414,6 +426,10 @@ public class DGenerateKeyPair extends JEscDialog {
             return mldsaKeySelector.getKeyPairType();
         }
 
+        if (mlkemKeySelector.isSelected()) {
+            return mlkemKeySelector.getKeyPairType();
+        }
+
         if (slhDsaKeySelector.isSelected()) {
             return slhDsaKeySelector.getKeyPairType();
         }
@@ -468,7 +484,7 @@ public class DGenerateKeyPair extends JEscDialog {
         defaults.setKeyPairSizeDSA(1024);
         defaults.setEcCurveSet("");
         defaults.setEcCurveName("");
-        DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.BKS, defaults);
+        DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.BKS, defaults, false);
         DialogViewer.run(dialog);
     }
 }

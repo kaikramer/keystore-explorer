@@ -116,7 +116,8 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             Provider provider = history.getExplicitProvider();
 
-            DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, defaults);
+            boolean isSelfSigned = issuerPrivateKey == null;
+            DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, defaults, isSelfSigned);
 
             dGenerateKeyPair.setLocationRelativeTo(frame);
             dGenerateKeyPair.setVisible(true);
@@ -137,6 +138,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             defaults.setEcCurveSet(keyPairCurveSet);
             defaults.setEcCurveName(keyPairCurveName);
             defaults.setMLDSAParameterSet(keyPairType);
+            defaults.setMLKEMParameterSet(keyPairType);
             defaults.setSlhDsaParameterSet(keyPairType);
 
             KeyPair keyPair = generateKeyPair(
@@ -244,6 +246,9 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         case MLDSA44:
         case MLDSA65:
         case MLDSA87:
+        case MLKEM512:
+        case MLKEM768:
+        case MLKEM1024:
         case SLHDSA_SHA2_128F:
         case SLHDSA_SHA2_128S:
         case SLHDSA_SHA2_192F:

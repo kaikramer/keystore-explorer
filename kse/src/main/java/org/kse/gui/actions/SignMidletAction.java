@@ -22,10 +22,8 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 
@@ -117,19 +115,10 @@ public class SignMidletAction extends KeyStoreExplorerAction {
     /**
      * Determines if the public key algorithm is supported.
      *
-     * @param selectedAlias The selected alias.
+     * @param publicKey The public key of the selected alias.
      * @return True if the selected alias is supported. False, if not.
      */
-    public boolean isKeySupported(String selectedAlias) {
-        PublicKey publicKey;
-        try {
-            Certificate cert = kseFrame.getActiveKeyStore().getCertificate(selectedAlias);
-            publicKey = cert.getPublicKey();
-        } catch (KeyStoreException e) {
-            // Not possible to sign if there is a keystore exception.
-            return false;
-        }
-
+    public boolean isKeySupported(PublicKey publicKey) {
         tooltip = null;
         boolean isSupported = KeyPairType.RSA.jce().equals(publicKey.getAlgorithm());
         if (!isSupported) {

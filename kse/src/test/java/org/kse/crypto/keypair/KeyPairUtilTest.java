@@ -288,6 +288,44 @@ public class KeyPairUtilTest extends CryptoTestsBase {
     }
 
     @ParameterizedTest
+    @MethodSource("mlkemVariants")
+    void shouldGenerateAndValidateMLKEM(KeyPairType keyPairType) throws Exception {
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, KSE.BC);
+        assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), privKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), privKeyInfo.getSize());
+        assertEquals("-", privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), pubKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), pubKeyInfo.getSize());
+        assertEquals("-", pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(keyPair.getPrivate()));
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(keyPair.getPublic()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "SUN" }) // SunJCE works when using Java 25
+    void shouldThrowOnWrongProviderForMLKEM(String providerName) {
+        Provider provider = Security.getProvider(providerName);
+        assumeTrue(provider != null, "Provider " + providerName + " not available");
+
+        assertThrows(
+                CryptoException.class,
+                () -> KeyPairUtil.generateKeyPair(KeyPairType.MLKEM512, provider)
+        );
+    }
+
+    private static Set<KeyPairType> mlkemVariants() {
+        return KeyPairType.MLKEM_TYPES_SET;
+    }
+
+    @ParameterizedTest
     @MethodSource("slhDsaVariants")
     void shouldGenerateAndValidateSlhDsa(KeyPairType keyPairType) throws Exception {
         KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, KSE.BC);
