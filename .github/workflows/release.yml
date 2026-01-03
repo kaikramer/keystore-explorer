@@ -195,7 +195,7 @@ jobs:
           echo "Contents of current directory:"
           ls -Rla
       - name: Create a release
-        uses: softprops/action-gh-release@v2.4.2
+        uses: softprops/action-gh-release@v2.3.2
         with:
           draft: true
           name: "KSE Release ${{ github.ref_name }}"
