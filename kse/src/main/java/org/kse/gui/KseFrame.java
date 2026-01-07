@@ -2457,11 +2457,12 @@ public final class KseFrame implements StatusBar {
                 (String) unlockKeyAction.getValue(Action.LONG_DESCRIPTION), this);
 
         jpmMultiEntrySel = new JPopupMenu();
+        jpmMultiEntrySel.add(jmiMultiEntryDetails);
+        jpmMultiEntrySel.addSeparator();
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);
         jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
         jpmMultiEntrySel.addSeparator();
-        jpmMultiEntrySel.add(jmiMultiEntryDetails);
         jpmMultiEntrySel.add(jmiMultiEntryExport);
         jpmMultiEntrySel.add(jmiMultiEntryCompare);
         jpmMultiEntrySel.addSeparator();
@@ -2589,6 +2590,7 @@ public final class KseFrame implements StatusBar {
 
                 selectedCertificatesChainDetailsAction.setEnabled(hasCertEntry);
                 exportSelectedCertificatesAction.setEnabled(hasCertEntry);
+                compareCertificateAction.setEnabled(hasCertEntry);
                 unlockKeyAction.setEnabled(hasKeyEntry);
 
                 jpmMultiEntrySel.show(jtKeyStore, x, y);
