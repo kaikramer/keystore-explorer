@@ -389,6 +389,14 @@ public class DPreferences extends JEscDialog {
         return ((Number) panelUserInterface.getJspAutoUpdateCheckInterval().getValue()).intValue();
     }
 
+    public boolean isAutomaticReloadEnabled() {
+        return panelUserInterface.getJcbAutomaticReload().isSelected();
+    }
+
+    public boolean isSilentReloadEnabled() {
+        return panelUserInterface.getJcbSilentlyReload().isSelected();
+    }
+
     /**
      * Read the new default DN (RDNs can be empty here)
      *

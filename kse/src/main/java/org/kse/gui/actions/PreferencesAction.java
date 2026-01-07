@@ -107,6 +107,8 @@ public class PreferencesAction extends ExitAction {
         preferences.getAutoUpdateCheckSettings().setCheckInterval(dPreferences.getAutoUpdateChecksInterval());
         preferences.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
         preferences.setSerialNumberLengthInBytes(dPreferences.getSerialNumberLengthInBytes());
+        preferences.setAutomaticallyReload(dPreferences.isAutomaticReloadEnabled());
+        preferences.setSilentlyReload(dPreferences.isSilentReloadEnabled());
 
         preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
         Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());

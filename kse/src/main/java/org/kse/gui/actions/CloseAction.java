@@ -29,6 +29,7 @@ import javax.swing.KeyStroke;
 import org.kse.gui.KseFrame;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.io.AutoReloadWatcher;
 
 /**
  * Action to close the active KeyStore.
@@ -101,6 +102,9 @@ public class CloseAction extends SaveAction {
             }
         }
 
+        if (history.getFile() != null) {
+            AutoReloadWatcher.INSTANCE.unregister(history);
+        }
         kseFrame.removeKeyStore(currentState.getKeyStore());
         kseFrame.updateControls(true);
 

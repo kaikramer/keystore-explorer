@@ -25,6 +25,7 @@ import java.security.Provider;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.io.AutoReloadWatcher;
 
 /**
  * Undo/redo history for a KeyStore.
@@ -36,6 +37,8 @@ public class KeyStoreHistory {
     private File file;
     private String name;
     private Provider explicitProvider;
+    private boolean isExternallyModified;
+    private boolean suppressWatcherEvents;
 
     /**
      * Create a new history for an unsaved KeyStore.
@@ -74,6 +77,7 @@ public class KeyStoreHistory {
         initialState = new KeyStoreState(this, keyStore, password);
         currentState = initialState;
         savedState = initialState;
+        AutoReloadWatcher.INSTANCE.register(this);
     }
 
     /**
@@ -112,10 +116,17 @@ public class KeyStoreHistory {
      * @param file The KeyStore save file
      */
     public void setFile(File file) {
+        // A new file is being set so unregister the previous one.
+        if (this.file != null) {
+            AutoReloadWatcher.INSTANCE.unregister(this);
+        }
+
         this.file = file;
 
         // Update name
         this.name = file.getName();
+
+        AutoReloadWatcher.INSTANCE.register(this);
     }
 
     /**
@@ -162,6 +173,22 @@ public class KeyStoreHistory {
      */
     public Provider getExplicitProvider() {
         return explicitProvider;
+    }
+
+    public void setExternallyModified(boolean isExternallyModified) {
+        this.isExternallyModified = isExternallyModified;
+    }
+
+    public boolean isExternallyModified() {
+        return isExternallyModified;
+    }
+
+    public void setSuppressWatcherEvents(boolean b) {
+        this.suppressWatcherEvents = b;
+    }
+
+    public boolean isSuppressWatcherEvents() {
+        return suppressWatcherEvents;
     }
 
     @Override

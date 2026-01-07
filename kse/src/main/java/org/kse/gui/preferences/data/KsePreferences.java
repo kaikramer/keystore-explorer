@@ -82,6 +82,8 @@ public class KsePreferences {
     // KeyPairType, but it does not work at runtime due to type erasure since the hashCodes
     // don't match. Use String since it matches jackson-jr and is convenient.
     private Map<String, SignatureType> signatureTypes = new HashMap<>();
+    private boolean automaticallyReload = false;
+    private boolean silentlyReload = false;
 
     // auto-generated getters/setters
 
@@ -383,5 +385,21 @@ public class KsePreferences {
 
     public void setPasswordManagerSettings(PasswordManagerSettings passwordManagerSettings) {
         this.passwordManagerSettings = passwordManagerSettings;
+    }
+
+    public void setAutomaticallyReload(boolean automaticallyReload) {
+        this.automaticallyReload = automaticallyReload;
+    }
+
+    public boolean isAutomaticallyReload() {
+        return automaticallyReload;
+    }
+
+    public void setSilentlyReload(boolean silentlyReload) {
+        this.silentlyReload = silentlyReload;
+    }
+
+    public boolean isSilentlyReload() {
+        return silentlyReload;
     }
 }

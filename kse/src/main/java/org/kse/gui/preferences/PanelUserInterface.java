@@ -64,6 +64,8 @@ class PanelUserInterface {
     private JComboBox<Pkcs12EncryptionSetting> jcbPkcs12Encryption;
     private JComboBox<RngTypeSetting> jcbRngType;
     private JSpinner jspSnRandomBytes;
+    private JCheckBox jcbEnableAutomaticReload;
+    private JCheckBox jcbEnableSilentReload;
 
     private JCheckBox jcbEnableAutoUpdateChecks;
     private JSpinner jspAutoUpdateCheckInterval;
@@ -165,6 +167,15 @@ class PanelUserInterface {
         jspSnRandomBytes.setToolTipText(res.getString("DPreferences.jlSnRandomBytes.tooltip"));
         JLabel jlSnRandomBytesPostfix = new JLabel(res.getString("DPreferences.jlSnRandomBytesPostfix.text"));
 
+        JLabel jlAutoReload = new JLabel(res.getString("DPreferences.jlAutoReload.text"));
+        jcbEnableAutomaticReload = new JCheckBox(res.getString("DPreferences.jcbEnableAutomaticReload.text"));
+        jcbEnableAutomaticReload.setToolTipText(res.getString("DPreferences.jcbEnableAutomaticReload.tooltip"));
+        jcbEnableSilentReload = new JCheckBox(res.getString("DPreferences.jcbEnableSilentReload.text"));
+        jcbEnableSilentReload.setToolTipText(res.getString("DPreferences.jcbEnableSilentReload.tooltip"));
+        jcbEnableAutomaticReload.setSelected(preferences.isAutomaticallyReload());
+        jcbEnableSilentReload.setEnabled(jcbEnableAutomaticReload.isSelected());
+        jcbEnableSilentReload.setSelected(preferences.isSilentlyReload());
+
         // layout
         JPanel jpUI = new JPanel();
         jpUI.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
@@ -191,7 +202,10 @@ class PanelUserInterface {
         jpUI.add(jcbRngType, "gapx indent, spanx, wrap unrel");
         MiGUtil.addSeparator(jpUI, jlSnRandomBytes.getText());
         jpUI.add(jspSnRandomBytes, "gapx indent, split 2");
-        jpUI.add(jlSnRandomBytesPostfix, "");
+        jpUI.add(jlSnRandomBytesPostfix, "wrap");
+        MiGUtil.addSeparator(jpUI, jlAutoReload.getText());
+        jpUI.add(jcbEnableAutomaticReload, "gapx indent, wrap");
+        jpUI.add(jcbEnableSilentReload, "gapx indent, wrap");
 
         jcbEnableAutoUpdateChecks
                 .addItemListener(evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
@@ -209,6 +223,10 @@ class PanelUserInterface {
                     .setEnabled(jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
             jsMinimumPasswordQuality
                     .setEnabled(jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
+        });
+
+        jcbEnableAutomaticReload.addItemListener(evt -> {
+            jcbEnableSilentReload.setEnabled(jcbEnableAutomaticReload.isSelected());
         });
 
         return jpUI;
@@ -309,5 +327,13 @@ class PanelUserInterface {
 
     JSpinner getJspAutoUpdateCheckInterval() {
         return jspAutoUpdateCheckInterval;
+    }
+
+    public JCheckBox getJcbAutomaticReload() {
+        return jcbEnableAutomaticReload;
+    }
+
+    public JCheckBox getJcbSilentlyReload() {
+        return jcbEnableSilentReload;
     }
 }

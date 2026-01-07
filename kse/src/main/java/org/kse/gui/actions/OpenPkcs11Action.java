@@ -19,21 +19,18 @@
  */
 package org.kse.gui.actions;
 
-import static org.kse.crypto.keystore.KeyStoreType.PKCS11;
-
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.security.AuthProvider;
-import java.security.KeyStore;
 import java.security.Provider;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DOpenPkcs11KeyStore;
-import org.kse.gui.dialogs.PasswordCallbackHandler;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 
@@ -78,19 +75,13 @@ public class OpenPkcs11Action extends OpenAction {
                 return;
             }
 
-            KeyStore keyStore = KeyStore.getInstance(PKCS11.jce(), selectedProvider);
+            KseKeyStore keyStore = KeyStoreUtil.loadPkcs11Store(frame, selectedProvider);
 
-            // register password handler
-            AuthProvider authProvider = (AuthProvider) selectedProvider;
-            authProvider.setCallbackHandler(new PasswordCallbackHandler(frame));
-
-            keyStore.load(null, null);
-
-            var history = new KeyStoreHistory(new KseKeyStore(keyStore), selectedProvider.getName(), null, selectedProvider);
+            var history = new KeyStoreHistory(keyStore, selectedProvider.getName(), null, selectedProvider);
 
             kseFrame.addKeyStoreHistory(history);
 
-        } catch (Exception ex) {
+        } catch (CryptoException ex) {
             DError.displayError(frame, ex);
         }
     }

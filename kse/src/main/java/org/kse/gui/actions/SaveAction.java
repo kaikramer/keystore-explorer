@@ -103,6 +103,7 @@ public class SaveAction extends SaveAsAction {
 
             saveInPasswordManager(currentState, saveFile, password, frame);
 
+            history.setSuppressWatcherEvents(true);
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 
             currentState.setPassword(password);
@@ -119,6 +120,8 @@ public class SaveAction extends SaveAsAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
             return false;
+        } finally {
+            history.setSuppressWatcherEvents(false);
         }
     }
 }

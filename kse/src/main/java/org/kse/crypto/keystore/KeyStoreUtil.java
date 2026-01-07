@@ -24,6 +24,7 @@ import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static org.kse.crypto.SecurityProvider.MS_CAPI;
 import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keystore.KeyStoreType.KEYCHAIN;
+import static org.kse.crypto.keystore.KeyStoreType.PKCS11;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,11 +34,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
+import java.security.AuthProvider;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Provider;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -46,9 +49,12 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
+import javax.swing.JFrame;
+
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.gui.dialogs.PasswordCallbackHandler;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.preferences.PreferencesManager;
 
@@ -257,6 +263,38 @@ public final class KeyStoreUtil {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"), msCapiStoreType.jce()),
                     ex);
+        }
+
+        return keyStore;
+    }
+
+    /**
+     * Load a PKCS #11 provider as a KeyStore. The KeyStore is not file based and
+     * therefore does not need to be saved.
+     *
+     * @param frame The JFrame to use for managing the password callback handler.
+     * @param provider The PKCS #11 provider to open.
+     * @return The PKCS #11 provider as a KeyStore
+     * @throws CryptoException Problem encountered loading the KeyStore
+     */
+    public static KseKeyStore loadPkcs11Store(JFrame frame, Provider provider) throws CryptoException {
+        KseKeyStore keyStore;
+        try {
+            keyStore = new KseKeyStore(KeyStore.getInstance(PKCS11.jce(), provider));
+
+            // register password handler
+            AuthProvider authProvider = (AuthProvider) provider;
+            authProvider.setCallbackHandler(new PasswordCallbackHandler(frame));
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"), PKCS11.jce()), ex);
+        }
+
+        try {
+            keyStore.load(null, null);
+        } catch (NoSuchAlgorithmException | CertificateException | IOException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"), PKCS11.jce()), ex);
         }
 
         return keyStore;
