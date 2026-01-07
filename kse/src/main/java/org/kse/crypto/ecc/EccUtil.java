@@ -51,6 +51,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.KSE;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -339,5 +340,28 @@ public final class EccUtil {
             // ignore -- not a JDK EdDSA key
         }
         return null;
+    }
+
+    /**
+     * Gets the bit size of a named curve.
+     *
+     * @param curveName Name of the curve
+     * @return The bit size of the curve, or -1 if the curve is not found
+     */
+    public static int getCurveSize(String curveName) {
+        if (curveName == null || curveName.isEmpty()) {
+            return -1;
+        }
+        try {
+            org.bouncycastle.jce.spec.ECParameterSpec ecSpec = null;
+            ecSpec = ECNamedCurveTable.getParameterSpec(curveName);
+            if (ecSpec != null) {
+                return ecSpec.getN().bitLength();
+            }
+        } catch (Exception e) {
+            // Curve not found or error getting parameters
+        }
+
+        return -1;
     }
 }

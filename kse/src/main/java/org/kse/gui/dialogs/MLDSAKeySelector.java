@@ -77,12 +77,14 @@ public class MLDSAKeySelector implements Serializable {
                 jRadioButton, RESOURCE_BUNDLE.getString("MLDSAKeySelector.jRadioButton.mnemonic").charAt(0));
 
         jLabelKeyType = new JLabel(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jLabelKeyType.tooltip"));
-
+        jLabelKeyType.setDisplayedMnemonic(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jLabelKeyType.mnemonic").charAt(0));
+        
         jComboBoxKeyType = new JComboBox<>();
         jComboBoxKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jComboBoxKeyType.tooltip"));
+        jLabelKeyType.setLabelFor(jComboBoxKeyType);
 
         String[] names = KeyPairType.MLDSA_TYPES_SET.stream()
-                .map(KeyPairType::jce)
+                .map(type -> DialogHelper.formatNameWithSize(type.jce(), type.maxSize()))
                 .toArray(String[]::new);
 
         jComboBoxKeyType.setModel(new DefaultComboBoxModel<>(names));
@@ -122,7 +124,7 @@ public class MLDSAKeySelector implements Serializable {
      */
     public void setPreferredParameterSet(KeyPairType keyType) {
         if (KeyPairType.isMlDSA(keyType)) {
-            jComboBoxKeyType.setSelectedItem(keyType.jce());
+            jComboBoxKeyType.setSelectedItem(DialogHelper.formatNameWithSize(keyType.jce(), keyType.maxSize()));
         }
     }
 
@@ -159,7 +161,8 @@ public class MLDSAKeySelector implements Serializable {
      * @return The KeyPairType of the ML-DSA parameter set.
      */
     public KeyPairType getKeyPairType() {
-        return KeyPairType.resolveJce((String) jComboBoxKeyType.getSelectedItem());
+        return KeyPairType
+                .resolveJce(DialogHelper.extractNameFromFormatted((String) jComboBoxKeyType.getSelectedItem()));
     }
 
 }

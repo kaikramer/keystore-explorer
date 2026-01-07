@@ -254,4 +254,36 @@ public class DialogHelper {
             }
         }
     }
+
+    /**
+     * Formats a name with its bit size for display.
+     *
+     * @param name The name
+     * @param size The bit size
+     * @return The formatted name with bit size (e.g., "secp256r1 (256 bits)")
+     */
+    public static String formatNameWithSize(String name, int size) {
+        if (size > 0) {
+            return name + " (" + size + " bits)";
+        }
+        return name;
+    }
+
+    /**
+     * Extracts the actual name from a formatted display string.
+     *
+     * @param formattedName The formatted name (e.g., "secp256r1 (256 bits)")
+     * @return The actual name without the bit size
+     */
+    public static String extractNameFromFormatted(String formattedName) {
+        if (formattedName == null) {
+            return null;
+        }
+        // Extract the name before the " (" if present
+        int index = formattedName.indexOf(" (");
+        if (index > 0) {
+            return formattedName.substring(0, index);
+        }
+        return formattedName;
+    }
 }

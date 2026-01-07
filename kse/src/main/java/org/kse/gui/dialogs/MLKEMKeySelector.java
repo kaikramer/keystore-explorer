@@ -81,12 +81,14 @@ public class MLKEMKeySelector implements Serializable {
                 jRadioButton, RESOURCE_BUNDLE.getString("MLKEMKeySelector.jRadioButton.mnemonic").charAt(0));
 
         jLabelKeyType = new JLabel(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jLabelKeyType.tooltip"));
+        jLabelKeyType.setDisplayedMnemonic(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jLabelKeyType.mnemonic").charAt(0));
 
         jComboBoxKeyType = new JComboBox<>();
         jComboBoxKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLKEMKeySelector.jComboBoxKeyType.tooltip"));
+        jLabelKeyType.setLabelFor(jComboBoxKeyType);
 
         String[] names = KeyPairType.MLKEM_TYPES_SET.stream()
-                .map(KeyPairType::jce)
+                .map(type -> DialogHelper.formatNameWithSize(type.jce(), type.maxSize()))
                 .toArray(String[]::new);
 
         jComboBoxKeyType.setModel(new DefaultComboBoxModel<>(names));
@@ -126,7 +128,7 @@ public class MLKEMKeySelector implements Serializable {
      */
     public void setPreferredParameterSet(KeyPairType keyType) {
         if (KeyPairType.isMlKEM(keyType)) {
-            jComboBoxKeyType.setSelectedItem(keyType.jce());
+            jComboBoxKeyType.setSelectedItem(DialogHelper.formatNameWithSize(keyType.jce(), keyType.maxSize()));
         }
     }
 
@@ -163,7 +165,8 @@ public class MLKEMKeySelector implements Serializable {
      * @return The KeyPairType of the ML-KEM parameter set.
      */
     public KeyPairType getKeyPairType() {
-        return KeyPairType.resolveJce((String) jComboBoxKeyType.getSelectedItem());
+        return KeyPairType
+                .resolveJce(DialogHelper.extractNameFromFormatted((String) jComboBoxKeyType.getSelectedItem()));
     }
 
 }
