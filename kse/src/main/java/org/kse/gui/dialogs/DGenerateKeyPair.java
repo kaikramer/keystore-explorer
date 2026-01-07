@@ -181,11 +181,11 @@ public class DGenerateKeyPair extends JEscDialog {
         jlECCurveSet = new JLabel(res.getString("DGenerateKeyPair.jlECCurveSet.text"));
         jlECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jlECCurveSet.tooltip"));
         jlECCurveSet.setDisplayedMnemonic(res.getString("DGenerateKeyPair.jlECCurveSet.mnemonic").charAt(0));
-        
+
         jcbECCurveSet = new JComboBox<>();
         jcbECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurveSet.tooltip"));
         jlECCurveSet.setLabelFor(jcbECCurveSet);
-        
+
         jlECCurve = new JLabel(res.getString("DGenerateKeyPair.jlECCurve.text"));
         jlECCurve.setToolTipText(res.getString("DGenerateKeyPair.jlECCurve.tooltip"));
         jlECCurve.setDisplayedMnemonic(res.getString("DGenerateKeyPair.jlECCurve.mnemonic").charAt(0));
@@ -333,7 +333,8 @@ public class DGenerateKeyPair extends JEscDialog {
         } else if (keyPairType == KeyPairType.DSA) {
             jrbDSA.setSelected(true);
             jtpAlgorithms.setSelectedIndex(0);
-        } else if (keyPairType == KeyPairType.EC) {
+        } else if (keyPairType == KeyPairType.EC || keyPairType == KeyPairType.ECGOST3410
+                || keyPairType == KeyPairType.ECGOST3410_2012) {
             jrbEC.setSelected(true);
             jtpAlgorithms.setSelectedIndex(1);
         } else if (keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
