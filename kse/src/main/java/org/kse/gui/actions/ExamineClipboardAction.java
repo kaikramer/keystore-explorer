@@ -90,7 +90,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     public ExamineClipboardAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('L', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('B', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("ExamineClipboardAction.statusbar"));
         putValue(NAME, res.getString("ExamineClipboardAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ExamineClipboardAction.tooltip"));
