@@ -234,30 +234,44 @@ tasks.register('prepareExe') {
 			  END
 			END
 		"""
-		providers.exec { spec ->
+		def result = providers.exec { spec ->
 			spec.workingDir = projectDir
 			spec.commandLine = ["${rh}",
-					'-open', "${launcherOutDir}\\kse.rc",
-					'-save', "${launcherOutDir}\\kse.res",
-					'-action', 'compile']
+								'-open', "${launcherOutDir}\\kse.rc",
+								'-save', "${launcherOutDir}\\kse.res",
+								'-action', 'compile']
 		}
-		providers.exec { spec ->
-			spec.workingDir = projectDir
-			spec.commandLine = ["${rh}",
-					'-open', "${launcherOutDir}\\${appExe}",
-					'-save', "${launcherOutDir}\\${appExe}",
-					'-action', 'addoverwrite',
-					'-mask', ' VersionInfo,,',
-					'-res', "${launcherOutDir}\\kse.res"]
+		println "RH1 finished with return code: ${result.result.get().exitValue}"
+		if (result.standardError.asText.get()) {
+			println "RH1 errors: ${result.standardError.asText.get()}"
 		}
-		providers.exec { spec ->
+
+		result = providers.exec { spec ->
 			spec.workingDir = projectDir
 			spec.commandLine = ["${rh}",
-					'-open', "${launcherOutDir}\\${appExe}",
-					'-save', "${launcherOutDir}\\${appExe}",
-					'-action', 'addoverwrite',
-					'-mask', 'ICONGROUP,MAINICON,0',
-					'-res', "$kseIco"]
+								'-open', "${launcherOutDir}\\${appExe}",
+								'-save', "${launcherOutDir}\\${appExe}",
+								'-action', 'addoverwrite',
+								'-mask', ' VersionInfo,,',
+								'-res', "${launcherOutDir}\\kse.res"]
+		}
+		println "RH2 finished with return code: ${result.result.get().exitValue}"
+		if (result.standardError.asText.get()) {
+			println "RH2 errors: ${result.standardError.asText.get()}"
+		}
+
+		result = providers.exec { spec ->
+			spec.workingDir = projectDir
+			spec.commandLine = ["${rh}",
+								'-open', "${launcherOutDir}\\${appExe}",
+								'-save', "${launcherOutDir}\\${appExe}",
+								'-action', 'addoverwrite',
+								'-mask', 'ICONGROUP,MAINICON,0',
+								'-res', "$kseIco"]
+		}
+		println "RH3 finished with return code: ${result.result.get().exitValue}"
+		if (result.standardError.asText.get()) {
+			println "RH3 errors: ${result.standardError.asText.get()}"
 		}
 	}
 }
