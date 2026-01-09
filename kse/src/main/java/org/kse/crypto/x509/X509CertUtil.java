@@ -663,12 +663,12 @@ public final class X509CertUtil {
     public static boolean verifyCertificate(X509Certificate signedCert, X509Certificate signingCert)
             throws CryptoException {
         try {
-            signedCert.verify(signingCert.getPublicKey());
+            signedCert.verify(signingCert.getPublicKey(), KSE.BC);
             return true;
         } catch (InvalidKeyException | SignatureException ex) {
             // Verification failed
             return false;
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | CertificateException ex) {
+        } catch (NoSuchAlgorithmException | CertificateException ex) {
             // Problem verifying
             throw new CryptoException(res.getString("NoVerifyCertificate.exception.message"), ex);
         }
