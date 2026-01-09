@@ -76,13 +76,14 @@ public class SlhDsaKeySelector implements Serializable {
                 jrbKeyType, RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jrbKeyType.mnemonic").charAt(0));
 
         jlKeyType = new JLabel(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jlKeyType.tooltip"));
+        jlKeyType.setDisplayedMnemonic(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jlKeyType.mnemonic").charAt(0));
 
         jcbParameterSet = new JComboBox<>();
         jcbParameterSet.setToolTipText(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jcbParameterSet.tooltip"));
-
+        jlKeyType.setLabelFor(jcbParameterSet);
 
         String[] names = KeyPairType.SLHDSA_TYPES_SET.stream()
-                .map(KeyPairType::jce)
+                .map(type -> DialogHelper.formatNameWithSize(type.jce(), type.maxSize()))
                 .toArray(String[]::new);
 
         jcbParameterSet.setModel(new DefaultComboBoxModel<>(names));
@@ -122,7 +123,7 @@ public class SlhDsaKeySelector implements Serializable {
      */
     public void setPreferredParameterSet(KeyPairType keyType) {
         if (KeyPairType.isSlhDsa(keyType)) {
-            jcbParameterSet.setSelectedItem(keyType.jce());
+            jcbParameterSet.setSelectedItem(DialogHelper.formatNameWithSize(keyType.jce(), keyType.maxSize()));
         }
     }
 
@@ -159,7 +160,8 @@ public class SlhDsaKeySelector implements Serializable {
      * @return The KeyPairType of the SLH-DSA parameter set.
      */
     public KeyPairType getKeyPairType() {
-        return KeyPairType.resolveJce((String) jcbParameterSet.getSelectedItem());
+        return KeyPairType
+                .resolveJce(DialogHelper.extractNameFromFormatted((String) jcbParameterSet.getSelectedItem()));
     }
 
 }
