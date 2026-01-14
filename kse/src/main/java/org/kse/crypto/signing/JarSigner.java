@@ -65,7 +65,6 @@ import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
@@ -144,6 +143,7 @@ public class JarSigner {
      * @param signer           Signer
      * @param digestType       Digest type
      * @param tsaUrl           TSA URL
+     * @param provider         The security provider to use.
      * @throws IOException     If an I/O problem occurs while signing the JAR file
      * @throws CryptoException If a crypto problem occurs while signing the JAR file
      */
@@ -173,6 +173,7 @@ public class JarSigner {
      * @param signer           Signer
      * @param digestType       Digest type
      * @param tsaUrl           TSA URL
+     * @param provider         The security provider to use.
      * @throws IOException     If an I/O problem occurs while signing the JAR file
      * @throws CryptoException If a crypto problem occurs while signing the JAR file
      */
@@ -684,11 +685,14 @@ public class JarSigner {
 
             Collections.addAll(certList, certificateChain);
 
-            DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(KSE.BC).build();
-            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce()).setSecureRandom(RNG.newInstanceForLongLivedSecrets());
-            if (provider != null) {
-                csb.setProvider(provider);
+            JcaDigestCalculatorProviderBuilder digCalcProv = new JcaDigestCalculatorProviderBuilder();
+            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
+                    .setSecureRandom(RNG.newInstanceForLongLivedSecrets());
+            if (provider == null) {
+                provider = KSE.BC;
             }
+            digCalcProv.setProvider(provider);
+            csb.setProvider(provider);
 
             // Workaround for display issue in verify function of jarsigner for Java <= 15
             // see https://github.com/kaikramer/keystore-explorer/issues/293
@@ -707,7 +711,7 @@ public class JarSigner {
                            super.findEncryptionAlgorithm(signatureAlgorithm);
                 }
             };
-            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv,
+            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv.build(),
                                                                                                  sigEncAlgFinder);
 
             // remove cmsAlgorithmProtect for compatibility reasons
