@@ -34,7 +34,6 @@ import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertPath;
@@ -97,12 +96,20 @@ import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.rng.RNG;
 
+/**
+ * Action to verify an X.509 certificate.
+ */
 public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private static final long serialVersionUID = 1L;
     private X509Certificate certificateEval;
     private X509Certificate[] keyCertChain;
 
+    /**
+     * Typical action constructor for use with menu items and toolbar buttons.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
     public VerifyCertificateAction(KseFrame kseFrame) {
         super(kseFrame);
         putValue(LONG_DESCRIPTION, res.getString("VerifyCertificateAction.statusbar"));
@@ -112,6 +119,13 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
                 Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifycert.png"))));
     }
 
+    /**
+     * Constructor that initializes the action with specific certificate.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     * @param cert The certificate to verify.
+     * @param keyCertChain The certificate chain of the certificate to verify.
+     */
     public VerifyCertificateAction(KseFrame kseFrame, X509Certificate cert, X509Certificate[] keyCertChain) {
         super(kseFrame);
         this.certificateEval = cert;
@@ -205,10 +219,10 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
                     String tempAlias = enumeration.nextElement();
                     X509Certificate cert = (X509Certificate) trustStore.getCertificate(tempAlias);
                     try {
-                        certificateEval.verify(cert.getPublicKey());
+                        certificateEval.verify(cert.getPublicKey(), KSE.BC);
                         issuer = cert;
                         break;
-                    } catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
+                    } catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | SignatureException e) {
                         // ignore
                     }
                 }

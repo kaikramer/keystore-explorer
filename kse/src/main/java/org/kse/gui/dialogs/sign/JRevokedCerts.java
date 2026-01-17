@@ -67,6 +67,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
@@ -231,7 +232,7 @@ public class JRevokedCerts extends JPanel {
     private void insertCertificateTable(X509Certificate cerRev) {
 
         try {
-            cerRev.verify(caCert.getPublicKey());
+            cerRev.verify(caCert.getPublicKey(), KSE.BC);
             if (mapRevokedEntry.containsKey(cerRev.getSerialNumber())) {
                 JOptionPane.showMessageDialog(parent, res.getString("JRevokedCerts.certWasRevoked.message"),
                                               res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
@@ -248,7 +249,7 @@ public class JRevokedCerts extends JPanel {
                     revokedCertsTableModel.load(mapRevokedEntry);
                 }
             }
-        } catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
+        } catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | SignatureException e) {
             JOptionPane.showMessageDialog(parent, res.getString("JRevokedCerts.certNotSignedCA.message"),
                                           res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
         }

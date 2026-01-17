@@ -56,8 +56,10 @@ import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
+import org.kse.utilities.rng.RNG;
 
 /**
  * Class provides functionality to sign files using PKCS #7 Cryptographic
@@ -90,12 +92,14 @@ public class CmsSigner {
         try {
             CMSTypedData msg = new CMSProcessableFile(inputFile);
 
-            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(signatureType.jce());
+            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(signatureType.jce())
+                    .setSecureRandom(RNG.newInstanceForLongLivedSecrets());
             JcaDigestCalculatorProviderBuilder digestCalculatorProviderBuilder = new JcaDigestCalculatorProviderBuilder();
-            if (provider != null) {
-                contentSignerBuilder.setProvider(provider);
-                digestCalculatorProviderBuilder.setProvider(provider);
+            if (provider == null) {
+                provider = KSE.BC;
             }
+            contentSignerBuilder.setProvider(provider);
+            digestCalculatorProviderBuilder.setProvider(provider);
 
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(digestCalculatorProviderBuilder.build())
@@ -135,12 +139,14 @@ public class CmsSigner {
             X509Certificate[] certificateChain, boolean detachedSignature, SignatureType signatureType, String tsaUrl,
             Provider provider) throws CryptoException {
         try {
-            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(signatureType.jce());
+            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(signatureType.jce())
+                    .setSecureRandom(RNG.newInstanceForLongLivedSecrets());
             JcaDigestCalculatorProviderBuilder digestCalculatorProviderBuilder = new JcaDigestCalculatorProviderBuilder();
-            if (provider != null) {
-                contentSignerBuilder.setProvider(provider);
-                digestCalculatorProviderBuilder.setProvider(provider);
+            if (provider == null) {
+                provider = KSE.BC;
             }
+            contentSignerBuilder.setProvider(provider);
+            digestCalculatorProviderBuilder.setProvider(provider);
 
             CMSSignedDataGenerator counterSignerGen = new CMSSignedDataGenerator();
             counterSignerGen.addSignerInfoGenerator(

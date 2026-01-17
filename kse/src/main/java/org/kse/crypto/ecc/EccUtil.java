@@ -62,7 +62,6 @@ import org.kse.crypto.keystore.KeyStoreType;
 public final class EccUtil {
 
     private static final Set<String> availableSunCurves = new HashSet<>();
-    private static final Set<String> availableBcBrainpoolCurves = new HashSet<>();
 
     private static final String PROVIDER_SUPPORTED_CURVES_KEY = "AlgorithmParameters.EC SupportedCurves";
 
@@ -71,12 +70,6 @@ public final class EccUtil {
         Provider sunECProvider = Security.getProvider("SunEC");
         if (sunECProvider != null) {
             availableSunCurves.addAll(Arrays.asList(sunECProvider.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("\\|")));
-        }
-        String[] bcCurves = KSE.BC.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("[|,\\[\\]]");
-        for (String bcCurve : bcCurves) {
-            if (TeleTrusTNamedCurves.getByName(bcCurve) != null) {
-                availableBcBrainpoolCurves.add(bcCurve);
-            }
         }
     }
 
@@ -191,28 +184,24 @@ public final class EccUtil {
     public static boolean isCurveAvailable(String curveName, KeyStoreType keyStoreType) {
 
         // BC provides all curves
-        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName) ||
-            EdDSACurves.ED448.jce().equalsIgnoreCase(curveName)) {
-            return true;
-        }
-
-        // ECGOST works with all key store types.
-        if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
+        // All KS types support EdDSA and all ECGOST curves
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || CurveSet.ED.getAllCurveNames().contains(curveName)
+                || CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
             return true;
         }
 
         // is curve among SunEC curves?
+        // Amazon Corretto enables more curves than other distributions
+        // of OpenJDK so this list changes depending on the JDK being used.
         for (String curve : availableSunCurves) {
             if (curve.contains(curveName)) {
                 return true;
             }
         }
 
-        // is Brainpool curve from BC?
-        for (String curve : availableBcBrainpoolCurves) {
-            if (curve.contains(curveName)) {
-                return true;
-            }
+        // JKS, JCEKS, and PKCS#12 key store types only support the "r1" Brainpool curves
+        if (CurveSet.TELETRUST.getAllCurveNames().contains(curveName) && curveName.endsWith("r1")) {
+            return true;
         }
 
         return false;
