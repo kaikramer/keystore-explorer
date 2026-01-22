@@ -19,7 +19,9 @@
  */
 package org.kse.gui.about;
 
-import java.awt.BorderLayout;
+import net.miginfocom.swing.MigLayout;
+
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -28,13 +30,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
@@ -51,8 +51,6 @@ public class DEnvironmentVariables extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
     private JButton jbOK;
-    private JPanel jpOK;
-    private JPanel jpEnvironmentVariablesTable;
     private JScrollPane jspEnvironmentVariablesTable;
     private JTable jtEnvironmentVariables;
 
@@ -104,22 +102,18 @@ public class DEnvironmentVariables extends JEscDialog {
         }
 
         jspEnvironmentVariablesTable = PlatformUtil.createScrollPane(jtEnvironmentVariables,
-                                                                     ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                                                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspEnvironmentVariablesTable.getViewport().setBackground(jtEnvironmentVariables.getBackground());
-
-        jpEnvironmentVariablesTable = new JPanel(new BorderLayout(10, 10));
-        jpEnvironmentVariablesTable.setPreferredSize(new Dimension(500, 300));
-        jpEnvironmentVariablesTable.add(jspEnvironmentVariablesTable, BorderLayout.CENTER);
-        jpEnvironmentVariablesTable.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jspEnvironmentVariablesTable.setPreferredSize(new Dimension(500, 300));
 
         jbOK = new JButton(res.getString("DEnvironmentVariables.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
-
-        getContentPane().add(jpEnvironmentVariablesTable, BorderLayout.CENTER);
-        getContentPane().add(jpOK, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspEnvironmentVariablesTable, "cell 0 0, grow, pushy");
+        pane.add(jbOK, "cell 0 1, align right, growx 0");
 
         setResizable(false);
 
