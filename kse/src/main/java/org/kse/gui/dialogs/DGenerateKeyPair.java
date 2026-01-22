@@ -96,8 +96,7 @@ public class DGenerateKeyPair extends JEscDialog {
     private SlhDsaKeySelector slhDsaKeySelector;
 
     private final KeyPairType keyPairType;
-    private final int keyPairSizeRSA;
-    private final int keyPairSizeDSA;
+    private final int keyPairSize;
     private final String keyPairCurveSet;
     private final String keyPairCurveName;
     private final KeyPairType mldsaParameterSet;
@@ -123,8 +122,7 @@ public class DGenerateKeyPair extends JEscDialog {
         super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
         this.keyPairType = defaults.getKeyPairType();
-        this.keyPairSizeRSA = defaults.getKeyPairSizeRSA();
-        this.keyPairSizeDSA = defaults.getKeyPairSizeDSA();
+        this.keyPairSize = defaults.getKeyPairSize();
         this.keyPairCurveSet = defaults.getEcCurveSet();
         this.keyPairCurveName = defaults.getEcCurveName();
         this.mldsaParameterSet = defaults.getMLDSAParameterSet();
@@ -218,7 +216,7 @@ public class DGenerateKeyPair extends JEscDialog {
         mlkemKeySelector = new MLKEMKeySelector(buttonGroup, !isSelfSigned);
         slhDsaKeySelector = new SlhDsaKeySelector(buttonGroup);
 
-        loadKeySizes(keyPairSizeRSA, keyPairSizeDSA);
+        loadKeySizes(keyPairSize);
         loadECNamedCurves(keyPairCurveSet, keyPairCurveName);
         mldsaKeySelector.setPreferredParameterSet(mldsaParameterSet);
         mlkemKeySelector.setPreferredParameterSet(mlkemParameterSet);
@@ -492,7 +490,7 @@ public class DGenerateKeyPair extends JEscDialog {
             int currentVal = ((Number) jspSizeManual.getValue()).intValue();
             int validatedVal = validateKeyPairSize(keyPairType, currentVal);
 
-            // Special case: if switching from 4096 (RSA) to DSA, default to 1024 as
+            // Special case: if switching from 4096 (RSA) to DSA, default to 2048 as
             // requested
             if (currentVal == 4096 && keyPairType == KeyPairType.DSA) {
                 validatedVal = 2048;
@@ -522,12 +520,16 @@ public class DGenerateKeyPair extends JEscDialog {
         slhDsaKeySelector.enableDisableElements();
     }
 
-    private void loadKeySizes(int keyPairSizeRSA, int keyPairSizeDSA) {
-        int keyPairSize = (keyPairType == KeyPairType.DSA) ? keyPairSizeDSA : keyPairSizeRSA;
-        keyPairSize = validateKeyPairSize(keyPairType, keyPairSize);
+    private void loadKeySizes(int keyPairSize) {
+        KeyPairType rsaDsaKeyPairType = KeyPairType.RSA;
+        if (jrbDSA.isSelected()) {
+            rsaDsaKeyPairType = KeyPairType.DSA;
+        }
 
-        jspSizeManual.setModel(new SpinnerNumberModel(keyPairSize, keyPairType.minSize(), keyPairType.maxSize(),
-                keyPairType.stepSize()));
+        keyPairSize = validateKeyPairSize(rsaDsaKeyPairType, keyPairSize);
+
+        jspSizeManual.setModel(new SpinnerNumberModel(keyPairSize, rsaDsaKeyPairType.minSize(), rsaDsaKeyPairType.maxSize(),
+                rsaDsaKeyPairType.stepSize()));
 
         if (keyPairSize == 2048) {
             jrbSize2048.setSelected(true);
@@ -589,16 +591,7 @@ public class DGenerateKeyPair extends JEscDialog {
      *
      * @return The key pair size
      */
-    public int getKeyPairSizeRSA() {
-        return ((Number) jspSizeManual.getValue()).intValue();
-    }
-
-    /**
-     * Get the key pair size chosen.
-     *
-     * @return The key pair size
-     */
-    public int getKeyPairSizeDSA() {
+    public int getKeyPairSize() {
         return ((Number) jspSizeManual.getValue()).intValue();
     }
 
@@ -705,8 +698,7 @@ public class DGenerateKeyPair extends JEscDialog {
     public static void main(String[] args) throws Exception {
         KeyGenerationSettings defaults = new KeyGenerationSettings();
         defaults.setKeyPairType(KeyPairType.RSA);
-        defaults.setKeyPairSizeRSA(2048);
-        defaults.setKeyPairSizeDSA(1024);
+        defaults.setKeyPairSize(2048);
         defaults.setEcCurveSet("");
         defaults.setEcCurveName("");
         DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.BKS, defaults, false);
