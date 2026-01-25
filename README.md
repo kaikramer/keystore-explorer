@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
 [![Packaging status](https://repology.org/badge/tiny-repos/keystore-explorer.svg)](https://repology.org/project/keystore-explorer/versions)
 [![Translation status](https://hosted.weblate.org/widgets/keystore-explorer/-/svg-badge.svg)](https://hosted.weblate.org/projects/keystore-explorer/)
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kaikramer/keystore-explorer)
 
 KeyStore Explorer is a free GUI replacement for the Java command-line utilities keytool and jarsigner.
 
