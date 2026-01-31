@@ -30,8 +30,7 @@ import org.kse.crypto.secretkey.SecretKeyType;
 public class KeyGenerationSettings {
 
     private KeyPairType keyPairType = KeyPairType.RSA;
-    private int keyPairSizeRSA = 2048;
-    private int keyPairSizeDSA = 1024;
+    private int keyPairSize = 2048;
     private String ecCurveSet = "";
     private String ecCurveName = "";
     private KeyPairType mlDSAParameterSet = KeyPairType.MLDSA44;
@@ -52,20 +51,21 @@ public class KeyGenerationSettings {
         this.keyPairType = keyPairType;
     }
 
-    public int getKeyPairSizeRSA() {
-        return keyPairSizeRSA;
+    // Keep the setter for migrating the renamed configuration setting
+    // to the new name. The getter so that the setting is saved using the
+    // new name. This setter should be removed in the next minor release
+    // after 5.7.0.
+    @Deprecated(since = "5.7.0", forRemoval = true)
+    public void setKeyPairSizeRSA(int keyPairSize) {
+        setKeyPairSize(keyPairSize);
     }
 
-    public void setKeyPairSizeRSA(int keyPairSizeRSA) {
-        this.keyPairSizeRSA = keyPairSizeRSA;
+    public int getKeyPairSize() {
+        return keyPairSize;
     }
 
-    public int getKeyPairSizeDSA() {
-        return keyPairSizeDSA;
-    }
-
-    public void setKeyPairSizeDSA(int keyPairSizeDSA) {
-        this.keyPairSizeDSA = keyPairSizeDSA;
+    public void setKeyPairSize(int keyPairSize) {
+        this.keyPairSize = keyPairSize;
     }
 
     public String getEcCurveSet() {

@@ -106,8 +106,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             // Restore preferences regarding key type and length (or EC curve)
             KeyGenerationSettings defaults = preferences.getKeyGenerationDefaults();
             KeyPairType keyPairType = defaults.getKeyPairType();
-            int keyPairSizeRSA = defaults.getKeyPairSizeRSA();
-            int keyPairSizeDSA = defaults.getKeyPairSizeDSA();
+            int keyPairSize = defaults.getKeyPairSize();
             String keyPairCurveSet = defaults.getEcCurveSet();
             String keyPairCurveName = defaults.getEcCurveName();
 
@@ -128,13 +127,11 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
             // update (saved) values from user selection
             keyPairType = dGenerateKeyPair.getKeyPairType();
-            keyPairSizeRSA = dGenerateKeyPair.getKeyPairSizeRSA();
-            keyPairSizeDSA = dGenerateKeyPair.getKeyPairSizeDSA();
+            keyPairSize = dGenerateKeyPair.getKeyPairSize();
             keyPairCurveSet = dGenerateKeyPair.getCurveSet();
             keyPairCurveName = dGenerateKeyPair.getCurveName();
             defaults.setKeyPairType(keyPairType);
-            defaults.setKeyPairSizeRSA(keyPairSizeRSA);
-            defaults.setKeyPairSizeDSA(keyPairSizeDSA);
+            defaults.setKeyPairSize(keyPairSize);
             defaults.setEcCurveSet(keyPairCurveSet);
             defaults.setEcCurveName(keyPairCurveName);
             defaults.setMLDSAParameterSet(keyPairType);
@@ -143,8 +140,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
             KeyPair keyPair = generateKeyPair(
                     keyPairType,
-                    keyPairSizeRSA,
-                    keyPairSizeDSA,
+                    keyPairSize,
                     keyPairCurveName,
                     provider
             );
@@ -232,16 +228,16 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         return alias;
     }
 
-    private KeyPair generateKeyPair(KeyPairType keyPairType, int keyPairSizeRSA, int keyPairSizeDSA, String curveName,
+    private KeyPair generateKeyPair(KeyPairType keyPairType, int keyPairSize, String curveName,
                                     Provider provider) {
         DGeneratingKeyPair dGeneratingKeyPair;
 
         switch (keyPairType) {
         case RSA:
-            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeRSA, provider);
+            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize, provider);
             break;
         case DSA:
-            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeDSA, provider);
+            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize, provider);
             break;
         case MLDSA44:
         case MLDSA65:
