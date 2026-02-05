@@ -19,12 +19,7 @@
  */
 package org.kse.gui.actions;
 
-import java.awt.Toolkit;
-import java.awt.event.InputEvent;
 import java.security.KeyStore;
-
-import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.MsCapiStoreType;
@@ -36,26 +31,17 @@ import org.kse.utilities.history.KeyStoreHistory;
  * Action to open the PKCS11 KeyStore. If it does not exist provide the
  * user with the option of creating it.
  */
-public class OpenMsCapiAction extends OpenAction {
+public abstract class OpenMsCapiAction extends OpenAction {
 
     private static final long serialVersionUID = -9068103518220241052L;
 
-    /**
-     * Construct action.
-     *
-     * @param kseFrame KeyStore Explorer frame
-     */
-    public OpenMsCapiAction(KseFrame kseFrame) {
-        super(kseFrame);
+    private MsCapiStoreType type;
+    private String tabTitleKey;
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('M',
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
-                                                         InputEvent.SHIFT_DOWN_MASK));
-        putValue(LONG_DESCRIPTION, res.getString("OpenMsCapiAction.statusbar"));
-        putValue(NAME, res.getString("OpenMsCapiAction.text"));
-        putValue(SHORT_DESCRIPTION, res.getString("OpenMsCapiAction.tooltip"));
-        putValue(SMALL_ICON, new ImageIcon(
-                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/openmscapi.png"))));
+    OpenMsCapiAction(KseFrame kseFrame, MsCapiStoreType type, String tabTitleKey) {
+        super(kseFrame);
+        this.type = type;
+        this.tabTitleKey = tabTitleKey;
     }
 
     /**
@@ -66,14 +52,14 @@ public class OpenMsCapiAction extends OpenAction {
 
         try {
 
-            KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
+            KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(type);
 
             // https://bugs.openjdk.java.net/browse/JDK-6407454
             // "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
             // Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
             // applications must not specify the SunMSCAPI provider."
 
-            var history = new KeyStoreHistory(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
+            var history = new KeyStoreHistory(openedKeyStore, res.getString(tabTitleKey), null, null);
 
             kseFrame.addKeyStoreHistory(history);
 

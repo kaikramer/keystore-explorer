@@ -48,7 +48,7 @@ public enum KeyStoreType {
     UBER("UBER", "KeyStoreType.Uber", true, true, UBER_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
     KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, true, null),
     MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, true, null),
-    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, true, null),
+    MS_CAPI_ROOT("Windows-ROOT", "KeyStoreType.MscapiRootCerts", false, true, null),
     PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, true, null),
     BCFKS("BCFKS", "KeyStoreType.Bcfks", true, true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
     UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, false, null);
@@ -130,7 +130,7 @@ public enum KeyStoreType {
      * @return True if it has, false otherwise
      */
     public boolean hasEntryPasswords() {
-        return this != PKCS11 && this != MS_CAPI_PERSONAL;
+        return this != PKCS11 && this != MS_CAPI_PERSONAL && this != MS_CAPI_ROOT;
     }
 
     /**
@@ -139,7 +139,7 @@ public enum KeyStoreType {
      * @return True if private keys are exportable, false otherwise
      */
     public boolean hasExportablePrivateKeys() {
-        return this != PKCS11 && this != MS_CAPI_PERSONAL;
+        return this != PKCS11 && this != MS_CAPI_PERSONAL && this != MS_CAPI_ROOT;
     }
 
     /**
