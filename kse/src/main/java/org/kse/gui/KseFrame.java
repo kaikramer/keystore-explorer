@@ -3163,6 +3163,8 @@ public final class KseFrame implements StatusBar {
             keyPairPrivateKeyDetailsAction.setEnabled(false);
             keyDetailsAction.setEnabled(false);
 
+            importTrustedCertificateAction.setEnabled(true);
+
             renameKeyAction.setEnabled(false);
             renameKeyPairAction.setEnabled(false);
             renameTrustedCertificateAction.setEnabled(false);
@@ -3176,9 +3178,31 @@ public final class KseFrame implements StatusBar {
 
             // "UnsupportedOperationException" ...
             jmKeyPairImportCaReply.setEnabled(false);
+        } else if (type == KeyStoreType.KEYCHAIN) {
+
+            keyPairPrivateKeyDetailsAction.setEnabled(true);
+            keyDetailsAction.setEnabled(true);
+
+            importTrustedCertificateAction.setEnabled(false);
+
+            renameKeyAction.setEnabled(true);
+            renameKeyPairAction.setEnabled(true);
+            renameTrustedCertificateAction.setEnabled(false);
+
+            exportKeyPairAction.setEnabled(true);
+            exportKeyPairPrivateKeyAction.setEnabled(true);
+
+            // Keychain manages the hierarchy. Edits are not persisted.
+            jmKeyPairEditCertChain.setEnabled(false);
+            appendToCertificateChainAction.setEnabled(false);
+            removeFromCertificateChainAction.setEnabled(false);
+
+            jmKeyPairImportCaReply.setEnabled(true);
         } else {
             keyPairPrivateKeyDetailsAction.setEnabled(true);
             keyDetailsAction.setEnabled(true);
+
+            importTrustedCertificateAction.setEnabled(true);
 
             renameKeyAction.setEnabled(true);
             renameKeyPairAction.setEnabled(true);
