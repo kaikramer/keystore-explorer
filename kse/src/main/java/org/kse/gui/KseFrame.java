@@ -148,8 +148,9 @@ import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.OpenAppleKeychainAction;
 import org.kse.gui.actions.OpenCaCertificatesAction;
 import org.kse.gui.actions.OpenDefaultAction;
-import org.kse.gui.actions.OpenMsCapiAction;
 import org.kse.gui.actions.OpenPkcs11Action;
+import org.kse.gui.actions.OpenWindowsMyAction;
+import org.kse.gui.actions.OpenWindowsRootAction;
 import org.kse.gui.actions.PasteAction;
 import org.kse.gui.actions.PreferencesAction;
 import org.kse.gui.actions.PropertiesAction;
@@ -239,8 +240,9 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiOpenDefaultKeyStore;
     private JMenuItem jmiOpenCaCertificatesKeyStore;
     private JMenuItem jmiOpenPkcs11KeyStore;
-    private JMenuItem jmiOpenMsCapiKeyStore;
     private JMenuItem jmiAppleKeychainKeyStore;
+    private JMenuItem jmiOpenWindowsMyKeyStore;
+    private JMenuItem jmiOpenWindowsRootKeyStore;
     private JMenuItem jmiClose;
     private JMenuItem jmiCloseAll;
     private JMenuItem jmiSave;
@@ -473,8 +475,9 @@ public final class KseFrame implements StatusBar {
     private final OpenDefaultAction openDefaultKeyStoreAction = new OpenDefaultAction(this);
     private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
     private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
-    private final OpenMsCapiAction openMsCapiAction = new OpenMsCapiAction(this);
     private final OpenAppleKeychainAction openAppleKeychainAction = new OpenAppleKeychainAction(this);
+    private final OpenWindowsMyAction openWindowsMyAction = new OpenWindowsMyAction(this);
+    private final OpenWindowsRootAction openWindowsRootAction = new OpenWindowsRootAction(this);
     private final SaveAction saveAction = new SaveAction(this);
     private final SaveAsAction saveAsAction = new SaveAsAction(this);
     private final SaveAllAction saveAllAction = new SaveAllAction(this);
@@ -738,15 +741,23 @@ public final class KseFrame implements StatusBar {
                                    (String) openPkcs11KeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
         jmOpenSpecial.add(jmiOpenPkcs11KeyStore);
 
-        jmiOpenMsCapiKeyStore = new JMenuItem(openMsCapiAction);
-        PlatformUtil.setMnemonic(jmiOpenMsCapiKeyStore,
-                                 res.getString("KseFrame.jmiOpenMsCapiKeyStore.mnemonic").charAt(0));
-        jmiOpenMsCapiKeyStore.setToolTipText(null);
-        new StatusBarChangeHandler(jmiOpenMsCapiKeyStore, (String) openMsCapiAction.getValue(Action.LONG_DESCRIPTION),
+        jmiOpenWindowsMyKeyStore = new JMenuItem(openWindowsMyAction);
+        PlatformUtil.setMnemonic(jmiOpenWindowsMyKeyStore,
+                                 res.getString("KseFrame.jmiOpenWindowsMyKeyStore.mnemonic").charAt(0));
+        jmiOpenWindowsMyKeyStore.setToolTipText(null);
+        new StatusBarChangeHandler(jmiOpenWindowsMyKeyStore, (String) openWindowsMyAction.getValue(Action.LONG_DESCRIPTION),
                                    this);
-        // show menu item for MSCAPI Windows-MY only on Windows
+
+        jmiOpenWindowsRootKeyStore = new JMenuItem(openWindowsRootAction);
+        PlatformUtil.setMnemonic(jmiOpenWindowsRootKeyStore,
+                                 res.getString("KseFrame.jmiOpenWindowsRootKeyStore.mnemonic").charAt(0));
+        jmiOpenWindowsRootKeyStore.setToolTipText(null);
+        new StatusBarChangeHandler(jmiOpenWindowsRootKeyStore, (String) openWindowsRootAction.getValue(Action.LONG_DESCRIPTION),
+                                   this);
+        // show menu item for MSCAPI Windows-MY and Windows-ROOT only on Windows
         if (OperatingSystem.isWindows()) {
-            jmOpenSpecial.add(jmiOpenMsCapiKeyStore);
+            jmOpenSpecial.add(jmiOpenWindowsMyKeyStore);
+            jmOpenSpecial.add(jmiOpenWindowsRootKeyStore);
         }
 
         jmiAppleKeychainKeyStore = new JMenuItem(openAppleKeychainAction);
@@ -3158,7 +3169,7 @@ public final class KseFrame implements StatusBar {
         }
 
         // Special restrictions for MSCAPI and PKCS#11 type
-        if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.PKCS11) {
+        if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.MS_CAPI_ROOT || type == KeyStoreType.PKCS11) {
 
             keyPairPrivateKeyDetailsAction.setEnabled(false);
             keyDetailsAction.setEnabled(false);
