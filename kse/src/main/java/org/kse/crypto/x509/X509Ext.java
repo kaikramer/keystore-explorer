@@ -372,12 +372,12 @@ public class X509Ext {
         return X509ExtensionType.UNKNOWN.friendly();
     }
 
-    private static String getIA5String(byte[] value) throws IOException {
+    private static String getIA5String(byte[] value) {
         ASN1IA5String ia5String = ASN1IA5String.getInstance(value);
         return ia5String.getString();
     }
 
-    private static String getIA5String(ASN1Encodable value) throws IOException {
+    private static String getIA5String(ASN1Encodable value) {
         ASN1IA5String ia5String = ASN1IA5String.getInstance(value);
         return ia5String.getString();
     }
@@ -475,7 +475,7 @@ public class X509Ext {
 
             AccessMethodType accessMethodType = AccessMethodType.resolveOid(accessMethod.getId());
 
-            String accessMethodStr = null;
+            String accessMethodStr;
 
             if (accessMethodType != null) {
                 accessMethodStr = accessMethodType.friendly();
@@ -530,7 +530,7 @@ public class X509Ext {
 
             AccessMethodType accessMethodType = AccessMethodType.resolveOid(accessMethod.getId());
 
-            String accessMethodStr = null;
+            String accessMethodStr;
 
             if (accessMethodType != null) {
                 accessMethodStr = accessMethodType.friendly();
@@ -603,7 +603,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getSubjectKeyIdentifierStringValue(byte[] value) throws IOException {
+    private static String getSubjectKeyIdentifierStringValue(byte[] value) {
         // @formatter:off
         /*
             SubjectKeyIdentifier ::= KeyIdentifier
@@ -647,7 +647,7 @@ public class X509Ext {
 
         AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(value);
 
-        byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
+        byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifierOctets();
         GeneralNames authorityCertIssuer = authorityKeyIdentifier.getAuthorityCertIssuer();
         BigInteger certificateSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
 
@@ -746,7 +746,7 @@ public class X509Ext {
         return (keyUsages & keyUsage) == keyUsage;
     }
 
-    private static String getPrivateKeyUsagePeriodStringValue(byte[] value) throws IOException {
+    private static String getPrivateKeyUsagePeriodStringValue(byte[] value) {
         // @formatter:off
         /*
             PrivateKeyUsagePeriod ::= ASN1Sequence {
@@ -824,7 +824,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getBasicConstraintsStringValue(byte[] value) throws IOException {
+    private static String getBasicConstraintsStringValue(byte[] value) {
         // @formatter:off
         /*
             BasicConstraints ::= ASN1Sequence {
@@ -865,7 +865,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getCrlNumberStringValue(byte[] value) throws IOException {
+    private static String getCrlNumberStringValue(byte[] value) {
 
         /* CRLNumber ::= ASN1Integer (0..MAX) */
 
@@ -879,7 +879,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getReasonCodeStringValue(byte[] value) throws IOException {
+    private static String getReasonCodeStringValue(byte[] value) {
         // @formatter:off
         /*
             ReasonCode ::= { CRLReason }
@@ -913,7 +913,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getHoldInstructionCodeStringValue(byte[] value) throws IOException {
+    private static String getHoldInstructionCodeStringValue(byte[] value) {
 
         /* HoldInstructionCode ::= OBJECT IDENTIFIER */
 
@@ -934,7 +934,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getInvalidityDateStringValue(byte[] value) throws IOException {
+    private static String getInvalidityDateStringValue(byte[] value) {
 
         /* InvalidityDate ::= ASN1GeneralizedTime */
 
@@ -948,7 +948,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getDeltaCrlIndicatorStringValue(byte[] value) throws IOException {
+    private static String getDeltaCrlIndicatorStringValue(byte[] value) {
         // @formatter:off
         /*
             deltaCRLIndicator EXTENSION ::= { SYNTAX BaseCRLNumber IDENTIFIED BY id-ce-deltaCRLIndicator }
@@ -1207,7 +1207,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getCertificatePoliciesStringValue(byte[] value) throws IOException {
+    private static String getCertificatePoliciesStringValue(byte[] value) {
         // @formatter:off
         /*
             CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
@@ -1365,7 +1365,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getPolicyMappingsStringValue(byte[] value) throws IOException {
+    private static String getPolicyMappingsStringValue(byte[] value) {
         // @formatter:off
         /*
             PolicyMappings ::= ASN1Sequence SIZE (1..MAX) OF PolicyMappings
@@ -1411,7 +1411,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getPolicyConstraintsStringValue(byte[] value) throws IOException {
+    private static String getPolicyConstraintsStringValue(byte[] value) {
         // @formatter:off
         /*
             PolicyConstraints ::= ASN1Sequence {
@@ -1500,7 +1500,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getInhibitAnyPolicyStringValue(byte[] value) throws IOException {
+    private static String getInhibitAnyPolicyStringValue(byte[] value) {
         // @formatter:off
         /*
             InhibitAnyPolicy ::= SkipCerts
@@ -1591,37 +1591,37 @@ public class X509Ext {
         return (netscapeCertTypes & certType) == certType;
     }
 
-    private static String getNetscapeBaseUrlStringValue(byte[] value) throws IOException {
+    private static String getNetscapeBaseUrlStringValue(byte[] value) {
         /* NetscapeBaseUrl ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
 
-    private static String getNetscapeRevocationUrlStringValue(byte[] value) throws IOException {
+    private static String getNetscapeRevocationUrlStringValue(byte[] value) {
         /* NetscapeRevocationUrl ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
 
-    private static String getNetscapeCaRevocationUrlStringValue(byte[] value) throws IOException {
+    private static String getNetscapeCaRevocationUrlStringValue(byte[] value) {
         /* NetscapeCARevocationUrl ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
 
-    private static String getNetscapeCertificateRenewalStringValue(byte[] value) throws IOException {
+    private static String getNetscapeCertificateRenewalStringValue(byte[] value) {
         /* NetscapeCertRenewalUrl ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
 
-    private static String getNetscapeCaPolicyUrlStringValue(byte[] value) throws IOException {
+    private static String getNetscapeCaPolicyUrlStringValue(byte[] value) {
         /* NetscapeCAPolicyUrl ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
 
-    private static String getNetscapeSslServerNameStringValue(byte[] value) throws IOException {
+    private static String getNetscapeSslServerNameStringValue(byte[] value) {
         /* NetscapeSslServerName ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
 
-    private static String getNetscapeCommentStringValue(byte[] value) throws IOException {
+    private static String getNetscapeCommentStringValue(byte[] value) {
         /* NetscapeComment ::= DERIA5String */
         return getIA5String(value) + NEWLINE;
     }
@@ -2591,7 +2591,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getMsApplicationPoliciesStringValue(byte[] octets) throws IOException {
+    private static String getMsApplicationPoliciesStringValue(byte[] octets) {
 
         // @formatter:off
         /*
@@ -2686,7 +2686,7 @@ public class X509Ext {
         byte[] valueBytes = valueOctets.getOctets();
 
         MSNtdsCaSecurityExtType typeIdType = MSNtdsCaSecurityExtType.resolveOid(typeId.getId());
-        String typeIdStr = null;
+        String typeIdStr;
 
         if (typeIdType != null) {
             typeIdStr = typeIdType.friendly();
