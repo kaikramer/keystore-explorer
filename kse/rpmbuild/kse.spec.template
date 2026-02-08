@@ -1,0 +1,152 @@
+# RPM spec file template for KSE
+#
+# Copyright 2004 - 2013 Wayne Grant
+#           2013 - 2026 Kai Kramer
+#
+# This file is part of KeyStore Explorer.
+#
+# KeyStore Explorer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# KeyStore Explorer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+
+# File structure after installation:
+#
+# /opt/kse/
+# ├── kse.jar
+# ├── kse.sh
+# ├── kse.desktop
+# ├── splash.png, splash@2x.png # Splash screens
+# ├── lib/
+# │   ├── bcpkix-jdk18on-1.83.jar
+# │   └── ... (other dependencies)
+# ├── icons/
+# │   ├── kse_16.png
+# │   ├── kse_32.png
+# │   ├── kse_48.png
+# │   ├── kse_128.png
+# │   ├── kse_256.png
+# │   └── kse_512.png
+# └── licenses/
+#     ├── kse.txt
+#     ├── bouncycastle.txt
+#     └── ... (other licenses)
+# /usr/bin/kse                             # Symlink to /opt/kse/kse.sh
+# /usr/share/applications/kse.desktop      # Symlink to desktop file in /opt/kse
+# /usr/share/icons/hicolor/*/apps/kse.png  # Icon symlinks (multiple sizes)
+
+Name:           %KSE_PACKAGE_NAME%
+Version:        %KSE_VERSION%
+Release:        1%{?dist}
+Summary:        Multipurpose keystore and certificate tool
+
+License:        GPLv3+
+URL:            %KSE_WEBSITE%
+Source0:        %{name}-%{version}.tar.gz
+
+BuildArch:      noarch
+BuildRequires:  desktop-file-utils
+Requires:       jre >= 17
+Requires:       hicolor-icon-theme
+
+%description
+KeyStore Explorer is a user friendly GUI application for creating,
+managing and examining keystores, keys, certificates, certificate requests,
+certificate revocation lists and more.
+
+%prep
+# No prep needed, files are copied directly
+
+%build
+# No build needed, using pre-built JAR
+
+%install
+rm -rf $RPM_BUILD_ROOT
+
+# Create installation directories
+install -d $RPM_BUILD_ROOT/opt/%{name}
+install -d $RPM_BUILD_ROOT/opt/%{name}/lib
+install -d $RPM_BUILD_ROOT/opt/%{name}/icons
+install -d $RPM_BUILD_ROOT/opt/%{name}/licenses
+install -d $RPM_BUILD_ROOT/usr/bin
+install -d $RPM_BUILD_ROOT/usr/share/applications
+install -d $RPM_BUILD_ROOT/usr/share/icons/hicolor/16x16/apps
+install -d $RPM_BUILD_ROOT/usr/share/icons/hicolor/32x32/apps
+install -d $RPM_BUILD_ROOT/usr/share/icons/hicolor/48x48/apps
+install -d $RPM_BUILD_ROOT/usr/share/icons/hicolor/128x128/apps
+install -d $RPM_BUILD_ROOT/usr/share/icons/hicolor/256x256/apps
+install -d $RPM_BUILD_ROOT/usr/share/icons/hicolor/512x512/apps
+
+install -m 644 %KSE_BUILD_ROOT%/%KSE_JAR_NAME% $RPM_BUILD_ROOT/opt/%{name}/
+install -m 755 %KSE_BUILD_ROOT%/kse.sh $RPM_BUILD_ROOT/opt/%{name}/
+install -m 644 %KSE_BUILD_ROOT%/kse.desktop $RPM_BUILD_ROOT/opt/%{name}/
+install -m 644 %KSE_BUILD_ROOT%/splash*.png $RPM_BUILD_ROOT/opt/%{name}/
+
+install -m 644 %KSE_BUILD_ROOT%/icons/kse_16.png $RPM_BUILD_ROOT/opt/%{name}/icons/
+install -m 644 %KSE_BUILD_ROOT%/icons/kse_32.png $RPM_BUILD_ROOT/opt/%{name}/icons/
+install -m 644 %KSE_BUILD_ROOT%/icons/kse_48.png $RPM_BUILD_ROOT/opt/%{name}/icons/
+install -m 644 %KSE_BUILD_ROOT%/icons/kse_128.png $RPM_BUILD_ROOT/opt/%{name}/icons/
+install -m 644 %KSE_BUILD_ROOT%/icons/kse_256.png $RPM_BUILD_ROOT/opt/%{name}/icons/
+install -m 644 %KSE_BUILD_ROOT%/icons/kse_512.png $RPM_BUILD_ROOT/opt/%{name}/icons/
+
+# Install library dependencies with proper permissions (0644)
+for jar in %KSE_BUILD_ROOT%/lib/*.jar; do
+    install -m 644 "$jar" $RPM_BUILD_ROOT/opt/%{name}/lib/
+done
+
+# Install license files with proper permissions (0644)
+for license in %KSE_BUILD_ROOT%/licenses/*.txt; do
+    install -m 644 "$license" $RPM_BUILD_ROOT/opt/%{name}/licenses/
+done
+
+ln -s /opt/%{name}/kse.sh $RPM_BUILD_ROOT/usr/bin/kse
+ln -s /opt/%{name}/kse.desktop $RPM_BUILD_ROOT/usr/share/applications/kse.desktop
+ln -s /opt/%{name}/icons/kse_16.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/16x16/apps/kse.png
+ln -s /opt/%{name}/icons/kse_32.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/32x32/apps/kse.png
+ln -s /opt/%{name}/icons/kse_48.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/48x48/apps/kse.png
+ln -s /opt/%{name}/icons/kse_128.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/128x128/apps/kse.png
+ln -s /opt/%{name}/icons/kse_256.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/256x256/apps/kse.png
+ln -s /opt/%{name}/icons/kse_512.png $RPM_BUILD_ROOT/usr/share/icons/hicolor/512x512/apps/kse.png
+
+%files
+%attr(0644,root,root) /opt/%{name}/%KSE_JAR_NAME%
+%attr(0755,root,root) /opt/%{name}/kse.sh
+%attr(0644,root,root) /opt/%{name}/kse.desktop
+%attr(0644,root,root) /opt/%{name}/splash*.png
+%attr(0644,root,root) /opt/%{name}/lib/*
+%attr(0644,root,root) /opt/%{name}/icons/*
+%attr(0644,root,root) /opt/%{name}/licenses/*
+/usr/bin/kse
+/usr/share/applications/kse.desktop
+/usr/share/icons/hicolor/16x16/apps/kse.png
+/usr/share/icons/hicolor/32x32/apps/kse.png
+/usr/share/icons/hicolor/48x48/apps/kse.png
+/usr/share/icons/hicolor/128x128/apps/kse.png
+/usr/share/icons/hicolor/256x256/apps/kse.png
+/usr/share/icons/hicolor/512x512/apps/kse.png
+
+%post
+update-desktop-database &> /dev/null || :
+touch --no-create /usr/share/icons/hicolor &>/dev/null || :
+
+%postun
+update-desktop-database &> /dev/null || :
+if [ $1 -eq 0 ] ; then
+    touch --no-create /usr/share/icons/hicolor &>/dev/null
+    gtk-update-icon-cache /usr/share/icons/hicolor &>/dev/null || :
+fi
+
+%posttrans
+gtk-update-icon-cache /usr/share/icons/hicolor &>/dev/null || :
+
+%changelog
+* %KSE_DATE% %KSE_VENDOR% - %{version}-%{release}
+- Version %{version} release

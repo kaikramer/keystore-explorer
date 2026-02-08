@@ -1,0 +1,26 @@
+Source: kse
+Section: utils
+Priority: optional
+Maintainer: Wayne Grant, Kai Kramer <keystore-explorer@keystore-explorer.org>
+Build-Depends: debhelper-compat (= 13),
+               default-jdk (>= 2:1.17) | openjdk-17-jdk
+Standards-Version: 4.6.2
+Homepage: https://keystore-explorer.org
+Vcs-Browser: https://github.com/kaikramer/keystore-explorer
+Vcs-Git: https://github.com/kaikramer/keystore-explorer.git
+Rules-Requires-Root: no
+
+Package: kse
+Architecture: all
+Depends: ${misc:Depends},
+         default-jre (>= 2:1.17) | java17-runtime,
+         desktop-file-utils,
+         hicolor-icon-theme
+Description: Multipurpose keystore and certificate tool
+ KeyStore Explorer is a user friendly GUI application for creating,
+ managing and examining keystores, keys, certificates, certificate requests,
+ certificate revocation lists and more.
+ .
+ It provides a graphical interface for working with Java keystores and
+ various cryptographic operations including key generation, certificate
+ signing requests, and certificate import/export.

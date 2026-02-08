@@ -62,12 +62,12 @@ For the macOS application:
 ./gradlew appbundler
 ```
 
-For the RPM package:
+For the RPM package (requires a Linux distribution with rpmbuild installed):
 ```sh
 ./gradlew buildRpm
 ```
 
-For the DEB package:
+For the DEB package (requires Ubuntu/Debian with debhelper installed):
 ```sh
 ./gradlew buildDeb
 ```

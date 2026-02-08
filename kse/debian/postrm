@@ -1,0 +1,27 @@
+#!/bin/sh
+# postrm script for kse
+
+set -e
+
+case "$1" in
+    purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        if [ -x /usr/bin/update-desktop-database ]; then
+            update-desktop-database -q /usr/share/applications || true
+        fi
+
+        if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+            if [ -x /usr/bin/gtk-update-icon-cache ]; then
+                gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+            fi
+        fi
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

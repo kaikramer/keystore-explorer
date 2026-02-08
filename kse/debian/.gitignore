@@ -1,0 +1,15 @@
+# Debian package build artifacts
+debian/kse/
+debian/.debhelper/
+debian/files
+debian/debhelper-build-stamp
+debian/*.substvars
+debian/*.log
+debian/tmp/
+
+# Debian package files (should be in build/distributions/)
+../*.deb
+../*.changes
+../*.buildinfo
+../*.dsc
+../*.tar.gz

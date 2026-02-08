@@ -1,0 +1,68 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Debian rules file for KeyStore Explorer
+# Uses debhelper for standard packaging operations
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export JAVA_HOME=/usr/lib/jvm/default-java
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Build is handled by Gradle in the prepareDeb task
+	# This override prevents debhelper from trying to build again
+	@echo "Build already completed by Gradle prepareDeb task"
+
+override_dh_auto_install:
+	install -d debian/kse/opt/kse
+	install -d debian/kse/opt/kse/lib
+	install -d debian/kse/opt/kse/icons
+	install -d debian/kse/opt/kse/licenses
+
+	install -m 644 build/libs/kse.jar debian/kse/opt/kse/
+
+	cp -r build/deb-stage/lib/* debian/kse/opt/kse/lib/
+
+	install -m 755 res/kse.sh debian/kse/opt/kse/
+	install -m 644 res/kse.desktop debian/kse/opt/kse/
+	install -m 644 res/splash.png debian/kse/opt/kse/
+	install -m 644 res/splash@2x.png debian/kse/opt/kse/
+
+	install -m 644 icons/kse_16.png debian/kse/opt/kse/icons/
+	install -m 644 icons/kse_32.png debian/kse/opt/kse/icons/
+	install -m 644 icons/kse_48.png debian/kse/opt/kse/icons/
+	install -m 644 icons/kse_128.png debian/kse/opt/kse/icons/
+	install -m 644 icons/kse_256.png debian/kse/opt/kse/icons/
+	install -m 644 icons/kse_512.png debian/kse/opt/kse/icons/
+
+	cp licenses/*.txt debian/kse/opt/kse/licenses/
+
+	install -d debian/kse/usr/bin
+	ln -s /opt/kse/kse.sh debian/kse/usr/bin/kse
+
+	install -d debian/kse/usr/share/applications
+	ln -s /opt/kse/kse.desktop debian/kse/usr/share/applications/kse.desktop
+
+	# Create icon symlinks
+	install -d debian/kse/usr/share/icons/hicolor/16x16/apps
+	install -d debian/kse/usr/share/icons/hicolor/32x32/apps
+	install -d debian/kse/usr/share/icons/hicolor/48x48/apps
+	install -d debian/kse/usr/share/icons/hicolor/128x128/apps
+	install -d debian/kse/usr/share/icons/hicolor/256x256/apps
+	install -d debian/kse/usr/share/icons/hicolor/512x512/apps
+	ln -s /opt/kse/icons/kse_16.png debian/kse/usr/share/icons/hicolor/16x16/apps/kse.png
+	ln -s /opt/kse/icons/kse_32.png debian/kse/usr/share/icons/hicolor/32x32/apps/kse.png
+	ln -s /opt/kse/icons/kse_48.png debian/kse/usr/share/icons/hicolor/48x48/apps/kse.png
+	ln -s /opt/kse/icons/kse_128.png debian/kse/usr/share/icons/hicolor/128x128/apps/kse.png
+	ln -s /opt/kse/icons/kse_256.png debian/kse/usr/share/icons/hicolor/256x256/apps/kse.png
+	ln -s /opt/kse/icons/kse_512.png debian/kse/usr/share/icons/hicolor/512x512/apps/kse.png
+
+override_dh_auto_clean:
+	@echo "Clean handled by Gradle"
+
+override_dh_auto_test:
+	@echo "Tests already run by Gradle"

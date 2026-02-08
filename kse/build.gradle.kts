@@ -36,7 +36,6 @@ plugins {
     java
     eclipse
     idea
-    id("com.netflix.nebula.ospackage") version "12.1.1"
 }
 
 defaultTasks("zip")
@@ -82,6 +81,8 @@ val jlinkOutDir: String by extra(layout.buildDirectory.dir("jlink").get().asFile
 val appBundleDir: String by extra(layout.buildDirectory.dir("appBundle").get().asFile.absolutePath)
 val distDir: String by extra(layout.buildDirectory.dir("distributions").get().asFile.absolutePath)
 val dmgDir: String by extra(layout.projectDirectory.dir("dmg").asFile.absolutePath)
+val rpmBuildDir: String by extra(layout.buildDirectory.dir("rpmbuild").get().asFile.absolutePath)
+val rpmStageDir: String by extra(layout.buildDirectory.dir("rpm-stage").get().asFile.absolutePath)
 val dependenciesDir: java.nio.file.Path by extra(
     Paths.get(layout.buildDirectory.get().asFile.absolutePath, "dependencies")
 )
@@ -479,9 +480,9 @@ tasks.register("appbundler") {
                 "option"("value" to "-Dcom.apple.mrj.application.apple.menu.about.name=$appName")
                 "option"("value" to "-Dcom.apple.smallTabs=true")
                 "option"("value" to "-Dfile.encoding=UTF-8")
-                "option"("value" to "-splash:\$APP_ROOT/Contents/Resources/splash.png")
+                "option"("value" to $$"-splash:$APP_ROOT/Contents/Resources/splash.png")
                 "option"("value" to "-Dkse.app=true")
-                "option"("value" to "-Dkse.app.stub=\$APP_ROOT/Contents/MacOS/KeyStore Explorer")
+                "option"("value" to $$"-Dkse.app.stub=$APP_ROOT/Contents/MacOS/KeyStore Explorer")
             }
         }
         copy {
@@ -648,9 +649,212 @@ tasks.register<Exec>("notarization") {
     )
 }
 
-// OSPackage plugin configuration (RPM and DEB)
-// Note: The ospackage plugin has limited Kotlin DSL support, so we use a separate Groovy file for now
-apply(from = "ospackage.gradle")
+tasks.register("buildRpm") {
+    dependsOn(tasks.jar, "copyDependencies")
+    group = "distribution"
+    description = "Build RPM package using rpmbuild"
+
+    doFirst {
+        val checkRpmbuild = providers.exec {
+            commandLine("bash", "-c", "which rpmbuild")
+            isIgnoreExitValue = true
+        }
+        if (checkRpmbuild.result.get().exitValue != 0) {
+            throw GradleException("rpmbuild is not installed. Install it with: sudo apt-get install rpm")
+        }
+    }
+
+    doLast {
+        // Create rpmbuild directory structure
+        val buildRoot = File(rpmBuildDir, "BUILD")
+        val specsDir = File(rpmBuildDir, "SPECS")
+        val rpmsDir = File(rpmBuildDir, "RPMS")
+        val sourcesDir = File(rpmBuildDir, "SOURCES")
+        val srpmsDir = File(rpmBuildDir, "SRPMS")
+
+        listOf(buildRoot, specsDir, rpmsDir, sourcesDir, srpmsDir, rpmStageDir).forEach { dir ->
+            delete(dir)
+            mkdir(dir)
+        }
+
+        val stageAppDir = File(rpmStageDir)
+
+        copy {
+            from(tasks.jar.get().archiveFile)
+            into(stageAppDir)
+        }
+
+        copy {
+            from(configurations.runtimeClasspath.get().files)
+            into(File(stageAppDir, "lib"))
+        }
+
+        copy {
+            from(resDir) {
+                include("kse.sh", "kse.desktop", "splash*.png")
+            }
+            into(stageAppDir)
+        }
+
+        copy {
+            from(iconsDir) {
+                include("kse_16.png", "kse_32.png", "kse_48.png", "kse_128.png", "kse_256.png", "kse_512.png")
+            }
+            into(File(stageAppDir, "icons"))
+        }
+
+        copy {
+            from(licensesDir) {
+                include("**/*.txt")
+            }
+            into(File(stageAppDir, "licenses"))
+        }
+
+        val dateFormatter = SimpleDateFormat("EEE MMM dd yyyy", Locale.ENGLISH)
+        copy {
+            from("rpmbuild/kse.spec.template")
+            rename("kse.spec.template", "kse.spec")
+            filter(
+                ReplaceTokens::class, "tokens" to mapOf(
+                    "KSE_PACKAGE_NAME" to appSimpleName,
+                    "KSE_VERSION" to appVersion,
+                    "KSE_WEBSITE" to website,
+                    "KSE_JAR_NAME" to appJarName,
+                    "KSE_BUILD_ROOT" to rpmStageDir,
+                    "KSE_DATE" to dateFormatter.format(Date()),
+                    "KSE_VENDOR" to vendor
+                ),
+                "beginToken" to "%",
+                "endToken" to "%"
+            )
+            into(specsDir)
+        }
+
+        val result = providers.exec {
+            workingDir(projectDir)
+            commandLine(
+                "rpmbuild",
+                "-bb",
+                "--define", "_topdir $rpmBuildDir",
+                "--buildroot", "$buildRoot",
+                "$specsDir/kse.spec"
+            )
+        }
+
+        println("rpmbuild output: ${result.standardOutput.asText.get()}")
+        if (result.standardError.asText.get().isNotEmpty()) {
+            println("rpmbuild errors: ${result.standardError.asText.get()}")
+        }
+
+        mkdir(distDir)
+        copy {
+            from(fileTree(rpmsDir) {
+                include("**/*.rpm")
+            })
+            into(distDir)
+        }
+
+        println("RPM package created successfully in: $distDir")
+    }
+}
+
+tasks.register("prepareDeb") {
+    dependsOn(tasks.jar, "copyDependencies")
+    group = "distribution"
+    description = "Prepare files for Debian package build"
+
+    doLast {
+        val debStageDir = layout.buildDirectory.dir("deb-stage").get().asFile
+        delete(debStageDir)
+        mkdir(debStageDir)
+
+        copy {
+            from(configurations.runtimeClasspath.get().files)
+            into(File(debStageDir, "lib"))
+        }
+
+        println("Prepared files for Debian package build in: $debStageDir")
+    }
+}
+
+tasks.register("updateDebChangelog") {
+    group = "distribution"
+    description = "Update debian/changelog with current version"
+
+    doLast {
+        val changelogFile = File(projectDir, "debian/changelog")
+        val dateFormatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
+
+        val changelogContent = """kse ($appVersion-1) unstable; urgency=medium
+
+  * Version $appVersion release
+  * See full changelog at $website
+
+ -- $vendor <keystore-explorer@keystore-explorer.org>  ${dateFormatter.format(Date())}
+"""
+        changelogFile.writeText(changelogContent)
+        println("Updated debian/changelog to version $appVersion")
+    }
+}
+
+tasks.register<Exec>("buildDeb") {
+    dependsOn(tasks.jar, "prepareDeb", "updateDebChangelog")
+    group = "distribution"
+    description = "Build Debian package using debhelper and dpkg-buildpackage"
+
+    doFirst {
+        val checkDebhelper = providers.exec {
+            commandLine("bash", "-c", "which dpkg-buildpackage")
+            isIgnoreExitValue = true
+        }
+        if (checkDebhelper.result.get().exitValue != 0) {
+            throw GradleException("""
+                |dpkg-buildpackage is not installed. Install it with:
+                |  sudo apt-get install debhelper dpkg-dev build-essential
+            """.trimMargin())
+        }
+
+        val rulesFile = File(projectDir, "debian/rules")
+        if (rulesFile.exists()) {
+            rulesFile.setExecutable(true, false)
+        }
+
+        File(projectDir, "debian/postinst").apply { if (exists()) setExecutable(true, false) }
+        File(projectDir, "debian/postrm").apply { if (exists()) setExecutable(true, false) }
+    }
+
+    workingDir(projectDir)
+
+    commandLine(
+        "dpkg-buildpackage",
+        "-us", "-uc",  // Don't sign (use -k for signing)
+        "-b",           // Binary only
+        "--build=binary"
+    )
+
+    doLast {
+        mkdir(distDir)
+
+        val parentDir = projectDir.parentFile
+        val debFiles = fileTree(parentDir) {
+            include("kse_*.deb")
+        }
+
+        if (debFiles.isEmpty) {
+            println("Warning: No .deb file found in ${parentDir.absolutePath}")
+        } else {
+            copy {
+                from(debFiles)
+                into(distDir)
+            }
+            println("Debian package created successfully in: $distDir")
+
+            delete(fileTree(parentDir) {
+                include("kse_*.buildinfo", "kse_*.changes", "kse_*.deb")
+            })
+        }
+    }
+}
 
 idea {
     module {
