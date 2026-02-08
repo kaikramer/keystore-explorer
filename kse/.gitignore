@@ -1,6 +1,7 @@
 /bin
 /build
 /build-test
+/buildSrc/build
 /out
 /dist
 /api

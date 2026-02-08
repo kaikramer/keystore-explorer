@@ -18,7 +18,6 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.apache.tools.ant.filters.ReplaceTokens
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,6 +35,10 @@ plugins {
     java
     eclipse
     idea
+    id("kse-deb-package")
+    id("kse-rpm-package")
+    id("kse-mac-package")
+    id("kse-windows-package")
 }
 
 defaultTasks("zip")
@@ -206,93 +209,8 @@ tasks.jar {
     }
 }
 
-tasks.register("prepareExe") {
-    doLast {
-        copy {
-            from("$resDir/kse-launcher.exe")
-            rename("kse-launcher.exe", appExe)
-            into(launcherOutDir)
-        }
-        val verInfo = appVersion.replace(".", ",") + ",0"
-        delete("$launcherOutDir/kse.rc")
-        File(launcherOutDir, "kse.rc").writeText(
-            """
-			1 VERSIONINFO
-			FILEVERSION     $verInfo
-			PRODUCTVERSION  $verInfo
-			FILEOS 			VOS__WINDOWS32
-			FILETYPE 		VFT_APP
-			BEGIN
-			  BLOCK "StringFileInfo"
-			  BEGIN
-				BLOCK "040904B0"
-				BEGIN
-				  VALUE "FileDescription", 	"$appName"
-				  VALUE "FileVersion", 		"$appVersion.0"
-				  VALUE "InternalName", 	"$appSimpleName"
-				  VALUE "LegalCopyright", 	"$copyright"
-				  VALUE "OriginalFilename", "$appExe"
-				  VALUE "ProductName", 		"$appName"
-				  VALUE "ProductVersion", 	"$appVersion"
-				END
-			  END
-			  BLOCK "VarFileInfo"
-			  BEGIN
-				VALUE "Translation", 0x0409, 0x04B0
-			  END
-			END
-		""".trimIndent()
-        )
-
-        var result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                rh,
-                "-open", "$launcherOutDir\\kse.rc",
-                "-save", "$launcherOutDir\\kse.res",
-                "-action", "compile"
-            )
-        }
-        println("RH1 finished with return code: ${result.result.get().exitValue}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("RH1 errors: ${result.standardError.asText.get()}")
-        }
-
-        result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                rh,
-                "-open", "$launcherOutDir\\$appExe",
-                "-save", "$launcherOutDir\\$appExe",
-                "-action", "addoverwrite",
-                "-mask", " VersionInfo,,",
-                "-res", "$launcherOutDir\\kse.res"
-            )
-        }
-        println("RH2 finished with return code: ${result.result.get().exitValue}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("RH2 errors: ${result.standardError.asText.get()}")
-        }
-
-        result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                rh,
-                "-open", "$launcherOutDir\\$appExe",
-                "-save", "$launcherOutDir\\$appExe",
-                "-action", "addoverwrite",
-                "-mask", "ICONGROUP,MAINICON,0",
-                "-res", kseIco
-            )
-        }
-        println("RH3 finished with return code: ${result.result.get().exitValue}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("RH3 errors: ${result.standardError.asText.get()}")
-        }
-    }
-}
-
 tasks.register<Zip>("zip") {
+    group = "distribution"
     dependsOn("prepareExe")
     archiveVersion.set(appSimpleVersion)
     into(distFileNamePrefix) {
@@ -374,486 +292,63 @@ tasks.register<Exec>("jlink") {
     )
 }
 
-tasks.register("innosetup") {
-    dependsOn(tasks.jar, "prepareExe", "jlink", "copyDependencies")
-    doLast {
-        mkdir(distDir)
-        copy {
-            from("innosetup/setup.iss.template")
-            rename("setup.iss.template", "setup.iss")
-            filter(
-                ReplaceTokens::class, "tokens" to mapOf(
-                    "KSE_VERSION" to appVersion,
-                    "KSE_APP_USER_MODEL_ID" to appUserModelId,
-                    "KSE_JAR" to tasks.jar.get().archiveFile.get().asFile.absolutePath,
-                    "LIB_DIR" to dependenciesDir.toString(),
-                    "LAUNCHER" to "$launcherOutDir\\$appExe",
-                    "JAVA_INFO_DLL" to "$resDir\\JavaInfo.dll",
-                    "NO_JRE" to if (JavaVersion.current() != JavaVersion.VERSION_17) "" else "-no-jre",
-                    "ICONS_DIR" to iconsDir,
-                    "RES_DIR" to resDir,
-                    "JRE_DIR" to "$jlinkOutDir\\jre",
-                    "LICENSES_DIR" to licensesDir,
-                    "DIST_DIR" to distDir
-                ),
-                "beginToken" to "%",
-                "endToken" to "%"
-            )
-            into("innosetup")
-        }
-        val result = providers.exec {
-            workingDir("$projectDir/innosetup")
-            commandLine("ISCC.exe", "setup.iss")
-        }
-        println("Innosetup output: ${result.standardOutput.asText.get()}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("Innosetup errors: ${result.standardError.asText.get()}")
-        }
-    }
+windowsPackage {
+    appName.set(project.extra["appName"].toString())
+    appVersion.set(project.extra["appVersion"].toString())
+    appSimpleName.set(project.extra["appSimpleName"].toString())
+    appExe.set(project.extra["appExe"].toString())
+    appUserModelId.set(project.extra["appUserModelId"].toString())
+    copyright.set(project.extra["copyright"].toString())
+    kseIco.set(project.extra["kseIco"].toString())
+    resourceHacker.set(project.extra["rh"].toString())
+    launcherOutDir.set(layout.buildDirectory.dir("launcher"))
+    resDir.set(layout.projectDirectory.dir("res"))
+    iconsDir.set(layout.projectDirectory.dir("icons"))
+    licensesDir.set(layout.projectDirectory.dir("licenses"))
+    jlinkOutDir.set(layout.buildDirectory.dir("jlink"))
+    distDir.set(layout.buildDirectory.dir("distributions"))
+    dependenciesDir.set(layout.buildDirectory.dir("dependencies"))
+    jarFile.set(tasks.named<Jar>("jar").flatMap { it.archiveFile })
 }
 
-tasks.register("appbundler") {
-    dependsOn(tasks.jar, "copyDependencies")
-    doLast {
-        ant.withGroovyBuilder {
-            "taskdef"(
-                "name" to "bundleapp",
-                "classname" to "com.oracle.appbundler.AppBundlerTask",
-                "classpath" to configurations["appbundler"].asPath
-            )
-        }
-        mkdir(appBundleDir)
-        ant.withGroovyBuilder {
-            "bundleapp"(
-                "outputdirectory" to appBundleDir,
-                "name" to appName,
-                "displayname" to appName,
-                "executableName" to appName,
-                "identifier" to "org.kse.$appAltName",
-                "shortversion" to appVersion,
-                "version" to appVersion,
-                "icon" to kseIcns,
-                "mainclassname" to mainClassName,
-                "copyright" to copyright,
-                "applicationCategory" to "public.app-category.developer-tools"
-            ) {
-                "classpath"("dir" to dependenciesDir)
-                "classpath"("file" to tasks.jar.get().archiveFile.get().asFile.absolutePath)
-                "arch"("name" to if (System.getProperty("os.arch") == "aarch64") "arm64" else "x86_64")
-
-                "jlink"("runtime" to System.getProperty("java.home")) {
-                    "jmod"("name" to "java.base")
-                    "jmod"("name" to "java.datatransfer")
-                    "jmod"("name" to "java.desktop")
-                    "jmod"("name" to "java.logging")
-                    "jmod"("name" to "java.naming")
-                    "jmod"("name" to "java.net.http")
-                    "jmod"("name" to "java.prefs")
-                    "jmod"("name" to "java.scripting")
-                    "jmod"("name" to "jdk.accessibility")
-                    "jmod"("name" to "jdk.localedata")
-                    "jmod"("name" to "jdk.net")
-                    "jmod"("name" to "jdk.charsets")
-                    "jmod"("name" to "jdk.crypto.ec")
-                    "jmod"("name" to "jdk.security.auth")
-                    "jmod"("name" to "jdk.crypto.cryptoki")
-                    "jmod"("name" to "jdk.zipfs")
-                    "jmod"("name" to "jdk.dynalink")
-                    "jmod"("name" to "jdk.unsupported")
-
-                    "argument"("value" to "--compress=2")
-                    "argument"("value" to "--no-header-files")
-                    "argument"("value" to "--no-man-pages")
-                    "argument"("value" to "--strip-debug")
-                    "argument"("value" to "--include-locales=en,de,fr,ru")
-                }
-
-                "bundledocument"(
-                    "extensions" to "ks,jks,jceks,keystore,bks,uber,pfx,p12",
-                    "icon" to keystoreIcns,
-                    "name" to "KeyStore",
-                    "role" to "editor"
-                )
-                "option"("value" to "-Dapple.laf.useScreenMenuBar=true")
-                "option"("value" to "-Dcom.apple.macos.use-file-dialog-packages=true")
-                "option"("value" to "-Dcom.apple.macos.useScreenMenuBar=true")
-                "option"("value" to "-Dcom.apple.mrj.application.apple.menu.about.name=$appName")
-                "option"("value" to "-Dcom.apple.smallTabs=true")
-                "option"("value" to "-Dfile.encoding=UTF-8")
-                "option"("value" to $$"-splash:$APP_ROOT/Contents/Resources/splash.png")
-                "option"("value" to "-Dkse.app=true")
-                "option"("value" to $$"-Dkse.app.stub=$APP_ROOT/Contents/MacOS/KeyStore Explorer")
-            }
-        }
-        copy {
-            from(resDir)
-            include("splash*.png")
-            into("$appBundleDir/$appName.app/Contents/Resources")
-        }
-    }
+macPackage {
+    appName.set(project.extra["appName"].toString())
+    appAltName.set(project.extra["appAltName"].toString())
+    appVersion.set(project.extra["appVersion"].toString())
+    appBundle.set(project.extra["appBundle"].toString())
+    copyright.set(project.extra["copyright"].toString())
+    mainClassName.set(project.extra["mainClassName"].toString())
+    kseIcns.set(project.extra["kseIcns"].toString())
+    keystoreIcns.set(project.extra["keystoreIcns"].toString())
+    appBundleDir.set(layout.buildDirectory.dir("appBundle"))
+    resDir.set(layout.projectDirectory.dir("res"))
+    dependenciesDir.set(layout.buildDirectory.dir("dependencies"))
+    appbundlerClasspath.set(configurations["appbundler"].asPath)
+    dmgDir.set(layout.projectDirectory.dir("dmg"))
+    dmgFile.set(project.extra["dmgFile"].toString())
+    distDir.set(layout.buildDirectory.dir("distributions"))
+    signingIdentity.set("Kai Kramer")
 }
 
-tasks.register("signapp") {
-    dependsOn("appbundler")
-    doLast {
-        val javaDir = File("$appBundleDir/$appBundle/Contents/Java")
-        fileTree(javaDir) {
-            include("flatlaf-*-macos-*.dylib")
-        }.forEach { flatlafDylib ->
-            println("Signing FlatLaf native library: ${flatlafDylib.absolutePath}")
-            val result = providers.exec {
-                workingDir(appBundleDir)
-                commandLine(
-                    "codesign",
-                    "-vvv",
-                    "--force",
-                    "-s", "Kai Kramer",
-                    flatlafDylib.absolutePath
-                )
-            }
-            println("Codesign output: ${result.standardOutput.asText.get()}")
-            if (result.standardError.asText.get().isNotEmpty()) {
-                println("Codesign errors: ${result.standardError.asText.get()}")
-            }
-        }
-
-        // Helper function to extract, sign, and repackage jars containing native libraries
-        fun processJarWithNativeLibs(jarPattern: String, jarName: String) {
-            val jarFiles = fileTree("$appBundleDir/$appBundle/Contents/Java") {
-                include("**/$jarPattern")
-            }
-            if (jarFiles.isEmpty) {
-                println("No $jarName jar found, skipping...")
-                return
-            }
-
-            val jar = jarFiles.singleFile
-            val extractDir = "$appBundleDir/$jarName-temp"
-            mkdir(extractDir)
-
-            copy {
-                from(zipTree(jar))
-                into(extractDir)
-            }
-
-            // Find all .dylib files in the extracted content, but not in .dSYM dirs
-            val dylibFiles = fileTree(extractDir) {
-                include("**/*.dylib")
-                exclude("**/*.dSYM/**")
-            }
-            if (dylibFiles.isEmpty) {
-                println("No native libraries found in $jarName jar")
-            } else {
-                dylibFiles.forEach { dylibFile ->
-                    println("Signing $jarName native library: ${dylibFile.absolutePath}")
-                    val result = providers.exec {
-                        workingDir(appBundleDir)
-                        commandLine(
-                            "codesign",
-                            "-vvv",
-                            "--force",
-                            "-s", "Kai Kramer",
-                            dylibFile.absolutePath
-                        )
-                    }
-                    println("Codesign output: ${result.standardOutput.asText.get()}")
-                    if (result.standardError.asText.get().isNotEmpty()) {
-                        println("Codesign errors: ${result.standardError.asText.get()}")
-                    }
-                }
-            }
-
-            // Repackage the jar with all extracted and signed files
-            ant.withGroovyBuilder {
-                "jar"("destfile" to jar.absolutePath, "update" to true) {
-                    "fileset"("dir" to extractDir) {
-                        "include"("name" to "**/*")
-                    }
-                }
-            }
-            delete(extractDir)
-        }
-
-        // Process jars that contain native libraries
-        processJarWithNativeLibs("vaqua-*.jar", "vaqua")
-        processJarWithNativeLibs("vappearances-*.jar", "vappearances")
-        processJarWithNativeLibs("jnr-*.jar", "jnr")
-
-        // Sign Java runtime and app bundle
-        val javaBaseDirName = File(System.getProperty("java.home")).parentFile.parentFile.name
-        println("java.home: ${System.getProperty("java.home")}")
-        println("Signing Java runtime: $appBundle/Contents/PlugIns/$javaBaseDirName")
-        val result1 = providers.exec {
-            workingDir(appBundleDir)
-            commandLine(
-                "codesign",
-                "-vvv",
-                "--force",
-                "--options=runtime",
-                "--entitlements", "$dmgDir/entitlements.xml",
-                "-s", "Kai Kramer",
-                "$appBundle/Contents/PlugIns/$javaBaseDirName"
-            )
-        }
-        println("Codesign output: ${result1.standardOutput.asText.get()}")
-        if (result1.standardError.asText.get().isNotEmpty()) {
-            println("Codesign errors: ${result1.standardError.asText.get()}")
-        }
-
-        println("Signing app bundle: $appBundle")
-        val result2 = providers.exec {
-            workingDir(appBundleDir)
-            commandLine(
-                "codesign",
-                "-vvv",
-                "--force",
-                "--options=runtime",
-                "--entitlements", "$dmgDir/entitlements.xml",
-                "-s", "Kai Kramer",
-                appBundle
-            )
-        }
-        println("Codesign output: ${result2.standardOutput.asText.get()}")
-        if (result2.standardError.asText.get().isNotEmpty()) {
-            println("Codesign errors: ${result2.standardError.asText.get()}")
-        }
-    }
+debianPackage {
+    appVersion.set(project.version.toString())
+    website.set(project.extra["website"].toString())
+    vendor.set(project.extra["vendor"].toString())
+    distDir.set(layout.buildDirectory.dir("distributions"))
 }
 
-tasks.register<Exec>("dmg") {
-    dependsOn("signapp")
-    doFirst {
-        mkdir(distDir)
-        delete("$distDir/$dmgFile")
-    }
-    workingDir(layout.buildDirectory)
-
-    commandLine("create-dmg", "--overwrite", "$appBundleDir/$appBundle", distDir)
-
-    doLast {
-        file("$distDir/$appName $appVersion.dmg").renameTo(file("$distDir/$dmgFile"))
-    }
-}
-
-tasks.register<Exec>("notarization") {
-    dependsOn("dmg")
-    workingDir(layout.buildDirectory)
-
-    commandLine(
-        "xcrun",
-        "notarytool",
-        "submit",
-        "--keychain-profile", "notarization-profile",
-        "--wait",
-        "$distDir/$dmgFile"
-    )
-}
-
-tasks.register("buildRpm") {
-    dependsOn(tasks.jar, "copyDependencies")
-    group = "distribution"
-    description = "Build RPM package using rpmbuild"
-
-    doFirst {
-        val checkRpmbuild = providers.exec {
-            commandLine("bash", "-c", "which rpmbuild")
-            isIgnoreExitValue = true
-        }
-        if (checkRpmbuild.result.get().exitValue != 0) {
-            throw GradleException("rpmbuild is not installed. Install it with: sudo apt-get install rpm")
-        }
-    }
-
-    doLast {
-        // Create rpmbuild directory structure
-        val buildRoot = File(rpmBuildDir, "BUILD")
-        val specsDir = File(rpmBuildDir, "SPECS")
-        val rpmsDir = File(rpmBuildDir, "RPMS")
-        val sourcesDir = File(rpmBuildDir, "SOURCES")
-        val srpmsDir = File(rpmBuildDir, "SRPMS")
-
-        listOf(buildRoot, specsDir, rpmsDir, sourcesDir, srpmsDir, rpmStageDir).forEach { dir ->
-            delete(dir)
-            mkdir(dir)
-        }
-
-        val stageAppDir = File(rpmStageDir)
-
-        copy {
-            from(tasks.jar.get().archiveFile)
-            into(stageAppDir)
-        }
-
-        copy {
-            from(configurations.runtimeClasspath.get().files)
-            into(File(stageAppDir, "lib"))
-        }
-
-        copy {
-            from(resDir) {
-                include("kse.sh", "kse.desktop", "splash*.png")
-            }
-            into(stageAppDir)
-        }
-
-        copy {
-            from(iconsDir) {
-                include("kse_16.png", "kse_32.png", "kse_48.png", "kse_128.png", "kse_256.png", "kse_512.png")
-            }
-            into(File(stageAppDir, "icons"))
-        }
-
-        copy {
-            from(licensesDir) {
-                include("**/*.txt")
-            }
-            into(File(stageAppDir, "licenses"))
-        }
-
-        val dateFormatter = SimpleDateFormat("EEE MMM dd yyyy", Locale.ENGLISH)
-        copy {
-            from("rpmbuild/kse.spec.template")
-            rename("kse.spec.template", "kse.spec")
-            filter(
-                ReplaceTokens::class, "tokens" to mapOf(
-                    "KSE_PACKAGE_NAME" to appSimpleName,
-                    "KSE_VERSION" to appVersion,
-                    "KSE_WEBSITE" to website,
-                    "KSE_JAR_NAME" to appJarName,
-                    "KSE_BUILD_ROOT" to rpmStageDir,
-                    "KSE_DATE" to dateFormatter.format(Date()),
-                    "KSE_VENDOR" to vendor
-                ),
-                "beginToken" to "%",
-                "endToken" to "%"
-            )
-            into(specsDir)
-        }
-
-        val result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                "rpmbuild",
-                "-bb",
-                "--define", "_topdir $rpmBuildDir",
-                "--buildroot", "$buildRoot",
-                "$specsDir/kse.spec"
-            )
-        }
-
-        println("rpmbuild output: ${result.standardOutput.asText.get()}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("rpmbuild errors: ${result.standardError.asText.get()}")
-        }
-
-        mkdir(distDir)
-        copy {
-            from(fileTree(rpmsDir) {
-                include("**/*.rpm")
-            })
-            into(distDir)
-        }
-
-        println("RPM package created successfully in: $distDir")
-    }
-}
-
-tasks.register("prepareDeb") {
-    dependsOn(tasks.jar, "copyDependencies")
-    group = "distribution"
-    description = "Prepare files for Debian package build"
-
-    doLast {
-        val debStageDir = layout.buildDirectory.dir("deb-stage").get().asFile
-        delete(debStageDir)
-        mkdir(debStageDir)
-
-        copy {
-            from(configurations.runtimeClasspath.get().files)
-            into(File(debStageDir, "lib"))
-        }
-
-        println("Prepared files for Debian package build in: $debStageDir")
-    }
-}
-
-tasks.register("updateDebChangelog") {
-    group = "distribution"
-    description = "Update debian/changelog with current version"
-
-    doLast {
-        val changelogFile = File(projectDir, "debian/changelog")
-        val dateFormatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
-
-        val changelogContent = """kse ($appVersion-1) unstable; urgency=medium
-
-  * Version $appVersion release
-  * See full changelog at $website
-
- -- $vendor <keystore-explorer@keystore-explorer.org>  ${dateFormatter.format(Date())}
-"""
-        changelogFile.writeText(changelogContent)
-        println("Updated debian/changelog to version $appVersion")
-    }
-}
-
-tasks.register<Exec>("buildDeb") {
-    dependsOn(tasks.jar, "prepareDeb", "updateDebChangelog")
-    group = "distribution"
-    description = "Build Debian package using debhelper and dpkg-buildpackage"
-
-    doFirst {
-        val checkDebhelper = providers.exec {
-            commandLine("bash", "-c", "which dpkg-buildpackage")
-            isIgnoreExitValue = true
-        }
-        if (checkDebhelper.result.get().exitValue != 0) {
-            throw GradleException("""
-                |dpkg-buildpackage is not installed. Install it with:
-                |  sudo apt-get install debhelper dpkg-dev build-essential
-            """.trimMargin())
-        }
-
-        val rulesFile = File(projectDir, "debian/rules")
-        if (rulesFile.exists()) {
-            rulesFile.setExecutable(true, false)
-        }
-
-        File(projectDir, "debian/postinst").apply { if (exists()) setExecutable(true, false) }
-        File(projectDir, "debian/postrm").apply { if (exists()) setExecutable(true, false) }
-    }
-
-    workingDir(projectDir)
-
-    commandLine(
-        "dpkg-buildpackage",
-        "-us", "-uc",  // Don't sign (use -k for signing)
-        "-b",           // Binary only
-        "--build=binary"
-    )
-
-    doLast {
-        mkdir(distDir)
-
-        val parentDir = projectDir.parentFile
-        val debFiles = fileTree(parentDir) {
-            include("kse_*.deb")
-        }
-
-        if (debFiles.isEmpty) {
-            println("Warning: No .deb file found in ${parentDir.absolutePath}")
-        } else {
-            copy {
-                from(debFiles)
-                into(distDir)
-            }
-            println("Debian package created successfully in: $distDir")
-
-            delete(fileTree(parentDir) {
-                include("kse_*.buildinfo", "kse_*.changes", "kse_*.deb")
-            })
-        }
-    }
+rpmPackage {
+    appVersion.set(project.extra["appVersion"].toString())
+    appSimpleName.set(project.extra["appSimpleName"].toString())
+    appJarName.set(project.extra["appJarName"].toString())
+    website.set(project.extra["website"].toString())
+    vendor.set(project.extra["vendor"].toString())
+    rpmBuildDir.set(layout.buildDirectory.dir("rpmbuild"))
+    rpmStageDir.set(layout.buildDirectory.dir("rpm-stage"))
+    distDir.set(layout.buildDirectory.dir("distributions"))
+    resDir.set(layout.projectDirectory.dir("res"))
+    iconsDir.set(layout.projectDirectory.dir("icons"))
+    licensesDir.set(layout.projectDirectory.dir("licenses"))
 }
 
 idea {
