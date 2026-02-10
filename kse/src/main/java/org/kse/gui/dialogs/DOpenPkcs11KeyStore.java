@@ -237,7 +237,8 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
     private void browsePressed() {
         JFileChooser chooser = FileChooserFactory.getLibFileChooser();
 
-        File currentLibFile = new File(((String) jtfP11Library.getSelectedItem()).trim());
+        String selectedItem = jtfP11Library.getSelectedItem() != null ? (String) jtfP11Library.getSelectedItem() : "";
+        File currentLibFile = new File(selectedItem.trim());
 
         if (currentLibFile.getParentFile() != null && currentLibFile.getParentFile().exists()) {
             chooser.setCurrentDirectory(currentLibFile.getParentFile());
@@ -261,8 +262,9 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
     }
 
     private void okPressed() {
+        Object selectedItem = jtfP11Library.getSelectedItem();
+        final String selectedLib = (selectedItem != null) ? ((String) selectedItem).trim() : "";
 
-        final String selectedLib = ((String) jtfP11Library.getSelectedItem()).trim();
         try {
             if (jrbUseExisting.isSelected()) {
 
