@@ -37,7 +37,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Set;
 
 /**
  * A KeyStore adapter for abstracting the differences in KeyStore provider
@@ -80,9 +79,10 @@ public class KseKeyStore {
         return keyStore.getType();
     }
 
-    public Set<Entry.Attribute> getAttributes(String alias) throws KeyStoreException {
-        return keyStore.getAttributes(alias);
-    }
+    // TODO Re-enable when Java 18+ is the default for KSE.
+//    public Set<Entry.Attribute> getAttributes(String alias) throws KeyStoreException {
+//        return keyStore.getAttributes(alias);
+//    }
 
     public Key getKey(String alias, char[] password)
             throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
