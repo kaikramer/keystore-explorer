@@ -22,7 +22,6 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.io.File;
-import java.security.KeyStore;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -31,6 +30,7 @@ import javax.swing.KeyStroke;
 import org.kse.AuthorityCertificates;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
@@ -94,7 +94,7 @@ public class OpenCaCertificatesAction extends OpenAction {
                 return;
             }
 
-            KeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
+            KseKeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
 
             PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(true, false);
 

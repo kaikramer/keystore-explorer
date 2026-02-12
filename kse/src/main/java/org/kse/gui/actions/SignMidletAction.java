@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -31,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.MidletSigner;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -80,7 +80,7 @@ public class SignMidletAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
             X509Certificate[] certs = X509CertUtil.orderX509CertChain(

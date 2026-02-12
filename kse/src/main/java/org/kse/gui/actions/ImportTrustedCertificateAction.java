@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
@@ -107,7 +107,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             // use either cert that was passed to c-tor or the one from file selection dialog
@@ -138,11 +138,11 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
                     }
                 }
 
-                KeyStore caCertificates = getCaCertificates();
-                KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
+                KseKeyStore caCertificates = getCaCertificates();
+                KseKeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
                 // Establish against current KeyStore
-                ArrayList<KeyStore> compKeyStores = new ArrayList<>();
+                ArrayList<KseKeyStore> compKeyStores = new ArrayList<>();
                 compKeyStores.add(keyStore);
 
                 if (caCertificates != null) {
@@ -156,7 +156,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
                 }
 
                 // Can we establish trust for the certificate?
-                if (X509CertUtil.establishTrust(trustCert, compKeyStores.toArray(KeyStore[]::new)) ==
+                if (X509CertUtil.establishTrust(trustCert, compKeyStores.toArray(KseKeyStore[]::new)) ==
                     null) {
 
                     // if trustCert comes from an Examination Dialog (i.e. certFile == null)

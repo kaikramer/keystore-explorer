@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.crypto.SecretKey;
@@ -30,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.KseFrame;
@@ -107,7 +107,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             DGetAlias dGetAlias = new DGetAlias(frame,

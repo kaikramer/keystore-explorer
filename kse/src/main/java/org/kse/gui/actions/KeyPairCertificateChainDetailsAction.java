@@ -21,13 +21,13 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewCertificate;
@@ -71,7 +71,7 @@ public class KeyPairCertificateChainDetailsAction extends KeyStoreExplorerAction
     public void showCertificateSelectedEntry() {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-            KeyStore keyStore = history.getCurrentState().getKeyStore();
+            KseKeyStore keyStore = history.getCurrentState().getKeyStore();
             String alias = kseFrame.getSelectedEntryAlias();
 
             X509Certificate[] certs = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));

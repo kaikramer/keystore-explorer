@@ -22,8 +22,6 @@ package org.kse.utilities.ssl;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -39,7 +37,11 @@ import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 
+/**
+ * A utility class providing TLS/SSL operations.
+ */
 public class SslUtils {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/ssl/resources");
@@ -58,7 +60,8 @@ public class SslUtils {
      * @throws CryptoException Problem encountered while loading the certificate(s)
      * @throws IOException     An I/O error occurred
      */
-    public static SslConnectionInfos readSSLConnectionInfos(String host, int port, KeyStore keyStore, char[] password)
+    @SuppressWarnings("deprecation") // for KseKeyStore.getKeyStore()
+    public static SslConnectionInfos readSSLConnectionInfos(String host, int port, KseKeyStore keyStore, char[] password)
             throws CryptoException, IOException {
 
         URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
@@ -73,7 +76,7 @@ public class SslUtils {
             X509KeyManager km = null;
             if (keyStore != null) {
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
-                keyManagerFactory.init(keyStore, password);
+                keyManagerFactory.init(keyStore.getKeyStore(), password);
                 for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
                     if (keyManager instanceof X509KeyManager) {
                         km = (X509KeyManager) keyManager;
@@ -138,11 +141,11 @@ public class SslUtils {
      */
     private static class X509TrustingManager implements X509TrustManager {
         @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
         }
 
         @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        public void checkClientTrusted(X509Certificate[] chain, String authType) {
             throw new UnsupportedOperationException();
         }
 

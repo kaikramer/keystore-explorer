@@ -21,7 +21,6 @@ package org.kse.utilities.history;
 
 import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.interfaces.DSAPrivateKey;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +30,7 @@ import org.bouncycastle.jce.provider.JDKDSAPrivateKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.passwordmanager.Password;
 
 /**
@@ -43,7 +43,7 @@ public class KeyStoreState {
     private KeyStoreHistory history;
 
     HistoryAction action;
-    private KeyStore keyStore;
+    private KseKeyStore keyStore;
     private Password password;
     private HashMap<String, Password> entryPasswords = new HashMap<>();
     private boolean isStoredInPasswordManager = false;
@@ -63,7 +63,7 @@ public class KeyStoreState {
      * @param keyStore KeyStore
      * @param password KeyStore password
      */
-    KeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
+    KeyStoreState(KeyStoreHistory history, KseKeyStore keyStore, Password password) {
         this.history = history;
         this.keyStore = keyStore;
         this.password = password;
@@ -200,7 +200,7 @@ public class KeyStoreState {
      *
      * @return The KeyStore
      */
-    public KeyStore getKeyStore() {
+    public KseKeyStore getKeyStore() {
         return keyStore;
     }
 
@@ -218,7 +218,7 @@ public class KeyStoreState {
      *
      * @param keyStore The KeyStore
      */
-    public void setKeyStore(KeyStore keyStore) {
+    public void setKeyStore(KseKeyStore keyStore) {
         this.keyStore = keyStore;
     }
 

@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -38,6 +37,7 @@ import javax.swing.JOptionPane;
 
 import org.kse.crypto.encryption.EncryptionException;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
@@ -150,8 +150,9 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
      */
     protected Password unlockEntry(String alias, KeyStoreState state) {
         try {
-            KeyStore keyStore = state.getKeyStore();
+            KseKeyStore keyStore = state.getKeyStore();
             KeyStoreHistory history = state.getHistory();
+            KeyStoreType keyStoreType = history.getCurrentState().getType();
             Password password = null;
 
             // try to get password from password manager
@@ -163,7 +164,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
             }
 
             // for PKCS#12 keystores, the entry password is usually the same as the keystore password
-            if (password == null && history.getCurrentState().getType() == KeyStoreType.PKCS12) {
+            if (password == null && (keyStoreType == KeyStoreType.PKCS12 || keyStoreType == KeyStoreType.KEYCHAIN)) {
                 Password keystorePassword = state.getPassword();
                 if (keystorePassword != null) {
                     password = new Password(keystorePassword.toCharArray());
@@ -292,7 +293,8 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
             KeyStoreState newState) {
         Password password = new Password((char[]) null);
 
-        if (keyStoreType.hasEntryPasswords() && keyStoreType != KeyStoreType.PKCS12) {
+        if (keyStoreType.hasEntryPasswords()
+                && (keyStoreType != KeyStoreType.PKCS12 && keyStoreType != KeyStoreType.KEYCHAIN)) {
             DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, title, preferences);
             dGetNewPassword.setLocationRelativeTo(frame);
             dGetNewPassword.setVisible(true);
@@ -302,7 +304,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
                 return null;
             }
         }
-        if (keyStoreType == KeyStoreType.PKCS12) {
+        if (keyStoreType == KeyStoreType.PKCS12 || keyStoreType == KeyStoreType.KEYCHAIN) {
             if (currentState.getPassword() == null) {
                 var passwordAndDecision = getNewKeyStorePassword(true, newState.isStoredInPasswordManager());
                 password = passwordAndDecision.getPassword();

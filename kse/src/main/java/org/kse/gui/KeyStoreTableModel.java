@@ -23,7 +23,6 @@ import static org.kse.crypto.KeyType.SYMMETRIC;
 
 import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -53,6 +52,7 @@ import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.KseX500NameStyle;
@@ -179,7 +179,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         this.history = history;
         KeyStoreState currentState = history.getCurrentState();
 
-        KeyStore keyStore = currentState.getKeyStore();
+        KseKeyStore keyStore = currentState.getKeyStore();
         KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
         Enumeration<String> aliases = keyStore.aliases();
@@ -367,7 +367,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         fireTableDataChanged();
     }
 
-    private Date getCertificateValidityStart(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private Date getCertificateValidityStart(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getNotBefore();
         } else {
@@ -383,7 +383,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         }
     }
 
-    private Date getCertificateExpiry(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private Date getCertificateExpiry(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getNotAfter();
         } else {
@@ -412,7 +412,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         }
     }
 
-    private KeyInfo getKeyInfo(String alias, KeyStore keyStore, KeyStoreState currentState)
+    private KeyInfo getKeyInfo(String alias, KseKeyStore keyStore, KeyStoreState currentState)
             throws CryptoException, GeneralSecurityException {
         if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             // Get key info from certificate
@@ -463,43 +463,43 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         return algorithm;
     }
 
-    private String getCertificateSubjectDN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateSubjectDN(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         return X500NameUtils.x500PrincipalToX500Name(x509Cert.getSubjectX500Principal()).toString();
     }
 
-    private String getCertificateIssuerDN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateIssuerDN(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         return X500NameUtils.x500PrincipalToX500Name(x509Cert.getIssuerX500Principal()).toString();
     }
 
-    private String getCertificateSerialNumberHex(String alias, KeyStore ks) throws CryptoException, KeyStoreException {
+    private String getCertificateSerialNumberHex(String alias, KseKeyStore ks) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, ks);
         return X509CertUtil.getSerialNumberAsHex(x509Cert);
     }
 
-    private String getCertificateSerialNumberDec(String alias, KeyStore ks) throws CryptoException, KeyStoreException {
+    private String getCertificateSerialNumberDec(String alias, KseKeyStore ks) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, ks);
         return X509CertUtil.getSerialNumberAsDec(x509Cert);
     }
 
-    private String getCertificateFingerprint(String alias, KeyStore ks, DigestType fingerprintAlg)
+    private String getCertificateFingerprint(String alias, KseKeyStore ks, DigestType fingerprintAlg)
             throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, ks);
         return X509CertUtil.getFingerprint(x509Cert, fingerprintAlg);
     }
 
-    private String getCertificateSubjectCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateSubjectCN(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         return X500NameUtils.extractCN(x509Cert.getSubjectX500Principal());
     }
 
-    private String getCertificateIssuerCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateIssuerCN(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         return X500NameUtils.extractCN(x509Cert.getIssuerX500Principal());
     }
 
-    private String getCertificateSKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateSKI(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         try {
             byte[] skiValue = x509Cert.getExtensionValue(Extension.subjectKeyIdentifier.getId());
@@ -511,7 +511,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         }
     }
 
-    private String getCertificateAKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateAKI(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         try {
             byte[] akiValue = x509Cert.getExtensionValue(Extension.authorityKeyIdentifier.getId());
@@ -523,19 +523,19 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         }
     }
 
-    private String getCertificateSubjectO(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateSubjectO(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         X500Name subject = X500NameUtils.x500PrincipalToX500Name(x509Cert.getSubjectX500Principal());
         return X500NameUtils.getRdn(subject, KseX500NameStyle.O);
     }
 
-    private String getCertificateIssuerO(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+    private String getCertificateIssuerO(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         X500Name issuer = X500NameUtils.x500PrincipalToX500Name(x509Cert.getIssuerX500Principal());
         return X500NameUtils.getRdn(issuer, KseX500NameStyle.O);
     }
 
-    private X509Certificate getCertificate(String alias, KeyStore keyStore) throws KeyStoreException, CryptoException {
+    private X509Certificate getCertificate(String alias, KseKeyStore keyStore) throws KeyStoreException, CryptoException {
         X509Certificate x509Cert = null;
         if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             x509Cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));

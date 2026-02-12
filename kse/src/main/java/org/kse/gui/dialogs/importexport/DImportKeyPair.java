@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -66,6 +65,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -541,7 +541,7 @@ public class DImportKeyPair extends JEscDialog {
 
     private PrivateKey loadPkcs12(File file, Password password) {
         try {
-            KeyStore pkcs12 = KeyStoreUtil.load(file, password, KeyStoreType.PKCS12);
+            KseKeyStore pkcs12 = KeyStoreUtil.load(file, password, KeyStoreType.PKCS12);
 
             // Find a key pair in the PKCS #12 KeyStore
             PrivateKey privKey = null;

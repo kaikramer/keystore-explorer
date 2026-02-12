@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -39,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.importexport.DExportCertificates;
@@ -128,7 +128,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
         String[] aliases = kseFrame.getSelectedEntryAliases();
         try {
             Set<X509Certificate> setCertificates = new HashSet<>();
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             for (String alias : aliases) {
                 if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
                     Certificate certificate = keyStore.getCertificate(alias);

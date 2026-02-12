@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -39,13 +38,13 @@ import javax.swing.JOptionPane;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
@@ -53,6 +52,7 @@ import org.kse.gui.CurrentDirectory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGenerateCsr;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -97,7 +97,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 

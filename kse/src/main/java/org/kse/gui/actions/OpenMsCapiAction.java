@@ -19,17 +19,15 @@
  */
 package org.kse.gui.actions;
 
-import java.security.KeyStore;
-
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.keystore.MsCapiStoreType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 
 /**
- * Action to open the PKCS11 KeyStore. If it does not exist provide the
- * user with the option of creating it.
+ * Action to open the MS CAPI KeyStore.
  */
 public abstract class OpenMsCapiAction extends OpenAction {
 
@@ -52,7 +50,7 @@ public abstract class OpenMsCapiAction extends OpenAction {
 
         try {
 
-            KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(type);
+            KseKeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(type);
 
             // https://bugs.openjdk.java.net/browse/JDK-6407454
             // "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.

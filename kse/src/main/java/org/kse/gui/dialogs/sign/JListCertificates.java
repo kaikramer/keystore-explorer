@@ -23,7 +23,6 @@ package org.kse.gui.dialogs.sign;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 
@@ -36,6 +35,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.PlatformUtil;
@@ -58,7 +58,7 @@ public class JListCertificates extends JPanel {
     private KsePreferences preferences = PreferencesManager.getPreferences();
 
     private KeyStoreTableColumns keyStoreTableColumns;
-    private KeyStore keyStore;
+    private KseKeyStore keyStore;
 
     /**
      * Creates a new JListCertificates

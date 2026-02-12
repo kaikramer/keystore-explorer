@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -43,11 +42,12 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.kse.gui.passwordmanager.Password;
-import org.kse.gui.components.JEscDialog;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.ssl.SslConnectionInfos;
 import org.kse.utilities.ssl.SslUtils;
@@ -72,7 +72,7 @@ public class DExaminingSsl extends JEscDialog {
 
     private String sslHost;
     private int sslPort;
-    private KeyStore keyStore;
+    private KseKeyStore keyStore;
     private char[] password;
     private SslConnectionInfos sslInfos;
     private Thread examiner;

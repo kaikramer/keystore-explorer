@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -47,6 +46,7 @@ import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
@@ -104,7 +104,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
             return;
         }
 
-        KeyStore keyStore = currentState.getKeyStore();
+        KseKeyStore keyStore = currentState.getKeyStore();
 
         DSignCsr dSignCsr = null;
         X509Certificate[] signingChain = null;

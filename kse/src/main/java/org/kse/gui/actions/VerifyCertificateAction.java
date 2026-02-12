@@ -84,6 +84,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.ocsp.OcspDigestAlgorithm;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -473,7 +474,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         trustStore.load(null, null);
         if (keyStoreHistory != null) {
 
-            KeyStore tempTrustStore = keyStoreHistory.getCurrentState().getKeyStore();
+            KseKeyStore tempTrustStore = keyStoreHistory.getCurrentState().getKeyStore();
             Enumeration<String> enumeration = tempTrustStore.aliases();
             while (enumeration.hasMoreElements()) {
                 String alias = enumeration.nextElement();
@@ -503,7 +504,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
     private X509Certificate getCertificate(String alias) throws CryptoException {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-            KeyStore keyStore = history.getCurrentState().getKeyStore();
+            KseKeyStore keyStore = history.getCurrentState().getKeyStore();
 
             return X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
         } catch (KeyStoreException ex) {
@@ -516,7 +517,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
     private X509Certificate[] getCertificateChain(String alias) throws CryptoException {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-            KeyStore keyStore = history.getCurrentState().getKeyStore();
+            KseKeyStore keyStore = history.getCurrentState().getKeyStore();
             Certificate[] certsIn = keyStore.getCertificateChain(alias);
             if (certsIn != null) {
                 return X509CertUtil.convertCertificates(certsIn);
@@ -533,7 +534,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     static class ExtensionRemovingCertPathChecker extends PKIXCertPathChecker {
         @Override
-        public void init(boolean forward) throws CertPathValidatorException {
+        public void init(boolean forward) {
             // nothing to do here
         }
 
@@ -553,7 +554,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         }
 
         @Override
-        public void check(Certificate cert, Collection<String> unresolvedCritExts) throws CertPathValidatorException {
+        public void check(Certificate cert, Collection<String> unresolvedCritExts) {
             // remove critical Apple private extension that causes certificate validation to
             // fail
             unresolvedCritExts.remove("1.2.840.113635.100.6.1.13");

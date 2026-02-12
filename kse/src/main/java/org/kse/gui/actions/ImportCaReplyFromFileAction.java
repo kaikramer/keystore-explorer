@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
@@ -93,7 +93,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             Key privateKey = keyStore.getKey(alias, password.toCharArray());
@@ -128,8 +128,8 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
             if (!preferences.getCaCertsSettings().isImportCaReplyTrustCheckEnabled()) {
                 newCertChain = certs;
             } else {
-                KeyStore caCertificates = getCaCertificates();
-                KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
+                KseKeyStore caCertificates = getCaCertificates();
+                KseKeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
                 // PKCS #7 reply - try and match the self-signed root with any
                 // of the certificates in the CA Certificates or current KeyStore
@@ -181,7 +181,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
                 // trust from the certificate and ending with a root CA self-signed certificate
                 else {
                     // Establish trust against current KeyStore
-                    ArrayList<KeyStore> compKeyStores = new ArrayList<>();
+                    ArrayList<KseKeyStore> compKeyStores = new ArrayList<>();
                     compKeyStores.add(keyStore);
 
                     if (caCertificates != null) {
@@ -195,7 +195,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
                     }
 
                     X509Certificate[] trustChain = X509CertUtil.establishTrust(certs[0], compKeyStores.toArray(
-                            KeyStore[]::new));
+                            KseKeyStore[]::new));
 
                     if (trustChain != null) {
                         newCertChain = trustChain;

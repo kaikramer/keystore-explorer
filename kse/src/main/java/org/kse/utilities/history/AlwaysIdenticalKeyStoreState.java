@@ -19,11 +19,9 @@
  */
 package org.kse.utilities.history;
 
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.util.ResourceBundle;
 
-import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.passwordmanager.Password;
 
 /**
@@ -37,20 +35,13 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
     protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/history/resources");
 
     /**
-     * Create an empty state.
-     */
-    AlwaysIdenticalKeyStoreState() {
-        super();
-    }
-
-    /**
      * Create a new state.
      *
      * @param history  History
      * @param keyStore KeyStore
      * @param password KeyStore password
      */
-    AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
+    AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KseKeyStore keyStore, Password password) {
         super(history, keyStore, password);
     }
 
@@ -70,12 +61,12 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
     }
 
     @Override
-    public void setPreviousStateAsCurrentState() throws CryptoException {
+    public void setPreviousStateAsCurrentState() {
         // do nothing
     }
 
     @Override
-    public void setNextStateAsCurrentState() throws CryptoException {
+    public void setNextStateAsCurrentState() {
         // do nothing
     }
 
@@ -90,18 +81,17 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
     }
 
     @Override
-    public KeyStoreState createBasisForNextState(HistoryAction action) throws CryptoException {
+    public KeyStoreState createBasisForNextState(HistoryAction action) {
         return this;
     }
 
     @Override
-    protected void propagateNewPasswords(KeyStoreState targetState) throws CryptoException {
+    protected void propagateNewPasswords(KeyStoreState targetState) {
         // do nothing
     }
 
     @Override
-    protected boolean isEntryPrivateKeyEqual(KeyStoreState targetState, String alias, Password password)
-            throws GeneralSecurityException {
+    protected boolean isEntryPrivateKeyEqual(KeyStoreState targetState, String alias, Password password) {
         return true;
     }
 }

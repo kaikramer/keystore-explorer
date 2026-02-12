@@ -20,7 +20,6 @@
 package org.kse.gui.preferences;
 
 import java.io.File;
-import java.security.KeyStore;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -29,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.passwordmanager.Password;
@@ -90,7 +90,7 @@ public class JChangeKeyStorePathButton extends JButton {
 
             passwordManager.getKeyStorePassword(oldPath).ifPresent(password -> {
                 try {
-                    KeyStore keyStore = KeyStoreUtil.load(newPath, new Password(password));
+                    KseKeyStore keyStore = KeyStoreUtil.load(newPath, new Password(password));
 
                     if (keyStore == null) {
                         JOptionPane.showMessageDialog(this.getParent(),

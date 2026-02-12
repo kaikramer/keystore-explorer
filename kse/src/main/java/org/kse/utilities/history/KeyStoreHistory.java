@@ -20,10 +20,10 @@
 package org.kse.utilities.history;
 
 import java.io.File;
-import java.security.KeyStore;
 import java.security.Provider;
 
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.passwordmanager.Password;
 
 /**
@@ -43,9 +43,9 @@ public class KeyStoreHistory {
      * @param keyStore         KeyStore
      * @param name             KeyStore name
      * @param password         KeyStore password
-     * @param explicitProvider
+     * @param explicitProvider The security provider to use for this key store.
      */
-    public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
+    public KeyStoreHistory(KseKeyStore keyStore, String name, Password password, Provider explicitProvider) {
         this.name = name;
         this.explicitProvider = explicitProvider;
 
@@ -68,7 +68,7 @@ public class KeyStoreHistory {
      * @param file     Save file
      * @param password KeyStore password
      */
-    public KeyStoreHistory(KeyStore keyStore, File file, Password password) {
+    public KeyStoreHistory(KseKeyStore keyStore, File file, Password password) {
         this.file = file;
         this.name = file.getName();
         initialState = new KeyStoreState(this, keyStore, password);
@@ -157,6 +157,9 @@ public class KeyStoreHistory {
         savedState = state;
     }
 
+    /**
+     * @return The security provider for this key store.
+     */
     public Provider getExplicitProvider() {
         return explicitProvider;
     }

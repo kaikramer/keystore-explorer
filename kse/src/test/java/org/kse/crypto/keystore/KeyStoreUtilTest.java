@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.KeyPair;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
@@ -68,7 +67,7 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
     })
     // @formatter:on
     void doTests(KeyStoreType keyStoreType) throws Exception {
-        KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
+        KseKeyStore keyStore = KeyStoreUtil.create(keyStoreType);
 
         assertThat(keyStore).isNotNull();
         assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
@@ -91,7 +90,7 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
     @MethodSource(value = "fileBasedKeyStores")
     void isMLDSAKeyPair(KeyStoreType keyStoreType) throws Exception {
         // Arrange
-        KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
+        KseKeyStore keyStore = KeyStoreUtil.create(keyStoreType);
 
         File keyStoreFile = File.createTempFile(
                 "keystore", keyStoreType.jce().toLowerCase()
@@ -121,7 +120,7 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
     @ParameterizedTest
     @MethodSource(value = "fileBasedKeyStores")
     void isSlhDsaKeyPair(KeyStoreType keyStoreType) throws Exception {
-        KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
+        KseKeyStore keyStore = KeyStoreUtil.create(keyStoreType);
         File keyStoreFile = File.createTempFile("keystore", keyStoreType.jce().toLowerCase());
         keyStoreFile.deleteOnExit();
 

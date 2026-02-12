@@ -20,16 +20,16 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.KSE;
-import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -64,7 +64,7 @@ public class UnlockKeyAction extends KeyStoreExplorerAction {
 
         if (kseFrame.getSelectedEntryAliases().length > 1) {
             try {
-                KeyStore keyStore = currentState.getKeyStore();
+                KseKeyStore keyStore = currentState.getKeyStore();
 
                 for (String alias : kseFrame.getSelectedEntryAliases()) {
                     // Use isKeyEntry rather than the KSE isKeyPair/isKey utils since

@@ -20,7 +20,6 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -28,6 +27,7 @@ import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
@@ -73,7 +73,7 @@ public class NewAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore newKeyStore = KeyStoreUtil.create(keyStoreType);
+            KseKeyStore newKeyStore = KeyStoreUtil.create(keyStoreType);
 
             untitledCount++;
             String untitled = MessageFormat.format(res.getString("NewAction.Untitled"), untitledCount);

@@ -48,9 +48,8 @@ import java.util.ResourceBundle;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.keypair.KeyPairType;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.preferences.PreferencesManager;
 
 /**
@@ -72,13 +71,13 @@ public final class KeyStoreUtil {
      * @throws CryptoException Problem encountered creating the KeyStore
      * @throws IOException     An I/O error occurred
      */
-    public static KeyStore create(KeyStoreType keyStoreType) throws CryptoException, IOException {
+    public static KseKeyStore create(KeyStoreType keyStoreType) throws CryptoException, IOException {
         if (!keyStoreType.isFileBased()) {
             throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStoreNotFile.exception.message"),
                                                            keyStoreType.jce()));
         }
 
-        KeyStore keyStore = getKeyStoreInstance(keyStoreType);
+        KseKeyStore keyStore = new KseKeyStore(getKeyStoreInstance(keyStoreType));
 
         try {
             keyStore.load(null, null);
@@ -108,7 +107,7 @@ public final class KeyStoreUtil {
      *                               than a regular file, or for some other reason cannot be
      *                               opened for reading
      */
-    public static KeyStore load(File keyStoreFile, Password password)
+    public static KseKeyStore load(File keyStoreFile, Password password)
             throws CryptoException, FileNotFoundException, NoSuchFileException {
         KeyStoreType keyStoreType = null;
 
@@ -144,14 +143,14 @@ public final class KeyStoreUtil {
      *                               than a regular file, or for some other reason cannot be
      *                               opened for reading
      */
-    public static KeyStore load(File keyStoreFile, Password password, KeyStoreType keyStoreType)
+    public static KseKeyStore load(File keyStoreFile, Password password, KeyStoreType keyStoreType)
             throws CryptoException, FileNotFoundException, NoSuchFileException {
         if (!keyStoreType.isFileBased()) {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreNotFile.exception.message"), keyStoreType.jce()));
         }
 
-        KeyStore keyStore = getKeyStoreInstance(keyStoreType);
+        KseKeyStore keyStore = new KseKeyStore(getKeyStoreInstance(keyStoreType));
 
         try (FileInputStream fis = new FileInputStream(keyStoreFile)) {
             if (password.isEmpty() && (keyStoreType == KeyStoreType.JKS || keyStoreType == KeyStoreType.JCEKS)) {
@@ -192,15 +191,17 @@ public final class KeyStoreUtil {
      * @return The Keychain as a KeyStore
      * @throws CryptoException Problem encountered loading the KeyStore
      */
-    public static KeyStore loadAppleKeychain() throws CryptoException {
+    public static KseKeyStore loadAppleKeychain() throws CryptoException {
         if (!isAppleKeychainSupported()) {
             throw new CryptoException(res.getString("AppleKeychainNotSupported.exception.message"));
         }
 
-        KeyStore keyStore = null;
+        KseKeyStore keyStore = null;
 
         try {
-            keyStore = KeyStore.getInstance(KEYCHAIN.jce(), APPLE.jce());
+            // Use the KeychainStoreAdapter so that the the KeychainStore
+            // acts more like the MS CAPI key store.
+            keyStore = new KeychainStoreAdapter(KeyStore.getInstance(KEYCHAIN.jce(), APPLE.jce()));
         } catch (KeyStoreException | NoSuchProviderException ex) {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"), KEYCHAIN.jce()), ex);
@@ -233,17 +234,17 @@ public final class KeyStoreUtil {
      * @return The MS CAPI Store as a KeyStore
      * @throws CryptoException Problem encountered loading the KeyStore
      */
-    public static KeyStore loadMsCapiStore(MsCapiStoreType msCapiStoreType) throws CryptoException {
+    public static KseKeyStore loadMsCapiStore(MsCapiStoreType msCapiStoreType) throws CryptoException {
         if (!areMsCapiStoresSupported()) {
             // May previously have been set on an MSCAPI supporting JRE
             PreferencesManager.getPreferences().getCaCertsSettings().setUseWindowsTrustedRootCertificates(false);
             throw new CryptoException(res.getString("MsCapiStoresNotSupported.exception.message"));
         }
 
-        KeyStore keyStore = null;
+        KseKeyStore keyStore = null;
 
         try {
-            keyStore = KeyStore.getInstance(msCapiStoreType.jce(), MS_CAPI.jce());
+            keyStore = new KseKeyStore(KeyStore.getInstance(msCapiStoreType.jce(), MS_CAPI.jce()));
         } catch (KeyStoreException | NoSuchProviderException ex) {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"), msCapiStoreType.jce()),
@@ -273,7 +274,7 @@ public final class KeyStoreUtil {
      *                               be opened for any other reason
      * @throws IOException           An I/O error occurred
      */
-    public static void save(KeyStore keyStore, File keyStoreFile, Password password)
+    public static void save(KseKeyStore keyStore, File keyStoreFile, Password password)
             throws CryptoException, IOException {
         KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
@@ -297,7 +298,7 @@ public final class KeyStoreUtil {
      * @return True if it does
      * @throws CryptoException Problem occurred checking the KeyStore
      */
-    public static boolean containsKey(KeyStore keyStore) throws CryptoException {
+    public static boolean containsKey(KseKeyStore keyStore) throws CryptoException {
         try {
             Enumeration<String> aliases = keyStore.aliases();
 
@@ -323,7 +324,7 @@ public final class KeyStoreUtil {
      * @return True if it is, false otherwise
      * @throws KeyStoreException If there was a problem accessing the KeyStore.
      */
-    public static boolean isKeyPairEntry(String alias, KeyStore keyStore) throws KeyStoreException {
+    public static boolean isKeyPairEntry(String alias, KseKeyStore keyStore) throws KeyStoreException {
         return keyStore.isKeyEntry(alias) && keyStore.getCertificateChain(alias) != null &&
                keyStore.getCertificateChain(alias).length != 0;
     }
@@ -336,7 +337,7 @@ public final class KeyStoreUtil {
      * @return True if it is, false otherwise
      * @throws KeyStoreException If there was a problem accessing the KeyStore.
      */
-    public static boolean isKeyEntry(String alias, KeyStore keyStore) throws KeyStoreException {
+    public static boolean isKeyEntry(String alias, KseKeyStore keyStore) throws KeyStoreException {
         return keyStore.isKeyEntry(alias) &&
                (keyStore.getCertificateChain(alias) == null || keyStore.getCertificateChain(alias).length == 0);
     }
@@ -349,7 +350,7 @@ public final class KeyStoreUtil {
      * @return True if it is, false otherwise
      * @throws KeyStoreException If there was a problem accessing the KeyStore.
      */
-    public static boolean isTrustedCertificateEntry(String alias, KeyStore keyStore) throws KeyStoreException {
+    public static boolean isTrustedCertificateEntry(String alias, KseKeyStore keyStore) throws KeyStoreException {
         return keyStore.isCertificateEntry(alias);
     }
 
@@ -360,7 +361,7 @@ public final class KeyStoreUtil {
      * @return Copy
      * @throws CryptoException Problem encountered copying the KeyStore
      */
-    public static KeyStore copy(KeyStore keyStore) throws CryptoException {
+    public static KseKeyStore copy(KseKeyStore keyStore) throws CryptoException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
@@ -368,7 +369,7 @@ public final class KeyStoreUtil {
 
             keyStore.store(baos, emptyPassword);
 
-            KeyStore theCopy = KeyStoreUtil.create(KeyStoreType.resolveJce(keyStore.getType()));
+            KseKeyStore theCopy = KeyStoreUtil.create(KeyStoreType.resolveJce(keyStore.getType()));
             theCopy.load(new ByteArrayInputStream(baos.toByteArray()), emptyPassword);
 
             return theCopy;
@@ -403,7 +404,7 @@ public final class KeyStoreUtil {
      * @return True, if alias is an EC key pair
      * @throws KeyStoreException If there was a problem accessing the KeyStore.
      */
-    public static boolean isECKeyPair(String alias, KeyStore keyStore) throws KeyStoreException {
+    public static boolean isECKeyPair(String alias, KseKeyStore keyStore) throws KeyStoreException {
 
         if (!isKeyPairEntry(alias, keyStore)) {
             return false;
@@ -422,7 +423,7 @@ public final class KeyStoreUtil {
      * @return True, if entry type is supported
      * @throws KeyStoreException If there was a problem accessing the KeyStore.
      */
-    public static boolean isSupportedEntryType(String alias, KeyStore keyStore) throws KeyStoreException {
+    public static boolean isSupportedEntryType(String alias, KseKeyStore keyStore) throws KeyStoreException {
         Certificate certificate = keyStore.getCertificate(alias);
         return (certificate == null) || (certificate instanceof X509Certificate);
     }

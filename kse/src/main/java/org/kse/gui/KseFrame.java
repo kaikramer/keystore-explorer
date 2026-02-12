@@ -45,7 +45,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -96,6 +95,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.AppendToCertificateChainAction;
@@ -145,6 +145,7 @@ import org.kse.gui.actions.KeyPairPrivateKeyDetailsAction;
 import org.kse.gui.actions.KeyPairPublicKeyDetailsAction;
 import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
+import org.kse.gui.actions.OpenAppleKeychainAction;
 import org.kse.gui.actions.OpenCaCertificatesAction;
 import org.kse.gui.actions.OpenDefaultAction;
 import org.kse.gui.actions.OpenPkcs11Action;
@@ -239,6 +240,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiOpenDefaultKeyStore;
     private JMenuItem jmiOpenCaCertificatesKeyStore;
     private JMenuItem jmiOpenPkcs11KeyStore;
+    private JMenuItem jmiAppleKeychainKeyStore;
     private JMenuItem jmiOpenWindowsMyKeyStore;
     private JMenuItem jmiOpenWindowsRootKeyStore;
     private JMenuItem jmiClose;
@@ -473,6 +475,7 @@ public final class KseFrame implements StatusBar {
     private final OpenDefaultAction openDefaultKeyStoreAction = new OpenDefaultAction(this);
     private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
     private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
+    private final OpenAppleKeychainAction openAppleKeychainAction = new OpenAppleKeychainAction(this);
     private final OpenWindowsMyAction openWindowsMyAction = new OpenWindowsMyAction(this);
     private final OpenWindowsRootAction openWindowsRootAction = new OpenWindowsRootAction(this);
     private final SaveAction saveAction = new SaveAction(this);
@@ -755,6 +758,17 @@ public final class KseFrame implements StatusBar {
         if (OperatingSystem.isWindows()) {
             jmOpenSpecial.add(jmiOpenWindowsMyKeyStore);
             jmOpenSpecial.add(jmiOpenWindowsRootKeyStore);
+        }
+
+        jmiAppleKeychainKeyStore = new JMenuItem(openAppleKeychainAction);
+        PlatformUtil.setMnemonic(jmiAppleKeychainKeyStore,
+                res.getString("KseFrame.jmiOpenAppleKeychainKeystore.mnemonic").charAt(0));
+        jmiAppleKeychainKeyStore.setToolTipText(null);
+        new StatusBarChangeHandler(jmiAppleKeychainKeyStore, (String) openAppleKeychainAction.getValue(Action.LONG_DESCRIPTION),
+                this);
+        // show menu item for Apple Keychain only on macOS
+        if (OperatingSystem.isMacOs()) {
+            jmOpenSpecial.add(jmiAppleKeychainKeyStore);
         }
 
         jmFile.addSeparator();
@@ -2494,7 +2508,7 @@ public final class KseFrame implements StatusBar {
             KeyStoreEntryAction keyAction
     ) {
         KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
+        KseKeyStore keyStore = history.getCurrentState().getKeyStore();
         String alias = getSelectedEntryAlias();
 
         if (alias == null) {
@@ -2764,7 +2778,7 @@ public final class KseFrame implements StatusBar {
      *
      * @param keyStore KeyStore
      */
-    public void removeKeyStore(KeyStore keyStore) {
+    public void removeKeyStore(KseKeyStore keyStore) {
         int index = findKeyStoreIndex(keyStore);
 
         if (index >= 0) {
@@ -2812,7 +2826,7 @@ public final class KseFrame implements StatusBar {
      * @param keyStore KeyStore to find
      * @return The KeyStore's index
      */
-    public int findKeyStoreIndex(KeyStore keyStore) {
+    public int findKeyStoreIndex(KseKeyStore keyStore) {
         for (int i = 0; i < histories.size(); i++) {
             if (keyStore.equals(histories.get(i).getCurrentState().getKeyStore())) {
                 return i;
@@ -2827,7 +2841,7 @@ public final class KseFrame implements StatusBar {
      *
      * @return The KeyStore or null if no KeyStore is active
      */
-    public KeyStore getActiveKeyStore() {
+    public KseKeyStore getActiveKeyStore() {
         KeyStoreHistory history = getActiveKeyStoreHistory();
         if (history == null) {
             return null;
@@ -2865,7 +2879,7 @@ public final class KseFrame implements StatusBar {
      *
      * @param keyStore KeyStore
      */
-    public void focusOnKeyStore(KeyStore keyStore) {
+    public void focusOnKeyStore(KseKeyStore keyStore) {
         int index = findKeyStoreIndex(keyStore);
 
         if (index >= 0) {
@@ -2896,7 +2910,7 @@ public final class KseFrame implements StatusBar {
             }
 
             KeyStoreState currentState = history.getCurrentState();
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             String alias = getSelectedEntryAlias();
             KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
@@ -3106,7 +3120,7 @@ public final class KseFrame implements StatusBar {
         // Can close others?
         closeOthersAction.setEnabled(jkstpKeyStores.getTabCount() > 1);
 
-        KeyStore keyStore = currentState.getKeyStore();
+        KseKeyStore keyStore = currentState.getKeyStore();
         KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
         // Can Save As
@@ -3160,6 +3174,8 @@ public final class KseFrame implements StatusBar {
             keyPairPrivateKeyDetailsAction.setEnabled(false);
             keyDetailsAction.setEnabled(false);
 
+            importTrustedCertificateAction.setEnabled(true);
+
             renameKeyAction.setEnabled(false);
             renameKeyPairAction.setEnabled(false);
             renameTrustedCertificateAction.setEnabled(false);
@@ -3173,9 +3189,31 @@ public final class KseFrame implements StatusBar {
 
             // "UnsupportedOperationException" ...
             jmKeyPairImportCaReply.setEnabled(false);
+        } else if (type == KeyStoreType.KEYCHAIN) {
+
+            keyPairPrivateKeyDetailsAction.setEnabled(true);
+            keyDetailsAction.setEnabled(true);
+
+            importTrustedCertificateAction.setEnabled(false);
+
+            renameKeyAction.setEnabled(true);
+            renameKeyPairAction.setEnabled(true);
+            renameTrustedCertificateAction.setEnabled(false);
+
+            exportKeyPairAction.setEnabled(true);
+            exportKeyPairPrivateKeyAction.setEnabled(true);
+
+            // Keychain manages the hierarchy. Edits are not persisted.
+            jmKeyPairEditCertChain.setEnabled(false);
+            appendToCertificateChainAction.setEnabled(false);
+            removeFromCertificateChainAction.setEnabled(false);
+
+            jmKeyPairImportCaReply.setEnabled(true);
         } else {
             keyPairPrivateKeyDetailsAction.setEnabled(true);
             keyDetailsAction.setEnabled(true);
+
+            importTrustedCertificateAction.setEnabled(true);
 
             renameKeyAction.setEnabled(true);
             renameKeyPairAction.setEnabled(true);
@@ -3387,7 +3425,7 @@ public final class KseFrame implements StatusBar {
         // Status Text: 'KeyStore Type, Size, Path'
         KeyStoreState currentState = history.getCurrentState();
 
-        KeyStore ksLoaded = currentState.getKeyStore();
+        KseKeyStore ksLoaded = currentState.getKeyStore();
 
         int size;
         try {

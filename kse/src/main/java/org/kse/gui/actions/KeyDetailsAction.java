@@ -22,7 +22,6 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -34,6 +33,7 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.secretkey.PasswordType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewPassword;
@@ -90,7 +90,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             Key key = keyStore.getKey(alias, password.toCharArray());
 
@@ -141,7 +141,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
 
     private void updateSecretKey(KeyStoreState currentState, String alias, Password password,
             SecretKey newSecretKey) throws CryptoException, KeyStoreException {
-        KeyStore keyStore;
+        KseKeyStore keyStore;
         KeyStoreState newState = currentState.createBasisForNextState(new GenerateSecretKeyAction(kseFrame));
         keyStore = newState.getKeyStore();
         keyStore.deleteEntry(alias);

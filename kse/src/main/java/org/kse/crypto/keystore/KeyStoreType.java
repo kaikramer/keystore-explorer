@@ -46,7 +46,7 @@ public enum KeyStoreType {
     PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, false, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12, PasswordType.PASSWORD_PKCS12),
     BKS("BKS", "KeyStoreType.Bks", true, true, BKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
     UBER("UBER", "KeyStoreType.Uber", true, true, UBER_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
-    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, true, null),
+    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, false, null),
     MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, true, null),
     MS_CAPI_ROOT("Windows-ROOT", "KeyStoreType.MscapiRootCerts", false, true, null),
     PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, true, null),
