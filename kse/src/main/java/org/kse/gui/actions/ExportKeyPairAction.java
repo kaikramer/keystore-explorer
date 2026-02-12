@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -39,6 +38,7 @@ import javax.swing.JOptionPane;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.x509.X509CertUtil;
@@ -90,7 +90,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
             Certificate[] certificates = keyStore.getCertificateChain(alias);
@@ -128,7 +128,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
     private void exportAsPkcs12(File exportFile, String alias, PrivateKey privateKey, Certificate[] certificates,
                                 Password exportPassword) throws CryptoException, IOException, KeyStoreException {
 
-        KeyStore pkcs12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
+        KseKeyStore pkcs12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
 
         certificates = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificates));
         pkcs12.setKeyEntry(alias, privateKey, exportPassword.toCharArray(), certificates);

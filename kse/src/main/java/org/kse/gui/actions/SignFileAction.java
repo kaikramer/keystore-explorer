@@ -23,7 +23,6 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
@@ -36,6 +35,7 @@ import javax.swing.JOptionPane;
 import org.bouncycastle.cms.CMSSignedData;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.CmsSigner;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.SignatureType;
@@ -88,7 +88,7 @@ public class SignFileAction extends KeyStoreExplorerAction {
             }
 
             // set the keystore state
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             // set the provider history
             Provider provider = history.getExplicitProvider();

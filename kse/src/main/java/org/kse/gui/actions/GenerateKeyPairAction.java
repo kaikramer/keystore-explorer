@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.security.KeyPair;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
@@ -33,6 +32,7 @@ import javax.swing.KeyStroke;
 
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGenerateKeyPair;
@@ -110,7 +110,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             String keyPairCurveSet = defaults.getEcCurveSet();
             String keyPairCurveName = defaults.getEcCurveName();
 
-            KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
+            KseKeyStore activeKeyStore = kseFrame.getActiveKeyStore();
             KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             Provider provider = history.getExplicitProvider();
@@ -174,7 +174,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             DGetAlias dGetAlias = new DGetAlias(frame,

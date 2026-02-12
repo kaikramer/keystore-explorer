@@ -20,14 +20,16 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.security.KeyStore;
 import java.security.PrivateKey;
+
 import javax.swing.ImageIcon;
-import org.kse.gui.passwordmanager.Password;
+
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.crypto.privatekey.PrivateKeyUtils;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyType;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -69,7 +71,7 @@ public class ExportKeyPairPrivateKeyAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
             DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType(frame, privateKey);

@@ -22,19 +22,19 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -84,7 +84,7 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
 
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
 
             Key privKey = keyStore.getKey(alias, password.toCharArray());
 

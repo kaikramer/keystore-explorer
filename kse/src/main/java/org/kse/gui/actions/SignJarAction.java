@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
@@ -32,10 +31,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.KSE;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -43,6 +42,7 @@ import org.kse.gui.dialogs.sign.DSignJar;
 import org.kse.gui.dialogs.sign.DSignJarSigning;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DErrorCollection;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -85,7 +85,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
             }
 
             // set the keystore state
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             // set the provider history
             Provider provider = history.getExplicitProvider();

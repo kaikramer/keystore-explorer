@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 
@@ -30,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
@@ -82,7 +82,7 @@ public class RenameTrustedCertificateAction extends KeyStoreExplorerAction imple
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             String alias = kseFrame.getSelectedEntryAlias();

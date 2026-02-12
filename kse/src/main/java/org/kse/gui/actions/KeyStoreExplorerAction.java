@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -38,6 +37,7 @@ import javax.swing.JOptionPane;
 
 import org.kse.crypto.encryption.EncryptionException;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
@@ -150,7 +150,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
      */
     protected Password unlockEntry(String alias, KeyStoreState state) {
         try {
-            KeyStore keyStore = state.getKeyStore();
+            KseKeyStore keyStore = state.getKeyStore();
             KeyStoreHistory history = state.getHistory();
             KeyStoreType keyStoreType = history.getCurrentState().getType();
             Password password = null;

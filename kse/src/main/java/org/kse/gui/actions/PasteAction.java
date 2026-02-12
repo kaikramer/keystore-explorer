@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -32,10 +31,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.buffer.Buffer;
 import org.kse.utilities.buffer.BufferEntry;
 import org.kse.utilities.buffer.KeyBufferEntry;
@@ -97,7 +97,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             boolean changed = false;
             for (BufferEntry bufferEntry : bufferEntries) {
                 changed |= pasteEntry(bufferEntry, keyStore, newState);
@@ -112,7 +112,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
         }
     }
 
-    private boolean pasteEntry(BufferEntry bufferEntry, KeyStore keyStore, KeyStoreState newState)
+    private boolean pasteEntry(BufferEntry bufferEntry, KseKeyStore keyStore, KeyStoreState newState)
             throws KeyStoreException {
         String alias = bufferEntry.getName();
 
@@ -180,7 +180,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
         return true;
     }
 
-    private String getUniqueEntryName(String name, KeyStore keyStore) throws KeyStoreException {
+    private String getUniqueEntryName(String name, KseKeyStore keyStore) throws KeyStoreException {
         // Get unique KeyStore entry name based on the one supplied, ie *
         // "<name> (n)" where n is a
         // number.

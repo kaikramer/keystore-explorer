@@ -19,9 +19,9 @@
  */
 package org.kse.utilities.history;
 
-import java.security.KeyStore;
 import java.util.ResourceBundle;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.passwordmanager.Password;
 
 /**
@@ -41,7 +41,7 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
      * @param keyStore KeyStore
      * @param password KeyStore password
      */
-    AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
+    AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KseKeyStore keyStore, Password password) {
         super(history, keyStore, password);
     }
 

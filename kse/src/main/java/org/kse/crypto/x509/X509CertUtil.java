@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -58,6 +57,7 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.utilities.SerialNumbers;
@@ -685,10 +685,10 @@ public final class X509CertUtil {
      * @return The trust chain, or null if trust could not be established
      * @throws CryptoException If there is a problem establishing trust
      */
-    public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore[] keyStores) throws CryptoException {
+    public static X509Certificate[] establishTrust(X509Certificate cert, KseKeyStore[] keyStores) throws CryptoException {
         ArrayList<X509Certificate> ksCerts = new ArrayList<>();
 
-        for (KeyStore keyStore : keyStores) {
+        for (KseKeyStore keyStore : keyStores) {
             ksCerts.addAll(extractCertificates(keyStore));
         }
 
@@ -749,7 +749,7 @@ public final class X509CertUtil {
      * @return List<X509Certificate>
      * @throws CryptoException If there is a problem extracting the certificates.
      */
-    public static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
+    public static List<X509Certificate> extractCertificates(KseKeyStore keyStore) throws CryptoException {
         try {
             List<X509Certificate> certs = new ArrayList<>();
 
@@ -777,7 +777,7 @@ public final class X509CertUtil {
      *         there is no match
      * @throws CryptoException If there is a problem establishing trust
      */
-    public static String matchCertificate(KeyStore keyStore, X509Certificate cert) throws CryptoException {
+    public static String matchCertificate(KseKeyStore keyStore, X509Certificate cert) throws CryptoException {
         try {
             for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements(); ) {
                 String alias = aliases.nextElement();

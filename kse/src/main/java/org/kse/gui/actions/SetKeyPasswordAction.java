@@ -24,12 +24,12 @@ import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import java.awt.Toolkit;
 import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
@@ -80,7 +80,7 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             alias = kseFrame.getSelectedEntryAlias();
 
             Password oldPassword = newState.getEntryPassword(alias);

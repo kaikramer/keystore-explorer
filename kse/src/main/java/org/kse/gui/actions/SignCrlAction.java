@@ -30,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -57,6 +56,7 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.importexport.DExportCrl;
@@ -101,7 +101,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
             if (password == null) {
                 return;
             }
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             String provider = BOUNCY_CASTLE.jce();
             if (history.getExplicitProvider() != null) {

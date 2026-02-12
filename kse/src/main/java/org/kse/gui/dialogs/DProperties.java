@@ -29,7 +29,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -65,19 +64,20 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -174,7 +174,7 @@ public class DProperties extends JEscDialog {
     }
 
     private DefaultMutableTreeNode createPropertiesNodes() throws CryptoException {
-        KeyStore keyStore = currentState.getKeyStore();
+        KseKeyStore keyStore = currentState.getKeyStore();
 
         String root = MessageFormat.format(res.getString("DProperties.properties.Root"), history.getName());
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(root);
@@ -205,7 +205,7 @@ public class DProperties extends JEscDialog {
 
     private TreeSet<String> getAliasesInAlphaOrder() throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             TreeSet<String> aliases = new TreeSet<>();
 
@@ -226,7 +226,7 @@ public class DProperties extends JEscDialog {
 
     private void createTrustedCertificatesNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             TreeSet<String> aliases = getAliasesInAlphaOrder();
 
@@ -256,7 +256,7 @@ public class DProperties extends JEscDialog {
 
     private void createTrustedCertificateNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             DefaultMutableTreeNode trustedCertificateNode = new DefaultMutableTreeNode(alias);
             parentNode.add(trustedCertificateNode);
@@ -397,7 +397,7 @@ public class DProperties extends JEscDialog {
 
     private void createKeyPairsNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             TreeSet<String> aliases = getAliasesInAlphaOrder();
 
@@ -427,7 +427,7 @@ public class DProperties extends JEscDialog {
 
     private void createKeyPairNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             DefaultMutableTreeNode keyPairNode = new DefaultMutableTreeNode(alias);
             parentNode.add(keyPairNode);
@@ -456,7 +456,7 @@ public class DProperties extends JEscDialog {
 
     private void createPrivateKeyNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             Password password = getEntryPassword(alias);
 
@@ -592,7 +592,7 @@ public class DProperties extends JEscDialog {
 
     private void createKeysNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             TreeSet<String> aliases = getAliasesInAlphaOrder();
 
@@ -621,7 +621,7 @@ public class DProperties extends JEscDialog {
 
     private void createKeyNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             DefaultMutableTreeNode keyNode = new DefaultMutableTreeNode(alias);
             parentNode.add(keyNode);
@@ -693,7 +693,7 @@ public class DProperties extends JEscDialog {
 
     private void createLastModifiedNode(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
         try {
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             if (KeyStoreType.resolveJce(keyStore.getType()) != KeyStoreType.PKCS12) {
                 String lastModified = MessageFormat.format(res.getString("DProperties.properties.LastModified"),

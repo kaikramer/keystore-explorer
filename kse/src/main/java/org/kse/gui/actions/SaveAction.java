@@ -82,35 +82,30 @@ public class SaveAction extends SaveAsAction {
 
             kseFrame.focusOnKeyStore(currentState.getKeyStore());
 
-            if (currentState.getType().isFileBased()) {
-                saveFile = history.getFile();
+            saveFile = history.getFile();
 
-                if (saveFile == null) {
-                    return saveKeyStoreAs(history);
-                }
-
-                Password password = currentState.getPassword();
-
-                if (password == null || password.isNulled()) {
-                    SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
-
-                    if (setPasswordAction.setKeyStorePassword()) {
-                        currentState = history.getCurrentState();
-                        password = currentState.getPassword();
-                    } else {
-                        return false;
-                    }
-                }
-
-                saveInPasswordManager(currentState, saveFile, password, frame);
-
-                KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
-
-                currentState.setPassword(password);
-            } else {
-                // The key store is not file based, but it is saveable.
-                currentState.getKeyStore().store(null, null);
+            if (saveFile == null) {
+                return saveKeyStoreAs(history);
             }
+
+            Password password = currentState.getPassword();
+
+            if (password == null || password.isNulled()) {
+                SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
+
+                if (setPasswordAction.setKeyStorePassword()) {
+                    currentState = history.getCurrentState();
+                    password = currentState.getPassword();
+                } else {
+                    return false;
+                }
+            }
+
+            saveInPasswordManager(currentState, saveFile, password, frame);
+
+            KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
+
+            currentState.setPassword(password);
 
             currentState.setAsSavedState();
 

@@ -22,7 +22,6 @@ package org.kse.gui.actions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
@@ -31,6 +30,7 @@ import org.kse.AuthorityCertificates;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keystore.KeyStoreLoadException;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
@@ -58,10 +58,10 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
      *
      * @return KeyStore or null if unavailable
      */
-    protected KeyStore getCaCertificates() {
+    protected KseKeyStore getCaCertificates() {
         AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
 
-        KeyStore caCertificates = null;
+        KseKeyStore caCertificates = null;
 
         if (preferences.getCaCertsSettings().isUseCaCertificates()) {
             caCertificates = authorityCertificates.getCaCertificates();
@@ -84,10 +84,10 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
      * @return KeyStore or null if unavailable
      * @throws CryptoException If a problem occurred getting the KeyStore
      */
-    protected KeyStore getWindowsTrustedRootCertificates() throws CryptoException {
+    protected KseKeyStore getWindowsTrustedRootCertificates() throws CryptoException {
         AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
 
-        KeyStore windowsTrustedRootCertificates = null;
+        KseKeyStore windowsTrustedRootCertificates = null;
 
         if (preferences.getCaCertsSettings().isUseWindowsTrustedRootCertificates()) {
             windowsTrustedRootCertificates = authorityCertificates.getWindowsTrustedRootCertificates();
@@ -96,10 +96,10 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
         return windowsTrustedRootCertificates;
     }
 
-    protected KeyStore loadCaCertificatesKeyStore() {
+    protected KseKeyStore loadCaCertificatesKeyStore() {
         File caCertificatesFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
 
-        KeyStore caCertificatesKeyStore = null;
+        KseKeyStore caCertificatesKeyStore = null;
         try {
 
             // first try to open cacerts with default password

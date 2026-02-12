@@ -23,7 +23,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DCompareCertificates;
 import org.kse.gui.error.DError;
@@ -89,7 +89,7 @@ public class CompareCertificateAction extends KeyStoreExplorerAction {
         }
         try {
             List<Certificate> listCertificates = new ArrayList<>();
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             for (String alias : aliases) {
                 if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore) ||
                     KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {

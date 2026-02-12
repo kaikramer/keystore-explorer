@@ -20,10 +20,10 @@
 package org.kse.utilities.history;
 
 import java.io.File;
-import java.security.KeyStore;
 import java.security.Provider;
 
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.passwordmanager.Password;
 
 /**
@@ -45,7 +45,7 @@ public class KeyStoreHistory {
      * @param password         KeyStore password
      * @param explicitProvider The security provider to use for this key store.
      */
-    public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
+    public KeyStoreHistory(KseKeyStore keyStore, String name, Password password, Provider explicitProvider) {
         this.name = name;
         this.explicitProvider = explicitProvider;
 
@@ -55,13 +55,7 @@ public class KeyStoreHistory {
             initialState = new KeyStoreState(this, keyStore, password);
         } else {
             // we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike
-            if (type == KeyStoreType.KEYCHAIN) {
-                // The Apple KeyStore provider does not update the Keychain until the
-                // key store is saved.
-                initialState = new SaveableNonFileKeyStoreState(this, keyStore, password);
-            } else {
-                initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
-            }
+            initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
         }
 
         currentState = initialState;
@@ -74,7 +68,7 @@ public class KeyStoreHistory {
      * @param file     Save file
      * @param password KeyStore password
      */
-    public KeyStoreHistory(KeyStore keyStore, File file, Password password) {
+    public KeyStoreHistory(KseKeyStore keyStore, File file, Password password) {
         this.file = file;
         this.name = file.getName();
         initialState = new KeyStoreState(this, keyStore, password);

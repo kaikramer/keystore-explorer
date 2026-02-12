@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.text.MessageFormat;
 import java.util.Optional;
@@ -29,10 +28,11 @@ import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewPrivateKey;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -82,7 +82,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             PrivateKey privKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 

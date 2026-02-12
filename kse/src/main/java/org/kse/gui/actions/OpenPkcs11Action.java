@@ -30,6 +30,7 @@ import java.security.Provider;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DOpenPkcs11KeyStore;
 import org.kse.gui.dialogs.PasswordCallbackHandler;
@@ -85,7 +86,7 @@ public class OpenPkcs11Action extends OpenAction {
 
             keyStore.load(null, null);
 
-            var history = new KeyStoreHistory(keyStore, selectedProvider.getName(), null, selectedProvider);
+            var history = new KeyStoreHistory(new KseKeyStore(keyStore), selectedProvider.getName(), null, selectedProvider);
 
             kseFrame.addKeyStoreHistory(history);
 

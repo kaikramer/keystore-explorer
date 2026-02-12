@@ -21,13 +21,13 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.security.KeyStore;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewPublicKey;
 import org.kse.gui.error.DError;
@@ -73,7 +73,7 @@ public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAc
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             KeyStoreState currentState = history.getCurrentState();
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             String alias = kseFrame.getSelectedEntryAlias();
 
             PublicKey pubKey = keyStore.getCertificate(alias).getPublicKey();

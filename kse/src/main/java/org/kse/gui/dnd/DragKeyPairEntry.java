@@ -23,7 +23,6 @@ import java.awt.Toolkit;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ResourceBundle;
@@ -31,12 +30,13 @@ import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.x509.X509CertUtil;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Encapsulates a draggable key pair entry. Product of drag is:
@@ -71,7 +71,7 @@ public class DragKeyPairEntry extends DragEntry {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
             // Binary content is PKCS #12 protected by password
-            KeyStore p12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
+            KseKeyStore p12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
             p12.setKeyEntry(name, privateKey, password.toCharArray(), certificateChain);
             p12.store(baos, password.toCharArray());
             contentBytes = baos.toByteArray();

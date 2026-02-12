@@ -20,17 +20,17 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import javax.swing.ImageIcon;
 
-import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -42,6 +42,11 @@ public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 
     private static final long serialVersionUID = 6130302168441299361L;
 
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
     public SignNewKeyPairAction(KseFrame kseFrame) {
         super(kseFrame);
 
@@ -67,7 +72,7 @@ public class SignNewKeyPairAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
             Certificate[] certs = keyStore.getCertificateChain(alias);
 

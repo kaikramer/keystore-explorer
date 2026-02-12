@@ -23,7 +23,6 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
@@ -34,6 +33,7 @@ import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreLoadException;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
@@ -102,6 +102,7 @@ public class OpenAction extends KeyStoreExplorerAction {
      * Open the supplied KeyStore file from disk.
      *
      * @param keyStoreFile The KeyStore file
+     * @param defaultPassword An optional password to use by default for the first try.
      */
     public void openKeyStore(File keyStoreFile, String defaultPassword) {
         try {
@@ -132,7 +133,7 @@ public class OpenAction extends KeyStoreExplorerAction {
                 password = (defaultPassword != null) ? new Password(defaultPassword.toCharArray()) : null;
             }
 
-            KeyStore openedKeyStore;
+            KseKeyStore openedKeyStore;
             boolean firstTry = true;
             while (true) {
                 boolean passwordManagerWanted = false;
@@ -227,6 +228,9 @@ public class OpenAction extends KeyStoreExplorerAction {
                                              res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
     }
 
+    /**
+     * @return True if a new key store was added by the open action.
+     */
     public boolean hasNewKeyStoreBeenAdded() {
         return newKeyStoreWasAdded;
     }

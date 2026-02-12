@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -31,10 +30,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.buffer.Buffer;
 import org.kse.utilities.buffer.BufferEntry;
 import org.kse.utilities.buffer.KeyBufferEntry;
@@ -99,9 +99,9 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
                 return null;
             }
 
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             KeyStoreState newState = currentState.createBasisForNextState(this);
-            KeyStore newKeyStore = newState.getKeyStore();
+            KseKeyStore newKeyStore = newState.getKeyStore();
             List<BufferEntry> bufferEntries = new ArrayList<>();
             for (String alias : aliases) {
                 BufferEntry bufferEntry = null;

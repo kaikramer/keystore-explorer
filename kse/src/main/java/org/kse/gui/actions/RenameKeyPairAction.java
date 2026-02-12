@@ -22,7 +22,6 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 
@@ -30,12 +29,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -93,7 +93,7 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
 
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             Key privateKey = keyStore.getKey(alias, password.toCharArray());

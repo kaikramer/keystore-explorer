@@ -22,10 +22,10 @@ package org.kse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.KeyStore;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.keystore.MsCapiStoreType;
 
 /**
@@ -36,8 +36,8 @@ public class AuthorityCertificates {
     public static final String CACERTS_DEFAULT_PWD = "changeit";
 
     private static AuthorityCertificates authorityCertificates;
-    private KeyStore caCertificates;
-    private KeyStore windowsTrustedRootCertificates;
+    private KseKeyStore caCertificates;
+    private KseKeyStore windowsTrustedRootCertificates;
 
     private AuthorityCertificates() {
     }
@@ -61,7 +61,7 @@ public class AuthorityCertificates {
      *
      * @return CA Certificates KeyStore
      */
-    public KeyStore getCaCertificates() {
+    public KseKeyStore getCaCertificates() {
         return caCertificates;
     }
 
@@ -70,7 +70,7 @@ public class AuthorityCertificates {
      *
      * @param caCertificates CA Certificates KeyStore
      */
-    public void setCaCertificates(KeyStore caCertificates) {
+    public void setCaCertificates(KseKeyStore caCertificates) {
         this.caCertificates = caCertificates;
     }
 
@@ -96,7 +96,7 @@ public class AuthorityCertificates {
      * @return Windows Trusted Root Certificates KeyStore
      * @throws CryptoException If a problem occurred getting the KeyStore
      */
-    public KeyStore getWindowsTrustedRootCertificates() throws CryptoException {
+    public KseKeyStore getWindowsTrustedRootCertificates() throws CryptoException {
         if (windowsTrustedRootCertificates == null) {
             windowsTrustedRootCertificates = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.ROOT);
         }

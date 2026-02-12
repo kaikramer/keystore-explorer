@@ -45,7 +45,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -96,6 +95,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.AppendToCertificateChainAction;
@@ -2508,7 +2508,7 @@ public final class KseFrame implements StatusBar {
             KeyStoreEntryAction keyAction
     ) {
         KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
+        KseKeyStore keyStore = history.getCurrentState().getKeyStore();
         String alias = getSelectedEntryAlias();
 
         if (alias == null) {
@@ -2778,7 +2778,7 @@ public final class KseFrame implements StatusBar {
      *
      * @param keyStore KeyStore
      */
-    public void removeKeyStore(KeyStore keyStore) {
+    public void removeKeyStore(KseKeyStore keyStore) {
         int index = findKeyStoreIndex(keyStore);
 
         if (index >= 0) {
@@ -2826,7 +2826,7 @@ public final class KseFrame implements StatusBar {
      * @param keyStore KeyStore to find
      * @return The KeyStore's index
      */
-    public int findKeyStoreIndex(KeyStore keyStore) {
+    public int findKeyStoreIndex(KseKeyStore keyStore) {
         for (int i = 0; i < histories.size(); i++) {
             if (keyStore.equals(histories.get(i).getCurrentState().getKeyStore())) {
                 return i;
@@ -2841,7 +2841,7 @@ public final class KseFrame implements StatusBar {
      *
      * @return The KeyStore or null if no KeyStore is active
      */
-    public KeyStore getActiveKeyStore() {
+    public KseKeyStore getActiveKeyStore() {
         KeyStoreHistory history = getActiveKeyStoreHistory();
         if (history == null) {
             return null;
@@ -2879,7 +2879,7 @@ public final class KseFrame implements StatusBar {
      *
      * @param keyStore KeyStore
      */
-    public void focusOnKeyStore(KeyStore keyStore) {
+    public void focusOnKeyStore(KseKeyStore keyStore) {
         int index = findKeyStoreIndex(keyStore);
 
         if (index >= 0) {
@@ -2910,7 +2910,7 @@ public final class KseFrame implements StatusBar {
             }
 
             KeyStoreState currentState = history.getCurrentState();
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
             String alias = getSelectedEntryAlias();
             KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
@@ -3120,7 +3120,7 @@ public final class KseFrame implements StatusBar {
         // Can close others?
         closeOthersAction.setEnabled(jkstpKeyStores.getTabCount() > 1);
 
-        KeyStore keyStore = currentState.getKeyStore();
+        KseKeyStore keyStore = currentState.getKeyStore();
         KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
         // Can Save As
@@ -3425,7 +3425,7 @@ public final class KseFrame implements StatusBar {
         // Status Text: 'KeyStore Type, Size, Path'
         KeyStoreState currentState = history.getCurrentState();
 
-        KeyStore ksLoaded = currentState.getKeyStore();
+        KseKeyStore ksLoaded = currentState.getKeyStore();
 
         int size;
         try {

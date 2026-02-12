@@ -20,7 +20,6 @@
 package org.kse.gui.actions;
 
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -33,14 +32,15 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -105,9 +105,9 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             KeyStoreState currentState = history.getCurrentState();
 
-            KeyStore currentKeyStore = currentState.getKeyStore();
+            KseKeyStore currentKeyStore = currentState.getKeyStore();
 
-            KeyStore newKeyStore = KeyStoreUtil.create(newKeyStoreType);
+            KseKeyStore newKeyStore = KeyStoreUtil.create(newKeyStoreType);
 
             // Only warn the user once
             resetWarnings();
@@ -161,8 +161,8 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         warnDuplicateAlias = false;
     }
 
-    private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState, KeyStore currentKeyStore,
-                                     KeyStore newKeyStore, String alias)
+    private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState, KseKeyStore currentKeyStore,
+                                     KseKeyStore newKeyStore, String alias)
             throws KeyStoreException, CryptoException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
         Certificate[] certificateChain = currentKeyStore.getCertificateChain(alias);
@@ -200,7 +200,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     }
 
     private boolean copySecretKeyEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
-                                       KeyStore currentKeyStore, KeyStore newKeyStore, String alias)
+                                       KseKeyStore currentKeyStore, KseKeyStore newKeyStore, String alias)
             throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
         if (newKeyStoreType.supportsKeyEntries()) {

@@ -21,7 +21,6 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -36,6 +35,7 @@ import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewJwt;
 import org.kse.gui.dialogs.sign.CustomClaim;
@@ -94,7 +94,7 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             if (password == null) {
                 return;
             }
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
             Provider provider = history.getExplicitProvider();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());

@@ -21,12 +21,12 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.security.KeyStore;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.HistoryAction;
@@ -84,7 +84,7 @@ public class DeleteMultipleEntriesAction extends KeyStoreExplorerAction implemen
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
-            KeyStore keyStore = newState.getKeyStore();
+            KseKeyStore keyStore = newState.getKeyStore();
 
             int selected = JOptionPane.showConfirmDialog(frame, res.getString(
                                                                  "DeleteMultipleEntriesAction.ConfirmDelete.message"),

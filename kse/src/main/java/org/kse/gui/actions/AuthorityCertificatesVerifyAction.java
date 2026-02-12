@@ -20,7 +20,6 @@
 
 package org.kse.gui.actions;
 
-import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -34,6 +33,7 @@ import org.bouncycastle.util.Store;
 import org.kse.AuthorityCertificates;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.SecurityProvider;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -70,10 +70,10 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
         // include the CA certs if the user has enabled the CA certs in the preferences.
         if (history != null) {
             KeyStoreState currentState = history.getCurrentState();
-            KeyStore keyStore = currentState.getKeyStore();
+            KseKeyStore keyStore = currentState.getKeyStore();
 
-            KeyStore caCertificates = getCaCertificates();
-            KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
+            KseKeyStore caCertificates = getCaCertificates();
+            KseKeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
             // Perform cert lookup against current KeyStore
             Set<X509Certificate> trustedCerts = new HashSet<>();
@@ -96,7 +96,7 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
         return getTrustedCertsNoPrefsAsSet();
     }
 
-    protected Collection<X509Certificate> extractCertificates(KeyStore keystore) throws CryptoException {
+    protected Collection<X509Certificate> extractCertificates(KseKeyStore keystore) throws CryptoException {
         // By default use the X509CertUtil for extracting certs. This implementation provides
         // compatibility with jarsigner and other tools that expect trust certs to be stored
         // in a key store certificate entry.
@@ -125,8 +125,8 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
      * A private method for getting the CA trusted certs (no user preferences) as a Set.
      */
     private Set<X509Certificate> getTrustedCertsNoPrefsAsSet() throws CryptoException {
-        KeyStore caCertificates = getCaCertificatesNoPrefCheck();
-        KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificatesNoPrefCheck();
+        KseKeyStore caCertificates = getCaCertificatesNoPrefCheck();
+        KseKeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificatesNoPrefCheck();
 
         // Perform cert lookup against current KeyStore
         Set<X509Certificate> allCerts = new HashSet<>();
@@ -149,10 +149,10 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
      *
      * @return KeyStore or null if unavailable
      */
-    private KeyStore getCaCertificatesNoPrefCheck() {
+    private KseKeyStore getCaCertificatesNoPrefCheck() {
         AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
 
-        KeyStore caCertificates = authorityCertificates.getCaCertificates();
+        KseKeyStore caCertificates = authorityCertificates.getCaCertificates();
 
         if (caCertificates == null) {
             caCertificates = loadCaCertificatesKeyStore();
@@ -171,10 +171,10 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
      * @return KeyStore or null if unavailable
      * @throws CryptoException If a problem occurred getting the KeyStore
      */
-    private KeyStore getWindowsTrustedRootCertificatesNoPrefCheck() throws CryptoException {
+    private KseKeyStore getWindowsTrustedRootCertificatesNoPrefCheck() throws CryptoException {
         AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
 
-        KeyStore windowsTrustedRootCertificates = null;
+        KseKeyStore windowsTrustedRootCertificates = null;
 
         if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
             windowsTrustedRootCertificates = authorityCertificates.getWindowsTrustedRootCertificates();

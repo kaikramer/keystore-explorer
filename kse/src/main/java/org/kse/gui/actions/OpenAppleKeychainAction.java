@@ -22,12 +22,12 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.security.KeyStore;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
@@ -68,13 +68,14 @@ public class OpenAppleKeychainAction extends OpenAction {
 
         try {
 
-            KeyStore openedKeyStore = KeyStoreUtil.loadAppleKeychain();
+            KseKeyStore openedKeyStore = KeyStoreUtil.loadAppleKeychain();
 
             var history = new KeyStoreHistory(openedKeyStore, res.getString("OpenAppleKeychainAction.TabTitle"), null, null);
+
             // The Apple security provider requires a password to import/export keychain entries,
             // but the password is irrelevant and not actually used. Keychain Access can export
             // entries created by KSE without using this password.
-            //
+
             // Sets the key store password so that the user doesn't have to be prompted for passwords
             // that won't be used and could be confusing for the user to understand.
             history.getCurrentState()

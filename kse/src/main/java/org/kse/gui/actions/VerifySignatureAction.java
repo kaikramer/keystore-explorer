@@ -23,7 +23,6 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.io.File;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -44,6 +43,7 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.Store;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.x509.X509CertUtil;
@@ -116,7 +116,7 @@ public class VerifySignatureAction extends AuthorityCertificatesVerifyAction {
      * that their PKCS#7/CMS signature is trusted by using their signing key store.
      */
     @Override
-    protected Collection<X509Certificate> extractCertificates(KeyStore keystore) throws CryptoException {
+    protected Collection<X509Certificate> extractCertificates(KseKeyStore keystore) throws CryptoException {
 
         List<X509Certificate> certs = new ArrayList<>();
 

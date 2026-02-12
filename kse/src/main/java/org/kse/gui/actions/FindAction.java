@@ -21,7 +21,6 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.text.MessageFormat;
 import java.util.Enumeration;
@@ -32,6 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DFindKeyStoreEntry;
 import org.kse.gui.error.DError;
@@ -87,7 +87,7 @@ public class FindAction extends KeyStoreExplorerAction {
     private Set<String> findEntryAlias(String name) throws KeyStoreException {
         Set<String> aliases = new HashSet<>();
         KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
+        KseKeyStore keyStore = history.getCurrentState().getKeyStore();
         Enumeration<String> enumeration = keyStore.aliases();
         while (enumeration.hasMoreElements()) {
             String alias = enumeration.nextElement();

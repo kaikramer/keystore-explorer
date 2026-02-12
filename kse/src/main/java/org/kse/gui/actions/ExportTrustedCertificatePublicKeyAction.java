@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -35,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
@@ -126,7 +126,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
     private PublicKey getPublicKey(String alias) throws CryptoException {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-            KeyStore keyStore = history.getCurrentState().getKeyStore();
+            KseKeyStore keyStore = history.getCurrentState().getKeyStore();
 
             X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
 
