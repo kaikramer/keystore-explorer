@@ -106,7 +106,6 @@ public class SaveAction extends SaveAsAction {
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 
             currentState.setPassword(password);
-
             currentState.setAsSavedState();
 
             kseFrame.updateControls(false);
