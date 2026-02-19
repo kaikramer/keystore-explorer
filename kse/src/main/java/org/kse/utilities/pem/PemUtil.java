@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bouncycastle.util.encoders.Base64;
 
@@ -36,9 +38,9 @@ public class PemUtil {
     // Begin OpenSSL EC parameters PEM (see "openssl ecparam -name prime256v1 -genkey -out key.pem"; missing "-noout")
     private static final String OPENSSL_EC_PARAMS_PEM_TYPE = "EC PARAMETERS";
 
-    public static final String PEM_BEGIN_MARKER = "-----BEGIN ";
-    public static final String PEM_FIVE_DASHES = "-----";
-    public static final String PEM_END_MARKER = "-----END ";
+    private static final String PEM_BEGIN_MARKER = "-----BEGIN ";
+    private static final String PEM_FIVE_DASHES = "-----";
+    private static final String PEM_END_MARKER = "-----END ";
 
     private PemUtil() {
     }
@@ -108,24 +110,31 @@ public class PemUtil {
     }
 
     /**
-     * Decode the PEM included in the supplied input stream.
+     * Decode all PEM entries included in the supplied input stream.
      *
-     * @param pemData PEM data as byte array
-     * @return PEM information or null if stream does not contain PEM
+     * @param pemData PEM data containing one or more PEM entries as byte array
+     * @return List<PEM> information
      * @throws IOException If an I/O problem occurs
      */
-    public static PemInfo decode(byte[] pemData) throws IOException {
+    public static List<PemInfo> decodeAll(byte[] pemData) throws IOException {
+        return decodeAll(pemData, false);
+    }
+
+    private static List<PemInfo> decodeAll(byte[] pemData, boolean readFirst) throws IOException {
+
+        List<PemInfo> blocks = new ArrayList<>();
 
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pemData);
-             InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
-             LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
+                InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
+                LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
             // we ignore EC parameter blocks for now
             String line = skipOverEcParams(lnr);
-            StringBuilder sbBase64 = new StringBuilder();
 
-            if (line != null) {
+            while (line != null) {
                 line = line.trim();
+
+                StringBuilder sbBase64 = new StringBuilder();
                 String headerType = getTypeFromHeader(line);
 
                 if (headerType != null) {
@@ -150,7 +159,7 @@ public class PemUtil {
 
                             // Run out of attributes before blank line - not PEM
                             if (!line.contains(": ")) {
-                                return null;
+                                return new ArrayList<>();
                             }
 
                             // Parse attribute from line
@@ -175,22 +184,47 @@ public class PemUtil {
                         } else {
                             // Header and footer types do not match - not PEM
                             if (!headerType.equals(footerType)) {
-                                return null;
+                                break;
                             } else {
                                 // Decode base 64 content
                                 byte[] content = Base64.decode(sbBase64.toString());
 
-                                return new PemInfo(headerType, attributes, content);
+                                blocks.add(new PemInfo(headerType, attributes, content));
+                                if (readFirst) {
+                                    return blocks;
+                                }
+
+                                line = skipOverEcParams(lnr);
+                                break;
                             }
                         }
 
                         line = lnr.readLine();
                     }
+                } else {
+                    line = lnr.readLine();
                 }
             }
         }
 
-        return null; // Not PEM
+        return blocks;
+    }
+
+    /**
+     * Decode the PEM included in the supplied input stream.
+     *
+     * @param pemData PEM data as byte array
+     * @return PEM information or null if stream does not contain PEM
+     * @throws IOException If an I/O problem occurs
+     */
+    public static PemInfo decode(byte[] pemData) throws IOException {
+
+        List<PemInfo> blocks = decodeAll(pemData, true);
+        if (!blocks.isEmpty()) {
+            return blocks.get(0);
+        }
+
+        return null; // not PEM
     }
 
     private static String skipOverEcParams(LineNumberReader lnr) throws IOException {

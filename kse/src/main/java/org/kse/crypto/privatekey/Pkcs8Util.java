@@ -61,8 +61,8 @@ import org.kse.utilities.pem.PemUtil;
  */
 public class Pkcs8Util {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
-    private static final String PKCS8_UNENC_PVK_PEM_TYPE = "PRIVATE KEY";
-    private static final String PKCS8_ENC_PVK_PEM_TYPE = "ENCRYPTED PRIVATE KEY";
+    public static final String PKCS8_UNENC_PVK_PEM_TYPE = "PRIVATE KEY";
+    public static final String PKCS8_ENC_PVK_PEM_TYPE = "ENCRYPTED PRIVATE KEY";
 
     private Pkcs8Util() {
     }

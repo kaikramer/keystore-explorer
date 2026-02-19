@@ -71,10 +71,10 @@ import org.kse.utilities.pem.PemUtil;
  */
 public final class X509CertUtil {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
-    private static final String X509_CERT_TYPE = "X.509";
+    public static final String X509_CERT_TYPE = "X.509";
     private static final String PKCS7_ENCODING = "PKCS7";
     private static final String PKI_PATH_ENCODING = "PkiPath";
-    private static final String CERT_PEM_TYPE = "CERTIFICATE";
+    public static final String CERT_PEM_TYPE = "CERTIFICATE";
     private static final String CRL_PEM_TYPE = "X509 CRL";
     private static final String PKCS7_PEM_TYPE = "PKCS7";
 

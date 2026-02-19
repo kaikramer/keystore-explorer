@@ -115,13 +115,13 @@ public class OpenSslPvkUtil {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
 
     // Begin OpenSSL RSA private key PEM
-    private static final String OPENSSL_RSA_PVK_PEM_TYPE = "RSA PRIVATE KEY";
+    public static final String OPENSSL_RSA_PVK_PEM_TYPE = "RSA PRIVATE KEY";
 
     // Begin OpenSSL DSA private key PEM
-    private static final String OPENSSL_DSA_PVK_PEM_TYPE = "DSA PRIVATE KEY";
+    public static final String OPENSSL_DSA_PVK_PEM_TYPE = "DSA PRIVATE KEY";
 
     // Begin OpenSSL EC private key PEM
-    private static final String OPENSSL_EC_PVK_PEM_TYPE = "EC PRIVATE KEY";
+    public static final String OPENSSL_EC_PVK_PEM_TYPE = "EC PRIVATE KEY";
 
     // OpenSSL version
     private static final BigInteger VERSION = BigInteger.ZERO;
@@ -416,6 +416,32 @@ public class OpenSslPvkUtil {
         // OpenSSL must be encrypted and therefore must be PEM
         PemInfo pemInfo = PemUtil.decode(pvkData);
 
+        return loadEncrypted(pemInfo, password);
+    }
+
+    /**
+     * Load an encrypted OpenSSL private key from a decoded PEM stream.
+     *
+     * @param pemInfo  Decoded PEM to load the encrypted private key from
+     * @param password Password to decrypt
+     * @return The private key
+     * @throws PrivateKeyUnencryptedException     If private key is unencrypted
+     * @throws PrivateKeyPbeNotSupportedException If private key PBE algorithm is not supported
+     * @throws CryptoException                    Problem encountered while loading the private key
+     * @throws IOException                        An I/O error occurred
+     */
+    public static PrivateKey loadEncrypted(PemInfo pemInfo, Password password) throws CryptoException, IOException {
+
+        EncryptionType encType = getEncryptionType(pemInfo);
+
+        if (encType == null) {
+            throw new CryptoException(res.getString("NotValidOpenSsl.exception.message"));
+        }
+
+        if (encType == UNENCRYPTED) {
+            throw new PrivateKeyUnencryptedException(res.getString("OpenSslIsUnencrypted.exception.message"));
+        }
+
         byte[] encKey = pemInfo.getContent();
 
         PemAttributes attributes = pemInfo.getAttributes();
@@ -469,23 +495,7 @@ public class OpenSslPvkUtil {
         PemInfo pemInfo = PemUtil.decode(openSsl);
 
         if (pemInfo != null) {
-            String pemType = pemInfo.getType();
-
-            // PEM type of OpenSSL?
-            if (OPENSSL_RSA_PVK_PEM_TYPE.equals(pemType) || OPENSSL_DSA_PVK_PEM_TYPE.equals(pemType) ||
-                OPENSSL_EC_PVK_PEM_TYPE.equals(pemType)) {
-
-                // Encrypted? It is if PEM contains appropriate header attributes/values
-                PemAttributes pemAttributes = pemInfo.getAttributes();
-
-                if ((pemAttributes != null) && (pemAttributes.get(PROC_TYPE_ATTR_NAME) != null) &&
-                    (pemAttributes.get(PROC_TYPE_ATTR_NAME).getValue().equals(PROC_TYPE_ATTR_VALUE)) &&
-                    (pemAttributes.get(DEK_INFO_ATTR_NAME) != null)) {
-                    return ENCRYPTED;
-                } else {
-                    return UNENCRYPTED;
-                }
-            }
+            return getEncryptionType(pemInfo);
         }
 
         // In ASN.1 format?
@@ -534,6 +544,33 @@ public class OpenSslPvkUtil {
         }
 
         return null; // Not an OpenSSL file
+    }
+
+    /**
+     * Detect if a OpenSSL private key is encrypted or not.
+     *
+     * @param pemInfo PEM info containing OpenSSL private key
+     * @return Encryption type or null if not a valid OpenSSL private key
+     */
+    public static EncryptionType getEncryptionType(PemInfo pemInfo) {
+        String pemType = pemInfo.getType();
+
+        // PEM type of OpenSSL?
+        if (OPENSSL_RSA_PVK_PEM_TYPE.equals(pemType) || OPENSSL_DSA_PVK_PEM_TYPE.equals(pemType) ||
+            OPENSSL_EC_PVK_PEM_TYPE.equals(pemType)) {
+
+            // Encrypted? It is if PEM contains appropriate header attributes/values
+            PemAttributes pemAttributes = pemInfo.getAttributes();
+
+            if ((pemAttributes != null) && (pemAttributes.get(PROC_TYPE_ATTR_NAME) != null) &&
+                (pemAttributes.get(PROC_TYPE_ATTR_NAME).getValue().equals(PROC_TYPE_ATTR_VALUE)) &&
+                (pemAttributes.get(DEK_INFO_ATTR_NAME) != null)) {
+                return ENCRYPTED;
+            } else {
+                return UNENCRYPTED;
+            }
+        }
+        return null;
     }
 
     private static byte[] generateSalt(int size) {

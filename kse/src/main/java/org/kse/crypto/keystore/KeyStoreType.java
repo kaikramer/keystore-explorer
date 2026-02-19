@@ -23,6 +23,7 @@ import static org.kse.crypto.filetype.CryptoFileType.BCFKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.BKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JCEKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JKS_KS;
+import static org.kse.crypto.filetype.CryptoFileType.PEM_KS;
 import static org.kse.crypto.filetype.CryptoFileType.PKCS12_KS;
 import static org.kse.crypto.filetype.CryptoFileType.UBER_KS;
 
@@ -51,6 +52,7 @@ public enum KeyStoreType {
     MS_CAPI_ROOT("Windows-ROOT", "KeyStoreType.MscapiRootCerts", false, true, null),
     PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, true, null),
     BCFKS("BCFKS", "KeyStoreType.Bcfks", true, true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
+    PEM("PEM", "KeyStoreType.Pem", true, true, PEM_KS),
     UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, false, null);
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
@@ -131,6 +133,22 @@ public enum KeyStoreType {
      */
     public boolean hasEntryPasswords() {
         return this != PKCS11 && this != MS_CAPI_PERSONAL && this != MS_CAPI_ROOT;
+    }
+
+    /**
+     * Are key store entries using the same password as the key store?
+     *
+     * For PKCS #12 key stores, the entry password is always going to be the same as the key store
+     * password.
+     * For KeyChainStore key stores, a password is needed by the provider, but the password
+     * is not used.
+     * For PEM key stores, there isn't a key store password, but all entries will use the same
+     * password so it's treated like a key store with a password.
+     *
+     * @return True if so, false otherwise
+     */
+    public boolean entrySameAsKeyStorePassword() {
+        return this == PKCS12 || this == KEYCHAIN || this == PEM;
     }
 
     /**

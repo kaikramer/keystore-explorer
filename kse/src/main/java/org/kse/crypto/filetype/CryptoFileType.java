@@ -61,6 +61,11 @@ public enum CryptoFileType {
     UBER_KS("CryptoFileType.UberKs"),
 
     /**
+     * PEM KeyStore
+     */
+    PEM_KS("CryptoFileType.PemKs"),
+
+    /**
      * Certificate
      */
     CERT("CryptoFileType.Certificate"),

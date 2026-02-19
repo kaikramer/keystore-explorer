@@ -25,19 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.Security;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.kse.KSE;
+import org.kse.crypto.CryptoTestsBase;
 
-class CryptoFileUtilTest {
+class CryptoFileUtilTest extends CryptoTestsBase {
 
     private static final String TEST_FILES_PATH = "src/test/resources/testdata/CryptoFileUtilTest";
-
-    static {
-        Security.addProvider(KSE.BC);
-    }
 
     @ParameterizedTest
     // @formatter:off

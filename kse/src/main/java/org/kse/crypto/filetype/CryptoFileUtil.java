@@ -36,6 +36,7 @@ import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
+import static org.kse.crypto.keystore.KeyStoreType.PEM;
 import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
 import static org.kse.crypto.keystore.KeyStoreType.UBER;
 import static org.kse.crypto.privatekey.EncryptionType.ENCRYPTED;
@@ -339,6 +340,10 @@ public class CryptoFileUtil {
                     return UBER;
                 }
             }
+        }
+
+        if (PemUtil.decodeAll(data).size() > 0) {
+            return PEM;
         }
 
         // @formatter:off

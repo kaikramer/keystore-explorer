@@ -38,6 +38,7 @@ import javax.swing.SwingUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.csr.pkcs12.Pkcs12Util;
+import org.kse.crypto.provider.KseProvider;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
@@ -117,6 +118,7 @@ public class KSE {
             }
 
             Security.addProvider(BC);
+            Security.addProvider(new KseProvider());
 
             Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
             RNG.setType(preferences.getRngTypeSetting());

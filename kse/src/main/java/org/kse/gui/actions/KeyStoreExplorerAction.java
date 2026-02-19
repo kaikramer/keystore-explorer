@@ -164,7 +164,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
             }
 
             // for PKCS#12 keystores, the entry password is usually the same as the keystore password
-            if (password == null && (keyStoreType == KeyStoreType.PKCS12 || keyStoreType == KeyStoreType.KEYCHAIN)) {
+            if (password == null && keyStoreType.entrySameAsKeyStorePassword()) {
                 Password keystorePassword = state.getPassword();
                 if (keystorePassword != null) {
                     password = new Password(keystorePassword.toCharArray());
@@ -293,8 +293,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
             KeyStoreState newState) {
         Password password = new Password((char[]) null);
 
-        if (keyStoreType.hasEntryPasswords()
-                && (keyStoreType != KeyStoreType.PKCS12 && keyStoreType != KeyStoreType.KEYCHAIN)) {
+        if (keyStoreType.hasEntryPasswords() && !keyStoreType.entrySameAsKeyStorePassword()) {
             DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, title, preferences);
             dGetNewPassword.setLocationRelativeTo(frame);
             dGetNewPassword.setVisible(true);
@@ -304,7 +303,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
                 return null;
             }
         }
-        if (keyStoreType == KeyStoreType.PKCS12 || keyStoreType == KeyStoreType.KEYCHAIN) {
+        if (keyStoreType.entrySameAsKeyStorePassword()) {
             if (currentState.getPassword() == null) {
                 var passwordAndDecision = getNewKeyStorePassword(true, newState.isStoredInPasswordManager());
                 password = passwordAndDecision.getPassword();
