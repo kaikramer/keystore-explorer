@@ -31,7 +31,6 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -45,21 +44,17 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.DefaultCMSSignatureEncryptionAlgorithmFinder;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.SignerInformation;
@@ -694,25 +689,7 @@ public class JarSigner {
             digCalcProv.setProvider(provider);
             csb.setProvider(provider);
 
-            // Workaround for display issue in verify function of jarsigner for Java <= 15
-            // see https://github.com/kaikramer/keystore-explorer/issues/293
-            DefaultCMSSignatureEncryptionAlgorithmFinder sigEncAlgFinder =
-                    new DefaultCMSSignatureEncryptionAlgorithmFinder() {
-                @Override
-                public AlgorithmIdentifier findEncryptionAlgorithm(AlgorithmIdentifier signatureAlgorithm) {
-                    List<ASN1ObjectIdentifier> shaRsaIdentifiers = Arrays.asList(
-                            PKCSObjectIdentifiers.sha256WithRSAEncryption,
-                            PKCSObjectIdentifiers.sha384WithRSAEncryption,
-                            PKCSObjectIdentifiers.sha512WithRSAEncryption);
-
-                    // map OIDs for RSAwithSHA256/384/512 to OID for RSAEncryption
-                    return shaRsaIdentifiers.contains(signatureAlgorithm.getAlgorithm()) ?
-                           new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE) :
-                           super.findEncryptionAlgorithm(signatureAlgorithm);
-                }
-            };
-            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv.build(),
-                                                                                                 sigEncAlgFinder);
+            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv.build());
 
             // remove cmsAlgorithmProtect for compatibility reasons
             SignerInfoGenerator sigGen = siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]);
