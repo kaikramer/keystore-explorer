@@ -64,6 +64,7 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
             "PKCS12",
             "BKS",
             "UBER",
+            "PEM",
     })
     // @formatter:on
     void doTests(KeyStoreType keyStoreType) throws Exception {
@@ -75,6 +76,12 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
         File keyStoreFile = File.createTempFile("keystore", keyStoreType.jce().toLowerCase());
         keyStoreFile.deleteOnExit();
 
+        // Need to add an entry to the KeyStore for the PEM type to be detected.
+        // An empty file cannot be positively identified as a PEM key store.
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair("P-256", KSE.BC);
+        X509Certificate cert = generateCert(keyPair, SignatureType.SHA256_ECDSA);
+
+        keyStore.setKeyEntry("alias", keyPair.getPrivate(), PASSWORD.toCharArray(), new Certificate[] {cert});
         KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
 
         assertThat(keyStoreType).isEqualTo(CryptoFileUtil.detectKeyStoreType(keyStoreFile));
@@ -84,6 +91,14 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
 
         assertThat(keyStore).isNotNull();
         assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
+
+        String expectedAlias = "alias";
+        if (keyStoreType == KeyStoreType.PEM) {
+            // PEM key stores don't have a way to retain the alias
+            // it is dynamically derived from the certificate subject
+            expectedAlias = "Cert";
+        }
+        assertNotNull(keyStore.getKey(expectedAlias, PASSWORD.toCharArray()));
     }
 
     @ParameterizedTest
@@ -114,7 +129,14 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
 
         assertThat(keyStore).isNotNull();
         assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
-        assertNotNull(keyStore.getKey("alias", PASSWORD.toCharArray()));
+
+        String expectedAlias = "alias";
+        if (keyStoreType == KeyStoreType.PEM) {
+            // PEM key stores don't have a way to retain the alias
+            // it is dynamically derived from the certificate subject
+            expectedAlias = "Cert";
+        }
+        assertNotNull(keyStore.getKey(expectedAlias, PASSWORD.toCharArray()));
     }
 
     @ParameterizedTest
@@ -137,7 +159,14 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
 
         assertThat(keyStore).isNotNull();
         assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
-        assertNotNull(keyStore.getKey("alias", PASSWORD.toCharArray()));
+
+        String expectedAlias = "alias";
+        if (keyStoreType == KeyStoreType.PEM) {
+            // PEM key stores don't have a way to retain the alias
+            // it is dynamically derived from the certificate subject
+            expectedAlias = "Cert";
+        }
+        assertNotNull(keyStore.getKey(expectedAlias, PASSWORD.toCharArray()));
     }
 
     private X509Certificate generateCert(KeyPair keyPair, SignatureType signatureType) throws CryptoException {

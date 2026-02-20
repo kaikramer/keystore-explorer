@@ -126,6 +126,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             case BKS_V1_KS:
             case BCFKS_KS:
             case UBER_KS:
+            case PEM_KS:
                 OpenAction openAction = new OpenAction(kseFrame);
                 openAction.openKeyStore(file);
                 break;

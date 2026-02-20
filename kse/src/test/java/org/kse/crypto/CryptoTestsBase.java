@@ -25,6 +25,7 @@ import java.security.Security;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.kse.KSE;
+import org.kse.crypto.provider.KseProvider;
 
 /**
  * Abstract base class for all test cases. Sets up the BC provider.
@@ -32,7 +33,8 @@ import org.kse.KSE;
 public abstract class CryptoTestsBase {
 
     @BeforeAll
-    public static void addBcProvider() {
+    static void addBcProvider() {
         Security.addProvider(KSE.BC);
+        Security.addProvider(new KseProvider());
     }
 }

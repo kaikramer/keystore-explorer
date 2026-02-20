@@ -28,6 +28,7 @@ import static org.kse.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.JAR;
 import static org.kse.crypto.filetype.CryptoFileType.JSON_WEB_TOKEN;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
+import static org.kse.crypto.filetype.CryptoFileType.PEM_KS;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
@@ -52,6 +53,8 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -72,6 +75,8 @@ import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 
 import com.nimbusds.jwt.JWTParser;
+
+import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
 /**
@@ -142,6 +147,17 @@ public class CryptoFileUtil {
             data =  decodeIfBase64sanitizeIfPem(data);
         } catch(IllegalArgumentException e) {
             // was not valid b64
+        }
+
+        try {
+            List<PemInfo> pemInfos = PemUtil.decodeAll(data);
+            Set<String> pemTypes = pemInfos.stream().map(pi -> pi.getType()).collect(Collectors.toSet());
+            if (pemTypes.size() > 1) {
+                // Assume a PEM containing a mix of keys and certificates is a PEM KeyStore
+                return PEM_KS;
+            }
+        } catch (IOException e) {
+            // was not valid PEM
         }
 
         if (isJarFile(data)) {
