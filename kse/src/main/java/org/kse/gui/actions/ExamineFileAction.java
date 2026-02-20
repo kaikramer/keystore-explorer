@@ -123,7 +123,6 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             case JCEKS_KS:
             case JKS_KS:
             case BKS_KS:
-            case BKS_V1_KS:
             case BCFKS_KS:
             case UBER_KS:
             case PEM_KS:

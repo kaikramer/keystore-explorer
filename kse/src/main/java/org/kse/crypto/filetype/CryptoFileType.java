@@ -41,11 +41,6 @@ public enum CryptoFileType {
     PKCS12_KS("CryptoFileType.Pkcs12Ks"),
 
     /**
-     * BKS-V1 KeyStore
-     */
-    BKS_V1_KS("CryptoFileType.BksV1Ks"),
-
-    /**
      * BKS KeyStore
      */
     BKS_KS("CryptoFileType.BksKs"),

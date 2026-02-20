@@ -182,7 +182,6 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             case JKS_KS:
             case PKCS12_KS:
             case BKS_KS:
-            case BKS_V1_KS:
             case UBER_KS:
             case BCFKS_KS:
             case UNKNOWN:

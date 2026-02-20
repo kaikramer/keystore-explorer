@@ -326,9 +326,8 @@ public class CryptoFileUtil {
 
             // Test for BKS and UBER
 
-            // Both start with a version number of 0, 1 or 2
-            // TODO version 0/1 can be removed after update to BC v1.69 which removes support for BKS-1
-            if ((i1 == 0) || (i1 == 1) || (i1 == 2)) {
+            // Both start with a version number of 1 (UBER) or 2 (BKS)
+            if (i1 == 1 || i1 == 2) {
                 /*
                  * For BKS and UBER the last 20 bytes of the file are the SHA-1
                  * Hash while the byte before that is a ASN1Null (0) indicating
@@ -348,12 +347,8 @@ public class CryptoFileUtil {
 
                 // Read what may be the null byte
                 if (dis.readByte() == 0) {
-                    // Found null byte - BKS/BKS-V1
-                    if (i1 == 1) {
-                        return null;
-                    } else {
-                        return BKS;
-                    }
+                    // Found null byte - BKS
+                    return BKS;
                 } else {
                     // No null byte - UBER
                     return UBER;
