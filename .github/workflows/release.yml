@@ -82,9 +82,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install required software packages
-        run: sudo apt install -y rpm debhelper dpkg-dev build-essential desktop-file-utils hicolor-icon-theme openjdk-17-jdk
+        run: sudo apt update && sudo apt install -y rpm debhelper dpkg-dev build-essential desktop-file-utils hicolor-icon-theme openjdk-25-jdk
+      - name: Install appimagetool
+        run: |
+          wget https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage
+          echo ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0 ./appimagetool-x86_64.AppImage | sha256sum --check
+          sudo chmod +x appimagetool-x86_64.AppImage
+          sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
       - name: Build with Gradle
-        run: ./gradlew test buildDeb buildRpm
+        run: ./gradlew test buildDeb buildRpm buildAppImage
         working-directory: kse
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
@@ -93,6 +99,7 @@ jobs:
           path: |
             kse/build/distributions/kse*.deb
             kse/build/distributions/kse*.rpm
+            kse/build/distributions/kse*.AppImage
           if-no-files-found: error
           compression-level: 0
 
@@ -205,6 +212,7 @@ jobs:
             artifacts/kse*.deb
             artifacts/kse*.rpm
             artifacts/kse*.dmg
+            artifacts/kse*.AppImage
           token: ${{ secrets.github_token }}
       - name: VirusTotal Scan
         run: |

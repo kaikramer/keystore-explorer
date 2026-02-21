@@ -18,6 +18,7 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import org.apache.tools.ant.taskdefs.condition.Os
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,6 +29,7 @@ Notes:
 - Task 'innosetup' requires an installation of InnoSetup 6 and ISCC.exe added to the PATH.
 - Tasks 'signapp' and 'dmg' work only under macOS.
 - Tasks 'prepareExe', 'zip' and 'innosetup' require an installation of Resource Hacker (http://www.angusj.com/resourcehacker/)
+- Task 'buildAppImage' requires appimagetool on PATH and must run on Linux with a Java 25 JDK.
 */
 
 plugins {
@@ -37,6 +39,7 @@ plugins {
     idea
     id("kse-deb-package")
     id("kse-rpm-package")
+    id("kse-appimage-package")
     id("kse-mac-package")
     id("kse-windows-package")
 }
@@ -145,7 +148,7 @@ dependencies {
         implementation("org.openjfx:javafx-graphics:17.0.17:win")
         implementation("org.openjfx:javafx-swing:17.0.17:win")
     }
-    if (gradle.startParameter.taskNames.any { it in listOf("buildDeb", "buildRpm", "zip") }) {
+    if (gradle.startParameter.taskNames.any { it in listOf("buildDeb", "buildRpm", "buildAppImage", "zip") }) {
         implementation("org.openjfx:javafx-swing:17.0.17:linux")
         implementation("org.openjfx:javafx-base:17.0.17:linux")
         implementation("org.openjfx:javafx-graphics:17.0.17:linux")
@@ -284,7 +287,7 @@ tasks.register<Exec>("jlink") {
                 "jdk.security.auth," +
                 "jdk.crypto.ec," +
                 "jdk.crypto.cryptoki," +
-                "jdk.crypto.mscapi," +
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) "jdk.crypto.mscapi," else "" +
                 "jdk.zipfs," +
                 "jdk.unsupported," +
                 "jdk.dynalink",
@@ -345,6 +348,20 @@ rpmPackage {
     vendor.set(project.extra["vendor"].toString())
     rpmBuildDir.set(layout.buildDirectory.dir("rpmbuild"))
     rpmStageDir.set(layout.buildDirectory.dir("rpm-stage"))
+    distDir.set(layout.buildDirectory.dir("distributions"))
+    resDir.set(layout.projectDirectory.dir("res"))
+    iconsDir.set(layout.projectDirectory.dir("icons"))
+    licensesDir.set(layout.projectDirectory.dir("licenses"))
+}
+
+appImagePackage {
+    appName.set(project.extra["appName"].toString())
+    appVersion.set(project.extra["appVersion"].toString())
+    appSimpleName.set(project.extra["appSimpleName"].toString())
+    appSimpleVersion.set(project.extra["appSimpleVersion"].toString())
+    website.set(project.extra["website"].toString())
+    appImageStageDir.set(layout.buildDirectory.dir("appimage-stage"))
+    jlinkOutDir.set(layout.buildDirectory.dir("jlink"))
     distDir.set(layout.buildDirectory.dir("distributions"))
     resDir.set(layout.projectDirectory.dir("res"))
     iconsDir.set(layout.projectDirectory.dir("icons"))
