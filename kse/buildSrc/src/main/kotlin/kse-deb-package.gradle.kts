@@ -18,6 +18,7 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Exec
 import java.io.File
@@ -63,22 +64,25 @@ tasks.register("updateDebChangelog") {
     description = "Update debian/changelog with current version"
 
     doLast {
-        val changelogFile = File(projectDir, "debian/changelog")
         val dateFormatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
 
-        val appVersion = extension.appVersion.get()
-        val website = extension.website.get()
-        val vendor = extension.vendor.get()
+        copy {
+            from("debian/changelog.template")
+            rename("changelog.template", "changelog")
+            filter(
+                ReplaceTokens::class, "tokens" to mapOf(
+                    "KSE_VERSION" to extension.appVersion.get(),
+                    "KSE_WEBSITE" to extension.website.get(),
+                    "KSE_VENDOR" to extension.vendor.get(),
+                    "KSE_DATE" to dateFormatter.format(Date())
+                ),
+                "beginToken" to "%",
+                "endToken" to "%"
+            )
+            into("debian")
+        }
 
-        val changelogContent = """kse ($appVersion-1) unstable; urgency=medium
-
-  * Version $appVersion release
-  * See full changelog at $website
-
- -- $vendor <keystore-explorer@keystore-explorer.org>  ${dateFormatter.format(Date())}
-"""
-        changelogFile.writeText(changelogContent)
-        println("Updated debian/changelog to version $appVersion")
+        println("Updated debian/changelog to version ${extension.appVersion.get()}")
     }
 }
 

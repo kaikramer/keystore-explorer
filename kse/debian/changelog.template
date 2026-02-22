@@ -1,0 +1,8 @@
+kse (%KSE_VERSION%-1) unstable; urgency=medium
+
+  * Version %KSE_VERSION% release
+  * See full changelog at %KSE_WEBSITE%/releases.html
+
+ -- Kai Kramer <kaikramer@users.noreply.github.com>  %KSE_DATE%
+
+

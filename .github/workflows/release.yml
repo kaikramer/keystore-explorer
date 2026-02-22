@@ -43,7 +43,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -82,15 +82,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install required software packages
-        run: sudo apt update && sudo apt install -y rpm debhelper dpkg-dev build-essential desktop-file-utils hicolor-icon-theme openjdk-25-jdk
+        run: sudo apt update && sudo apt install -y rpm debhelper dpkg-dev build-essential desktop-file-utils hicolor-icon-theme
+      - name: Build DEB and RPM with Gradle
+        run: JAVA_HOME="${JAVA_HOME_17_X64}" ./gradlew test buildDeb buildRpm
+        working-directory: kse
       - name: Install appimagetool
         run: |
           wget https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage
           echo ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0 ./appimagetool-x86_64.AppImage | sha256sum --check
           sudo chmod +x appimagetool-x86_64.AppImage
           sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
-      - name: Build with Gradle
-        run: ./gradlew test buildDeb buildRpm buildAppImage
+      - name: Build AppImage with Gradle
+        run: JAVA_HOME="${JAVA_HOME_25_X64}" ./gradlew buildAppImage
         working-directory: kse
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
@@ -115,7 +118,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
