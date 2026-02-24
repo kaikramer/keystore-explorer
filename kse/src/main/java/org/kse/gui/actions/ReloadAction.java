@@ -124,7 +124,7 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
                         // Prompt for unsaved changes to the current key store
                         if (!currentState.isSavedState()) {
                             String messageKey = "ReloadAction.KeyStoreUnsavedChanges.message";
-                            if (prefs.isSilentlyReload()) {
+                            if (automatic && prefs.isSilentlyReload()) {
                                 messageKey = "ReloadAction.KeyStoreUnsavedChangesAutomatic.message";
                             }
                             int selected = JOptionPane.showConfirmDialog(frame,
