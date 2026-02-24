@@ -53,8 +53,9 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -73,11 +74,10 @@ import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
-
-import com.nimbusds.jwt.JWTParser;
-
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
+
+import com.nimbusds.jwt.JWTParser;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
@@ -149,11 +149,10 @@ public class CryptoFileUtil {
             // was not valid b64
         }
 
+        List<PemInfo> pemInfos = null;
         try {
-            List<PemInfo> pemInfos = PemUtil.decodeAll(data);
-            Set<String> pemTypes = pemInfos.stream().map(pi -> pi.getType()).collect(Collectors.toSet());
-            if (pemTypes.size() > 1) {
-                // Assume a PEM containing a mix of keys and certificates is a PEM KeyStore
+            pemInfos = PemUtil.decodeAll(data);
+            if (isPemKeyStore(pemInfos)) {
                 return PEM_KS;
             }
         } catch (IOException e) {
@@ -225,7 +224,7 @@ public class CryptoFileUtil {
             return csrType.getCryptoFileType();
         }
 
-        KeyStoreType keyStoreType = detectKeyStoreType(data);
+        KeyStoreType keyStoreType = detectKeyStoreType(data, pemInfos);
 
         if (keyStoreType != null) {
             return keyStoreType.getCryptoFileType();
@@ -300,6 +299,10 @@ public class CryptoFileUtil {
      * @throws IOException If an I/O problem occurred
      */
     public static KeyStoreType detectKeyStoreType(byte[] data) throws IOException {
+        return detectKeyStoreType(data, null);
+    }
+
+    private static KeyStoreType detectKeyStoreType(byte[] data, List<PemInfo> pemInfos) throws IOException {
 
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
 
@@ -358,7 +361,10 @@ public class CryptoFileUtil {
             }
         }
 
-        if (PemUtil.decodeAll(data).size() > 0) {
+        if (pemInfos == null) {
+            pemInfos = PemUtil.decodeAll(data);
+        }
+        if (isPemKeyStore(pemInfos)) {
             return PEM;
         }
 
@@ -405,5 +411,23 @@ public class CryptoFileUtil {
 
         // KeyStore type not recognised
         return null;
+    }
+
+    private static boolean isPemKeyStore(List<PemInfo> pemInfos) {
+        boolean isPemKeyStore = false;
+        final Map<String, Integer> pemTypes = new HashMap<>();
+
+        pemInfos.stream().forEach(pi -> countPemTypes(pemTypes, pi.getType()));
+
+        // Assume a PEM containing a mix of keys and certificates is a PEM KeyStore
+        isPemKeyStore = pemTypes.size() > 1
+                // Assume a PEM containing multiple certificates is a PEM KeyStore
+                || pemTypes.getOrDefault(X509CertUtil.CERT_PEM_TYPE, 0) > 1;
+
+        return isPemKeyStore;
+    }
+
+    private static void countPemTypes(Map<String, Integer> counts, String type) {
+        counts.compute(type, (k, v) -> v != null ? v + 1 : Integer.valueOf(1));
     }
 }

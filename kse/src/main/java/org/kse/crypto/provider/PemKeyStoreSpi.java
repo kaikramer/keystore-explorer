@@ -51,6 +51,7 @@ import javax.security.auth.x500.X500Principal;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.EncryptionType;
+import org.kse.crypto.privatekey.OpenSslPbeType;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -73,6 +74,12 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
     private static class Entry {
         private PrivateKey key;
         private Certificate[] chain;
+        private boolean isPkcs1;
+
+        private Entry(PrivateKey key, boolean isPkcs1) {
+            this.key = key;
+            this.isPkcs1 = isPkcs1;
+        }
 
         private Entry(PrivateKey key, Certificate[] chain) {
             this.key = key;
@@ -95,7 +102,7 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
 
         List<PemInfo> blocks = PemUtil.decodeAll(stream.readAllBytes());
 
-        List<PrivateKey> keys = new ArrayList<>();
+        List<Entry> keys = new ArrayList<>();
         List<Certificate> certs = new ArrayList<>();
 
         try {
@@ -107,21 +114,23 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
             for (PemInfo pem : blocks) {
                 switch (pem.getType()) {
                     case Pkcs8Util.PKCS8_UNENC_PVK_PEM_TYPE:
-                        keys.add(Pkcs8Util.load(pem.getContent()));
+                        keys.add(new Entry(Pkcs8Util.load(pem.getContent()), false));
                         break;
 
                     case Pkcs8Util.PKCS8_ENC_PVK_PEM_TYPE:
-                        keys.add(Pkcs8Util.loadEncrypted(pem.getContent(), pass));
+                        keys.add(new Entry(Pkcs8Util.loadEncrypted(pem.getContent(), pass), false));
                         break;
 
                     case OpenSslPvkUtil.OPENSSL_RSA_PVK_PEM_TYPE:
                     case OpenSslPvkUtil.OPENSSL_EC_PVK_PEM_TYPE:
                     case OpenSslPvkUtil.OPENSSL_DSA_PVK_PEM_TYPE:
+                        PrivateKey key;
                         if (OpenSslPvkUtil.getEncryptionType(pem) == EncryptionType.ENCRYPTED) {
-                            keys.add(OpenSslPvkUtil.loadEncrypted(pem, pass));
+                            key = OpenSslPvkUtil.loadEncrypted(pem, pass);
                         } else {
-                            keys.add(OpenSslPvkUtil.load(pem.getContent()));
+                            key = OpenSslPvkUtil.load(pem.getContent());
                         }
+                        keys.add(new Entry(key, true));
                         break;
 
                     case X509CertUtil.CERT_PEM_TYPE:
@@ -137,7 +146,7 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
         }
     }
 
-    private void associateKeys(List<PrivateKey> keys, List<Certificate> certs) throws CryptoException {
+    private void associateKeys(List<Entry> keyEntries, List<Certificate> certs) throws CryptoException {
 
         List<X509Certificate> x509Certs = new ArrayList<>();
         Map<X500Principal, List<X509Certificate>> bySubject = new HashMap<>();
@@ -155,33 +164,41 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
         }
 
         // Build full certificate chain for each key
-        int keyIndex = 1;
-        for (PrivateKey key : keys) {
+        int aliasIndex = 1;
+        for (Entry keyEntry : keyEntries) {
 
-            X509Certificate leaf = findCertificateForKey(key, x509Certs);
+            X509Certificate leaf = findCertificateForKey(keyEntry.key, x509Certs);
 
             if (leaf != null) {
-                X509Certificate[] chain = buildCertificateChain(leaf, bySubject, byIssuer);
+                keyEntry.chain = buildCertificateChain(leaf, bySubject, byIssuer);
 
                 String alias = X509CertUtil.getCertificateAlias(leaf);
                 if (StringUtils.isBlank(alias)) {
-                    alias = "key" + keyIndex++;
+                    alias = "key";
                 }
-                entries.put(alias, new Entry(key, chain));
+                String indexedAlias = alias;
+                while (entries.containsKey(indexedAlias)) {
+                    indexedAlias = alias + aliasIndex++;
+                }
+                entries.put(indexedAlias, keyEntry);
             }
         }
 
         // Add standalone certificates
-        int index = 1;
+        aliasIndex = 1;
         for (X509Certificate cert : x509Certs) {
             boolean used = entries.values().stream()
                     .anyMatch(e -> Stream.of(e.chain).anyMatch(c -> c.equals(cert)));
             if (!used) {
                 String alias = X509CertUtil.getCertificateAlias(cert);
                 if (StringUtils.isBlank(alias)) {
-                    alias = "cert" + index++;
+                    alias = "cert";
                 }
-                entries.put(alias, new Entry(cert));
+                String indexedAlias = alias;
+                while (entries.containsKey(indexedAlias)) {
+                    indexedAlias = alias + aliasIndex++;
+                }
+                entries.put(indexedAlias, new Entry(cert));
             }
         }
     }
@@ -253,10 +270,18 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
 
                 if (entry.key != null) {
                     String keyPem;
-                    if (pass != null) {
-                        keyPem = Pkcs8Util.getEncryptedPem(entry.key, Pkcs8PbeType.PBES2_AES256_SHA256, pass);
+                    if (entry.isPkcs1) {
+                        if (pass != null) {
+                            keyPem = OpenSslPvkUtil.getEncrypted(entry.key, OpenSslPbeType.AES_256BIT_CBC, pass);
+                        } else {
+                            keyPem = OpenSslPvkUtil.getPem(entry.key);
+                        }
                     } else {
-                        keyPem = Pkcs8Util.getPem(entry.key);
+                        if (pass != null) {
+                            keyPem = Pkcs8Util.getEncryptedPem(entry.key, Pkcs8PbeType.PBES2_AES256_SHA256, pass);
+                        } else {
+                            keyPem = Pkcs8Util.getPem(entry.key);
+                        }
                     }
                     stream.write(keyPem.getBytes(StandardCharsets.US_ASCII));
                 }

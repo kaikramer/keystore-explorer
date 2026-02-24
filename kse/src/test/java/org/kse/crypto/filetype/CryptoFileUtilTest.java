@@ -39,7 +39,7 @@ class CryptoFileUtilTest extends CryptoTestsBase {
     @CsvSource({
             // formats for X.509 certificates
             "cert.pem.cer, CERT",
-            "cert.multi.pem.cer, CERT",
+            "cert.multi.pem.cer, PEM_KS",
             "filetype_detection_issue.cer, CERT",
             "cert.der.cer, CERT",
             "cert.pkipath, CERT",

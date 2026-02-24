@@ -42,7 +42,7 @@ public class KseProvider extends Provider {
     public KseProvider() {
         super(PROVIDER_NAME, PROVIDER_VERSION, PROVIDER_INFO);
 
-        put("KeyStore.PEM", PemKeyStoreSpi.class.getCanonicalName());
+        putService(new Service(this, "KeyStore", "PEM", PemKeyStoreSpi.class.getCanonicalName(), null, null));
     }
 
 }
