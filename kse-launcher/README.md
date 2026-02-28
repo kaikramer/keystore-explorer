@@ -4,6 +4,9 @@ The KSE launcher is a small Windows executable that detects Java runtime install
 with [Bill Stewart's JavaInfo.dll](https://github.com/Bill-Stewart/JavaInfo) and 
 then launches KeyStore Explorer with the newest JRE.  
 
+The launcher searches first for a local folder with the name "jre" and uses this
+Java runtime preferredly. This allows bundling a specific Java version with KSE.
+
 ## Requirements
 
 - Install rustup (see https://www.rust-lang.org/tools/install)

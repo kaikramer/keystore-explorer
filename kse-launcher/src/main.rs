@@ -75,7 +75,7 @@ fn get_app_dir() -> PathBuf {
 
 unsafe fn load_java_info_lib() -> Handle {
     let lib_wide = to_wide_null("JavaInfo.dll");
-    let handle = LoadLibraryExW(lib_wide.as_ptr(), ptr::null_mut(), 0);
+    let handle = unsafe { LoadLibraryExW(lib_wide.as_ptr(), ptr::null_mut(), 0) };
     if handle.is_null() {
         show_error_message("Error", "Error loading JavaInfo.dll!\nIt has to be in the same folder as kse.exe!");
         process::exit(1);

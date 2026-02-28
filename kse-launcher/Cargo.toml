@@ -2,7 +2,7 @@
 name = "kse-launcher"
 version = "2.0.0"
 authors = ["Kai Kramer <kaikramer@users.noreply.github.com>"]
-edition = "2021"
+edition = "2024"
 
 [profile.release]
 strip = "symbols"
