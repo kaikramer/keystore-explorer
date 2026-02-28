@@ -22,20 +22,14 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import java.io.File
 
 /**
- * Pre-compiled script plugin for Windows packaging tasks (prepareExe and innosetup)
+ * Pre-compiled script plugin for Windows packaging tasks
  */
 
 // Extension for configuration
 interface WindowsPackageExtension {
-    val appName: Property<String>
     val appVersion: Property<String>
-    val appSimpleName: Property<String>
     val appExe: Property<String>
     val appUserModelId: Property<String>
-    val copyright: Property<String>
-    val kseIco: Property<String>
-    val resourceHacker: Property<String>
-    val launcherOutDir: DirectoryProperty
     val resDir: DirectoryProperty
     val iconsDir: DirectoryProperty
     val licensesDir: DirectoryProperty
@@ -47,119 +41,16 @@ interface WindowsPackageExtension {
 
 val extension = extensions.create<WindowsPackageExtension>("windowsPackage")
 
-tasks.register("prepareExe") {
-    group = "distribution"
-    description = "Prepare Windows executable with version info and icon using Resource Hacker"
-
-    doLast {
-        val appExe = extension.appExe.get()
-        val appName = extension.appName.get()
-        val appVersion = extension.appVersion.get()
-        val appSimpleName = extension.appSimpleName.get()
-        val copyright = extension.copyright.get()
-        val kseIco = extension.kseIco.get()
-        val rh = extension.resourceHacker.get()
-        val launcherOutDir = extension.launcherOutDir.get().asFile.absolutePath
-        val resDir = extension.resDir.get().asFile.absolutePath
-
-        copy {
-            from("$resDir/kse-launcher.exe")
-            rename("kse-launcher.exe", appExe)
-            into(launcherOutDir)
-        }
-
-        val verInfo = appVersion.replace(".", ",") + ",0"
-        delete("$launcherOutDir/kse.rc")
-        File(launcherOutDir, "kse.rc").writeText(
-            """
-			1 VERSIONINFO
-			FILEVERSION     $verInfo
-			PRODUCTVERSION  $verInfo
-			FILEOS 			VOS__WINDOWS32
-			FILETYPE 		VFT_APP
-			BEGIN
-			  BLOCK "StringFileInfo"
-			  BEGIN
-				BLOCK "040904B0"
-				BEGIN
-				  VALUE "FileDescription", 	"$appName"
-				  VALUE "FileVersion", 		"$appVersion.0"
-				  VALUE "InternalName", 	"$appSimpleName"
-				  VALUE "LegalCopyright", 	"$copyright"
-				  VALUE "OriginalFilename", "$appExe"
-				  VALUE "ProductName", 		"$appName"
-				  VALUE "ProductVersion", 	"$appVersion"
-				END
-			  END
-			  BLOCK "VarFileInfo"
-			  BEGIN
-				VALUE "Translation", 0x0409, 0x04B0
-			  END
-			END
-		""".trimIndent()
-        )
-
-        var result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                rh,
-                "-open", "$launcherOutDir\\kse.rc",
-                "-save", "$launcherOutDir\\kse.res",
-                "-action", "compile"
-            )
-        }
-        println("RH1 finished with return code: ${result.result.get().exitValue}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("RH1 errors: ${result.standardError.asText.get()}")
-        }
-
-        result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                rh,
-                "-open", "$launcherOutDir\\$appExe",
-                "-save", "$launcherOutDir\\$appExe",
-                "-action", "addoverwrite",
-                "-mask", " VersionInfo,,",
-                "-res", "$launcherOutDir\\kse.res"
-            )
-        }
-        println("RH2 finished with return code: ${result.result.get().exitValue}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("RH2 errors: ${result.standardError.asText.get()}")
-        }
-
-        result = providers.exec {
-            workingDir(projectDir)
-            commandLine(
-                rh,
-                "-open", "$launcherOutDir\\$appExe",
-                "-save", "$launcherOutDir\\$appExe",
-                "-action", "addoverwrite",
-                "-mask", "ICONGROUP,MAINICON,0",
-                "-res", kseIco
-            )
-        }
-        println("RH3 finished with return code: ${result.result.get().exitValue}")
-        if (result.standardError.asText.get().isNotEmpty()) {
-            println("RH3 errors: ${result.standardError.asText.get()}")
-        }
-
-        println("Windows executable prepared successfully: $launcherOutDir\\$appExe")
-    }
-}
-
 tasks.register("innosetup") {
     group = "distribution"
     description = "Create Windows installer using InnoSetup"
 
-    dependsOn("jar", "prepareExe", "jlink", "copyDependencies")
+    dependsOn("jar", "jlink", "copyDependencies")
 
     doLast {
         val appVersion = extension.appVersion.get()
         val appUserModelId = extension.appUserModelId.get()
         val appExe = extension.appExe.get()
-        val launcherOutDir = extension.launcherOutDir.get().asFile.absolutePath
         val resDir = extension.resDir.get().asFile.absolutePath
         val iconsDir = extension.iconsDir.get().asFile.absolutePath
         val licensesDir = extension.licensesDir.get().asFile.absolutePath
@@ -179,7 +70,7 @@ tasks.register("innosetup") {
                     "KSE_APP_USER_MODEL_ID" to appUserModelId,
                     "KSE_JAR" to jarFile,
                     "LIB_DIR" to dependenciesDir,
-                    "LAUNCHER" to "$launcherOutDir\\$appExe",
+                    "LAUNCHER" to "$resDir\\$appExe",
                     "JAVA_INFO_DLL" to "$resDir\\JavaInfo.dll",
                     "NO_JRE" to if (JavaVersion.current() != JavaVersion.VERSION_17) "" else "-no-jre",
                     "ICONS_DIR" to iconsDir,

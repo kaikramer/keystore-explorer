@@ -14,20 +14,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install build tools
+      - name: Install mingw-w64
         run: |
           sudo apt-get update
-          sudo apt-get install nim mingw-w64
+          sudo apt-get install -y mingw-w64
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install 1.93.1 --target x86_64-pc-windows-gnu --profile minimal
+          rustup default 1.93.1
       - name: Build
-        run: nim -d:mingw --cpu:i386 -d:release --app:gui --opt:size --out:kse-launcher.exe c kse_launcher.nim
-        working-directory: kse/res
-      - name: Shrink executable
-        run: strip kse/res/kse-launcher.exe
+        run: cargo build --release
+        working-directory: kse-launcher
+      - name: Copy executable
+        run: cp kse-launcher/target/x86_64-pc-windows-gnu/release/kse-launcher.exe kse/res/kse.exe
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: kse-launcher
-          path: kse/res/kse-launcher.exe
+          path: kse/res/kse.exe
           if-no-files-found: error
           compression-level: 0
 
@@ -47,25 +51,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-#      - uses: actions/download-artifact@v4.1.7
-#        with:
-#          name: kse-launcher
-#          path: kse/res
+      - uses: actions/download-artifact@v5
+        with:
+          name: kse-launcher
+          path: kse/res
       - name: Build with Gradle
         run: .\gradlew.bat test zip innosetup
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
-          name: windows-artifact-exe
-          path: |
-            kse/build/launcher/kse.exe
-          if-no-files-found: error
-          compression-level: 0
-      - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
-        with:
-          # use second step to upload other artifacts in order to avoid sub-folders
           name: windows-artifacts
           path: |
             kse/build/distributions/kse-*.zip
@@ -96,7 +91,7 @@ jobs:
         run: JAVA_HOME="${JAVA_HOME_25_X64}" ./gradlew buildAppImage
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: linux-artifacts
           path: |
@@ -122,15 +117,15 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-#      - uses: actions/download-artifact@v4.1.7
-#        with:
-#          name: kse-launcher
-#          path: kse/res
+      - uses: actions/download-artifact@v5
+        with:
+          name: kse-launcher
+          path: kse/res
       - name: Build with Gradle
         run: .\gradlew.bat test innosetup
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: windows-with-jre-artifact
           path: kse/build/distributions/kse-*-setup.exe
@@ -153,7 +148,7 @@ jobs:
           chmod +x .github/scripts/macos-build.sh
           .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.1_8.tar.gz"
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: macos-artifact
           path: kse/build/distributions/kse*.dmg
@@ -176,7 +171,7 @@ jobs:
           chmod +x .github/scripts/macos-build.sh
           .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.1_8.tar.gz"
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: macos-arm-artifact
           path: kse/build/distributions/kse*.dmg
