@@ -25,13 +25,17 @@ use std::ffi::{CString, OsStr};
 use std::os::windows::ffi::OsStrExt;
 use std::path::PathBuf;
 
-use winapi::um::winuser::{MB_ICONERROR, MB_OK, MessageBoxA};
+use windows_sys::Win32::Foundation::FreeLibrary;
+use windows_sys::Win32::System::LibraryLoader::{
+    AddDllDirectory, GetProcAddress, LoadLibraryExW,
+    SetDllDirectoryW, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS, LOAD_LIBRARY_SEARCH_USER_DIRS,
+};
+use windows_sys::Win32::UI::Shell::SetCurrentProcessExplicitAppUserModelID;
+use windows_sys::Win32::UI::WindowsAndMessaging::{MessageBoxA, MB_ICONERROR, MB_OK};
 
 const SPLASH_FILE: &str = "splash.png";
-const LOAD_LIBRARY_SEARCH_DEFAULT_DIRS: u32 = 0x00001000;
-const LOAD_LIBRARY_SEARCH_USER_DIRS: u32 = 0x00000400;
 
-type Handle = *mut std::ffi::c_void;
+type Handle = *mut core::ffi::c_void;
 
 type GetJavaHomeFn = unsafe extern "system" fn(*mut u16, u32) -> u32;
 type IsBinary64BitFn = unsafe extern "system" fn(*const u16, *mut u32) -> u32;
@@ -47,20 +51,6 @@ type JliLaunchFn = unsafe extern "system" fn(
 type SplashInitFn = unsafe extern "system" fn() -> i32;
 type SplashLoadFileFn = unsafe extern "system" fn(*const i8) -> i32;
 
-#[link(name = "kernel32")]
-extern "system" {
-    fn LoadLibraryExW(lpLibFileName: *const u16, hFile: Handle, dwFlags: u32) -> Handle;
-    fn GetProcAddress(hModule: Handle, lpProcName: *const u8) -> Handle;
-    fn FreeLibrary(hLibModule: Handle) -> i32;
-    fn SetDllDirectoryW(lpPathName: *const u16) -> i32;
-    fn AddDllDirectory(newDirectory: *const u16) -> Handle;
-}
-
-#[link(name = "shell32")]
-extern "system" {
-    fn SetCurrentProcessExplicitAppUserModelID(AppID: *const u16) -> i32;
-}
-
 fn to_wide_null(s: &str) -> Vec<u16> {
     OsStr::new(s).encode_wide().chain(std::iter::once(0)).collect()
 }
@@ -69,7 +59,7 @@ fn show_error_message(title: &str, message: &str) {
     let title_c = CString::new(title).unwrap_or_default();
     let message_c = CString::new(message).unwrap_or_default();
     unsafe {
-        MessageBoxA(ptr::null_mut(), message_c.as_ptr(), title_c.as_ptr(), MB_OK | MB_ICONERROR);
+        MessageBoxA(ptr::null_mut(), message_c.as_ptr() as _, title_c.as_ptr() as _, MB_OK | MB_ICONERROR);
     }
 }
 
@@ -96,7 +86,7 @@ unsafe fn load_java_info_lib() -> Handle {
 fn get_java_home() -> String {
     unsafe {
         let handle = load_java_info_lib();
-        let get_fn: GetJavaHomeFn = std::mem::transmute(GetProcAddress(handle, b"GetJavaHome\0".as_ptr()));
+        let get_fn: GetJavaHomeFn = std::mem::transmute(GetProcAddress(handle, b"GetJavaHome\0".as_ptr()).unwrap());
 
         // first call to GetJavaHome is for determining the length of the path
         let java_home_length = get_fn(ptr::null_mut(), 0);
@@ -119,11 +109,11 @@ fn is_64bit_dll(file_path: &str) -> bool {
     unsafe {
         let handle = load_java_info_lib();
         let proc = GetProcAddress(handle, b"IsBinary64Bit\0".as_ptr());
-        if proc.is_null() {
+        if proc.is_none() {
             show_error_message("Error Detecting Java Installation", "Could not find symbol IsBinary64Bit");
             process::exit(1);
         }
-        let is_binary_64bit: IsBinary64BitFn = std::mem::transmute(proc);
+        let is_binary_64bit: IsBinary64BitFn = std::mem::transmute(proc.unwrap());
 
         let path_wide = to_wide_null(file_path);
         let mut is_64bit: u32 = 0;
@@ -160,14 +150,14 @@ fn show_splash_screen(jdk_dll_base_dir: &str, image_path: &str) {
 
         let splash_init_ptr = GetProcAddress(handle, b"SplashInit\0".as_ptr());
         let splash_load_file_ptr = GetProcAddress(handle, b"SplashLoadFile\0".as_ptr());
-        if splash_init_ptr.is_null() || splash_load_file_ptr.is_null() {
+        if splash_init_ptr.is_none() || splash_load_file_ptr.is_none() {
             show_error_message("Error", "Failed to load required splash screen functions!");
             FreeLibrary(handle);
             return;
         }
 
-        let splash_init: SplashInitFn = std::mem::transmute(splash_init_ptr);
-        let splash_load_file: SplashLoadFileFn = std::mem::transmute(splash_load_file_ptr);
+        let splash_init: SplashInitFn = std::mem::transmute(splash_init_ptr.unwrap());
+        let splash_load_file: SplashLoadFileFn = std::mem::transmute(splash_load_file_ptr.unwrap());
 
         if splash_init() == 0 {
             show_error_message("Error", "Failed to initialize splash screen!");
@@ -250,11 +240,11 @@ fn call_jli_launch() {
     let jli_handle = load_jli_library();
     let jli_launch: JliLaunchFn = unsafe {
         let p = GetProcAddress(jli_handle, b"JLI_Launch\0".as_ptr());
-        if p.is_null() {
+        if p.is_none() {
             show_error_message("Error Loading DLL", "Failed to get JLI_Launch function address!");
             process::exit(1);
         }
-        std::mem::transmute(p)
+        std::mem::transmute(p.unwrap())
     };
 
     let app_dir = get_app_dir();
