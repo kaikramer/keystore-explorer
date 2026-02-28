@@ -1,6 +1,6 @@
 [package]
 name = "kse-launcher"
-version = "1.0.0"
+version = "2.0.0"
 authors = ["Kai Kramer <kaikramer@users.noreply.github.com>"]
 edition = "2021"
 
@@ -8,5 +8,4 @@ edition = "2021"
 strip = "symbols"
 
 [dependencies]
-winapi = { version = "0.3.9", features = ["winuser", "winnt", "minwindef"] }
-libloading = "0.7.0"
+winapi = { version = "0.3.9", features = ["winuser"] }
