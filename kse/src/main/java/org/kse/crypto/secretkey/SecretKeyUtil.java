@@ -20,6 +20,15 @@
 
 package org.kse.crypto.secretkey;
 
+import static org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers.gostR28147_gcfb;
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes128_CBC;
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes128_GCM;
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes192_CBC;
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes256_CBC;
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes256_GCM;
+import static org.bouncycastle.asn1.ntt.NTTObjectIdentifiers.id_camellia128_cbc;
+import static org.bouncycastle.asn1.ntt.NTTObjectIdentifiers.id_camellia192_cbc;
+import static org.bouncycastle.asn1.ntt.NTTObjectIdentifiers.id_camellia256_cbc;
 import static org.kse.crypto.KeyType.SYMMETRIC;
 
 import java.security.GeneralSecurityException;
@@ -29,6 +38,9 @@ import java.util.ResourceBundle;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -87,5 +99,40 @@ public final class SecretKeyUtil {
             // Key size unknown
             return new KeyInfo(SYMMETRIC, algorithm);
         }
+    }
+
+    /**
+     * Gets the secret key size from the algorithm identifier.
+     *
+     * @param algOid The algorithm identifier for a secret key or encryption scheme.
+     * @return The key size.
+     */
+    public static int getKeySize(AlgorithmIdentifier algOid) {
+        String id = algOid.getAlgorithm().getId();
+        if (PKCSObjectIdentifiers.des_EDE3_CBC.getId().equals(id)) {
+            return 192;
+        } else if (id_aes128_CBC.getId().equals(id)) {
+            return 128;
+        } else if (id_aes192_CBC.getId().equals(id)) {
+            return 192;
+        } else if (id_aes256_CBC.getId().equals(id)) {
+            return 256;
+        } else if (id_aes128_GCM.getId().equals(id)) {
+            return 128;
+        } else if (id_aes256_GCM.getId().equals(id)) {
+            return 256;
+        } else if (id_camellia128_cbc.getId().equals(id)) {
+            return 128;
+        } else if (id_camellia192_cbc.getId().equals(id)) {
+            return 192;
+        } else if (id_camellia256_cbc.getId().equals(id)) {
+            return 256;
+        } else if (gostR28147_gcfb.getId().equals(id)) {
+            return 256;
+        } else if (new ASN1ObjectIdentifier("1.2.840.113533.7.66.10").getId().equals(id)) {
+            // CAST-5
+            return 128;
+        }
+        throw new IllegalStateException("Unexpected algorithm: " + algOid.getAlgorithm().getId());
     }
 }

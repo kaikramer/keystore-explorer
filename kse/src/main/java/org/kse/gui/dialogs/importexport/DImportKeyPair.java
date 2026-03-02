@@ -66,6 +66,7 @@ import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.keystore.Pkcs12KeyStoreAdapter;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -573,6 +574,11 @@ public class DImportKeyPair extends JEscDialog {
                     if (certificate != null) {
                         certsList.add(certificate);
                     }
+                }
+                // load in any invisible certificates
+                if (pkcs12 instanceof Pkcs12KeyStoreAdapter) {
+                    certsList.addAll(((Pkcs12KeyStoreAdapter) pkcs12).getInvisibleCerts().stream().map(ce -> ce.cert())
+                            .toList());
                 }
             }
 

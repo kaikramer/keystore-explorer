@@ -22,9 +22,6 @@ package org.kse.gui.dialogs;
 import static java.text.MessageFormat.format;
 import static org.bouncycastle.asn1.cms.CMSObjectIdentifiers.encryptedData;
 import static org.bouncycastle.asn1.cms.CMSObjectIdentifiers.envelopedData;
-import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes128_CBC;
-import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes192_CBC;
-import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes256_CBC;
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.certBag;
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.data;
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.keyBag;
@@ -108,6 +105,7 @@ import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.jcajce.spec.PBKDF2KeySpec;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
@@ -141,7 +139,10 @@ public class DPkcs12Info extends JEscDialog {
     /**
      * Creates a new DProperties dialog.
      *
-     * @param parent  Parent frame
+     * @param parent   Parent frame
+     * @param p12Data  A byte[] containing the PKCS#12 data
+     * @param password The password for decrypting the PKCS#12 encrypted contents
+     * @param file     The PKCS#12 file.
      * @throws CryptoException If a problem occurred while getting the properties
      */
     public DPkcs12Info(JFrame parent, byte[] p12Data, Password password, File file) throws CryptoException {
@@ -542,6 +543,7 @@ public class DPkcs12Info extends JEscDialog {
 
         byte[] salt = pbkdf2Params.getSalt();
         int iterations = pbkdf2Params.getIterationCount().intValue();
+        int keySize = SecretKeyUtil.getKeySize(encScheme);
 
         addNode(parentNode, "DPkcs12Info.content.KeyDerivationFunction", ObjectIdUtil.toString(derivationFunctionOid));
         addNode(parentNode, "DPkcs12Info.content.Salt", + salt.length);
@@ -550,10 +552,9 @@ public class DPkcs12Info extends JEscDialog {
 
         SecretKey key;
         if (pbkdf2Params.isDefaultPrf()) {
-            key = keyFact.generateSecret(new PBEKeySpec(password, salt, iterations, algOidToKeySize(encScheme)));
+            key = keyFact.generateSecret(new PBEKeySpec(password, salt, iterations, keySize));
         } else {
-            key = keyFact.generateSecret(
-                    new PBKDF2KeySpec(password, salt, iterations, algOidToKeySize(encScheme), pbkdf2Params.getPrf()));
+            key = keyFact.generateSecret(new PBKDF2KeySpec(password, salt, iterations, keySize, pbkdf2Params.getPrf()));
         }
 
         Cipher cipher = Cipher.getInstance(encScheme.getAlgorithm().getId(), BC);
@@ -562,20 +563,6 @@ public class DPkcs12Info extends JEscDialog {
         cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(ASN1OctetString.getInstance(encParams).getOctets()));
 
         return cipher;
-    }
-
-    private int algOidToKeySize(AlgorithmIdentifier algOid) {
-        String id = algOid.getAlgorithm().getId();
-        if (PKCSObjectIdentifiers.des_EDE3_CBC.getId().equals(id)) {
-            return 192;
-        } else if (id_aes128_CBC.getId().equals(id)) {
-            return 128;
-        } else if (id_aes192_CBC.getId().equals(id)) {
-            return 192;
-        } else if (id_aes256_CBC.getId().equals(id)) {
-            return 256;
-        }
-        throw new IllegalStateException("Unexpected algorithm: " + algOid.getAlgorithm().getId());
     }
 
     private void copyPressed() {

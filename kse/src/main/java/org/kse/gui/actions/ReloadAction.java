@@ -51,6 +51,7 @@ import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.keystore.MsCapiStoreType;
+import org.kse.crypto.keystore.Pkcs12KeyStoreAdapter;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
@@ -92,23 +93,43 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
         KeyStoreState currentState = history.getCurrentState();
 
         if (currentState.getType().isFileBased()) {
-            reloadFileBased(history, currentState, false);
+            reloadFileBased(history, false);
         } else {
-            reloadSpecial(history, currentState);
+            reloadSpecial(history);
         }
     }
 
-    public void reloadFileBased(KeyStoreHistory history, KeyStoreState currentState, boolean automatic) {
+    /**
+     * Reloads a file-based KeyStore.
+     *
+     * @param history   The KeyStoreHistory to be reloaded.
+     * @param automatic Set to true if the reload is an automatic reload, false for a manual reload.
+     */
+    public void reloadFileBased(KeyStoreHistory history, boolean automatic) {
         File file = history.getFile();
         if (file != null) {
             try {
                 KsePreferences prefs = PreferencesManager.getPreferences();
+                KeyStoreState currentState = history.getCurrentState();
                 KeyStoreState newState = currentState.createBasisForNextState(this);
 
                 try {
                     history.setExternallyModified(false);
 
                     KseKeyStore keyStore = KeyStoreUtil.load(file, newState.getPassword());
+                    if (keyStore == null) {
+                        JOptionPane.showMessageDialog(frame,
+                                MessageFormat.format(res.getString("ReloadAction.NotKeyStore.message"), file),
+                                res.getString("ReloadAction.ReloadKeyStore.Title"), JOptionPane.WARNING_MESSAGE);
+
+                        // Make the new state the current state so that the "unsaved file"
+                        // indicator is displayed since the file backing this key store cannot
+                        // be opened as a key store.
+                        currentState.append(newState);
+                        kseFrame.updateControls(true);
+                        return;
+                    }
+
                     if (!isEqual(keyStore, newState.getKeyStore(), newState)) {
 
                         // Prompt for automatic reload, unless silent
@@ -141,6 +162,14 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
                         newState.setAsSavedState();
 
                         currentState.append(newState);
+
+                        kseFrame.updateControls(true);
+                    }
+
+                    if (keyStore instanceof Pkcs12KeyStoreAdapter) {
+                        ConvertToJavaP12Action convertAction = new ConvertToJavaP12Action(kseFrame,
+                                (Pkcs12KeyStoreAdapter) keyStore, newState);
+                        convertAction.doAction();
                         kseFrame.updateControls(true);
                     }
 
@@ -167,10 +196,11 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
         }
     }
 
-    private void reloadSpecial(KeyStoreHistory history, KeyStoreState currentState) {
+    private void reloadSpecial(KeyStoreHistory history) {
         try {
             KseKeyStore keyStore = null;
 
+            KeyStoreState currentState = history.getCurrentState();
             KeyStoreType keyStoreType = currentState.getType();
             if (keyStoreType == MS_CAPI_PERSONAL) {
                 keyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
@@ -209,7 +239,7 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
             byte[] trustedCert,
             byte[] privateKey,
             Map<String, String> attributes
-    ) {};
+    ) {}
 
     private boolean isEqual(KseKeyStore ks1, KseKeyStore ks2, KeyStoreState currentState) {
 
@@ -242,7 +272,11 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
                 password = currentState.getPassword();
             }
 
-            KeyStore.Entry entry = ks.getEntry(alias, new KeyStore.PasswordProtection(password.toCharArray()));
+            KeyStore.PasswordProtection protParam = null;
+            if (ks.isKeyEntry(alias)) {
+                protParam = new KeyStore.PasswordProtection(password.toCharArray());
+            }
+            KeyStore.Entry entry = ks.getEntry(alias, protParam);
             result.put(alias, canonicalizeEntry(alias, entry));
         }
 
