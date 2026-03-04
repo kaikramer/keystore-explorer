@@ -52,11 +52,12 @@ public class X509ExtensionSetUpdater {
      * @param issuerPublicKey        New issuer public key
      * @param issuerCertName         New issuer DN
      * @param issuerCertSerialNumber New SN
+     * @param issuerSkiExt           New issuer SKI extension
      * @throws CryptoException For example when hash value cannot be calculated
      * @throws IOException     If the content cannot be encoded
      */
     public static void update(X509ExtensionSet extensionSet, PublicKey subjectPublicKey, PublicKey issuerPublicKey,
-                              X500Name issuerCertName, BigInteger issuerCertSerialNumber)
+                              X500Name issuerCertName, BigInteger issuerCertSerialNumber, byte[] issuerSkiExt)
             throws CryptoException, IOException {
 
         Set<String> allExtensions = new HashSet<>(extensionSet.getCriticalExtensionOIDs());
@@ -66,7 +67,7 @@ public class X509ExtensionSetUpdater {
 
             switch (X509ExtensionType.resolveOid(extensionOid)) {
             case AUTHORITY_KEY_IDENTIFIER:
-                updateAKI(extensionSet, extensionOid, issuerPublicKey, issuerCertName, issuerCertSerialNumber);
+                updateAKI(extensionSet, extensionOid, issuerPublicKey, issuerCertName, issuerCertSerialNumber, issuerSkiExt);
                 break;
             case SUBJECT_KEY_IDENTIFIER:
                 updateSKI(extensionSet, extensionOid, subjectPublicKey);
@@ -91,7 +92,7 @@ public class X509ExtensionSetUpdater {
     }
 
     private static void updateAKI(X509ExtensionSet extensionSet, String extensionOid, PublicKey newIssuerPublicKey,
-                                  X500Name newIssuerCertName, BigInteger newIssuerSerialNumber)
+                                  X500Name newIssuerCertName, BigInteger newIssuerSerialNumber, byte[] issuerSkiExt)
             throws CryptoException, IOException {
 
         // extract old AKI data
@@ -102,6 +103,11 @@ public class X509ExtensionSetUpdater {
 
         // generate new values
         byte[] newKeyIdentifier = new KeyIdentifierGenerator(newIssuerPublicKey).generate160BitHashId();
+        if (issuerSkiExt != null) {
+            // The *issuer* subject key identifier is the *issued* cert's authority key identifier
+            newKeyIdentifier = SubjectKeyIdentifier.getInstance(X509Ext.unwrapExtension(issuerSkiExt))
+                    .getKeyIdentifier();
+        }
         GeneralNames newCertIssuer = new GeneralNames(new GeneralName[] { new GeneralName(newIssuerCertName) });
 
         // create new AKI object with same components as before
