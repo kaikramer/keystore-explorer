@@ -84,6 +84,7 @@ public class KsePreferences {
     private Map<String, SignatureType> signatureTypes = new HashMap<>();
     private boolean automaticallyReload = false;
     private boolean silentlyReload = false;
+    private boolean openWithExistingInstance = true;
 
     // auto-generated getters/setters
 
@@ -401,5 +402,13 @@ public class KsePreferences {
 
     public boolean isSilentlyReload() {
         return silentlyReload;
+    }
+
+    public boolean isOpenWithExistingInstance() {
+        return openWithExistingInstance;
+    }
+
+    public void setOpenWithExistingInstance(boolean openWithExistingInstance) {
+        this.openWithExistingInstance = openWithExistingInstance;
     }
 }

@@ -20,6 +20,7 @@
 package org.kse;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -133,6 +134,19 @@ public class KSE {
                     parameterFiles.add(parameterFile);
                 }
             }
+
+            if (!parameterFiles.isEmpty() && preferences.isOpenWithExistingInstance()) {
+                // Attempt to notify existing instance of files
+                try {
+                    InstanceManager.INSTANCE.sendToPrimary(parameterFiles);
+                    return;
+                } catch (IOException e) {
+                    // Ignore. An existing instance does not exist so continue to load.
+                }
+            }
+
+            // Attempt to become the primary instance
+            InstanceManager.INSTANCE.tryBecomePrimary();
 
             SwingUtilities.invokeLater(new CreateApplicationGui(preferences, parameterFiles));
         } catch (Throwable t) {

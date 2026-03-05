@@ -397,6 +397,10 @@ public class DPreferences extends JEscDialog {
         return panelUserInterface.getJcbSilentlyReload().isSelected();
     }
 
+    public boolean isSingleInstanceEnabled() {
+        return panelUserInterface.getJcbSingleInstance().isSelected();
+    }
+
     /**
      * Read the new default DN (RDNs can be empty here)
      *
