@@ -656,7 +656,8 @@ public class DSignCsr extends JEscDialog {
             X509ExtensionSetUpdater.update(extensions, csrPublicKey, issuerCertificate.getPublicKey(),
                                            X500NameUtils.x500PrincipalToX500Name(
                                                    issuerCertificate.getSubjectX500Principal()),
-                                           issuerCertificate.getSerialNumber());
+                                           issuerCertificate.getSerialNumber(),
+                                           issuerCertificate.getExtensionValue(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid()));
         } catch (CryptoException | IOException e) {
             DError.displayError(this, e);
         }

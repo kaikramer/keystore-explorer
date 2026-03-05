@@ -764,7 +764,7 @@ public class DAddExtensions extends JEscDialog {
                 extensions = X509ExtensionSet.load(new FileInputStream(loadFile));
 
                 X509ExtensionSetUpdater.update(extensions, subjectPublicKey, issuerPublicKey, issuerCertName,
-                                               issuerCertSerialNumber);
+                                               issuerCertSerialNumber, issuerSki);
 
                 reloadExtensionsTable();
                 selectFirstExtensionInTable();

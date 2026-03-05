@@ -324,12 +324,13 @@ public class DGenerateKeyPairCert extends JEscDialog {
                     String serialNumberStr = jtfSerialNumber.getText().trim();
                     BigInteger serialNumber = SerialNumbers.parse(serialNumberStr);
                     X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), keyPair.getPublic(),
-                                                   jdnName.getDistinguishedName(), serialNumber);
+                                                   jdnName.getDistinguishedName(), serialNumber, null);
                 } else {
                     X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), issuerCert.getPublicKey(),
                                                    X500NameUtils.x500PrincipalToX500Name(
                                                            issuerCert.getSubjectX500Principal()),
-                                                   issuerCert.getSerialNumber());
+                                                   issuerCert.getSerialNumber(),
+                                                   issuerCert.getExtensionValue(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid()));
                 }
             } catch (CryptoException | IOException | NumberFormatException e) {
                 DError.displayError(this, e);
