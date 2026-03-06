@@ -181,13 +181,7 @@ public class Pkcs12KeyStoreAdapter extends KseKeyStore {
                 if (safeContent.getContentType().equals(data)) {
 
                     try (ASN1InputStream dIn = new ASN1InputStream(((ASN1OctetString) safeContent.getContent()).getOctets())) {
-                        ASN1Sequence seq = (ASN1Sequence) dIn.readObject();
-
-                        for (ASN1Encodable asn1Encodable : seq) {
-                            SafeBag b = SafeBag.getInstance(asn1Encodable);
-
-                            certificates.addAll(readCertificates(b));
-                        }
+                        readCertificates(certificates, (ASN1Sequence) dIn.readObject());
                     }
                 } else if (safeContent.getContentType().equals(encryptedData)) {
 
@@ -201,12 +195,7 @@ public class Pkcs12KeyStoreAdapter extends KseKeyStore {
                     }
 
                     // process safe bags
-                    ASN1Sequence seq = ASN1Sequence.getInstance(octets);
-                    for (ASN1Encodable asn1Encodable : seq) {
-                        SafeBag b = SafeBag.getInstance(asn1Encodable);
-
-                        certificates.addAll(readCertificates(b));
-                    }
+                    readCertificates(certificates, ASN1Sequence.getInstance(octets));
                 }
             }
         }
@@ -214,18 +203,22 @@ public class Pkcs12KeyStoreAdapter extends KseKeyStore {
         return certificates;
     }
 
-    private List<CertEntry> readCertificates(SafeBag safeBag) {
-        List<CertEntry> certificates = new ArrayList<>();
-        if (safeBag.getBagId().equals(certBag)) {
-            CertEntry cert = readCertificate(safeBag);
-            if (cert != null) {
-                certificates.add(cert);
+    private void readCertificates(List<CertEntry> certificates, ASN1Sequence seq) {
+        for (ASN1Encodable asn1Encodable : seq) {
+            SafeBag b = SafeBag.getInstance(asn1Encodable);
+
+            CertEntry certificate = readCertificate(b);
+            if (certificate != null) {
+                certificates.add(certificate);
             }
         }
-        return certificates;
     }
 
     private CertEntry readCertificate(SafeBag safeBag) {
+
+        if (!safeBag.getBagId().equals(certBag)) {
+            return null;
+        }
 
         CertBag cb = CertBag.getInstance(safeBag.getBagValue());
         if (!cb.getCertId().equals(x509Certificate)) {
