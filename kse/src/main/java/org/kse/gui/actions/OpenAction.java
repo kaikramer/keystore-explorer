@@ -34,6 +34,7 @@ import javax.swing.KeyStroke;
 import org.kse.crypto.keystore.KeyStoreLoadException;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.keystore.Pkcs12KeyStoreAdapter;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
@@ -44,6 +45,7 @@ import org.kse.gui.password.DGetPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to open a KeyStore.
@@ -198,7 +200,14 @@ public class OpenAction extends KeyStoreExplorerAction {
 
             KeyStoreHistory history = new KeyStoreHistory(openedKeyStore, keyStoreFile, password);
 
-            history.getCurrentState().setStoredInPasswordManager(passwordManager.isKeyStorePasswordKnown(keyStoreFile));
+            KeyStoreState currentState = history.getCurrentState();
+            currentState.setStoredInPasswordManager(passwordManager.isKeyStorePasswordKnown(keyStoreFile));
+
+            if (openedKeyStore instanceof Pkcs12KeyStoreAdapter) {
+                ConvertToJavaP12Action convertAction = new ConvertToJavaP12Action(kseFrame,
+                        (Pkcs12KeyStoreAdapter) openedKeyStore, currentState);
+                convertAction.doAction();
+            }
 
             kseFrame.addKeyStoreHistory(history);
             this.newKeyStoreWasAdded = true;
