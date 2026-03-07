@@ -75,9 +75,6 @@ val dmgFile: String by extra(
     else "${appSimpleName}-${appSimpleVersion}-x64.dmg"
 )
 
-// Resource Hacker for setting the version info and icon of kse.exe
-val rh: String by extra("c:\\Program Files (x86)\\Resource Hacker\\ResourceHacker.exe")
-
 // Directories
 val resDir: String by extra(layout.projectDirectory.dir("res").asFile.absolutePath)
 val iconsDir: String by extra(layout.projectDirectory.dir("icons").asFile.absolutePath)
@@ -208,18 +205,17 @@ tasks.jar {
 
 tasks.register<Zip>("zip") {
     group = "distribution"
-    dependsOn("prepareExe")
     archiveVersion.set(appSimpleVersion)
     into(distFileNamePrefix) {
         from(tasks.jar.get().archiveFile)
-        from("$launcherOutDir/$appExe")
+        from("$resDir/$appExe")
         from(resDir) {
             include("JavaInfo.dll", "splash*.png")
         }
         from(resDir) {
             include("kse.sh")
             filePermissions {
-                unix(0x1ed) // 0755
+                unix("755")
             }
             include("readme.txt")
         }
@@ -290,15 +286,9 @@ tasks.register<Exec>("jlink") {
 }
 
 windowsPackage {
-    appName.set(project.extra["appName"].toString())
     appVersion.set(project.extra["appVersion"].toString())
-    appSimpleName.set(project.extra["appSimpleName"].toString())
     appExe.set(project.extra["appExe"].toString())
     appUserModelId.set(project.extra["appUserModelId"].toString())
-    copyright.set(project.extra["copyright"].toString())
-    kseIco.set(project.extra["kseIco"].toString())
-    resourceHacker.set(project.extra["rh"].toString())
-    launcherOutDir.set(layout.buildDirectory.dir("launcher"))
     resDir.set(layout.projectDirectory.dir("res"))
     iconsDir.set(layout.projectDirectory.dir("icons"))
     licensesDir.set(layout.projectDirectory.dir("licenses"))
