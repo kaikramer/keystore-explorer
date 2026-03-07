@@ -10,12 +10,11 @@ Java runtime preferredly. This allows bundling a specific Java version with KSE.
 ## Requirements
 
 - Install rustup (see https://www.rust-lang.org/tools/install)
-- Install and use toolchain for 32bit Windows: `rustup default stable-i686-pc-windows-gnu`
+- Install and use toolchain for 64bit Windows: `rustup default stable-i686-pc-windows-gnu`
+- If on Ubuntu, install the mingw-w64 toolchain: `sudo apt-get install -y mingw-w64`
 
 ## Building
 
 `cd kse-launcher`
-
 `cargo build --release`
-
-`copy .\target\i686-pc-windows-gnu\release\kse-launcher.exe ..\kse\res\kse-launcher.exe`
+`cp kse-launcher/target/x86_64-pc-windows-gnu/release/kse-launcher.exe kse/res/kse.exe`
