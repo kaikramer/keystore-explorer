@@ -52,11 +52,6 @@ import org.kse.utilities.os.OperatingSystem;
 import org.kse.utilities.rng.RNG;
 import org.kse.version.Version;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.WString;
-
 /**
  * Main class to start the KeyStore Explorer (KSE) application.
  */
@@ -83,10 +78,6 @@ public class KSE {
         System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
     }
 
-    public interface Shell32 extends Library {
-        NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
-    }
-
     /**
      * Start the KeyStore Explorer application. Takes one optional argument -
      * the location of a KeyStore file to open upon startup.
@@ -98,10 +89,6 @@ public class KSE {
             // To take effect these must be set before the splash screen is instantiated
             if (OperatingSystem.isMacOs()) {
                 setAppleSystemProperties();
-            } else if (OperatingSystem.isWindows()) {
-                String appId = props.getString("KSE.AppUserModelId");
-                Shell32 shell32 = Native.load("shell32", Shell32.class);
-                shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
             }
 
             // Set the install directory property (this is used for restarts and in some cases to find the config file)

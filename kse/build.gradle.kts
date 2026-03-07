@@ -163,12 +163,6 @@ dependencies {
             implementation("org.openjfx:javafx-graphics:17.0.17:mac")
             implementation("org.openjfx:javafx-swing:17.0.17:mac")
         }
-
-        // don't include jar in app bundle because of Apple notarization failing due to unsigned native libraries
-        compileOnly("net.java.dev.jna:jna:5.17.0")
-    } else {
-        // currently JNA is only used for Windows, so this is fine as a temporary workaround
-        implementation("net.java.dev.jna:jna:5.17.0")
     }
     if (gradle.startParameter.taskNames.any { it in listOf("zip") }) {
         implementation("org.openjfx:javafx-base:17.0.17:mac")
