@@ -2943,7 +2943,7 @@ public final class KseFrame implements StatusBar {
         if (preferences.isAutomaticallyReload()) {
             // Only reload if this is the active tab
             if (history == getActiveKeyStoreHistory()) {
-                reloadAction.reloadFileBased(history, history.getCurrentState(), true);
+                reloadAction.reloadFileBased(history, true);
             }
         }
     }
@@ -2954,7 +2954,7 @@ public final class KseFrame implements StatusBar {
         if (preferences.isAutomaticallyReload()) {
             KeyStoreHistory history = getActiveKeyStoreHistory();
             if (history != null && history.isExternallyModified()) {
-                reloadAction.reloadFileBased(history, history.getCurrentState(), true);
+                reloadAction.reloadFileBased(history, true);
             }
         }
     }
