@@ -97,9 +97,9 @@ Type: files; Name: "{app}\lib\*.jar"
 Type: filesandordirs; Name: "{app}\jre"
 
 [Files]
-Source: "%LAUNCHER%"; DestDir: "{app}"; Flags: replacesameversion
-Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"; Flags: replacesameversion
-Source: "%KSE_JAR%"; DestDir: "{app}"; Flags: replacesameversion
+Source: "%LAUNCHER%"; DestDir: "{app}"; Flags: ignoreversion
+Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"; Flags: ignoreversion
+Source: "%KSE_JAR%"; DestDir: "{app}"; Flags: ignoreversion
 Source: "%LIB_DIR%\*"; DestDir: "{app}\lib"
 Source: "%JRE_DIR%\*"; DestDir: "{app}\jre"; Flags: skipifsourcedoesntexist recursesubdirs
 Source: "%RES_DIR%\splash*.png"; DestDir: "{app}"
