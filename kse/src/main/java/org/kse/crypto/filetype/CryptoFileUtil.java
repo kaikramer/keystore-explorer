@@ -283,18 +283,25 @@ public class CryptoFileUtil {
     /**
      * Detect the KeyStore type contained in the supplied file.
      *
-     * @param file Keystore file
+     * @param file KeyStore file
      * @return KeyStore type or null if none matched
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than
+     *                               a regular file, or for some other reason cannot be opened
+     *                               for reading
+     * @throws NoSuchFileException   If the file does not exist, is a directory rather than
+     *                               a regular file, or for some other reason cannot be opened
+     *                               for reading
      * @throws IOException If an I/O problem occurred
      */
-    public static KeyStoreType detectKeyStoreType(File file) throws IOException {
+    public static KeyStoreType detectKeyStoreType(File file)
+            throws FileNotFoundException, NoSuchFileException, IOException {
         return detectKeyStoreType(Files.readAllBytes(file.toPath()));
     }
 
     /**
-     * Detect the KeyStore type contained in the supplied file.
+     * Detect the KeyStore type contained in the supplied data.
      *
-     * @param data Keystore data as byte array
+     * @param data KeyStore data as byte array
      * @return KeyStore type or null if none matched
      * @throws IOException If an I/O problem occurred
      */
