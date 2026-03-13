@@ -31,6 +31,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.kse.AuthorityCertificates;
+import org.kse.InstanceManager;
 import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.gui.KseFrame;
 import org.kse.gui.preferences.DPreferences;
@@ -109,6 +110,7 @@ public class PreferencesAction extends ExitAction {
         preferences.setSerialNumberLengthInBytes(dPreferences.getSerialNumberLengthInBytes());
         preferences.setAutomaticallyReload(dPreferences.isAutomaticReloadEnabled());
         preferences.setSilentlyReload(dPreferences.isSilentReloadEnabled());
+        preferences.setOpenWithExistingInstance(dPreferences.isSingleInstanceEnabled());
 
         preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
         Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
