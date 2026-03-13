@@ -2719,6 +2719,20 @@ public final class KseFrame implements StatusBar {
 
                     jpmKey.show(jtKeyStore, x, y);
                 }
+
+                // Don't allow for renaming if the key store does not support storing of aliases.
+                jmiKeyPairRename.setEnabled(type.supportsAliases());
+                jmiKeyPairRename.setToolTipText(MessageFormat.format(
+                        res.getString("KseFrame.jmiKeyPairRename." + type.supportsAliases() + ".tooltip"),
+                        type.friendly()));
+                jmiTrustedCertificateRename.setEnabled(type.supportsAliases());
+                jmiTrustedCertificateRename.setToolTipText(MessageFormat.format(
+                        res.getString("KseFrame.jmiKeyPairRename." + type.supportsAliases() + ".tooltip"),
+                        type.friendly()));
+                jmiKeyRename.setEnabled(type.supportsAliases());
+                jmiKeyRename.setToolTipText(MessageFormat.format(
+                        res.getString("KseFrame.jmiKeyPairRename." + type.supportsAliases() + ".tooltip"),
+                        type.friendly()));
             }
         } else {
             jpmKeyStore.show(jtKeyStore, x, y);

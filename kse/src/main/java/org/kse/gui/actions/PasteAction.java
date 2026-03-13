@@ -27,15 +27,19 @@ import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.List;
 
+import javax.crypto.SecretKey;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.secretkey.PasswordType;
+import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.AliasUtil;
 import org.kse.utilities.buffer.Buffer;
 import org.kse.utilities.buffer.BufferEntry;
 import org.kse.utilities.buffer.KeyBufferEntry;
@@ -114,25 +118,33 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 
     private boolean pasteEntry(BufferEntry bufferEntry, KseKeyStore keyStore, KeyStoreState newState)
             throws KeyStoreException {
-        String alias = bufferEntry.getName();
+        String alias;
 
-        if (keyStore.containsAlias(alias)) {
-            if (bufferEntry.isCut()) {
-                int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
-                                                                     res.getString("PasteAction.PasteExistsReplace" +
-                                                                                   ".message"), alias),
-                                                             res.getString("PasteAction.Paste.Title"),
-                                                             JOptionPane.YES_NO_OPTION);
+        // Only handle the cut if the key store type supports aliases
+        if (newState.getType().supportsAliases()) {
+            alias = bufferEntry.getName();
 
-                if (selected != JOptionPane.YES_OPTION) {
-                    return false;
+            if (keyStore.containsAlias(alias)) {
+                if (bufferEntry.isCut()) {
+                    int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
+                            res.getString("PasteAction.PasteExistsReplace" +
+                                    ".message"), alias),
+                            res.getString("PasteAction.Paste.Title"),
+                            JOptionPane.YES_NO_OPTION);
+
+                    if (selected != JOptionPane.YES_OPTION) {
+                        return false;
+                    }
+
+                    keyStore.deleteEntry(alias);
+                    newState.removeEntryPassword(alias);
+                } else {
+                    alias = AliasUtil.uniqueAlias(keyStore, alias);
                 }
-
-                keyStore.deleteEntry(alias);
-                newState.removeEntryPassword(alias);
-            } else {
-                alias = getUniqueEntryName(alias, keyStore);
             }
+        } else {
+            // Wipe out the incoming alias since it must be generated from the entry.
+            alias = null;
         }
 
         if (bufferEntry instanceof KeyBufferEntry) {
@@ -153,6 +165,16 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 
             Password password = keyBufferEntry.getPassword();
 
+            if (alias == null && key instanceof SecretKey) {
+                SecretKeyType secretKeyType = SecretKeyType.resolveJce(key.getAlgorithm());
+                if (secretKeyType != null) {
+                    alias = AliasUtil.uniqueAlias(keyStore, secretKeyType);
+                } else {
+                    PasswordType passwordType = PasswordType.resolveJce(key.getAlgorithm());
+                    alias = AliasUtil.uniqueAlias(keyStore, passwordType);
+                }
+            }
+
             keyStore.setKeyEntry(alias, key, password.toCharArray(), null);
 
             newState.setEntryPassword(alias, password);
@@ -164,11 +186,19 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 
             Certificate[] certificateChain = keyPairBufferEntry.getCertificateChain();
 
+            if (alias == null) {
+                alias = AliasUtil.uniqueAlias(keyStore, certificateChain[0]);
+            }
+
             keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
 
             newState.setEntryPassword(alias, password);
         } else {
             TrustedCertificateBufferEntry certBufferEntry = (TrustedCertificateBufferEntry) bufferEntry;
+
+            if (alias == null) {
+                alias = AliasUtil.uniqueAlias(keyStore, certBufferEntry.getTrustedCertificate());
+            }
 
             keyStore.setCertificateEntry(alias, certBufferEntry.getTrustedCertificate());
         }
@@ -178,19 +208,5 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
         }
 
         return true;
-    }
-
-    private String getUniqueEntryName(String name, KseKeyStore keyStore) throws KeyStoreException {
-        // Get unique KeyStore entry name based on the one supplied, ie *
-        // "<name> (n)" where n is a
-        // number.
-        int i = 1;
-        while (true) {
-            String tryName = MessageFormat.format("{0} ({1})", name, i);
-            if (!keyStore.containsAlias(tryName)) {
-                return tryName;
-            }
-            i++;
-        }
     }
 }

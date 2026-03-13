@@ -37,6 +37,7 @@ import org.kse.gui.dialogs.DGenerateSecretKey;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.AliasUtil;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -110,26 +111,31 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
             KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
-            DGetAlias dGetAlias = new DGetAlias(frame,
-                                                res.getString("GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"),
-                                                null);
-            dGetAlias.setLocationRelativeTo(frame);
-            dGetAlias.setVisible(true);
-            String alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
+            String alias;
+            if (keyStoreType.supportsAliases()) {
+                DGetAlias dGetAlias = new DGetAlias(frame,
+                                                    res.getString("GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"),
+                                                    null);
+                dGetAlias.setLocationRelativeTo(frame);
+                dGetAlias.setVisible(true);
+                alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
 
-            if (alias == null) {
-                return;
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                String message = MessageFormat.format(res.getString("GenerateSecretKeyAction.OverWriteEntry.message"),
-                                                      alias);
-
-                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
-                        "GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
-                if (selected != JOptionPane.YES_OPTION) {
+                if (alias == null) {
                     return;
                 }
+
+                if (keyStore.containsAlias(alias)) {
+                    String message = MessageFormat.format(res.getString("GenerateSecretKeyAction.OverWriteEntry.message"),
+                                                          alias);
+
+                    int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
+                            "GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
+                    if (selected != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+            } else {
+                alias = AliasUtil.uniqueAlias(keyStore, secretKeyType);
             }
 
             Password password = getNewEntryPassword(keyStoreType,
