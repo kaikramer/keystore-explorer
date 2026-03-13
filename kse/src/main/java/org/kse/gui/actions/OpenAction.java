@@ -52,6 +52,7 @@ import org.kse.utilities.history.KeyStoreState;
  */
 public class OpenAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 1L;
+    private static int clipboardCount = 0;
 
     private boolean newKeyStoreWasAdded = false;
 
@@ -215,6 +216,78 @@ public class OpenAction extends KeyStoreExplorerAction {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("OpenAction.NoReadFile.message"),
                                                                       keyStoreFile),
                                           res.getString("OpenAction.OpenKeyStore.Title"), JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
+
+    /**
+     * Open the supplied KeyStore from the clip board.
+     *
+     * @param keyStoreData The KeyStore data from clip board
+     */
+    public void openKeyStoreFromClipboard(byte[] keyStoreData) {
+        clipboardCount++;
+        String keyStoreName = MessageFormat.format(res.getString("OpenAction.Clipboard"), clipboardCount);
+
+        try {
+            Password password = null;
+
+            KseKeyStore openedKeyStore;
+            while (true) {
+                boolean passwordManagerWanted = false;
+
+                DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+                        res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreName),
+                        passwordManagerWanted);
+                dGetPassword.setLocationRelativeTo(frame);
+                dGetPassword.setVisible(true);
+
+                password = dGetPassword.getPassword();
+
+                // user did not enter password -> abort
+                if (password == null) {
+                    return;
+                }
+
+                // try to load keystore
+                try {
+                    openedKeyStore = KeyStoreUtil.loadFromClipboard(keyStoreData, password);
+                    break;
+                } catch (KeyStoreLoadException klex) {
+                    int tryAgainChoice = showErrorMessage(new File(keyStoreName), klex);
+                    if (tryAgainChoice == JOptionPane.NO_OPTION) {
+                        return;
+                    }
+                }
+
+                // failure, reset password
+                password.nullPassword();
+                password = null;
+            }
+
+            if (openedKeyStore == null) {
+                JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                        res.getString("OpenAction.FileNotRecognisedType.message"),
+                        keyStoreName),
+                        res.getString("OpenAction.OpenKeyStore.Title"),
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            KeyStoreHistory history = new KeyStoreHistory(openedKeyStore, keyStoreName, password, null);
+
+            KeyStoreState currentState = history.getCurrentState();
+            currentState.setStoredInPasswordManager(false);
+
+            if (openedKeyStore instanceof Pkcs12KeyStoreAdapter) {
+                ConvertToJavaP12Action convertAction = new ConvertToJavaP12Action(kseFrame,
+                        (Pkcs12KeyStoreAdapter) openedKeyStore, currentState);
+                convertAction.doAction();
+            }
+
+            kseFrame.addKeyStoreHistory(history);
+            this.newKeyStoreWasAdded = true;
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }

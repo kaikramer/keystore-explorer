@@ -29,10 +29,10 @@ import static org.kse.crypto.keystore.KeyStoreType.PKCS11;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.AuthProvider;
 import java.security.GeneralSecurityException;
@@ -96,6 +96,34 @@ public final class KeyStoreUtil {
     }
 
     /**
+     * Load a KeyStore, auto-detecting the type, from clip board data accessed by a
+     * password.
+     *
+     * @param keyStoreData Clipboard data containing a KeyStore to load
+     * @param password     Password of the KeyStore
+     * @return The KeyStore or null if file did not contain a KeyStore of a
+     *         recognised type
+     * @throws KeyStoreLoadException Problem encountered loading the KeyStore as the auto-detected
+     *                               type
+     * @throws CryptoException       Problem encountered loading the KeyStore
+     */
+    public static KseKeyStore loadFromClipboard(byte[] keyStoreData, Password password)
+            throws CryptoException {
+
+        try {
+            KeyStoreType keyStoreType = CryptoFileUtil.detectKeyStoreType(keyStoreData);
+
+            if (keyStoreType == null) {
+                return null;
+            }
+
+            return load(keyStoreData, password, keyStoreType);
+        } catch (IOException ex) {
+            throw new CryptoException(res.getString("NoLoadKeyStore.exception.message"), ex);
+        }
+    }
+
+    /**
      * Load a KeyStore, auto-detecting the type, from a file accessed by a
      * password.
      *
@@ -115,42 +143,35 @@ public final class KeyStoreUtil {
      */
     public static KseKeyStore load(File keyStoreFile, Password password)
             throws CryptoException, FileNotFoundException, NoSuchFileException {
-        KeyStoreType keyStoreType = null;
 
         try {
-            keyStoreType = CryptoFileUtil.detectKeyStoreType(keyStoreFile);
+            KeyStoreType keyStoreType = CryptoFileUtil.detectKeyStoreType(keyStoreFile);
+
+            if (keyStoreType == null) {
+                return null;
+            }
+
+            return load(Files.readAllBytes(keyStoreFile.toPath()), password, keyStoreType);
         } catch (FileNotFoundException | NoSuchFileException ex) {
             throw ex;
         } catch (IOException ex) {
             throw new CryptoException(res.getString("NoLoadKeyStore.exception.message"), ex);
         }
-
-        if (keyStoreType == null) {
-            return null;
-        }
-
-        return load(keyStoreFile, password, keyStoreType);
     }
 
     /**
-     * Load a KeyStore from a file accessed by a password.
+     * Load a KeyStore from a byte array accessed by a password.
      *
-     * @param keyStoreFile File to load KeyStore from
+     * @param keyStoreData byte[] containing the KeyStore data to load
      * @param password     Password of the KeyStore
      * @param keyStoreType The type of the KeyStore to open
      * @return The KeyStore
      * @throws KeyStoreLoadException Problem encountered loading the KeyStore as the specified
      *                               type
      * @throws CryptoException       Problem encountered loading the KeyStore
-     * @throws FileNotFoundException If the KeyStore file does not exist, is a directory rather
-     *                               than a regular file, or for some other reason cannot be
-     *                               opened for reading
-     * @throws NoSuchFileException   If the KeyStore file does not exist, is a directory rather
-     *                               than a regular file, or for some other reason cannot be
-     *                               opened for reading
      */
-    public static KseKeyStore load(File keyStoreFile, Password password, KeyStoreType keyStoreType)
-            throws CryptoException, FileNotFoundException, NoSuchFileException {
+    public static KseKeyStore load(byte[] keyStoreData, Password password, KeyStoreType keyStoreType)
+            throws CryptoException {
         if (!keyStoreType.isFileBased()) {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreNotFile.exception.message"), keyStoreType.jce()));
@@ -163,20 +184,18 @@ public final class KeyStoreUtil {
             keyStore = new KseKeyStore(getKeyStoreInstance(keyStoreType));
         }
 
-        try (FileInputStream fis = new FileInputStream(keyStoreFile)) {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(keyStoreData)) {
             if (password.isEmpty() && (keyStoreType == KeyStoreType.JKS || keyStoreType == KeyStoreType.JCEKS)) {
                 // allow JKS and JCEKS files to be opened without providing a password
                 password.nullPassword();
-                keyStore.load(fis, null);
+                keyStore.load(bais, null);
             } else {
-                keyStore.load(fis, password.toCharArray());
+                keyStore.load(bais, password.toCharArray());
             }
         } catch (CertificateException | NoSuchAlgorithmException ex) {
             throw new KeyStoreLoadException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"), keyStoreType), ex,
                     keyStoreType);
-        } catch (FileNotFoundException | NoSuchFileException ex) {
-            throw ex;
         } catch (IOException ex) {
             throw new KeyStoreLoadException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"), keyStoreType), ex,

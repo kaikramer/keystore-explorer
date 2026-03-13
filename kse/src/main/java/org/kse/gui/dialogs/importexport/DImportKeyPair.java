@@ -492,7 +492,7 @@ public class DImportKeyPair extends JEscDialog {
 
             switch (fileType) {
                 case PKCS12_KS:
-                    privateKey = loadPkcs12(privateKeyFile, password);
+                    privateKey = loadPkcs12(pvkData, privateKeyFile, password);
                     break;
                 case ENC_PKCS8_PVK:
                     privateKey = Pkcs8Util.loadEncrypted(pvkData, password);
@@ -540,9 +540,9 @@ public class DImportKeyPair extends JEscDialog {
         return null;
     }
 
-    private PrivateKey loadPkcs12(File file, Password password) {
+    private PrivateKey loadPkcs12(byte[] pvkData, File file, Password password) {
         try {
-            KseKeyStore pkcs12 = KeyStoreUtil.load(file, password, KeyStoreType.PKCS12);
+            KseKeyStore pkcs12 = KeyStoreUtil.load(pvkData, password, KeyStoreType.PKCS12);
 
             // Find a key pair in the PKCS #12 KeyStore
             PrivateKey privKey = null;
@@ -592,11 +592,6 @@ public class DImportKeyPair extends JEscDialog {
             certificateChain = X509CertUtil.convertCertificates(certsList.toArray(Certificate[]::new));
 
             return privKey;
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this,
-                                          MessageFormat.format(res.getString("DImportKeyPair.NoReadFile.message"),
-                                                               file), getTitle(), JOptionPane.WARNING_MESSAGE);
-            return null;
         } catch (Exception ex) {
             Problem problem = createLoadPkcs12Problem(ex, file);
 
