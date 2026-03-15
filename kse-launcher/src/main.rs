@@ -20,18 +20,19 @@
 
 #![windows_subsystem = "windows"]
 
-use std::{env, process, ptr};
 use std::ffi::{CString, OsStr};
 use std::os::windows::ffi::OsStrExt;
 use std::path::PathBuf;
+use std::{env, process, ptr};
 
 use windows_sys::Win32::Foundation::FreeLibrary;
+use windows_sys::Win32::Globalization::{CP_ACP, WideCharToMultiByte};
 use windows_sys::Win32::System::LibraryLoader::{
-    AddDllDirectory, GetProcAddress, LoadLibraryExW,
-    SetDllDirectoryW, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS, LOAD_LIBRARY_SEARCH_USER_DIRS,
+    AddDllDirectory, GetProcAddress, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS,
+    LOAD_LIBRARY_SEARCH_USER_DIRS, LoadLibraryExW, SetDllDirectoryW,
 };
 use windows_sys::Win32::UI::Shell::SetCurrentProcessExplicitAppUserModelID;
-use windows_sys::Win32::UI::WindowsAndMessaging::{MessageBoxA, MB_ICONERROR, MB_OK};
+use windows_sys::Win32::UI::WindowsAndMessaging::{MB_ICONERROR, MB_OK, MessageBoxA};
 
 const SPLASH_FILE: &str = "splash.png";
 
@@ -40,26 +41,71 @@ type Handle = *mut core::ffi::c_void;
 type GetJavaHomeFn = unsafe extern "system" fn(*mut u16, u32) -> u32;
 type IsBinary64BitFn = unsafe extern "system" fn(*const u16, *mut u32) -> u32;
 type JliLaunchFn = unsafe extern "system" fn(
-    argc: i32, argv: *const *const i8,
-    jargc: i32, jargv: *const *const i8,
-    appclassc: i32, appclassv: *const *const i8,
-    fullversion: *const i8, dotversion: *const i8,
-    pname: *const i8, lname: *const i8,
-    javaargs: u8, cpwildcard: u8, javaw: u8,
+    argc: i32,
+    argv: *const *const i8,
+    jargc: i32,
+    jargv: *const *const i8,
+    appclassc: i32,
+    appclassv: *const *const i8,
+    fullversion: *const i8,
+    dotversion: *const i8,
+    pname: *const i8,
+    lname: *const i8,
+    javaargs: u8,
+    cpwildcard: u8,
+    javaw: u8,
     ergo: i32,
 ) -> i32;
 type SplashInitFn = unsafe extern "system" fn() -> i32;
 type SplashLoadFileFn = unsafe extern "system" fn(*const i8) -> i32;
 
 fn to_wide_null(s: &str) -> Vec<u16> {
-    OsStr::new(s).encode_wide().chain(std::iter::once(0)).collect()
+    OsStr::new(s)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect()
+}
+
+/// Converts a UTF-8 string to the Windows ANSI code page encoding
+fn utf8_to_ansi(s: &str) -> Vec<u8> {
+    let wide = to_wide_null(s);
+    let wide_len = (wide.len() - 1) as i32; // exclude null terminator
+    unsafe {
+        let len = WideCharToMultiByte(
+            CP_ACP,
+            0,
+            wide.as_ptr(),
+            wide_len,
+            ptr::null_mut(),
+            0,
+            ptr::null(),
+            ptr::null_mut(),
+        );
+        let mut buf = vec![0u8; len as usize];
+        WideCharToMultiByte(
+            CP_ACP,
+            0,
+            wide.as_ptr(),
+            wide_len,
+            buf.as_mut_ptr(),
+            len,
+            ptr::null(),
+            ptr::null_mut(),
+        );
+        buf
+    }
 }
 
 fn show_error_message(title: &str, message: &str) {
     let title_c = CString::new(title).unwrap_or_default();
     let message_c = CString::new(message).unwrap_or_default();
     unsafe {
-        MessageBoxA(ptr::null_mut(), message_c.as_ptr() as _, title_c.as_ptr() as _, MB_OK | MB_ICONERROR);
+        MessageBoxA(
+            ptr::null_mut(),
+            message_c.as_ptr() as _,
+            title_c.as_ptr() as _,
+            MB_OK | MB_ICONERROR,
+        );
     }
 }
 
@@ -77,7 +123,10 @@ unsafe fn load_java_info_lib() -> Handle {
     let lib_wide = to_wide_null("JavaInfo.dll");
     let handle = unsafe { LoadLibraryExW(lib_wide.as_ptr(), ptr::null_mut(), 0) };
     if handle.is_null() {
-        show_error_message("Error", "Error loading JavaInfo.dll!\nIt has to be in the same folder as kse.exe!");
+        show_error_message(
+            "Error",
+            "Error loading JavaInfo.dll!\nIt has to be in the same folder as kse.exe!",
+        );
         process::exit(1);
     }
     handle
@@ -86,7 +135,8 @@ unsafe fn load_java_info_lib() -> Handle {
 fn get_java_home() -> String {
     unsafe {
         let handle = load_java_info_lib();
-        let get_fn: GetJavaHomeFn = std::mem::transmute(GetProcAddress(handle, b"GetJavaHome\0".as_ptr()).unwrap());
+        let get_fn: GetJavaHomeFn =
+            std::mem::transmute(GetProcAddress(handle, b"GetJavaHome\0".as_ptr()).unwrap());
 
         // first call to GetJavaHome is for determining the length of the path
         let java_home_length = get_fn(ptr::null_mut(), 0);
@@ -94,7 +144,10 @@ fn get_java_home() -> String {
 
         let result = get_fn(java_home.as_mut_ptr(), java_home_length);
         if result == 0 {
-            show_error_message("Error Detecting Java Installation", "No Java Runtime found! Please set JAVA_HOME!");
+            show_error_message(
+                "Error Detecting Java Installation",
+                "No Java Runtime found! Please set JAVA_HOME!",
+            );
             process::exit(1);
         }
 
@@ -110,7 +163,10 @@ fn is_64bit_dll(file_path: &str) -> bool {
         let handle = load_java_info_lib();
         let proc = GetProcAddress(handle, b"IsBinary64Bit\0".as_ptr());
         if proc.is_none() {
-            show_error_message("Error Detecting Java Installation", "Could not find symbol IsBinary64Bit");
+            show_error_message(
+                "Error Detecting Java Installation",
+                "Could not find symbol IsBinary64Bit",
+            );
             process::exit(1);
         }
         let is_binary_64bit: IsBinary64BitFn = std::mem::transmute(proc.unwrap());
@@ -118,7 +174,10 @@ fn is_64bit_dll(file_path: &str) -> bool {
         let path_wide = to_wide_null(file_path);
         let mut is_64bit: u32 = 0;
         if is_binary_64bit(path_wide.as_ptr(), &mut is_64bit) != 0 {
-            show_error_message("Error Detecting Java Installation", "Could not call IsBinary64Bit");
+            show_error_message(
+                "Error Detecting Java Installation",
+                "Could not call IsBinary64Bit",
+            );
             process::exit(1);
         }
 
@@ -165,9 +224,12 @@ fn show_splash_screen(jdk_dll_base_dir: &str, image_path: &str) {
             return;
         }
 
-        let image_path_c = CString::new(image_path).unwrap();
+        let image_path_c = CString::new(utf8_to_ansi(image_path)).unwrap();
         if splash_load_file(image_path_c.as_ptr()) == 0 {
-            show_error_message("Error", &format!("Failed to load splash image: {}", image_path));
+            show_error_message(
+                "Error",
+                &format!("Failed to load splash image: {}", image_path),
+            );
             FreeLibrary(handle);
         }
     }
@@ -177,7 +239,10 @@ fn add_dll_directories(jre_bin_dir: &str) {
     let dir_wide = to_wide_null(jre_bin_dir);
     unsafe {
         if SetDllDirectoryW(dir_wide.as_ptr()) == 0 {
-            show_error_message("Error Loading DLL", "Could not set directory for DLL search path!");
+            show_error_message(
+                "Error Loading DLL",
+                "Could not set directory for DLL search path!",
+            );
             process::exit(1);
         }
 
@@ -185,7 +250,10 @@ fn add_dll_directories(jre_bin_dir: &str) {
         if PathBuf::from(&server_dir).is_dir() {
             let server_wide = to_wide_null(&server_dir);
             if AddDllDirectory(server_wide.as_ptr()).is_null() {
-                show_error_message("Error Loading DLL", "Could not add directory to DLL search path!");
+                show_error_message(
+                    "Error Loading DLL",
+                    "Could not add directory to DLL search path!",
+                );
                 process::exit(1);
             }
             return;
@@ -196,7 +264,10 @@ fn add_dll_directories(jre_bin_dir: &str) {
         if PathBuf::from(&default_dir).is_dir() {
             let default_wide = to_wide_null(&default_dir);
             if AddDllDirectory(default_wide.as_ptr()).is_null() {
-                show_error_message("Error Loading DLL", "Could not add directory to DLL search path!");
+                show_error_message(
+                    "Error Loading DLL",
+                    "Could not add directory to DLL search path!",
+                );
                 process::exit(1);
             }
         }
@@ -206,26 +277,44 @@ fn add_dll_directories(jre_bin_dir: &str) {
 fn load_jli_library() -> Handle {
     let local_jre_path = get_app_dir().join("jre");
     let jli_dll_path = if local_jre_path.is_dir() {
-        local_jre_path.join("bin").join("jli.dll").to_string_lossy().into_owned()
+        local_jre_path
+            .join("bin")
+            .join("jli.dll")
+            .to_string_lossy()
+            .into_owned()
     } else {
         format!("{}\\bin\\jli.dll", get_java_home())
     };
-    let jdk_dll_base_dir = PathBuf::from(&jli_dll_path).parent().unwrap().to_string_lossy().into_owned();
+    let jdk_dll_base_dir = PathBuf::from(&jli_dll_path)
+        .parent()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned();
 
     // Add the directories containing JVM DLLs to the search path for this application
     add_dll_directories(&jdk_dll_base_dir);
 
-    show_splash_screen(&jdk_dll_base_dir, &format!("{}\\{}", get_app_dir().display(), SPLASH_FILE));
+    show_splash_screen(
+        &jdk_dll_base_dir,
+        &format!("{}\\{}", get_app_dir().display(), SPLASH_FILE),
+    );
 
     let jli_path_wide = to_wide_null(&jli_dll_path);
     let handle = unsafe {
-        LoadLibraryExW(jli_path_wide.as_ptr(), ptr::null_mut(), LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)
+        LoadLibraryExW(
+            jli_path_wide.as_ptr(),
+            ptr::null_mut(),
+            LOAD_LIBRARY_SEARCH_DEFAULT_DIRS,
+        )
     };
     if handle.is_null() {
         if !is_64bit_dll(&jli_dll_path) {
             show_error_message(
                 "Error Loading DLL",
-                &format!("{} is a 32 bit Java runtime.\nPlease install a 64 bit JRE!", jli_dll_path),
+                &format!(
+                    "{} is a 32 bit Java runtime.\nPlease install a 64 bit JRE!",
+                    jli_dll_path
+                ),
             );
         } else {
             show_error_message("Error Loading DLL", "Could not load jli.dll!");
@@ -241,7 +330,10 @@ fn call_jli_launch() {
     let jli_launch: JliLaunchFn = unsafe {
         let p = GetProcAddress(jli_handle, b"JLI_Launch\0".as_ptr());
         if p.is_none() {
-            show_error_message("Error Loading DLL", "Failed to get JLI_Launch function address!");
+            show_error_message(
+                "Error Loading DLL",
+                "Failed to get JLI_Launch function address!",
+            );
             process::exit(1);
         }
         std::mem::transmute(p.unwrap())
@@ -254,10 +346,19 @@ fn call_jli_launch() {
     // Define the command-line arguments and JVM options
     let mut java_params: Vec<String> = vec![splash_arg, "-jar".to_string(), kse_jar];
     java_params.extend(env::args().skip(1));
-    let jvm_params: Vec<String> = vec!["-Dkse.exe=true".to_string(), "-Djava.awt.headless=false".to_string()];
+    let jvm_params: Vec<String> = vec![
+        "-Dkse.exe=true".to_string(),
+        "-Djava.awt.headless=false".to_string(),
+    ];
 
-    let java_cstrings: Vec<CString> = java_params.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
-    let jvm_cstrings: Vec<CString> = jvm_params.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+    let java_cstrings: Vec<CString> = java_params
+        .iter()
+        .map(|s| CString::new(utf8_to_ansi(s)).unwrap())
+        .collect();
+    let jvm_cstrings: Vec<CString> = jvm_params
+        .iter()
+        .map(|s| CString::new(s.as_str()).unwrap())
+        .collect();
     let java_ptrs: Vec<*const i8> = java_cstrings.iter().map(|s| s.as_ptr()).collect();
     let jvm_ptrs: Vec<*const i8> = jvm_cstrings.iter().map(|s| s.as_ptr()).collect();
 
@@ -268,15 +369,20 @@ fn call_jli_launch() {
 
     let result = unsafe {
         jli_launch(
-            java_params.len() as i32, java_ptrs.as_ptr(),
-            jvm_params.len() as i32, jvm_ptrs.as_ptr(),
-            0, ptr::null(),
-            fullversion.as_ptr(), dotversion.as_ptr(),
-            pname.as_ptr(), lname.as_ptr(),
+            java_params.len() as i32,
+            java_ptrs.as_ptr(),
+            jvm_params.len() as i32,
+            jvm_ptrs.as_ptr(),
+            0,
+            ptr::null(),
+            fullversion.as_ptr(),
+            dotversion.as_ptr(),
+            pname.as_ptr(),
+            lname.as_ptr(),
             (!jvm_params.is_empty()) as u8, // javaargs
-            0u8,  // cpwildcard = JNI_FALSE
-            1u8,  // javaw = JNI_TRUE
-            0i32, // ergo
+            0u8,                            // cpwildcard = JNI_FALSE
+            1u8,                            // javaw = JNI_TRUE
+            0i32,                           // ergo
         )
     };
 

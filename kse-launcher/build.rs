@@ -21,7 +21,7 @@
 use std::path::PathBuf;
 use std::{env, process};
 
-/// Parse a dotted version string like "5.6.1" into a (major, minor, patch, build) tuple.
+/// Parse a dotted version string like "5.6.1" into a (major, minor, patch, build) tuple
 fn parse_version(version: &str) -> (u16, u16, u16, u16) {
     let mut parts = version.split('.').map(|p| p.parse::<u16>().unwrap_or(0));
     (
@@ -34,16 +34,15 @@ fn parse_version(version: &str) -> (u16, u16, u16, u16) {
 
 /// Read `KSE.Version` from version.properties.
 fn read_kse_version(manifest_dir: &std::path::Path) -> String {
-    let props_path = manifest_dir
-        .join("../kse/src/main/resources/org/kse/version.properties");
-    let content = std::fs::read_to_string(&props_path)
-        .expect("Failed to read version.properties");
+    let props_path = manifest_dir.join("../kse/src/main/resources/org/kse/version.properties");
+    let content = std::fs::read_to_string(&props_path).expect("Failed to read version.properties");
     for line in content.lines() {
         let line = line.trim();
-        if let Some(rest) = line.strip_prefix("KSE.Version") {
-            if let Some(rest) = rest.trim().strip_prefix('=') {
-                return rest.trim().to_string();
-            }
+
+        if let Some(rest) = line.strip_prefix("KSE.Version")
+            && let Some(rest) = rest.trim().strip_prefix('=')
+        {
+            return rest.trim().to_string();
         }
     }
     panic!("KSE.Version not found in version.properties");
@@ -103,10 +102,14 @@ BEGIN
 END
 "#,
         icon = icon_path.display(),
-        fmaj = file_version.0, fmin = file_version.1,
-        fpat = file_version.2, fbld = file_version.3,
-        pmaj = product_version.0, pmin = product_version.1,
-        ppat = product_version.2, pbld = product_version.3,
+        fmaj = file_version.0,
+        fmin = file_version.1,
+        fpat = file_version.2,
+        fbld = file_version.3,
+        pmaj = product_version.0,
+        pmin = product_version.1,
+        ppat = product_version.2,
+        pbld = product_version.3,
     );
 
     let rc_path = out_dir.join("resource.rc");
@@ -122,8 +125,10 @@ END
     let status = process::Command::new(windres)
         .args([
             rc_path.to_str().unwrap(),
-            "-O", "coff",
-            "-o", obj_path.to_str().unwrap(),
+            "-O",
+            "coff",
+            "-o",
+            obj_path.to_str().unwrap(),
         ])
         .status()
         .unwrap_or_else(|e| panic!("Failed to run {windres}: {e}"));
