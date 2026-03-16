@@ -35,6 +35,7 @@ import org.kse.InstanceManager;
 import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.gui.KseFrame;
 import org.kse.gui.preferences.DPreferences;
+import org.kse.gui.preferences.PreferencesManager;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
@@ -110,7 +111,10 @@ public class PreferencesAction extends ExitAction {
         preferences.setSerialNumberLengthInBytes(dPreferences.getSerialNumberLengthInBytes());
         preferences.setAutomaticallyReload(dPreferences.isAutomaticReloadEnabled());
         preferences.setSilentlyReload(dPreferences.isSilentReloadEnabled());
-        preferences.setOpenWithExistingInstance(dPreferences.isSingleInstanceEnabled());
+
+        boolean openWithExistingInstance = dPreferences.isSingleInstanceEnabled();
+        boolean openWithExistingInstanceHasChanged = openWithExistingInstance != preferences.isOpenWithExistingInstance();
+        preferences.setOpenWithExistingInstance(openWithExistingInstance);
 
         preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
         Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
@@ -144,6 +148,22 @@ public class PreferencesAction extends ExitAction {
 
         preferences.setNativeFileChooserEnabled(dPreferences.isNativeFileChooserEnabled());
 
+        // Persist the preferences. This is especially for openWithExistingInstance
+        // since persisting immediately enable/disables the feature for new instances
+        // that might be started. Otherwise, a restart must take place for the setting
+        // takes effect.
+        PreferencesManager.persistPreferences();
+
+        if (openWithExistingInstanceHasChanged) {
+            if (openWithExistingInstance) {
+                InstanceManager.INSTANCE.tryBecomePrimary();
+                InstanceManager.INSTANCE.register(kseFrame);
+            } else {
+                InstanceManager.INSTANCE.shutdown();
+            }
+        }
+
+        // UI updates for L&F and language
         if ((!dPreferences.getLookFeelInfo().getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
             dPreferences.getLookFeelDecoration() != JFrame.isDefaultLookAndFeelDecorated()) {
             FlatAnimatedLafChange.showSnapshot();

@@ -20,6 +20,7 @@
 
 package org.kse;
 
+import java.awt.event.FocusEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +47,7 @@ import javax.swing.SwingUtilities;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dnd.DroppedFileHandler;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.PreferencesManager;
 
 /**
  * A Singleton for managing the existing instance infrastructure. The existing
@@ -70,6 +72,11 @@ public enum InstanceManager {
      * Attempt to become the primary instance of KSE if the feature is enabled.
      */
     public void tryBecomePrimary() {
+        // There's no need to open a socket if the preference isn't enabled.
+        if (!PreferencesManager.getPreferences().isOpenWithExistingInstance()) {
+            return;
+        }
+
         Path socketPath = getSocketPath();
 
         try {
@@ -166,7 +173,12 @@ public enum InstanceManager {
         try (client) {
             List<File> parameterFiles = readParameterFiles(client);
             if (!parameterFiles.isEmpty()) {
-                SwingUtilities.invokeLater(() -> DroppedFileHandler.openFiles(kseFrame, parameterFiles));
+                SwingUtilities.invokeLater(() -> {
+                    JFrame frame = kseFrame.getUnderlyingFrame();
+                    frame.toFront();
+                    frame.requestFocus(FocusEvent.Cause.ACTIVATION);
+                    DroppedFileHandler.openFiles(kseFrame, parameterFiles);
+                });
             }
         } catch (IOException e) {
             // Ignore. There is nothing the user can do about this.

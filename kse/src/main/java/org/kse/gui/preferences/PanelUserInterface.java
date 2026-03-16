@@ -43,6 +43,7 @@ import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
 
 import net.miginfocom.swing.MigLayout;
 import org.kse.gui.preferences.data.RngTypeSetting;
+import org.kse.utilities.os.OperatingSystem;
 
 class PanelUserInterface {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
@@ -208,7 +209,10 @@ class PanelUserInterface {
         jpUI.add(jspSnRandomBytes, "gapx indent, split 2");
         jpUI.add(jlSnRandomBytesPostfix, "wrap");
         MiGUtil.addSeparator(jpUI, jlKeyStores.getText());
-        jpUI.add(jcbEnableOpenWithExistingInstance, "gapx indent, wrap");
+        // macOS does not use this setting since it uses the MacOsIntegration open file support.
+        if (!OperatingSystem.isMacOs()) {
+            jpUI.add(jcbEnableOpenWithExistingInstance, "gapx indent, wrap");
+        }
         jpUI.add(jcbEnableAutomaticReload, "gapx indent, wrap");
         jpUI.add(jcbEnableSilentReload, "gapx indent, wrap");
 
