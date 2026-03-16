@@ -58,6 +58,7 @@ fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let icon_path = manifest_dir.join("../kse/icons/kse.ico");
+    let manifest_path = manifest_dir.join("kse.exe.manifest");
 
     let file_version = parse_version(&env::var("CARGO_PKG_VERSION").unwrap());
 
@@ -66,6 +67,9 @@ fn main() {
     let rc_content = format!(
         r#"
 #include <winver.h>
+
+// Application manifest (RT_MANIFEST)
+1 24 "{manifest}"
 
 // Application icon
 IDI_ICON1 ICON "{icon}"
@@ -101,6 +105,7 @@ BEGIN
     END
 END
 "#,
+        manifest = manifest_path.display(),
         icon = icon_path.display(),
         fmaj = file_version.0,
         fmin = file_version.1,
