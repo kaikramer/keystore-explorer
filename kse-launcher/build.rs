@@ -60,8 +60,6 @@ fn main() {
     let icon_path = manifest_dir.join("../kse/icons/kse.ico");
     let manifest_path = manifest_dir.join("kse.exe.manifest");
 
-    let file_version = parse_version(&env::var("CARGO_PKG_VERSION").unwrap());
-
     let product_version = parse_version(&read_kse_version(&manifest_dir));
 
     let rc_content = format!(
@@ -76,8 +74,8 @@ IDI_ICON1 ICON "{icon}"
 
 // Version information block
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     {fmaj},{fmin},{fpat},{fbld}
-PRODUCTVERSION  {pmaj},{pmin},{ppat},{pbld}
+FILEVERSION     {pmaj},{pmin},{ppat},{pbld}
+PRODUCTVERSION  {pmaj},{pmin},{ppat}
 FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 FILEFLAGS       0
 FILEOS          VOS_NT_WINDOWS32
@@ -88,12 +86,12 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "FileDescription",  "KeyStore Explorer Launcher"
-            VALUE "FileVersion",      "{fmaj}.{fmin}.{fpat}.{fbld}"
+            VALUE "FileDescription",  "KeyStore Explorer"
+            VALUE "FileVersion",      "{pmaj}.{pmin}.{ppat}.{pbld}"
             VALUE "ProductName",      "KeyStore Explorer"
-            VALUE "ProductVersion",   "{pmaj}.{pmin}.{ppat}.{pbld}"
+            VALUE "ProductVersion",   "{pmaj}.{pmin}.{ppat}"
             VALUE "CompanyName",      "KeyStore Explorer"
-            VALUE "LegalCopyright",   "Copyright \xa9 2004-2026 Wayne Grant, Kai Kramer"
+            VALUE "LegalCopyright",   "Copyright 2004 - 2013 Wayne Grant, 2013 - 2026 Kai Kramer"
             VALUE "OriginalFilename", "kse.exe"
             VALUE "InternalName",     "kse"
         END
@@ -107,10 +105,6 @@ END
 "#,
         manifest = manifest_path.display(),
         icon = icon_path.display(),
-        fmaj = file_version.0,
-        fmin = file_version.1,
-        fpat = file_version.2,
-        fbld = file_version.3,
         pmaj = product_version.0,
         pmin = product_version.1,
         ppat = product_version.2,
