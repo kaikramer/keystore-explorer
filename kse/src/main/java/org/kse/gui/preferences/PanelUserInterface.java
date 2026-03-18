@@ -43,6 +43,7 @@ import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
 
 import net.miginfocom.swing.MigLayout;
 import org.kse.gui.preferences.data.RngTypeSetting;
+import org.kse.utilities.os.OperatingSystem;
 
 class PanelUserInterface {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
@@ -66,6 +67,7 @@ class PanelUserInterface {
     private JSpinner jspSnRandomBytes;
     private JCheckBox jcbEnableAutomaticReload;
     private JCheckBox jcbEnableSilentReload;
+    private JCheckBox jcbEnableOpenWithExistingInstance;
 
     private JCheckBox jcbEnableAutoUpdateChecks;
     private JSpinner jspAutoUpdateCheckInterval;
@@ -167,7 +169,10 @@ class PanelUserInterface {
         jspSnRandomBytes.setToolTipText(res.getString("DPreferences.jlSnRandomBytes.tooltip"));
         JLabel jlSnRandomBytesPostfix = new JLabel(res.getString("DPreferences.jlSnRandomBytesPostfix.text"));
 
-        JLabel jlAutoReload = new JLabel(res.getString("DPreferences.jlAutoReload.text"));
+        JLabel jlKeyStores = new JLabel(res.getString("DPreferences.jlKeyStores.text"));
+        jcbEnableOpenWithExistingInstance = new JCheckBox(res.getString("DPreferences.jcbEnableOpenWithExistingInstance.text"));
+        jcbEnableOpenWithExistingInstance.setToolTipText(res.getString("DPreferences.jcbEnableOpenWithExistingInstance.tooltip"));
+        jcbEnableOpenWithExistingInstance.setSelected(preferences.isOpenWithExistingInstance());
         jcbEnableAutomaticReload = new JCheckBox(res.getString("DPreferences.jcbEnableAutomaticReload.text"));
         jcbEnableAutomaticReload.setToolTipText(res.getString("DPreferences.jcbEnableAutomaticReload.tooltip"));
         jcbEnableSilentReload = new JCheckBox(res.getString("DPreferences.jcbEnableSilentReload.text"));
@@ -203,7 +208,11 @@ class PanelUserInterface {
         MiGUtil.addSeparator(jpUI, jlSnRandomBytes.getText());
         jpUI.add(jspSnRandomBytes, "gapx indent, split 2");
         jpUI.add(jlSnRandomBytesPostfix, "wrap");
-        MiGUtil.addSeparator(jpUI, jlAutoReload.getText());
+        MiGUtil.addSeparator(jpUI, jlKeyStores.getText());
+        // macOS does not use this setting since it uses the MacOsIntegration open file support.
+        if (!OperatingSystem.isMacOs()) {
+            jpUI.add(jcbEnableOpenWithExistingInstance, "gapx indent, wrap");
+        }
         jpUI.add(jcbEnableAutomaticReload, "gapx indent, wrap");
         jpUI.add(jcbEnableSilentReload, "gapx indent, wrap");
 
@@ -335,5 +344,9 @@ class PanelUserInterface {
 
     public JCheckBox getJcbSilentlyReload() {
         return jcbEnableSilentReload;
+    }
+
+    public JCheckBox getJcbSingleInstance() {
+        return jcbEnableOpenWithExistingInstance;
     }
 }

@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import org.kse.InstanceManager;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.KseRestart;
@@ -96,6 +97,8 @@ public class ExitAction extends CloseAllAction {
         if (PasswordManager.getInstance().isInitialized() && PasswordManager.getInstance().isUnlocked()) {
             KeyStoreExplorerAction.savePasswordManagerWithProgress(kseFrame.getUnderlyingFrame());
         }
+
+        InstanceManager.INSTANCE.shutdown();
 
         if (restart) {
             KseRestart.restart();

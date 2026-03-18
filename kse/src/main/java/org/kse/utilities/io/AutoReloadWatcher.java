@@ -43,22 +43,29 @@ import org.kse.utilities.history.KeyStoreHistory;
  */
 public enum AutoReloadWatcher {
 
-    // Singleton pattern
+    /**
+     * Singleton instance
+     */
     INSTANCE;
 
-    private KseFrame frame;
+    private KseFrame kseFrame;
     private WatchService ws;
     private Thread watchThread;
 
     private Set<Path> watchedDirs = new HashSet<>();
     private Map<Path, KeyStoreHistory> keyStoreFiles = new HashMap<>();
 
-    public void start(KseFrame frame) {
-        this.frame = frame;
+    /**
+     * Starts the file watch service.
+     *
+     * @param kseFrame The KseFrame for reloading files.
+     */
+    public void start(KseFrame kseFrame) {
+        this.kseFrame = kseFrame;
         try {
             ws = FileSystems.getDefault().newWatchService();
 
-            watchThread = new Thread(this::eventHandler, "Watch Service");
+            watchThread = new Thread(this::eventHandler, "kse-ws-listener");
             watchThread.setDaemon(true);
             watchThread.start();
         } catch (IOException e) {
@@ -115,7 +122,7 @@ public enum AutoReloadWatcher {
                             history.setExternallyModified(true);
 
                             SwingUtilities.invokeLater(() -> {
-                                frame.handleExternalModification(history);
+                                kseFrame.handleExternalModification(history);
                             });
                         }
                     }

@@ -135,7 +135,10 @@ public class Pkcs12KeyStoreAdapter extends KseKeyStore {
                     if (isCertificateEntry(alias)) {
                         certs.add(getCertificate(alias));
                     } else if (isKeyEntry(alias)) {
-                        Collections.addAll(certs, getCertificateChain(alias));
+                        Certificate[] chain = getCertificateChain(alias);
+                        if (chain != null) {
+                            Collections.addAll(certs, chain);
+                        }
                     }
                 } catch (KeyStoreException e) {
                     // ignore  -- just trying to find the visible certs

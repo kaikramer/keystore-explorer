@@ -35,6 +35,7 @@ import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
 import org.kse.gui.preferences.data.ValiditySettings.PeriodType;
+import org.kse.utilities.os.OperatingSystem;
 
 /**
  * Bean for storing application preferences
@@ -84,6 +85,8 @@ public class KsePreferences {
     private Map<String, SignatureType> signatureTypes = new HashMap<>();
     private boolean automaticallyReload = false;
     private boolean silentlyReload = false;
+    // Default to off for macOS since this features is not used.
+    private boolean openWithExistingInstance = !OperatingSystem.isMacOs();
 
     // auto-generated getters/setters
 
@@ -401,5 +404,13 @@ public class KsePreferences {
 
     public boolean isSilentlyReload() {
         return silentlyReload;
+    }
+
+    public boolean isOpenWithExistingInstance() {
+        return openWithExistingInstance;
+    }
+
+    public void setOpenWithExistingInstance(boolean openWithExistingInstance) {
+        this.openWithExistingInstance = openWithExistingInstance;
     }
 }
