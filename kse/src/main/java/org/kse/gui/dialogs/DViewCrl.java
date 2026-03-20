@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -39,7 +40,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -58,8 +58,8 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
@@ -76,7 +76,7 @@ import net.miginfocom.swing.MigLayout;
 public class DViewCrl extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
-    public static final int TEXT_FIELD_WIDTH = 40;
+    private static final int TEXT_FIELD_WIDTH = 40;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
@@ -104,26 +104,12 @@ public class DViewCrl extends JEscDialog {
     /**
      * Creates a new DViewCrl dialog.
      *
-     * @param parent Parent frame
+     * @param parent Parent window
      * @param title  The dialog title
      * @param crl    CRL to display
      */
-    public DViewCrl(JFrame parent, String title, X509CRL crl) {
+    public DViewCrl(Window parent, String title, X509CRL crl) {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.crl = crl;
-        initComponents();
-    }
-
-    /**
-     * Creates new DViewCrl dialog where the parent is a dialog.
-     *
-     * @param parent   Parent dialog
-     * @param title    The dialog title
-     * @param modality Dialog modality
-     * @param crl      CRL to display
-     */
-    public DViewCrl(JDialog parent, String title, Dialog.ModalityType modality, X509CRL crl) {
-        super(parent, title, modality);
         this.crl = crl;
         initComponents();
     }

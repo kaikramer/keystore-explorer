@@ -516,7 +516,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         try {
             byte[] akiValue = x509Cert.getExtensionValue(Extension.authorityKeyIdentifier.getId());
             byte[] octets = DEROctetString.getInstance(akiValue).getOctets();
-            byte[] akiBytes = AuthorityKeyIdentifier.getInstance(octets).getKeyIdentifier();
+            byte[] akiBytes = AuthorityKeyIdentifier.getInstance(octets).getKeyIdentifierOctets();
             return HexUtil.getHexString(akiBytes);
         } catch (Exception e) {
             return "-";

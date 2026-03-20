@@ -22,6 +22,8 @@ package org.kse.version;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -39,10 +41,11 @@ public class VersionCheck {
      * Gets the latest version of KSE from the web site.
      * @return The latest version of KSE.
      * @throws IOException If fetching the version file from the web site failed
+     * @throws URISyntaxException If there is an error in the URL syntax.
      */
-    public static Version getLatestVersion() throws IOException {
+    public static Version getLatestVersion() throws IOException, URISyntaxException {
         // Get the version number of the latest KeyStore Explorer from its web site
-        URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+        URL latestVersionUrl = new URI(URLs.LATEST_VERSION_ADDRESS).toURL();
         try (InputStream is = latestVersionUrl.openStream()) {
             return new Version(new String(is.readAllBytes(), StandardCharsets.US_ASCII));
         }

@@ -180,7 +180,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
             String namedCurve = EccUtil.getNamedCurve(currentKeyStore.getKey(alias, password.toCharArray()));
 
-            // EC or curve not supported?
+            // EC curve not supported?
             if (!newKeyStoreType.supportsNamedCurve(namedCurve)) {
 
                 // show warning and abort change or just skip depending on user choice

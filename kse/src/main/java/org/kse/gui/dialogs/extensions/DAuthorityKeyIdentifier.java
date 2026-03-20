@@ -257,8 +257,8 @@ public class DAuthorityKeyIdentifier extends DExtension {
     private void prepopulateWithValue(byte[] value) {
         AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(value);
 
-        if (authorityKeyIdentifier.getKeyIdentifier() != null) {
-            jkiKeyIdentifier.setKeyIdentifier(authorityKeyIdentifier.getKeyIdentifier());
+        if (authorityKeyIdentifier.getKeyIdentifierOctets() != null) {
+            jkiKeyIdentifier.setKeyIdentifier(authorityKeyIdentifier.getKeyIdentifierOctets());
         }
 
         GeneralNames authorityCertIssuer = authorityKeyIdentifier.getAuthorityCertIssuer();

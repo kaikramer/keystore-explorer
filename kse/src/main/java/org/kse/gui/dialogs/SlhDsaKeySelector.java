@@ -21,19 +21,11 @@
 
 package org.kse.gui.dialogs;
 
-import java.awt.Container;
-import java.awt.event.ItemListener;
-import java.io.Serializable;
-import java.util.ResourceBundle;
+import java.util.Collection;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 
 import org.kse.crypto.keypair.KeyPairType;
-import org.kse.gui.PlatformUtil;
 
 /**
  * UI elements used by {@link org.kse.gui.dialogs.DGenerateKeyPair}
@@ -54,14 +46,8 @@ import org.kse.gui.PlatformUtil;
  * }
  * </pre>
  */
-public class SlhDsaKeySelector implements Serializable {
+public class SlhDsaKeySelector extends KeySelector {
     private static final long serialVersionUID = 1L;
-
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-    protected JRadioButton jrbKeyType;
-    protected JLabel jlKeyType;
-    protected JComboBox<String> jcbParameterSet;
 
     /**
      * Constructs a new SLH-DSA key selector UI elements.
@@ -69,99 +55,11 @@ public class SlhDsaKeySelector implements Serializable {
      * @param buttonGroup The button group to use for the SLH-DSA radio button.
      */
     public SlhDsaKeySelector(ButtonGroup buttonGroup) {
-
-        jrbKeyType = new JRadioButton(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jrbKeyType.text"));
-        jrbKeyType.setToolTipText(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jrbKeyType.tooltip"));
-        PlatformUtil.setMnemonic(
-                jrbKeyType, RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jrbKeyType.mnemonic").charAt(0));
-
-        jlKeyType = new JLabel(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jlKeyType.tooltip"));
-        jlKeyType.setDisplayedMnemonic(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jlKeyType.mnemonic").charAt(0));
-
-        jcbParameterSet = new JComboBox<>();
-        jcbParameterSet.setToolTipText(RESOURCE_BUNDLE.getString("SlhDsaKeySelector.jcbParameterSet.tooltip"));
-        jlKeyType.setLabelFor(jcbParameterSet);
-
-        String[] names = KeyPairType.SLHDSA_TYPES_SET.stream()
-                .map(type -> DialogHelper.formatNameWithSize(type.jce(), type.maxSize()))
-                .toArray(String[]::new);
-
-        jcbParameterSet.setModel(new DefaultComboBoxModel<>(names));
-        jrbKeyType.setEnabled(true);
-        jrbKeyType.addItemListener(event -> enableDisableElements());
-        this.setSelected(true);
-        if (buttonGroup != null) {
-            buttonGroup.add(jrbKeyType);
-        }
+        super(buttonGroup, "SlhDsaKeySelector");
     }
 
-    /**
-     * Adds the SLH-DSA controls the pane.
-     *
-     * @param pane The pane to add the controls to.
-     */
-    public void add(Container pane) {
-        if (pane == null) {
-            return;
-        }
-        pane.add(jrbKeyType, "");
-        pane.add(jlKeyType, "");
-        pane.add(jcbParameterSet, "growx, wrap");
+    @Override
+    protected Collection<KeyPairType> keyPairTypes() {
+        return KeyPairType.SLHDSA_TYPES_SET;
     }
-
-    /**
-     * Enable and disable the selector elements.
-     */
-    public void enableDisableElements() {
-        jcbParameterSet.setEnabled(jrbKeyType.isSelected());
-    }
-
-    /**
-     * The preferred parameter set to use.
-     *
-     * @param keyType The KeyPairType.
-     */
-    public void setPreferredParameterSet(KeyPairType keyType) {
-        if (KeyPairType.isSlhDsa(keyType)) {
-            jcbParameterSet.setSelectedItem(DialogHelper.formatNameWithSize(keyType.jce(), keyType.maxSize()));
-        }
-    }
-
-    /**
-     * Adds an item listener to the SLH-DSA radio button. Allows the parent
-     * panel to update controls when the SLH-DSA radio button is selected.
-     *
-     * @param itemListener The item listener to add.
-     */
-    public void addItemListener(ItemListener itemListener) {
-        jrbKeyType.addItemListener(itemListener);
-    }
-
-    /**
-     *
-     * @return True if the SLH-DSA radio button is selected. False if not.
-     */
-    public boolean isSelected() {
-        return jrbKeyType.isSelected();
-    }
-
-    /**
-     * Selects the selected state of the SLH-DSA radio button.
-     *
-     * @param selected The selected state.
-     */
-    public void setSelected(boolean selected) {
-        jrbKeyType.setSelected(selected);
-        enableDisableElements();
-    }
-
-    /**
-     *
-     * @return The KeyPairType of the SLH-DSA parameter set.
-     */
-    public KeyPairType getKeyPairType() {
-        return KeyPairType
-                .resolveJce(DialogHelper.extractNameFromFormatted((String) jcbParameterSet.getSelectedItem()));
-    }
-
 }

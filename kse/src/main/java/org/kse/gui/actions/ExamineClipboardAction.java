@@ -19,7 +19,10 @@
  */
 package org.kse.gui.actions;
 
+import static org.kse.crypto.filetype.CryptoFileUtil.decodeIfBase64sanitizeIfPem;
+
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -28,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
@@ -35,7 +40,9 @@ import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -70,8 +77,6 @@ import org.kse.gui.passwordmanager.Password;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
-
-import static org.kse.crypto.filetype.CryptoFileUtil.decodeIfBase64sanitizeIfPem;
 
 /**
  * Action to examine a certificate.
@@ -135,16 +140,16 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         }
 
         try {
-            URL url = new URL(data);
+            URL url = new URI(data).toURL();
             String path = url.getPath();
             if (path.endsWith(".cer") || path.endsWith(".crt") || path.endsWith(".pem") || path.endsWith(".der")) {
-                downloadCert(url);
+                downloadCert(url, frame, kseFrame);
                 return;
             } else if (url.getPath().endsWith(".crl")) {
-                downloadCrl(url);
+                downloadCrl(url, frame);
                 return;
             }
-        } catch (IOException | CryptoException e) {
+        } catch (IOException | URISyntaxException | CryptoException e) {
             // ignore
         }
 
@@ -203,7 +208,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 
 
-    private boolean isRedirect(int status) {
+    private static boolean isRedirect(int status) {
         // normally, 3xx is redirect
         if (status != HttpURLConnection.HTTP_OK) {
             return status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM ||
@@ -212,43 +217,59 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         return false;
     }
 
-    private void downloadCrl(URL url) throws IOException, CryptoException {
+    private static byte[] download(URL url) throws IOException, URISyntaxException {
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         int status = urlConn.getResponseCode();
         if (isRedirect(status)) {
             String newUrl = urlConn.getHeaderField("Location");
-            url = new URL(newUrl);
+            url = new URI(newUrl).toURL();
             urlConn = (HttpURLConnection) url.openConnection();
         }
         try (InputStream is = urlConn.getInputStream()) {
-            X509CRL crl = X509CertUtil.loadCRL(is.readAllBytes());
-            if (crl != null) {
-                DViewCrl dViewCrl = new DViewCrl(frame,
-                                                 MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"),
-                                                                      url.toString()), crl);
-                dViewCrl.setLocationRelativeTo(frame);
-                dViewCrl.setVisible(true);
-            }
+            return is.readAllBytes();
         }
     }
 
-    private void downloadCert(URL url) throws IOException, CryptoException {
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        int status = urlConn.getResponseCode();
-        if (isRedirect(status)) {
-            String newUrl = urlConn.getHeaderField("Location");
-            url = new URL(newUrl);
-            urlConn = (HttpURLConnection) url.openConnection();
+    /**
+     * Downloads and displays the CRL.
+     *
+     * @param url The URL of the CRL to download and display.
+     * @param window The Window to use for modality and location.
+     * @throws IOException If an I/O error occurred.
+     * @throws URISyntaxException If the CRL URL is malformed.
+     * @throws CryptoException If the CRL cannot be loaded.
+     */
+    public static void downloadCrl(URL url, Window window) throws IOException, URISyntaxException, CryptoException {
+        X509CRL crl = X509CertUtil.loadCRL(download(url));
+        if (crl != null) {
+            DViewCrl dViewCrl = new DViewCrl(window,
+                    MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"),
+                            url.toString()), crl);
+            dViewCrl.setLocationRelativeTo(window);
+            dViewCrl.setVisible(true);
         }
-        try (InputStream is = urlConn.getInputStream()) {
-            X509Certificate[] certs = X509CertUtil.loadCertificates(is.readAllBytes());
-            if (certs != null && certs.length > 0) {
-                DViewCertificate dViewCertificate = new DViewCertificate(frame,
-                        MessageFormat.format(resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
-                        this.kseFrame, DViewCertificate.IMPORT_EXPORT);
-                dViewCertificate.setLocationRelativeTo(frame);
-                dViewCertificate.setVisible(true);
-            }
+    }
+
+    /**
+     * Downloads and displays the certificate.
+     *
+     * @param url The URL of the certificate to download and display.
+     * @param window The Window to use for modality and location.
+     * @param kseFrame The KseFrame to use for import if present.
+     * @throws IOException If an I/O error occurred.
+     * @throws URISyntaxException If the certificate URL is malformed.
+     * @throws CryptoException If the certificate cannot be loaded.
+     */
+    public static void downloadCert(URL url, Window window, KseFrame kseFrame)
+            throws IOException, URISyntaxException, CryptoException {
+        X509Certificate[] certs = X509CertUtil.loadCertificates(download(url));
+        if (certs != null && certs.length > 0) {
+            int importExport = kseFrame == null ? DViewCertificate.NONE : DViewCertificate.IMPORT_EXPORT;
+            DViewCertificate dViewCertificate = new DViewCertificate(window,
+                    MessageFormat.format(resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
+                    kseFrame, importExport);
+            dViewCertificate.setLocationRelativeTo(window);
+            dViewCertificate.setVisible(true);
         }
     }
 

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.PrivateKey;
@@ -719,7 +720,7 @@ public class JarSigner {
         }
     }
 
-    private static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException {
+    private static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException, URISyntaxException {
 
         Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
 
