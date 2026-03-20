@@ -72,6 +72,11 @@ For the DEB package (requires Ubuntu/Debian with debhelper installed):
 ./gradlew buildDeb
 ```
 
+For the AppImage package (requires Linux and appimagetool):
+```sh
+./gradlew buildAppImage
+```
+
 ## Running
 
 To run the application, issue the following command from the `kse` directory:
