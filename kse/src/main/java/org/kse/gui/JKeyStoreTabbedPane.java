@@ -20,13 +20,18 @@
 
 package org.kse.gui;
 
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JTabbedPane;
 
+import org.kse.gui.actions.CloseAction;
 import org.kse.gui.dnd.DroppedFileHandler;
 
 /**
@@ -45,45 +50,43 @@ public class JKeyStoreTabbedPane extends JTabbedPane implements DropTargetListen
         this.kseFrame = kseFrame;
 
         // Make this pane a drop target and its own listener
-        new java.awt.dnd.DropTarget(this, this);
+        new DropTarget(this, this);
 
-        java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new java.awt.KeyEventDispatcher() {
-            @Override
-            public boolean dispatchKeyEvent(java.awt.event.KeyEvent e) {
-                if (JKeyStoreTabbedPane.this.kseFrame.getUnderlyingFrame() != null &&
-                    JKeyStoreTabbedPane.this.kseFrame.getUnderlyingFrame().isActive()) {
-
-                    if (e.getID() == java.awt.event.KeyEvent.KEY_PRESSED && e.isControlDown()) {
-                        
-                        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_PAGE_UP) {
-                            int index = getSelectedIndex();
-                            if (index > 0) {
-                                setSelectedIndex(index - 1);
-                            } else if (getTabCount() > 0) {
-                                setSelectedIndex(getTabCount() - 1);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
+                    @Override
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        if (kseFrame.getUnderlyingFrame() != null &&
+                                kseFrame.getUnderlyingFrame().isActive()) {
+                            if (e.getID() == KeyEvent.KEY_PRESSED && e.isControlDown()) {
+                                if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+                                    int index = getSelectedIndex();
+                                    if (index > 0) {
+                                        setSelectedIndex(index - 1);
+                                    } else if (getTabCount() > 0) {
+                                        setSelectedIndex(getTabCount() - 1);
+                                    }
+                                    return true;
+                                }
+                                if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+                                    int index = getSelectedIndex();
+                                    if (index < getTabCount() - 1) {
+                                        setSelectedIndex(index + 1);
+                                    } else if (getTabCount() > 0) {
+                                        setSelectedIndex(0);
+                                    }
+                                    return true;
+                                }
+                                if (e.getKeyCode() == KeyEvent.VK_F4) {
+                                    new CloseAction(JKeyStoreTabbedPane.this.kseFrame)
+                                            .closeActiveKeyStore();
+                                    return true;
+                                }
                             }
-                            return true;
                         }
-                        
-                        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_PAGE_DOWN) {
-                            int index = getSelectedIndex();
-                            if (index < getTabCount() - 1) {
-                                setSelectedIndex(index + 1);
-                            } else if (getTabCount() > 0) {
-                                setSelectedIndex(0);
-                            }
-                            return true;
-                        }
-
-                        if (e.getKeyCode() == java.awt.event.KeyEvent.VK_F4) {
-                            new org.kse.gui.actions.CloseAction(JKeyStoreTabbedPane.this.kseFrame).closeActiveKeyStore();
-                            return true;
-                        }
+                        return false;
                     }
-                }
-                return false;
-            }
-        });
+                });
     }
 
     @Override

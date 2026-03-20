@@ -79,6 +79,9 @@ public class CloseAction extends SaveAction {
      * @return True if the KeyStore is closed, false otherwise
      */
     public boolean closeKeyStore(KeyStoreHistory history) {
+        if (history == null) {
+            return false;
+        }
         KeyStoreState currentState = history.getCurrentState();
 
         if (needSave(currentState)) {
