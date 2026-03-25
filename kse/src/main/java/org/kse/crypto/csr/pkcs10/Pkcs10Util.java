@@ -68,7 +68,7 @@ public class Pkcs10Util {
     private static final String END_CSR_FORM_1 = "-----END CERTIFICATE REQUEST-----";
     private static final String BEGIN_CSR_FORM_2 = "-----BEGIN NEW CERTIFICATE REQUEST-----";
     private static final String END_CSR_FORM_2 = "-----END NEW CERTIFICATE REQUEST-----";
-    private static final int MAX_PRINTABLE_ENC_LINE_LENGTH = 76;
+    private static final int MAX_PRINTABLE_ENC_LINE_LENGTH = 64;
 
     private Pkcs10Util() {
     }
