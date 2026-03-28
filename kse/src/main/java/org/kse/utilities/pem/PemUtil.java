@@ -56,6 +56,16 @@ public class PemUtil {
     }
 
     /**
+     * Simple detection of PEM format (does not check if format is correct, only if it claims to be PEM).
+     *
+     * @param text data
+     * @return True, if data starts with PEM header
+     */
+    public static boolean isPemFormat(String data) {
+        return data.startsWith(PEM_BEGIN_MARKER);
+    }
+
+    /**
      * Encode the supplied information as PEM.
      *
      * @param pemInfo PEM Information

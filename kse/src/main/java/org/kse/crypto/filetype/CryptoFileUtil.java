@@ -115,9 +115,14 @@ public class CryptoFileUtil {
         if (data == null) {
             return null;
         }
-        String input = new String(data, StandardCharsets.US_ASCII).trim();
+        int offset = 0;
+        // Check for BOM in the original bytes
+        if (data.length >= 3 && data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) {
+            offset = 3; // Skip BOM
+        }
+        String input = new String(data, offset, data.length - offset, StandardCharsets.US_ASCII).trim();
         // data may be a PEM
-        if (PemUtil.isPemFormat(input.getBytes())) {
+        if (PemUtil.isPemFormat(input)) {
             // remove whitespaces between lines
             return Arrays.stream(input.split("\\R"))
                     .map(String::trim)
@@ -126,8 +131,8 @@ public class CryptoFileUtil {
         } else {
             try {
                 // handle base64 encoded binary data
-                return Base64.getDecoder().decode(new String(data, StandardCharsets.US_ASCII).trim());
-            } catch(IllegalArgumentException e) {
+                return Base64.getDecoder().decode(input.getBytes(StandardCharsets.US_ASCII));
+            } catch (IllegalArgumentException e) {
                 return data;
             }
         }
