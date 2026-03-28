@@ -27,6 +27,22 @@ jobs:
         working-directory: kse-launcher
       - name: Copy executable
         run: cp kse-launcher/target/x86_64-pc-windows-gnu/release/kse-launcher.exe kse/res/kse.exe
+      - name: Upload unsigned artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v5
+        with:
+          path: kse/res/kse.exe
+          if-no-files-found: error
+      - name: Sign executable
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          project-slug: 'keystore-explorer'
+          signing-policy-slug: 'test-signing'
+          organization-id: '012d4358-74c0-4a1a-ad01-3f4274e54951'
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'kse/res'
       - name: Store artifacts for release
         uses: actions/upload-artifact@v5
         with:
@@ -191,11 +207,26 @@ jobs:
         with:
           merge-multiple: true
           path: artifacts
-      - name: Debug - Check current directory
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls -Rla
+      - name: Upload setup files for signing
+        id: upload-unsigned-setup-files
+        uses: actions/upload-artifact@v6
+        with:
+          name: unsigned-setup-files
+          path: |
+            artifacts/kse-*-setup.exe
+            artifacts/kse-*-setup-no-jre.exe
+          if-no-files-found: error
+      - name: Sign executable
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          project-slug: 'keystore-explorer'
+          signing-policy-slug: 'test-signing'
+          artifact-configuration-slug: 'setup-exe'
+          organization-id: '012d4358-74c0-4a1a-ad01-3f4274e54951'
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          github-artifact-id: '${{ steps.upload-unsigned-setup-files.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'artifacts'
       - name: Create a release
         uses: softprops/action-gh-release@v2.3.2
         with:
