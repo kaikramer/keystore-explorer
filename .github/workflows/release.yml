@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install mingw-w64
         run: |
           sudo apt-get update
@@ -29,7 +29,7 @@ jobs:
         run: cp kse-launcher/target/x86_64-pc-windows-gnu/release/kse-launcher.exe kse/res/kse.exe
       - name: Upload unsigned artifact
         id: upload-unsigned-artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: kse/res/kse.exe
           if-no-files-found: error
@@ -44,7 +44,7 @@ jobs:
           wait-for-completion: true
           output-artifact-directory: 'kse/res'
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: kse-launcher
           path: kse/res/kse.exe
@@ -61,13 +61,13 @@ jobs:
       - name: Install required software packages
         run: choco install reshack
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           name: kse-launcher
           path: kse/res
@@ -75,7 +75,7 @@ jobs:
         run: .\gradlew.bat test zip innosetup
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: windows-artifacts
           path: |
@@ -91,7 +91,7 @@ jobs:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install required software packages
         run: sudo apt update && sudo apt install -y rpm debhelper dpkg-dev build-essential desktop-file-utils hicolor-icon-theme
       - name: Build DEB and RPM with Gradle
@@ -107,7 +107,7 @@ jobs:
         run: JAVA_HOME="${JAVA_HOME_25_X64}" ./gradlew buildAppImage
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: linux-artifacts
           path: |
@@ -127,13 +127,13 @@ jobs:
       - name: Install required software packages
         run: choco install reshack
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '25'
           distribution: 'temurin'
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           name: kse-launcher
           path: kse/res
@@ -141,7 +141,7 @@ jobs:
         run: .\gradlew.bat test innosetup
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: windows-with-jre-artifact
           path: kse/build/distributions/kse-*-setup.exe
@@ -155,7 +155,7 @@ jobs:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build
         env:
           MACOS_CERT: ${{ secrets.MACOS_CERT }}
@@ -164,7 +164,7 @@ jobs:
           chmod +x .github/scripts/macos-build.sh
           .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.1_8.tar.gz"
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: macos-artifact
           path: kse/build/distributions/kse*.dmg
@@ -178,7 +178,7 @@ jobs:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build
         env:
           MACOS_CERT: ${{ secrets.MACOS_CERT }}
@@ -187,7 +187,7 @@ jobs:
           chmod +x .github/scripts/macos-build.sh
           .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.1_8.tar.gz"
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: macos-arm-artifact
           path: kse/build/distributions/kse*.dmg
@@ -200,10 +200,10 @@ jobs:
     steps:
       # Checkout has to be done BEFORE downloading artifacts, because it deletes all files in the working directory
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: .github
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v7
         with:
           merge-multiple: true
           path: artifacts
