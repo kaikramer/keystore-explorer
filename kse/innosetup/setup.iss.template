@@ -7,7 +7,7 @@
 #define AppID "{A771FBEB-F7E1-4443-9181-AFD57F7BFF45}"
 #define AppURL "https://keystore-explorer.org/"
 #define AppName "KeyStore Explorer"
-#define AppCopyright "Copyright 2004-2013 Wayne Grant, 2013-2021 Kai Kramer"
+#define AppCopyright "Copyright 2004 - 2013 Wayne Grant, 2013 - 2026 Kai Kramer"
 #define ProgIdName StringChange(AppName, " ", "")
 #define AppPublisher "Kai Kramer"
 #define AppFullVersion "%KSE_VERSION%"
@@ -81,6 +81,8 @@ UninstallDisplayIcon={app}\kse.ico
 UninstallDisplayName={#AppName}
 UninstallFilesDir={app}\uninstall
 VersionInfoCompany={#SetupCompany}
+VersionInfoCopyright={#AppCopyright}
+VersionInfoProductName={#AppName}
 VersionInfoProductVersion={#AppFullVersion}
 VersionInfoVersion={#AppFullVersion}
 WizardImageFile={#WizardLeftImageFilename}
