@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Extract version from properties file
+        id: version
+        run: |
+          version=$(sed -n 's/^KSE\.Version[[:space:]]*=[[:space:]]*\([^[:space:]]*\).*/\1/p' kse/src/main/resources/org/kse/version.properties)
+          echo "version=$version" >> $GITHUB_OUTPUT
       - name: Install mingw-w64
         run: |
           sudo apt-get update
@@ -43,6 +48,8 @@ jobs:
           github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
           wait-for-completion: true
           output-artifact-directory: 'kse/res'
+          parameters: |
+            version: ${{ toJSON(steps.version.outputs.version) }}
       - name: Store artifacts for release
         uses: actions/upload-artifact@v6
         with:
@@ -202,7 +209,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          sparse-checkout: .github
+          sparse-checkout: |
+            .github
+            kse/src/main/resources/org/kse/version.properties
+      - name: Extract version from properties file
+        id: version
+        run: |
+          version=$(sed -n 's/^KSE\.Version[[:space:]]*=[[:space:]]*\([^[:space:]]*\).*/\1/p' kse/src/main/resources/org/kse/version.properties)
+          echo "version=$version" >> $GITHUB_OUTPUT
       - uses: actions/download-artifact@v7
         with:
           merge-multiple: true
@@ -227,6 +241,8 @@ jobs:
           github-artifact-id: '${{ steps.upload-unsigned-setup-files.outputs.artifact-id }}'
           wait-for-completion: true
           output-artifact-directory: 'artifacts'
+          parameters: |
+            version: ${{ toJSON(steps.version.outputs.version) }}
       - name: Create a release
         uses: softprops/action-gh-release@v2.3.2
         with:
