@@ -109,7 +109,7 @@ public enum SignatureType {
     ED25519("Ed25519", EdDSACurves.ED25519.oid().getId(), SHA512, "SignatureType.Ed25519"),
     ED448("Ed448", EdDSACurves.ED448.oid().getId(), SHAKE256, "SignatureType.Ed448"),
 
-    // ML-DSA (“pure”)
+    // ML-DSA ("pure")
     MLDSA44("ML-DSA-44", "2.16.840.1.101.3.4.3.17", SHAKE256, "SignatureType.MlDsa44"),
     MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", SHAKE256, "SignatureType.MlDsa65"),
     MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", SHAKE256, "SignatureType.MlDsa87"),

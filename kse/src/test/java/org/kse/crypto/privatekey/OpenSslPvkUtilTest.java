@@ -48,7 +48,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
  * Unit tests for OpenSslPvkUtil. Encodes a RSA, EC and DSA private keys using
  * OpenSSL format and reads them back using a variety of options.
  * <p>
- * Note that OpenSSL ML-DSA has no support for “traditional” (or “legacy”)
+ * Note that OpenSSL ML-DSA has no support for "traditional" (or "legacy")
  * private-key format
  * </p>
  */
