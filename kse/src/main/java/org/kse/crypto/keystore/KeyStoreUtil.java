@@ -83,12 +83,7 @@ public final class KeyStoreUtil {
                                                            keyStoreType.jce()));
         }
 
-        KseKeyStore keyStore;
-        if (keyStoreType == KeyStoreType.PKCS12) {
-            keyStore = new Pkcs12KeyStoreAdapter(getKeyStoreInstance(keyStoreType));
-        } else {
-            keyStore = new KseKeyStore(getKeyStoreInstance(keyStoreType));
-        }
+        KseKeyStore keyStore = new KseKeyStore(getKeyStoreInstance(keyStoreType));
 
         try {
             keyStore.load(null, null);
