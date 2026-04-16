@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -354,6 +355,20 @@ public class X509Ext {
      */
     public static byte[] wrapInOctetString(byte[] extensionValue) throws IOException {
         return new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+    }
+
+    /**
+     * Gets the Subject Key Identifier extension for the certificate.
+     *
+     * @param cert The certificate with or without a Subject Key Identifier extension.
+     * @return The SubjectKeyIdentifier if present else null.
+     */
+    public static SubjectKeyIdentifier getSubjectKeyIdentifier(X509Certificate cert) {
+        byte[] skiExtBytes = cert.getExtensionValue(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid());
+        if (skiExtBytes == null) {
+            return null;
+        }
+        return SubjectKeyIdentifier.getInstance(unwrapExtension(skiExtBytes));
     }
 
     private static String lookupFriendlyName(ASN1ObjectIdentifier oid) {

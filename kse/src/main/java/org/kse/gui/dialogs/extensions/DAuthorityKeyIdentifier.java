@@ -51,6 +51,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JKeyIdentifier;
@@ -80,7 +81,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 
     private byte[] value;
     private PublicKey authorityPublicKey;
-    private byte[] authorityKeyIdentifier;
+    private SubjectKeyIdentifier authoritySubjectKeyIdentifier;
 
     /**
      * Creates a new DAuthorityKeyIdentifier dialog.
@@ -89,15 +90,15 @@ public class DAuthorityKeyIdentifier extends DExtension {
      * @param authorityPublicKey        Authority public key
      * @param authorityCertName         Authority certificate name
      * @param authorityCertSerialNumber Authority certificate serial number
-     * @param authorityKeyIdentifier    Authority key identifier
+     * @param authoritySki              Authority subject key identifier extension
      */
     public DAuthorityKeyIdentifier(JDialog parent, PublicKey authorityPublicKey, X500Name authorityCertName,
-                                   BigInteger authorityCertSerialNumber, byte[] authorityKeyIdentifier) {
+                                   BigInteger authorityCertSerialNumber, SubjectKeyIdentifier authoritySki) {
         super(parent);
 
         setTitle(res.getString("DAuthorityKeyIdentifier.Title"));
         this.authorityPublicKey = authorityPublicKey;
-        this.authorityKeyIdentifier = authorityKeyIdentifier;
+        this.authoritySubjectKeyIdentifier = authoritySki;
         initComponents();
         prepopulateWithAuthorityCertDetails(authorityCertName, authorityCertSerialNumber);
     }
@@ -108,14 +109,14 @@ public class DAuthorityKeyIdentifier extends DExtension {
      * @param parent             The parent dialog
      * @param value              Authority Key Identifier DER-encoded
      * @param authorityPublicKey Authority public key
-     * @param authorityKeyIdentifier    Authority key identifier
+     * @param authoritySki       Authority subject key identifier extension
      */
     public DAuthorityKeyIdentifier(JDialog parent, byte[] value, PublicKey authorityPublicKey,
-            byte[] authorityKeyIdentifier) {
+            SubjectKeyIdentifier authoritySki) {
         super(parent);
         setTitle(res.getString("DAuthorityKeyIdentifier.Title"));
         this.authorityPublicKey = authorityPublicKey;
-        this.authorityKeyIdentifier = authorityKeyIdentifier;
+        this.authoritySubjectKeyIdentifier = authoritySki;
         initComponents();
         prepopulateWithValue(value);
     }
@@ -232,8 +233,8 @@ public class DAuthorityKeyIdentifier extends DExtension {
     }
 
     private void prepopulateWithAuthorityCertDetails(X500Name authorityCertName, BigInteger authorityCertSerialNumber) {
-        if (authorityKeyIdentifier != null) {
-            jkiKeyIdentifier.setKeyIdentifier(authorityKeyIdentifier);
+        if (authoritySubjectKeyIdentifier != null) {
+            jkiKeyIdentifier.setKeyIdentifier(authoritySubjectKeyIdentifier.getKeyIdentifier());
         }
 
         if (authorityCertName != null) {

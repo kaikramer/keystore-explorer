@@ -92,7 +92,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
     private PublicKey authorityPublicKey;
     private PublicKey subjectPublicKey;
     private X500Name subjectCertName;
-    private byte[] issuerSkiExt;
+    private SubjectKeyIdentifier issuerSki;
 
     private boolean cancelled = true;
 
@@ -103,15 +103,15 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
      * @param authorityPublicKey Key of issuer certificate
      * @param subjectPublicKey   Key of new certificate
      * @param subjectCertName    Subject DN
-     * @param issuerSkiExt       Subject key identifier extension of issuer certificate
+     * @param issuerSki          Subject key identifier extension of issuer certificate
      */
     public DSelectStandardExtensionTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey,
-                                            X500Name subjectCertName, byte[] issuerSkiExt) {
+                                            X500Name subjectCertName, SubjectKeyIdentifier issuerSki) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.authorityPublicKey = authorityPublicKey;
         this.subjectPublicKey = subjectPublicKey;
         this.subjectCertName = subjectCertName;
-        this.issuerSkiExt = issuerSkiExt;
+        this.issuerSki = issuerSki;
         setTitle(res.getString("DSelectStandardExtensionTemplate.Title"));
         initComponents();
     }
@@ -265,10 +265,8 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 
     private void addAuthorityKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
         byte[] keyIdentifier = new KeyIdentifierGenerator(authorityPublicKey).generate160BitHashId();
-        if (issuerSkiExt != null) {
-            // The *issuer* subject key identifier is the *issued* cert's authority key identifier
-            keyIdentifier = SubjectKeyIdentifier.getInstance(X509Ext.unwrapExtension(issuerSkiExt))
-                    .getKeyIdentifier();
+        if (issuerSki != null) {
+            keyIdentifier = issuerSki.getKeyIdentifier();
         }
         AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(keyIdentifier);
         byte[] akiEncoded = X509Ext.wrapInOctetString(aki.getEncoded());

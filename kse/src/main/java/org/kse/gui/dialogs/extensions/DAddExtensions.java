@@ -127,7 +127,7 @@ public class DAddExtensions extends JEscDialog {
     private PublicKey issuerPublicKey;
     private X500Name issuerCertName;
     private BigInteger issuerCertSerialNumber;
-    private byte[] issuerSki;
+    private SubjectKeyIdentifier issuerSki;
     private PublicKey subjectPublicKey;
     private X500Name subjectCertName;
 
@@ -145,7 +145,7 @@ public class DAddExtensions extends JEscDialog {
      * @param subjectCertName        Subject DN
      */
     public DAddExtensions(JFrame parent, String title, X509ExtensionSet extensions, PublicKey issuerPublicKey,
-                          X500Name issuerCertName, BigInteger issuerCertSerialNumber, byte[] issuerSki,
+                          X500Name issuerCertName, BigInteger issuerCertSerialNumber, SubjectKeyIdentifier issuerSki,
                           PublicKey subjectPublicKey, X500Name subjectCertName) {
 
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -173,7 +173,7 @@ public class DAddExtensions extends JEscDialog {
      * @param subjectCertName        Subject DN
      */
     public DAddExtensions(JDialog parent, X509ExtensionSet extensions, PublicKey issuerPublicKey,
-                          X500Name issuerCertName, BigInteger issuerCertSerialNumber, byte[] issuerSki,
+                          X500Name issuerCertName, BigInteger issuerCertSerialNumber, SubjectKeyIdentifier issuerSki,
                           PublicKey subjectPublicKey, X500Name subjectCertName) {
 
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);

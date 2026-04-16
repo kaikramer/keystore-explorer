@@ -53,6 +53,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
@@ -60,6 +61,7 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509CertificateGenerator;
+import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.crypto.x509.X509ExtensionType;
@@ -130,10 +132,13 @@ public class DGenerateKeyPairCert extends JEscDialog {
      * Creates a new DGenerateKeyPairCert dialog.
      *
      * @param parent           The parent frame
+     * @param kseFrame         The KSE Frame
      * @param title            The dialog's title
      * @param keyPair          The key pair to generate the certificate from
      * @param keyPairType      The key pair type
-     * @param issuerPrivateKey The signing key pair (issuer CA)
+     * @param issuerCert       The signing key pair certificate
+     * @param issuerPrivateKey The signing key pair private key (issuer CA)
+     * @param provider         The provider to use.
      * @throws CryptoException A problem was encountered with the supplied key pair
      */
     public DGenerateKeyPairCert(JFrame parent, KseFrame kseFrame, String title, KeyPair keyPair, KeyPairType keyPairType,
@@ -330,7 +335,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
                                                    X500NameUtils.x500PrincipalToX500Name(
                                                            issuerCert.getSubjectX500Principal()),
                                                    issuerCert.getSerialNumber(),
-                                                   issuerCert.getExtensionValue(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid()));
+                                                   X509Ext.getSubjectKeyIdentifier(issuerCert));
                 }
             } catch (CryptoException | IOException | NumberFormatException e) {
                 DError.displayError(this, e);
@@ -343,12 +348,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
         PublicKey caPublicKey = null;
         X500Name caIssuerName = null;
         BigInteger caSerialNumber = null;
-        byte[] caIssuerSki = null;
+        SubjectKeyIdentifier caIssuerSki = null;
         if (issuerCert != null) {
             caIssuerName = X500NameUtils.x500PrincipalToX500Name(issuerCert.getIssuerX500Principal());
             caPublicKey = issuerCert.getPublicKey();
             caSerialNumber = issuerCert.getSerialNumber();
-            caIssuerSki = issuerCert.getExtensionValue(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid());
+            caIssuerSki = X509Ext.getSubjectKeyIdentifier(issuerCert);
         } else {
             caIssuerName = jdnName.getDistinguishedName(); // May be null
             caPublicKey = keyPair.getPublic();
