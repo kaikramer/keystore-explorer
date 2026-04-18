@@ -32,14 +32,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.KeyStore.Entry;
+import java.security.KeyStore.ProtectionParameter;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -74,6 +79,7 @@ import org.bouncycastle.asn1.pkcs.Pfx;
 import org.bouncycastle.asn1.pkcs.SafeBag;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.jcajce.spec.PBKDF2KeySpec;
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.X509CertUtil;
 
@@ -110,19 +116,98 @@ public class Pkcs12KeyStoreAdapter extends KseKeyStore {
     }
 
     @Override
+    public void setKeyEntry(String alias, Key key, char[] password, Certificate[] chain) throws KeyStoreException {
+        super.setKeyEntry(alias, key, password, rebuildChain(chain));
+    }
+
+    @Override
+    public void setKeyEntry(String alias, byte[] key, Certificate[] chain) throws KeyStoreException {
+        super.setKeyEntry(alias, key, rebuildChain(chain));
+    }
+
+    @Override
+    public void setEntry(String alias, Entry entry, ProtectionParameter protParam) throws KeyStoreException {
+        if (entry instanceof KeyStore.PrivateKeyEntry) {
+            KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) entry;
+            entry = new KeyStore.PrivateKeyEntry(pkEntry.getPrivateKey(), rebuildChain(pkEntry.getCertificateChain()),
+                    pkEntry.getAttributes());
+        }
+        super.setEntry(alias, entry, protParam);
+    }
+
+    /**
+     * The intent of this method is to help maintain consistency of operations for PKCS#12 key stores.
+     * Specifically, if a key pair with a partial chain only containing the leaf or intermediate CA
+     * certificates and the key store contains certificates for the whole chain, then when importing
+     * or pasting the key pair with partial chain, the partial chain is stored. But, the moment a user
+     * performs an action that will trigger the undo/redo code, the key store is copied. While copying,
+     * the Java PKCS12 key store provider will identify that the whole chain is present in the key store
+     * and populate the key pair entry with the full chain.
+     *
+     * Generally, this behavior is irrelevant for most KSE operations, but for the Append Certificate
+     * action it is confusing to see a partial chain in DViewCertificate, but then to have the append
+     * certificate action state that the chain's end certificate is already self-signed.
+     *
+     * Steps:
+     * 1. Paste/import key pair with partial chain
+     * 2. View certificate details: leaf -> subCA
+     * 3. Add new key pair (or any operation that affects undo/redo)
+     * 4. View certificate details: leaf -> subCA -> root
+     *
+     * This method will attempt to ensure consistency by rebuilding the chain when the key pair is added
+     * to the key store.
+     * Steps:
+     * 1. Paste/import key pair with partial chain
+     * 2. View certificate details: leaf -> subCA -> root
+     * 3. Add new key pair (or any operation that affects undo/redo)
+     * 4. View certificate details: leaf -> subCA -> root
+     *
+     * There is nothing wrong, per se, with the partial chain so this method simply falls back on returning
+     * the original chain if an exception occurs or if there aren't any other certificates.
+     *
+     * @param chain The certificate chain
+     * @return A potentially augmented certificate chain.
+     */
+    private Certificate[] rebuildChain(Certificate[] chain) {
+        try {
+            Certificate cert = chain[chain.length - 1];
+            if (!X509CertUtil.isCertificateSelfSigned(X509CertUtil.convertCertificate(cert))) {
+                Set<Certificate> certs = extractAllCertificates();
+                certs.addAll(Arrays.asList(chain));
+                X509Certificate[] orderedChain = X509CertUtil
+                        .orderX509CertChain(X509CertUtil.convertCertificates(certs.toArray(Certificate[]::new)));
+                // The goal is to update the chain if it's not anchored with a root.
+                // If the ordered chain is the same length or less then the goal is
+                // not satisfied and the original chain should be used.
+                if (orderedChain.length > chain.length) {
+                    chain = orderedChain;
+                }
+            }
+        } catch (CryptoException e) {
+            // Ignore. Just return the original chain if there was a problem with
+            // converting or extracting certificates.
+        }
+        return chain;
+    }
+
+    @Override
     public void load(InputStream stream, char[] password)
             throws NoSuchAlgorithmException, CertificateException, IOException {
 
-        certificateFactory = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE);
+        if (stream != null) {
+            certificateFactory = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE);
 
-        byte[] data = stream.readAllBytes();
+            byte[] data = stream.readAllBytes();
 
-        super.load(new ByteArrayInputStream(data), password);
+            super.load(new ByteArrayInputStream(data), password);
 
-        Set<Certificate> visibleCerts = extractAllCertificates();
-        invisibleCerts = parseP12(data, password).stream() //
-                .filter(ce -> !visibleCerts.contains(ce.cert)) //
-                .toList();
+            Set<Certificate> visibleCerts = extractAllCertificates();
+            invisibleCerts = parseP12(data, password).stream() //
+                    .filter(ce -> !visibleCerts.contains(ce.cert)) //
+                    .toList();
+        } else {
+            super.load(stream, password);
+        }
     }
 
     private Set<Certificate> extractAllCertificates() {
