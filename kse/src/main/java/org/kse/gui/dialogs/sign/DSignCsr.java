@@ -73,6 +73,7 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509CertificateVersion;
+import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.crypto.x509.X509ExtensionType;
@@ -657,7 +658,7 @@ public class DSignCsr extends JEscDialog {
                                            X500NameUtils.x500PrincipalToX500Name(
                                                    issuerCertificate.getSubjectX500Principal()),
                                            issuerCertificate.getSerialNumber(),
-                                           issuerCertificate.getExtensionValue(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid()));
+                                           X509Ext.getSubjectKeyIdentifier(issuerCertificate));
         } catch (CryptoException | IOException e) {
             DError.displayError(this, e);
         }
@@ -668,8 +669,7 @@ public class DSignCsr extends JEscDialog {
                                                            X500NameUtils.x500PrincipalToX500Name(
                                                                    issuerCertificate.getSubjectX500Principal()),
                                                            issuerCertificate.getSerialNumber(),
-                                                           issuerCertificate.getExtensionValue(
-                                                                   X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid()),
+                                                           X509Ext.getSubjectKeyIdentifier(issuerCertificate),
                                                            csrPublicKey, jdnSubjectDN.getDistinguishedName());
         dAddExtensions.setLocationRelativeTo(this);
         dAddExtensions.setVisible(true);

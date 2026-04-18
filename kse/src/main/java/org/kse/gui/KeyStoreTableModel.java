@@ -41,11 +41,8 @@ import java.util.TreeMap;
 
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.digest.DigestType;
@@ -58,6 +55,8 @@ import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
+import org.kse.crypto.x509.X509Ext;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.table.ToolTipTableModel;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -502,9 +501,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
     private String getCertificateSKI(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         try {
-            byte[] skiValue = x509Cert.getExtensionValue(Extension.subjectKeyIdentifier.getId());
-            byte[] octets = DEROctetString.getInstance(skiValue).getOctets();
-            byte[] skiBytes = SubjectKeyIdentifier.getInstance(octets).getKeyIdentifier();
+            byte[] skiBytes = X509Ext.getSubjectKeyIdentifier(x509Cert).getKeyIdentifier();
             return HexUtil.getHexString(skiBytes);
         } catch (Exception e) {
             return "-";
@@ -514,8 +511,8 @@ public class KeyStoreTableModel extends ToolTipTableModel {
     private String getCertificateAKI(String alias, KseKeyStore keyStore) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, keyStore);
         try {
-            byte[] akiValue = x509Cert.getExtensionValue(Extension.authorityKeyIdentifier.getId());
-            byte[] octets = DEROctetString.getInstance(akiValue).getOctets();
+            byte[] akiValue = x509Cert.getExtensionValue(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid());
+            byte[] octets = X509Ext.unwrapExtension(akiValue);
             byte[] akiBytes = AuthorityKeyIdentifier.getInstance(octets).getKeyIdentifierOctets();
             return HexUtil.getHexString(akiBytes);
         } catch (Exception e) {
