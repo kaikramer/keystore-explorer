@@ -115,6 +115,14 @@ public class Pkcs12KeyStoreAdapter extends KseKeyStore {
 
         certificateFactory = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE);
 
+        if (stream == null) {
+            super.load(stream, password);
+
+            invisibleCerts = Collections.EMPTY_LIST;
+
+            return;
+        }
+
         byte[] data = stream.readAllBytes();
 
         super.load(new ByteArrayInputStream(data), password);

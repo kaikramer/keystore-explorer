@@ -22,10 +22,13 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.security.Key;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -81,6 +84,7 @@ public class RemoveFromCertificateChainAction extends KeyStoreExplorerAction imp
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KseKeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = newState.getType();
 
             Key privKey = keyStore.getKey(alias, password.toCharArray());
 
@@ -104,6 +108,36 @@ public class RemoveFromCertificateChainAction extends KeyStoreExplorerAction imp
             keyStore.deleteEntry(alias);
 
             keyStore.setKeyEntry(alias, privKey, password.toCharArray(), newCertChain);
+
+            if (keyStoreType.hasDynamicCertificateChains()) {
+                // The PKCS12 and PEM key store types do not store full chains. They store
+                // collections of certificates, which are then used to build the full chain
+                // for the private key entries when the key store is loaded. When a certificate
+                // is removed from the chain, the undo/redo system makes a copy of the key store
+                // and the chain is rebuilt using all the certificates in the key store. The same
+                // thing happens when re-opening the key store, the chain is rebuilt an it appears 
+                // that the removal did not take place.
+                KseKeyStore copiedKeyStore = KeyStoreUtil.copy(keyStore);
+
+                X509Certificate[] copiedCertChain = X509CertUtil.orderX509CertChain(
+                        X509CertUtil.convertCertificates(copiedKeyStore.getCertificateChain(alias)));
+
+                X509Certificate topCert = copiedCertChain[copiedCertChain.length - 1];
+
+                // If the top certificate after the copy is not the top certificate after removal,
+                // then it is not possible to edit the certificate chain using the current key store.
+                // Need to copy to an empty key store or convert to JKS, JCEKS, or BKS.
+                if (!topCert.equals(newCertChain[newCertChain.length - 1])) {
+                    JOptionPane.showMessageDialog(frame,
+                            MessageFormat.format(
+                                    res.getString("RemoveFromCertificateChainAction.AutomaticRebuild.message"),
+                                    keyStoreType.friendly()),
+                            res.getString("RemoveFromCertificateChainAction.RemoveFromCertificateChain.Title"),
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                    return;
+                }
+            }
 
             currentState.append(newState);
 
