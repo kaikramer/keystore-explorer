@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -37,18 +34,16 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.generalname.JGeneralNames;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit an Issuer Alternative Name extension.
@@ -60,10 +55,8 @@ public class DIssuerAlternativeName extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpIssuerAlternativeName;
     private JLabel jlAlternativeName;
     private JGeneralNames jgnAlternativeName;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -98,31 +91,8 @@ public class DIssuerAlternativeName extends DExtension {
     private void initComponents() {
         jlAlternativeName = new JLabel(res.getString("DIssuerAlternativeName.jlAlternativeName.text"));
 
-        GridBagConstraints gbc_jlAlternativeName = new GridBagConstraints();
-        gbc_jlAlternativeName.gridx = 0;
-        gbc_jlAlternativeName.gridy = 1;
-        gbc_jlAlternativeName.gridwidth = 1;
-        gbc_jlAlternativeName.gridheight = 1;
-        gbc_jlAlternativeName.insets = new Insets(5, 5, 5, 5);
-        gbc_jlAlternativeName.anchor = GridBagConstraints.NORTHEAST;
-
         jgnAlternativeName = new JGeneralNames(res.getString("DIssuerAlternativeName.AlternativeName.Title"));
         jgnAlternativeName.setPreferredSize(new Dimension(400, 150));
-
-        GridBagConstraints gbc_jgnAlternativeName = new GridBagConstraints();
-        gbc_jgnAlternativeName.gridx = 1;
-        gbc_jgnAlternativeName.gridy = 1;
-        gbc_jgnAlternativeName.gridwidth = 1;
-        gbc_jgnAlternativeName.gridheight = 1;
-        gbc_jgnAlternativeName.insets = new Insets(5, 5, 5, 5);
-        gbc_jgnAlternativeName.anchor = GridBagConstraints.WEST;
-
-        jpIssuerAlternativeName = new JPanel(new GridBagLayout());
-
-        jpIssuerAlternativeName.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-        jpIssuerAlternativeName.add(jlAlternativeName, gbc_jlAlternativeName);
-        jpIssuerAlternativeName.add(jgnAlternativeName, gbc_jgnAlternativeName);
 
         jbOK = new JButton(res.getString("DIssuerAlternativeName.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -140,11 +110,13 @@ public class DIssuerAlternativeName extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpIssuerAlternativeName, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlAlternativeName, "wrap");
+        pane.add(jgnAlternativeName, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

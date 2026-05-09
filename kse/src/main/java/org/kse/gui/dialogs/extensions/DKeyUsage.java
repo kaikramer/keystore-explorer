@@ -19,7 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -28,26 +28,24 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit a Key Usage extension.
@@ -59,9 +57,7 @@ public class DKeyUsage extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpKeyUsage;
     private JLabel jlKeyUsage;
-    private JPanel jpKeyUsages;
     private JCheckBox jcbCertificateSigning;
     private JCheckBox jcbCrlSign;
     private JCheckBox jcbDataEncipherment;
@@ -71,7 +67,6 @@ public class DKeyUsage extends DExtension {
     private JCheckBox jcbKeyAgreement;
     private JCheckBox jcbKeyEncipherment;
     private JCheckBox jcbNonRepudiation;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -133,42 +128,6 @@ public class DKeyUsage extends DExtension {
         jcbNonRepudiation = new JCheckBox(res.getString("DKeyUsage.jcbNonRepudiation.text"));
         jcbNonRepudiation.setToolTipText(res.getString("DKeyUsage.jcbNonRepudiation.tooltip"));
 
-        JPanel jpFirstColumn = new JPanel();
-        jpFirstColumn.setLayout(new BoxLayout(jpFirstColumn, BoxLayout.Y_AXIS));
-
-        jpFirstColumn.add(jcbCertificateSigning);
-        jpFirstColumn.add(jcbCrlSign);
-        jpFirstColumn.add(jcbDataEncipherment);
-
-        JPanel jpSecondColumn = new JPanel();
-        jpSecondColumn.setLayout(new BoxLayout(jpSecondColumn, BoxLayout.Y_AXIS));
-
-        jpSecondColumn.add(jcbDecipherOnly);
-        jpSecondColumn.add(jcbDigitalSignature);
-        jpSecondColumn.add(jcbEncipherOnly);
-
-        JPanel jpThirdColumn = new JPanel();
-        jpThirdColumn.setLayout(new BoxLayout(jpThirdColumn, BoxLayout.Y_AXIS));
-
-        jpThirdColumn.add(jcbKeyAgreement);
-        jpThirdColumn.add(jcbKeyEncipherment);
-        jpThirdColumn.add(jcbNonRepudiation);
-
-        jpKeyUsages = new JPanel();
-        jpKeyUsages.setLayout(new BoxLayout(jpKeyUsages, BoxLayout.X_AXIS));
-
-        jpKeyUsages.add(jpFirstColumn);
-        jpKeyUsages.add(jpSecondColumn);
-        jpKeyUsages.add(jpThirdColumn);
-
-        jpKeyUsage = new JPanel(new BorderLayout(5, 5));
-
-        jpKeyUsage.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-        jpKeyUsage.add(jlKeyUsage, BorderLayout.NORTH);
-        jpKeyUsage.add(jpKeyUsages, BorderLayout.CENTER);
-
         jbOK = new JButton(res.getString("DKeyUsage.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
@@ -185,11 +144,21 @@ public class DKeyUsage extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpKeyUsage, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlKeyUsage, "spanx, wrap");
+        pane.add(jcbCertificateSigning);
+        pane.add(jcbDecipherOnly);
+        pane.add(jcbKeyAgreement, "wrap");
+        pane.add(jcbCrlSign);
+        pane.add(jcbDigitalSignature);
+        pane.add(jcbKeyEncipherment, "wrap");
+        pane.add(jcbDataEncipherment);
+        pane.add(jcbEncipherOnly);
+        pane.add(jcbNonRepudiation, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

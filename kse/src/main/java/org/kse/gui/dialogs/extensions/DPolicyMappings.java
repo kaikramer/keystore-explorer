@@ -19,10 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,19 +33,17 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.policymapping.JPolicyMappings;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit a Policy Mappings extension.
@@ -60,10 +55,8 @@ public class DPolicyMappings extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPolicyMappings;
     private JLabel jlPolicyMappings;
     private JPolicyMappings jpmPolicyMappings;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -97,32 +90,7 @@ public class DPolicyMappings extends DExtension {
     private void initComponents() {
         jlPolicyMappings = new JLabel(res.getString("DPolicyMappings.jlPolicyMappings.text"));
 
-        GridBagConstraints gbc_jlPolicyMappings = new GridBagConstraints();
-        gbc_jlPolicyMappings.gridx = 0;
-        gbc_jlPolicyMappings.gridy = 0;
-        gbc_jlPolicyMappings.gridwidth = 1;
-        gbc_jlPolicyMappings.gridheight = 1;
-        gbc_jlPolicyMappings.insets = new Insets(5, 5, 5, 5);
-        gbc_jlPolicyMappings.anchor = GridBagConstraints.NORTHEAST;
-
         jpmPolicyMappings = new JPolicyMappings(res.getString("DPolicyMappings.PolicyMapping.Title"));
-
-        GridBagConstraints gbc_jadPolicyMappings = new GridBagConstraints();
-        gbc_jadPolicyMappings.gridx = 1;
-        gbc_jadPolicyMappings.gridy = 0;
-        gbc_jadPolicyMappings.gridwidth = 1;
-        gbc_jadPolicyMappings.gridheight = 1;
-        gbc_jadPolicyMappings.insets = new Insets(5, 5, 5, 5);
-        gbc_jadPolicyMappings.anchor = GridBagConstraints.WEST;
-
-        jpPolicyMappings = new JPanel(new GridBagLayout());
-
-        jpPolicyMappings.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                      new CompoundBorder(new EtchedBorder(),
-                                                                         new EmptyBorder(5, 5, 5, 5))));
-
-        jpPolicyMappings.add(jlPolicyMappings, gbc_jlPolicyMappings);
-        jpPolicyMappings.add(jpmPolicyMappings, gbc_jadPolicyMappings);
 
         jbOK = new JButton(res.getString("DPolicyMappings.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -140,11 +108,13 @@ public class DPolicyMappings extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpPolicyMappings, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlPolicyMappings, "wrap");
+        pane.add(jpmPolicyMappings, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

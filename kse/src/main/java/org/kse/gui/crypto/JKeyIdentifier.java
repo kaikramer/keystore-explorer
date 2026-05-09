@@ -20,9 +20,6 @@
 package org.kse.gui.crypto;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.security.PublicKey;
 import java.util.ResourceBundle;
 
@@ -37,6 +34,8 @@ import org.kse.crypto.CryptoException;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.io.HexUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to edit a key identifier.
@@ -70,13 +69,6 @@ public class JKeyIdentifier extends JPanel {
         jtfKeyIdentifier = new JTextField(40);
         jtfKeyIdentifier.setEditable(false);
 
-        GridBagConstraints gbc_jtfKeyIdentifier = new GridBagConstraints();
-        gbc_jtfKeyIdentifier.gridwidth = 1;
-        gbc_jtfKeyIdentifier.gridheight = 1;
-        gbc_jtfKeyIdentifier.gridx = 0;
-        gbc_jtfKeyIdentifier.gridy = 0;
-        gbc_jtfKeyIdentifier.insets = new Insets(0, 0, 0, 5);
-
         ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_key_id.png"));
         jbEditKeyIdentifier = new JButton(editIcon);
         jbEditKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbEditKeyIdentifier.tooltip"));
@@ -88,13 +80,6 @@ public class JKeyIdentifier extends JPanel {
                 CursorUtil.setCursorFree(JKeyIdentifier.this);
             }
         });
-
-        GridBagConstraints gbc_jbEditKeyIdentifier = new GridBagConstraints();
-        gbc_jbEditKeyIdentifier.gridwidth = 1;
-        gbc_jbEditKeyIdentifier.gridheight = 1;
-        gbc_jbEditKeyIdentifier.gridx = 1;
-        gbc_jbEditKeyIdentifier.gridy = 0;
-        gbc_jbEditKeyIdentifier.insets = new Insets(0, 0, 0, 5);
 
         ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_key_id.png"));
         jbClearKeyIdentifier = new JButton(clearIcon);
@@ -108,17 +93,10 @@ public class JKeyIdentifier extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbClearKeyIdentifier = new GridBagConstraints();
-        gbc_jbClearKeyIdentifier.gridwidth = 1;
-        gbc_jbClearKeyIdentifier.gridheight = 1;
-        gbc_jbClearKeyIdentifier.gridx = 2;
-        gbc_jbClearKeyIdentifier.gridy = 0;
-        gbc_jbClearKeyIdentifier.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jtfKeyIdentifier, gbc_jtfKeyIdentifier);
-        add(jbEditKeyIdentifier, gbc_jbEditKeyIdentifier);
-        add(jbClearKeyIdentifier, gbc_jbClearKeyIdentifier);
+        setLayout(new MigLayout("insets 0", "[]", "[]"));
+        add(jtfKeyIdentifier);
+        add(jbEditKeyIdentifier);
+        add(jbClearKeyIdentifier);
 
         populate();
     }

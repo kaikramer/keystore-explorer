@@ -19,13 +19,13 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import static org.kse.gui.MiGUtil.addButtonSeparator;
+
+import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -42,15 +42,12 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.table.TableColumn;
@@ -73,6 +70,8 @@ import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 import org.kse.utilities.oid.ObjectIdComparator;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Displays the details of X.509 Extensions.
  */
@@ -81,19 +80,14 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-    private JPanel jpExtensions;
-    private JPanel jpExtensionsTable;
     private JScrollPane jspExtensionsTable;
     private JTable jtExtensions;
-    private JPanel jpExtensionValue;
     private JLabel jlExtensionValue;
-    private JPanel jpExtensionValueTextArea;
     private JScrollPane jspExtensionValue;
     private JEditorPane jepExtensionValue;
-    private JPanel jpExtensionActionPanel;
     private JButton jbAsn1;
+    private JButton jbSaveTemplate;
     private JButton jbCopy;
-    private JPanel jpOK;
     private JButton jbOK;
 
     private X509Extension extensions;
@@ -183,16 +177,9 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
                                                            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspExtensionsTable.getViewport().setBackground(jtExtensions.getBackground());
-
-        jpExtensionsTable = new JPanel(new BorderLayout(5, 5));
-        jpExtensionsTable.setPreferredSize(new Dimension(500, 200));
-        jpExtensionsTable.add(jspExtensionsTable, BorderLayout.CENTER);
-
-        jpExtensionValue = new JPanel(new BorderLayout(5, 5));
+        jspExtensionsTable.setPreferredSize(new Dimension(500, 200));
 
         jlExtensionValue = new JLabel(res.getString("DViewExtensions.jlExtensionValue.text"));
-
-        jpExtensionValue.add(jlExtensionValue, BorderLayout.NORTH);
 
         jepExtensionValue = new JEditorPane();
         jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
@@ -210,12 +197,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
         jspExtensionValue = PlatformUtil.createScrollPane(jepExtensionValue,
                                                           ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        jpExtensionValueTextArea = new JPanel(new BorderLayout(5, 5));
-        jpExtensionValueTextArea.setPreferredSize(new Dimension(500, 200));
-        jpExtensionValueTextArea.add(jspExtensionValue, BorderLayout.CENTER);
-
-        jpExtensionValue.add(jpExtensionValueTextArea, BorderLayout.CENTER);
+        jspExtensionValue.setPreferredSize(new Dimension(500, 200));
 
         jbAsn1 = new JButton(res.getString("DViewExtensions.jbAsn1.text"));
 
@@ -230,7 +212,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             }
         });
 
-        JButton jbSaveTemplate = new JButton(res.getString("DAddExtensions.jbSaveTemplate.text"));
+        jbSaveTemplate = new JButton(res.getString("DAddExtensions.jbSaveTemplate.text"));
         jbSaveTemplate.setMnemonic(res.getString("DAddExtensions.jbSaveTemplate.mnemonic").charAt(0));
         jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
 
@@ -255,28 +237,8 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             }
         });
 
-        jpExtensionActionPanel = new JPanel(new BorderLayout());
-        jpExtensionActionPanel.add(jbCopy, BorderLayout.WEST);
-
-        JPanel jpOtherActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
-        jpOtherActions.add(jbSaveTemplate);
-        jpOtherActions.add(jbAsn1);
-
-        jpExtensionActionPanel.add(jpOtherActions, BorderLayout.EAST);
-
-        jpExtensionValue.add(jpExtensionActionPanel, BorderLayout.SOUTH);
-
-        jpExtensions = new JPanel(new GridLayout(2, 1, 5, 5));
-        jpExtensions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-        jpExtensions.add(jpExtensionsTable);
-        jpExtensions.add(jpExtensionValue);
-
         jbOK = new JButton(res.getString("DViewExtensions.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
-
-        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
         extensionsTableModel.load(extensions);
 
@@ -284,8 +246,17 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             jtExtensions.changeSelection(0, 0, false, false);
         }
 
-        getContentPane().add(jpExtensions, BorderLayout.CENTER);
-        getContentPane().add(jpOK, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspExtensionsTable, "growx, wrap");
+        pane.add(jlExtensionValue, "wrap");
+        pane.add(jspExtensionValue, "wrap");
+        pane.add(jbCopy, "right, spanx, split 4");
+        addButtonSeparator(pane, true);
+        pane.add(jbSaveTemplate);
+        pane.add(jbAsn1, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbOK, "spanx, tag ok");
 
         setResizable(false);
 

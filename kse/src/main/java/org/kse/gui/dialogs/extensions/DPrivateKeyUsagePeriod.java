@@ -19,11 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -39,11 +35,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
@@ -53,9 +46,10 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit a Private Key Usage Period extension.
@@ -67,12 +61,10 @@ public class DPrivateKeyUsagePeriod extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPrivateKeyUsagePeriod;
     private JLabel jlNotBefore;
     private JDateTime jdtNotBefore;
     private JLabel jlNotAfter;
     private JDateTime jdtNotAfter;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -106,59 +98,13 @@ public class DPrivateKeyUsagePeriod extends DExtension {
     private void initComponents() {
         jlNotBefore = new JLabel(res.getString("DPrivateKeyUsagePeriod.jlNotBefore.text"));
 
-        GridBagConstraints gbc_jlNotBefore = new GridBagConstraints();
-        gbc_jlNotBefore.gridx = 0;
-        gbc_jlNotBefore.gridy = 0;
-        gbc_jlNotBefore.gridwidth = 1;
-        gbc_jlNotBefore.gridheight = 1;
-        gbc_jlNotBefore.insets = new Insets(5, 5, 5, 5);
-        gbc_jlNotBefore.anchor = GridBagConstraints.EAST;
-
         jdtNotBefore = new JDateTime(res.getString("DPrivateKeyUsagePeriod.jdtNotBefore.text"));
         jdtNotBefore.setToolTipText(res.getString("DPrivateKeyUsagePeriod.jdtNotBefore.tooltip"));
 
-        GridBagConstraints gbc_jdtNotBefore = new GridBagConstraints();
-        gbc_jdtNotBefore.gridx = 1;
-        gbc_jdtNotBefore.gridy = 0;
-        gbc_jdtNotBefore.gridwidth = 1;
-        gbc_jdtNotBefore.gridheight = 1;
-        gbc_jdtNotBefore.insets = new Insets(5, 5, 5, 5);
-        gbc_jdtNotBefore.anchor = GridBagConstraints.WEST;
-
         jlNotAfter = new JLabel(res.getString("DPrivateKeyUsagePeriod.jlNotAfter.text"));
-
-        GridBagConstraints gbc_jlNotAfter = new GridBagConstraints();
-        gbc_jlNotAfter.gridx = 0;
-        gbc_jlNotAfter.gridy = 1;
-        gbc_jlNotAfter.gridwidth = 1;
-        gbc_jlNotAfter.gridheight = 1;
-        gbc_jlNotAfter.insets = new Insets(5, 5, 5, 5);
-        gbc_jlNotAfter.anchor = GridBagConstraints.EAST;
 
         jdtNotAfter = new JDateTime(res.getString("DPrivateKeyUsagePeriod.jdtNotAfter.text"));
         jdtNotAfter.setToolTipText(res.getString("DPrivateKeyUsagePeriod.jdtNotAfter.tooltip"));
-
-        GridBagConstraints gbc_jdtNotAfter = new GridBagConstraints();
-        gbc_jdtNotAfter.gridx = 1;
-        gbc_jdtNotAfter.gridy = 1;
-        gbc_jdtNotAfter.gridwidth = 1;
-        gbc_jdtNotAfter.gridheight = 1;
-        gbc_jdtNotAfter.insets = new Insets(5, 5, 5, 5);
-        gbc_jdtNotAfter.anchor = GridBagConstraints.WEST;
-
-        jpPrivateKeyUsagePeriod = new JPanel(new FlowLayout());
-
-        jpPrivateKeyUsagePeriod.add(jlNotBefore);
-        jpPrivateKeyUsagePeriod.add(jdtNotBefore);
-        jpPrivateKeyUsagePeriod.add(jlNotAfter);
-        jpPrivateKeyUsagePeriod.add(jdtNotAfter);
-
-        jpPrivateKeyUsagePeriod = new JPanel(new GridBagLayout());
-        jpPrivateKeyUsagePeriod.add(jlNotBefore, gbc_jlNotBefore);
-        jpPrivateKeyUsagePeriod.add(jdtNotBefore, gbc_jdtNotBefore);
-        jpPrivateKeyUsagePeriod.add(jlNotAfter, gbc_jlNotAfter);
-        jpPrivateKeyUsagePeriod.add(jdtNotAfter, gbc_jdtNotAfter);
-        jpPrivateKeyUsagePeriod.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
         jbOK = new JButton(res.getString("DPrivateKeyUsagePeriod.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -176,11 +122,15 @@ public class DPrivateKeyUsagePeriod extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpPrivateKeyUsagePeriod, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
+        pane.add(jlNotBefore);
+        pane.add(jdtNotBefore, "wrap");
+        pane.add(jlNotAfter);
+        pane.add(jdtNotAfter, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override
