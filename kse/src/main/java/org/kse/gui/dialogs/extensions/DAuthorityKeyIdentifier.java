@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -39,12 +36,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -53,10 +47,11 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JKeyIdentifier;
 import org.kse.gui.crypto.generalname.JGeneralNames;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit an Authority Key Identifier extension.
@@ -68,14 +63,12 @@ public class DAuthorityKeyIdentifier extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpAuthorityKeyIdentifier;
     private JLabel jlKeyIdentifier;
     private JKeyIdentifier jkiKeyIdentifier;
     private JLabel jlAuthorityCertIssuer;
     private JGeneralNames jgnAuthorityCertIssuer;
     private JLabel jlAuthorityCertSerialNumber;
     private JTextField jtfAuthorityCertSerialNumber;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -124,77 +117,18 @@ public class DAuthorityKeyIdentifier extends DExtension {
     private void initComponents() {
         jlKeyIdentifier = new JLabel(res.getString("DAuthorityKeyIdentifier.jlKeyIdentifer.text"));
 
-        GridBagConstraints gbc_jlKeyIdentifier = new GridBagConstraints();
-        gbc_jlKeyIdentifier.gridx = 0;
-        gbc_jlKeyIdentifier.gridy = 0;
-        gbc_jlKeyIdentifier.gridwidth = 1;
-        gbc_jlKeyIdentifier.gridheight = 1;
-        gbc_jlKeyIdentifier.insets = new Insets(5, 5, 5, 5);
-        gbc_jlKeyIdentifier.anchor = GridBagConstraints.EAST;
-
         jkiKeyIdentifier = new JKeyIdentifier(res.getString("DAuthorityKeyIdentifier.KeyIdentifier.Title"),
                                               authorityPublicKey);
 
-        GridBagConstraints gbc_jkiKeyIdentifier = new GridBagConstraints();
-        gbc_jkiKeyIdentifier.gridx = 1;
-        gbc_jkiKeyIdentifier.gridy = 0;
-        gbc_jkiKeyIdentifier.gridwidth = 1;
-        gbc_jkiKeyIdentifier.gridheight = 1;
-        gbc_jkiKeyIdentifier.insets = new Insets(5, 5, 5, 5);
-        gbc_jkiKeyIdentifier.anchor = GridBagConstraints.WEST;
-
         jlAuthorityCertIssuer = new JLabel(res.getString("DAuthorityKeyIdentifier.jlAuthorityCertIssuer.text"));
-
-        GridBagConstraints gbc_jlAuthorityCertIssuer = new GridBagConstraints();
-        gbc_jlAuthorityCertIssuer.gridx = 0;
-        gbc_jlAuthorityCertIssuer.gridy = 1;
-        gbc_jlAuthorityCertIssuer.gridwidth = 1;
-        gbc_jlAuthorityCertIssuer.gridheight = 1;
-        gbc_jlAuthorityCertIssuer.insets = new Insets(0, 5, 0, 5);
-        gbc_jlAuthorityCertIssuer.anchor = GridBagConstraints.NORTHEAST;
 
         jgnAuthorityCertIssuer = new JGeneralNames(res.getString("DAuthorityKeyIdentifier.AuthorityCertIssuer.Title"));
         jgnAuthorityCertIssuer.setPreferredSize(new Dimension(400, 150));
 
-        GridBagConstraints gbc_jgnAuthorityCertIssuer = new GridBagConstraints();
-        gbc_jgnAuthorityCertIssuer.gridx = 1;
-        gbc_jgnAuthorityCertIssuer.gridy = 1;
-        gbc_jgnAuthorityCertIssuer.gridwidth = 1;
-        gbc_jgnAuthorityCertIssuer.gridheight = 1;
-        gbc_jgnAuthorityCertIssuer.insets = new Insets(0, 5, 0, 5);
-        gbc_jgnAuthorityCertIssuer.anchor = GridBagConstraints.WEST;
-
         jlAuthorityCertSerialNumber = new JLabel(
                 res.getString("DAuthorityKeyIdentifier.jlAuthorityCertSerialNumber.text"));
 
-        GridBagConstraints gbc_jlAuthorityCertSerialNumber = new GridBagConstraints();
-        gbc_jlAuthorityCertSerialNumber.gridx = 0;
-        gbc_jlAuthorityCertSerialNumber.gridy = 2;
-        gbc_jlAuthorityCertSerialNumber.gridwidth = 1;
-        gbc_jlAuthorityCertSerialNumber.gridheight = 1;
-        gbc_jlAuthorityCertSerialNumber.insets = new Insets(5, 5, 5, 5);
-        gbc_jlAuthorityCertSerialNumber.anchor = GridBagConstraints.EAST;
-
         jtfAuthorityCertSerialNumber = new JTextField(20);
-
-        GridBagConstraints gbc_jtfAuthorityCertSerialNumber = new GridBagConstraints();
-        gbc_jtfAuthorityCertSerialNumber.gridx = 1;
-        gbc_jtfAuthorityCertSerialNumber.gridy = 2;
-        gbc_jtfAuthorityCertSerialNumber.gridwidth = 1;
-        gbc_jtfAuthorityCertSerialNumber.gridheight = 1;
-        gbc_jtfAuthorityCertSerialNumber.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfAuthorityCertSerialNumber.anchor = GridBagConstraints.WEST;
-
-        jpAuthorityKeyIdentifier = new JPanel(new GridBagLayout());
-
-        jpAuthorityKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-        jpAuthorityKeyIdentifier.add(jlKeyIdentifier, gbc_jlKeyIdentifier);
-        jpAuthorityKeyIdentifier.add(jkiKeyIdentifier, gbc_jkiKeyIdentifier);
-        jpAuthorityKeyIdentifier.add(jlAuthorityCertIssuer, gbc_jlAuthorityCertIssuer);
-        jpAuthorityKeyIdentifier.add(jgnAuthorityCertIssuer, gbc_jgnAuthorityCertIssuer);
-        jpAuthorityKeyIdentifier.add(jlAuthorityCertSerialNumber, gbc_jlAuthorityCertSerialNumber);
-        jpAuthorityKeyIdentifier.add(jtfAuthorityCertSerialNumber, gbc_jtfAuthorityCertSerialNumber);
 
         jbOK = new JButton(res.getString("DAuthorityKeyIdentifier.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -212,11 +146,17 @@ public class DAuthorityKeyIdentifier extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpAuthorityKeyIdentifier, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
+        pane.add(jlKeyIdentifier);
+        pane.add(jkiKeyIdentifier, "wrap");
+        pane.add(jlAuthorityCertIssuer, "top");
+        pane.add(jgnAuthorityCertIssuer, "wrap");
+        pane.add(jlAuthorityCertSerialNumber);
+        pane.add(jtfAuthorityCertSerialNumber, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

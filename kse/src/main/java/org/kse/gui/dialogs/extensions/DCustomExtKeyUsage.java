@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -38,16 +35,14 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.customextkeyusage.JCustomExtendedKeyUsage;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit custom extended key usages.
@@ -59,10 +54,8 @@ public class DCustomExtKeyUsage extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpCustomExtendedKeyUsage;
     private JLabel jlCustomExtendedKeyUsage;
     private JCustomExtendedKeyUsage jCustomExtendedKeyUsage;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -72,6 +65,7 @@ public class DCustomExtKeyUsage extends JEscDialog {
      * Creates a new DCustomExtKeyUsage dialog.
      *
      * @param parent The parent dialog
+     * @param customExtUsageOids Set of OIDs for pre-populating in the dialog.
      */
     public DCustomExtKeyUsage(JDialog parent, Set<ASN1ObjectIdentifier> customExtUsageOids) {
         super(parent, ModalityType.DOCUMENT_MODAL);
@@ -84,32 +78,9 @@ public class DCustomExtKeyUsage extends JEscDialog {
     private void initComponents() {
         jlCustomExtendedKeyUsage = new JLabel(res.getString("DCustomExtendedKeyUsage.jlCustomExtendedKeyUsage.text"));
 
-        GridBagConstraints gbc_jlCustomExtendedKeyUsage = new GridBagConstraints();
-        gbc_jlCustomExtendedKeyUsage.gridx = 0;
-        gbc_jlCustomExtendedKeyUsage.gridy = 1;
-        gbc_jlCustomExtendedKeyUsage.gridwidth = 1;
-        gbc_jlCustomExtendedKeyUsage.gridheight = 1;
-        gbc_jlCustomExtendedKeyUsage.insets = new Insets(5, 5, 5, 5);
-        gbc_jlCustomExtendedKeyUsage.anchor = GridBagConstraints.NORTHEAST;
-
         jCustomExtendedKeyUsage = new JCustomExtendedKeyUsage(
                 res.getString("DCustomExtendedKeyUsage.jCustomExtendedKeyUsage.text"));
         jCustomExtendedKeyUsage.setPreferredSize(new Dimension(400, 150));
-
-        GridBagConstraints gbc_jpiCustomExtendedKeyUsage = new GridBagConstraints();
-        gbc_jpiCustomExtendedKeyUsage.gridx = 1;
-        gbc_jpiCustomExtendedKeyUsage.gridy = 1;
-        gbc_jpiCustomExtendedKeyUsage.gridwidth = 1;
-        gbc_jpiCustomExtendedKeyUsage.gridheight = 1;
-        gbc_jpiCustomExtendedKeyUsage.insets = new Insets(5, 5, 5, 5);
-        gbc_jpiCustomExtendedKeyUsage.anchor = GridBagConstraints.WEST;
-
-        jpCustomExtendedKeyUsage = new JPanel(new GridBagLayout());
-
-        jpCustomExtendedKeyUsage.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-        jpCustomExtendedKeyUsage.add(jlCustomExtendedKeyUsage, gbc_jlCustomExtendedKeyUsage);
-        jpCustomExtendedKeyUsage.add(jCustomExtendedKeyUsage, gbc_jpiCustomExtendedKeyUsage);
 
         jbOK = new JButton(res.getString("DCustomExtendedKeyUsage.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -127,11 +98,13 @@ public class DCustomExtKeyUsage extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpCustomExtendedKeyUsage, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]"));
+        pane.add(jlCustomExtendedKeyUsage, "wrap");
+        pane.add(jCustomExtendedKeyUsage, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override
