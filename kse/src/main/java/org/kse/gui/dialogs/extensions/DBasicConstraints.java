@@ -92,11 +92,10 @@ public class DBasicConstraints extends DExtension {
 
     private void initComponents() {
         jlBasicConstraints = new JLabel(res.getString("DBasicConstraints.jlBasicConstraints.text"));
-        jlBasicConstraints.setBorder(new EmptyBorder(5, 5, 0, 5));
 
         jcbSubjectIsCa = new JCheckBox(res.getString("DBasicConstraints.jcbSubjectIsCa.text"));
         jcbSubjectIsCa.setSelected(false);
-        jcbSubjectIsCa.setBorder(new EmptyBorder(5, 5, 0, 5));
+        jcbSubjectIsCa.setBorder(new EmptyBorder(0, 0, 5, 0));
 
         jlPathLengthConstraint = new JLabel(res.getString("DBasicConstraints.jlPathLengthConstraint.text"));
 
@@ -119,7 +118,7 @@ public class DBasicConstraints extends DExtension {
         });
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
         pane.add(jlBasicConstraints, "wrap");
         pane.add(jcbSubjectIsCa, "wrap");
         pane.add(jlPathLengthConstraint);

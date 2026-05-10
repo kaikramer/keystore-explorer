@@ -90,7 +90,7 @@ public class DInhibitAnyPolicy extends DExtension {
 
     private void initComponents() {
         jlInhibitAnyPolicy = new JLabel(res.getString("DInhibitAnyPolicy.jlInhibitAnyPolicy.text"));
-        jlInhibitAnyPolicy.setBorder(new EmptyBorder(5, 5, 0, 5));
+        jlInhibitAnyPolicy.setBorder(new EmptyBorder(0, 0, 5, 0));
 
         jlSkipCertificates = new JLabel(res.getString("DInhibitAnyPolicy.jlSkipCertificates.text"));
 
@@ -113,7 +113,7 @@ public class DInhibitAnyPolicy extends DExtension {
         });
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
         pane.add(jlInhibitAnyPolicy, "wrap");
         pane.add(jlSkipCertificates);
         pane.add(jtfSkipCertificates, "wrap");
