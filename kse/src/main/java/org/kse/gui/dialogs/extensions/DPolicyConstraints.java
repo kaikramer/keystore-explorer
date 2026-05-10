@@ -19,10 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -37,18 +34,16 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.PolicyConstraints;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit a Policy Constraints extension.
@@ -60,13 +55,11 @@ public class DPolicyConstraints extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPolicyConstraints;
     private JLabel jlPolicyConstraints;
     private JLabel jlRequireExplicitPolicy;
     private JTextField jtfRequireExplicitPolicy;
     private JLabel jlInhibitPolicyMapping;
     private JTextField jtfInhibitPolicyMapping;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -99,56 +92,14 @@ public class DPolicyConstraints extends DExtension {
 
     private void initComponents() {
         jlPolicyConstraints = new JLabel(res.getString("DPolicyConstraints.jlPolicyConstraints.text"));
-        GridBagConstraints gbc_jlPolicyConstraints = new GridBagConstraints();
-        gbc_jlPolicyConstraints.gridx = 0;
-        gbc_jlPolicyConstraints.gridy = 0;
-        gbc_jlPolicyConstraints.gridwidth = 2;
-        gbc_jlPolicyConstraints.insets = new Insets(5, 5, 5, 5);
-        gbc_jlPolicyConstraints.anchor = GridBagConstraints.WEST;
 
         jlRequireExplicitPolicy = new JLabel(res.getString("DPolicyConstraints.jlRequireExplicitPolicy.text"));
-        GridBagConstraints gbc_jlRequireExplicitPolicy = new GridBagConstraints();
-        gbc_jlRequireExplicitPolicy.gridx = 0;
-        gbc_jlRequireExplicitPolicy.gridy = 1;
-        gbc_jlRequireExplicitPolicy.gridwidth = 1;
-        gbc_jlRequireExplicitPolicy.insets = new Insets(5, 5, 5, 5);
-        gbc_jlRequireExplicitPolicy.anchor = GridBagConstraints.EAST;
 
         jtfRequireExplicitPolicy = new JTextField(3);
-        GridBagConstraints gbc_jtfRequireExplicitPolicy = new GridBagConstraints();
-        gbc_jtfRequireExplicitPolicy.gridx = 1;
-        gbc_jtfRequireExplicitPolicy.gridy = 1;
-        gbc_jtfRequireExplicitPolicy.gridwidth = 1;
-        gbc_jtfRequireExplicitPolicy.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfRequireExplicitPolicy.anchor = GridBagConstraints.WEST;
 
         jlInhibitPolicyMapping = new JLabel(res.getString("DPolicyConstraints.jlInhibitPolicyMapping.text"));
-        GridBagConstraints gbc_jlInhibitPolicyMapping = new GridBagConstraints();
-        gbc_jlInhibitPolicyMapping.gridx = 0;
-        gbc_jlInhibitPolicyMapping.gridy = 2;
-        gbc_jlInhibitPolicyMapping.gridwidth = 1;
-        gbc_jlInhibitPolicyMapping.insets = new Insets(5, 5, 5, 5);
-        gbc_jlInhibitPolicyMapping.anchor = GridBagConstraints.EAST;
 
         jtfInhibitPolicyMapping = new JTextField(3);
-        GridBagConstraints gbc_jtfInhibitPolicyMapping = new GridBagConstraints();
-        gbc_jtfInhibitPolicyMapping.gridx = 1;
-        gbc_jtfInhibitPolicyMapping.gridy = 2;
-        gbc_jtfInhibitPolicyMapping.gridwidth = 1;
-        gbc_jtfInhibitPolicyMapping.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfInhibitPolicyMapping.anchor = GridBagConstraints.WEST;
-
-        jpPolicyConstraints = new JPanel(new GridBagLayout());
-
-        jpPolicyConstraints.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                         new CompoundBorder(new EtchedBorder(),
-                                                                            new EmptyBorder(5, 5, 5, 5))));
-
-        jpPolicyConstraints.add(jlPolicyConstraints, gbc_jlPolicyConstraints);
-        jpPolicyConstraints.add(jlRequireExplicitPolicy, gbc_jlRequireExplicitPolicy);
-        jpPolicyConstraints.add(jtfRequireExplicitPolicy, gbc_jtfRequireExplicitPolicy);
-        jpPolicyConstraints.add(jlInhibitPolicyMapping, gbc_jlInhibitPolicyMapping);
-        jpPolicyConstraints.add(jtfInhibitPolicyMapping, gbc_jtfInhibitPolicyMapping);
 
         jbOK = new JButton(res.getString("DPolicyConstraints.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -166,11 +117,16 @@ public class DPolicyConstraints extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpPolicyConstraints, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlPolicyConstraints, "wrap");
+        pane.add(jlRequireExplicitPolicy);
+        pane.add(jtfRequireExplicitPolicy, "wrap");
+        pane.add(jlInhibitPolicyMapping);
+        pane.add(jtfInhibitPolicyMapping, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

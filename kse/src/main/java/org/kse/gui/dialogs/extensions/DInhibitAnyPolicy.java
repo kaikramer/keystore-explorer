@@ -19,8 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -34,18 +33,17 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.kse.crypto.x509.InhibitAnyPolicy;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit an Inhibit Any Policy extension.
@@ -57,12 +55,9 @@ public class DInhibitAnyPolicy extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpInhibitAnyPolicy;
     private JLabel jlInhibitAnyPolicy;
-    private JPanel jpSkipCertificates;
     private JLabel jlSkipCertificates;
     private JTextField jtfSkipCertificates;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -95,24 +90,11 @@ public class DInhibitAnyPolicy extends DExtension {
 
     private void initComponents() {
         jlInhibitAnyPolicy = new JLabel(res.getString("DInhibitAnyPolicy.jlInhibitAnyPolicy.text"));
-        jlInhibitAnyPolicy.setBorder(new EmptyBorder(5, 5, 0, 5));
+        jlInhibitAnyPolicy.setBorder(new EmptyBorder(0, 0, 5, 0));
 
         jlSkipCertificates = new JLabel(res.getString("DInhibitAnyPolicy.jlSkipCertificates.text"));
 
         jtfSkipCertificates = new JTextField(3);
-
-        jpSkipCertificates = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        jpSkipCertificates.add(jlSkipCertificates);
-        jpSkipCertificates.add(jtfSkipCertificates);
-
-        jpInhibitAnyPolicy = new JPanel(new BorderLayout(5, 5));
-
-        jpInhibitAnyPolicy.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                        new CompoundBorder(new EtchedBorder(),
-                                                                           new EmptyBorder(5, 5, 5, 5))));
-
-        jpInhibitAnyPolicy.add(jlInhibitAnyPolicy, BorderLayout.NORTH);
-        jpInhibitAnyPolicy.add(jpSkipCertificates, BorderLayout.CENTER);
 
         jbOK = new JButton(res.getString("DInhibitAnyPolicy.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -130,11 +112,14 @@ public class DInhibitAnyPolicy extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpInhibitAnyPolicy, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
+        pane.add(jlInhibitAnyPolicy, "wrap");
+        pane.add(jlSkipCertificates);
+        pane.add(jtfSkipCertificates, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

@@ -19,10 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -39,11 +36,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
@@ -51,9 +45,10 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.accessdescription.JAccessDescriptions;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to add or edit an Authority Information Access extension.
@@ -65,10 +60,8 @@ public class DAuthorityInformationAccess extends DExtension {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpAccessDescriptions;
     private JLabel jlAccessDescriptions;
     private JAccessDescriptions jadAccessDescriptions;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -102,33 +95,8 @@ public class DAuthorityInformationAccess extends DExtension {
     private void initComponents() {
         jlAccessDescriptions = new JLabel(res.getString("DAuthorityInformationAccess.jlAccessDescriptions.text"));
 
-        GridBagConstraints gbc_jlAccessDescriptions = new GridBagConstraints();
-        gbc_jlAccessDescriptions.gridx = 0;
-        gbc_jlAccessDescriptions.gridy = 0;
-        gbc_jlAccessDescriptions.gridwidth = 1;
-        gbc_jlAccessDescriptions.gridheight = 1;
-        gbc_jlAccessDescriptions.insets = new Insets(5, 5, 5, 5);
-        gbc_jlAccessDescriptions.anchor = GridBagConstraints.NORTHEAST;
-
         jadAccessDescriptions = new JAccessDescriptions(
                 res.getString("DAuthorityInformationAccess.AccessDescription.Title"));
-
-        GridBagConstraints gbc_jadAccessDescriptions = new GridBagConstraints();
-        gbc_jadAccessDescriptions.gridx = 1;
-        gbc_jadAccessDescriptions.gridy = 0;
-        gbc_jadAccessDescriptions.gridwidth = 1;
-        gbc_jadAccessDescriptions.gridheight = 1;
-        gbc_jadAccessDescriptions.insets = new Insets(5, 5, 5, 5);
-        gbc_jadAccessDescriptions.anchor = GridBagConstraints.WEST;
-
-        jpAccessDescriptions = new JPanel(new GridBagLayout());
-
-        jpAccessDescriptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                          new CompoundBorder(new EtchedBorder(),
-                                                                             new EmptyBorder(5, 5, 5, 5))));
-
-        jpAccessDescriptions.add(jlAccessDescriptions, gbc_jlAccessDescriptions);
-        jpAccessDescriptions.add(jadAccessDescriptions, gbc_jadAccessDescriptions);
 
         jbOK = new JButton(res.getString("DAuthorityInformationAccess.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -146,11 +114,13 @@ public class DAuthorityInformationAccess extends DExtension {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpAccessDescriptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]"));
+        pane.add(jlAccessDescriptions, "wrap");
+        pane.add(jadAccessDescriptions, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

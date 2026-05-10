@@ -38,7 +38,7 @@ import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_ALTERNATIVE_NAME;
 import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_INFORMATION_ACCESS;
 import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_KEY_IDENTIFIER;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -58,19 +58,17 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to retrieve the type to use in the addition of a new extension.
@@ -92,12 +90,10 @@ public class DAddExtensionType extends JEscDialog {
                                                                       SUBJECT_INFORMATION_ACCESS,
                                                                       SUBJECT_KEY_IDENTIFIER };
 
-    private JPanel jpExtensionTypes;
     private JLabel jlExtensionTypes;
     private JList<X509ExtensionType> jltExtensionTypes;
     private JScrollPane jspExtensionTypes;
     private JCheckBox jcbCriticalExtension;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -119,11 +115,6 @@ public class DAddExtensionType extends JEscDialog {
     }
 
     private void initComponents() {
-        jpExtensionTypes = new JPanel(new BorderLayout(5, 5));
-        jpExtensionTypes.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                      new CompoundBorder(new EtchedBorder(),
-                                                                         new EmptyBorder(5, 5, 5, 5))));
-
         jlExtensionTypes = new JLabel(res.getString("DAddExtensionType.jlExtensionTypes.text"));
 
         jltExtensionTypes = new JList<>();
@@ -131,7 +122,6 @@ public class DAddExtensionType extends JEscDialog {
         jltExtensionTypes.setPrototypeCellValue(NETSCAPE_CERTIFICATE_RENEWAL_URL);
         jltExtensionTypes.setToolTipText(res.getString("DAddExtensionType.jltExtensionTypes.tooltip"));
         jltExtensionTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jltExtensionTypes.setBorder(new EtchedBorder());
 
         jltExtensionTypes.addMouseListener(new MouseAdapter() {
             @Override
@@ -145,10 +135,6 @@ public class DAddExtensionType extends JEscDialog {
         jcbCriticalExtension = new JCheckBox(res.getString("DAddExtensionType.jcbCriticalExtension.text"));
         jcbCriticalExtension.setMnemonic(res.getString("DAddExtensionType.jcbCriticalExtension.mnemonic").charAt(0));
         jcbCriticalExtension.setToolTipText(res.getString("DAddExtensionType.jcbCriticalExtension.tooltip"));
-
-        jpExtensionTypes.add(jlExtensionTypes, BorderLayout.NORTH);
-        jpExtensionTypes.add(jspExtensionTypes, BorderLayout.CENTER);
-        jpExtensionTypes.add(jcbCriticalExtension, BorderLayout.SOUTH);
 
         jbOK = new JButton(res.getString("DAddExtensionType.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -166,13 +152,16 @@ public class DAddExtensionType extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
         populateExtensionTypes();
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpExtensionTypes, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]"));
+        pane.add(jlExtensionTypes, "wrap");
+        pane.add(jspExtensionTypes, "wrap");
+        pane.add(jcbCriticalExtension, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         addWindowListener(new WindowAdapter() {
             @Override

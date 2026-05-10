@@ -19,9 +19,8 @@
  */
 package org.kse.gui.crypto;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.security.PublicKey;
@@ -35,19 +34,17 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.publickey.KeyIdentifierGenerator;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.PlatformUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose a key identifier value.
@@ -61,13 +58,11 @@ public class DKeyIdentifierChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpKeyIdentifier;
     private JLabel jlGenerationMethod;
     private JRadioButton jrb160BitHash;
     private JRadioButton jrb64BitHash;
     private JRadioButton jrbSha1OverSpki;
     private JRadioButton jrbSha256OverSpki;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -131,18 +126,6 @@ public class DKeyIdentifierChooser extends JEscDialog {
         bgKeyIdentifier.add(jrbSha1OverSpki);
         bgKeyIdentifier.add(jrbSha256OverSpki);
 
-        jpKeyIdentifier = new JPanel(new GridLayout(5, 1));
-        jpKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-                                                                                                     new EmptyBorder(5,
-                                                                                                                     5,
-                                                                                                                     5,
-                                                                                                                     5))));
-        jpKeyIdentifier.add(jlGenerationMethod);
-        jpKeyIdentifier.add(jrb160BitHash);
-        jpKeyIdentifier.add(jrb64BitHash);
-        jpKeyIdentifier.add(jrbSha1OverSpki);
-        jpKeyIdentifier.add(jrbSha256OverSpki);
-
         jbOK = new JButton(res.getString("DKeyIdentifierChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
@@ -159,11 +142,16 @@ public class DKeyIdentifierChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpKeyIdentifier);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlGenerationMethod, "wrap");
+        pane.add(jrb160BitHash, "wrap");
+        pane.add(jrb64BitHash, "wrap");
+        pane.add(jrbSha1OverSpki, "wrap");
+        pane.add(jrbSha256OverSpki, "wrap");
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
         populate(keyIdentifier);
 
