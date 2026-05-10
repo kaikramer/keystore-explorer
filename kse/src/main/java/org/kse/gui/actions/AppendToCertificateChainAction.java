@@ -23,11 +23,13 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.security.Key;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
@@ -85,6 +87,7 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KseKeyStore keyStore = newState.getKeyStore();
+            KeyStoreType keyStoreType = newState.getType();
 
             Key privKey = keyStore.getKey(alias, password.toCharArray());
 
@@ -93,6 +96,46 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
 
             // Certificate to append to is the end one in the chain
             X509Certificate certToAppendTo = certChain[certChain.length - 1];
+
+            if (keyStoreType.hasDynamicCertificateChains()) {
+                // The PKCS12 and PEM key store types do not store full chains. They store
+                // collections of certificates, which are then used to build the full chain
+                // for the private key entries when the key store is loaded. When a key pair
+                // entry containing just an end-entity certificate or a partial chain is
+                // imported into a PKCS12 or PEM key store that already has the necessary
+                // certificates for building the entire chain, then next time the key store
+                // is loaded the new entry will have the entire certificate chain. The undo/redo
+                // system loads the new state from the current state causing the potential for
+                // the newState key store to have a different certificate chain than the currentState
+                // key store.
+                KseKeyStore currentKeyStore = currentState.getKeyStore();
+
+                X509Certificate[] currentCertChain = X509CertUtil.orderX509CertChain(
+                        X509CertUtil.convertCertificates(currentKeyStore.getCertificateChain(alias)));
+
+                // Certificate to append to is the end one in the chain
+                X509Certificate currentCertToAppendTo = currentCertChain[currentCertChain.length - 1];
+
+                if (!currentCertToAppendTo.equals(certToAppendTo)) {
+                    int selection = JOptionPane.showConfirmDialog(frame,
+                            MessageFormat.format(
+                                    res.getString("AppendToCertificateChainAction.DifferentChains.message"),
+                                    keyStoreType.friendly()),
+                            res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"),
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (selection == JOptionPane.YES_OPTION) {
+                        currentState.append(newState);
+
+                        kseFrame.updateControls(true);
+
+                        JOptionPane.showMessageDialog(frame, res.getString(
+                                "AppendToCertificateChainAction.DifferentChainsUpdated.message"), res.getString(
+                                "AppendToCertificateChainAction.AppendToCertificateChain.Title"), JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                    return;
+                }
+            }
 
             if (X509CertUtil.isCertificateSelfSigned(certToAppendTo)) {
                 JOptionPane.showMessageDialog(frame, res.getString(
