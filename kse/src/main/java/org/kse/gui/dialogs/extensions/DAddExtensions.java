@@ -885,12 +885,12 @@ public class DAddExtensions extends JEscDialog {
         X509ExtensionSet extensionSet = new X509ExtensionSet();
 
         KeyIdentifierGenerator akiGenerator = new KeyIdentifierGenerator(keyPair.getPublic());
-        AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generate160BitHashId());
+        AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generateDefault());
         byte[] akiEncoded = X509Ext.wrapInOctetString(aki.getEncoded());
         extensionSet.addExtension(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid(), false, akiEncoded);
 
         KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(keyPair.getPublic());
-        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
+        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generateDefault());
         byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded());
         extensionSet.addExtension(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid(), false, skiEncoded);
 

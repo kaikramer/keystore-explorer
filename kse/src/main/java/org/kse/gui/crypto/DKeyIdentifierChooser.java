@@ -61,6 +61,9 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private JLabel jlGenerationMethod;
     private JRadioButton jrb160BitHash;
     private JRadioButton jrb64BitHash;
+    private JRadioButton jrb160BitHash256;
+    private JRadioButton jrb160BitHash384;
+    private JRadioButton jrb160BitHash512;
     private JRadioButton jrbSha1OverSpki;
     private JRadioButton jrbSha256OverSpki;
     private JButton jbOK;
@@ -69,6 +72,9 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private PublicKey publicKey;
     private byte[] keyIdentifier160Bit;
     private byte[] keyIdentifier64Bit;
+    private byte[] keyIdentifier160BitSha256;
+    private byte[] keyIdentifier160BitSha384;
+    private byte[] keyIdentifier160BitSha512;
     private byte[] keyIdentifierSha1OverSpki;
     private byte[] keyIdentifierSha256OverSpki;
     private byte[] keyIdentifier;
@@ -114,6 +120,15 @@ public class DKeyIdentifierChooser extends JEscDialog {
         jrb64BitHash = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod2.text"));
         jrb64BitHash.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod2.tooltip"));
 
+        jrb160BitHash256 = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiSha256.text"));
+        jrb160BitHash256.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiSha256.tooltip"));
+
+        jrb160BitHash384 = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiSha384.text"));
+        jrb160BitHash384.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiSha384.tooltip"));
+
+        jrb160BitHash512 = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiSha512.text"));
+        jrb160BitHash512.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiSha512.tooltip"));
+
         jrbSha1OverSpki = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"));
         jrbSha1OverSpki.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.Sha1overSpki.tooltip"));
 
@@ -123,6 +138,9 @@ public class DKeyIdentifierChooser extends JEscDialog {
         ButtonGroup bgKeyIdentifier = new ButtonGroup();
         bgKeyIdentifier.add(jrb160BitHash);
         bgKeyIdentifier.add(jrb64BitHash);
+        bgKeyIdentifier.add(jrb160BitHash256);
+        bgKeyIdentifier.add(jrb160BitHash384);
+        bgKeyIdentifier.add(jrb160BitHash512);
         bgKeyIdentifier.add(jrbSha1OverSpki);
         bgKeyIdentifier.add(jrbSha256OverSpki);
 
@@ -147,6 +165,9 @@ public class DKeyIdentifierChooser extends JEscDialog {
         pane.add(jlGenerationMethod, "wrap");
         pane.add(jrb160BitHash, "wrap");
         pane.add(jrb64BitHash, "wrap");
+        pane.add(jrb160BitHash256, "wrap");
+        pane.add(jrb160BitHash384, "wrap");
+        pane.add(jrb160BitHash512, "wrap");
         pane.add(jrbSha1OverSpki, "wrap");
         pane.add(jrbSha256OverSpki, "wrap");
         pane.add(new JSeparator(), "spanx, growx");
@@ -168,14 +189,24 @@ public class DKeyIdentifierChooser extends JEscDialog {
         // This strategy is similar to PublicKeyFingerprintUtil.calculateFingerprint
         keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
         keyIdentifier64Bit = keyIdentifierGenerator.generate64BitHashId();
+        keyIdentifier160BitSha256 = keyIdentifierGenerator.generate160BitSha256HashId();
+        keyIdentifier160BitSha384 = keyIdentifierGenerator.generate160BitSha384HashId();
+        keyIdentifier160BitSha512 = keyIdentifierGenerator.generate160BitSha512HashId();
         keyIdentifierSha1OverSpki = DigestUtil.getMessageDigest(publicKey.getEncoded(), DigestType.SHA1);
         keyIdentifierSha256OverSpki = DigestUtil.getMessageDigest(publicKey.getEncoded(), DigestType.SHA256);
 
         if (keyIdentifier == null) {
-            jrb160BitHash.setSelected(true);
+            // default hash
+            jrb160BitHash256.setSelected(true);
         } else if (keyIdentifier.length == keyIdentifier160Bit.length) {
             if (Arrays.equals(keyIdentifier, keyIdentifier160Bit)) {
                 jrb160BitHash.setSelected(true);
+            } else if (Arrays.equals(keyIdentifier, keyIdentifier160BitSha256)) {
+                jrb160BitHash256.setSelected(true);
+            } else if (Arrays.equals(keyIdentifier, keyIdentifier160BitSha384)) {
+                jrb160BitHash384.setSelected(true);
+            } else if (Arrays.equals(keyIdentifier, keyIdentifier160BitSha512)) {
+                jrb160BitHash512.setSelected(true);
             } else {
                 jrbSha1OverSpki.setSelected(true);
             }
@@ -200,6 +231,12 @@ public class DKeyIdentifierChooser extends JEscDialog {
             keyIdentifier = keyIdentifier160Bit;
         } else if (jrb64BitHash.isSelected()) {
             keyIdentifier = keyIdentifier64Bit;
+        } else if (jrb160BitHash256.isSelected()) {
+            keyIdentifier = keyIdentifier160BitSha256;
+        } else if (jrb160BitHash384.isSelected()) {
+            keyIdentifier = keyIdentifier160BitSha384;
+        } else if (jrb160BitHash512.isSelected()) {
+            keyIdentifier = keyIdentifier160BitSha512;
         } else if (jrbSha1OverSpki.isSelected()) {
             keyIdentifier = keyIdentifierSha1OverSpki;
         } else {

@@ -54,6 +54,16 @@ public class KeyIdentifierGenerator {
     }
 
     /**
+     * Generate the key identifier using the default method.
+     *
+     * @return Key identifier
+     * @throws CryptoException If generation fails
+     */
+    public byte[] generateDefault() throws CryptoException {
+        return generate160BitSha256HashId();
+    }
+
+    /**
      * Generate 160 bit hash key identifier.
      *
      * @return Key identifier
@@ -66,12 +76,7 @@ public class KeyIdentifierGenerator {
          * length, and number of unused bits)
          */
 
-        try {
-            DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
-            return DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), DigestType.SHA1);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
-        }
+        return generate160BitHashId(DigestType.SHA1);
     }
 
     /**
@@ -96,6 +101,63 @@ public class KeyIdentifierGenerator {
             subHash[0] |= 0x40;
 
             return subHash;
+        } catch (IOException ex) {
+            throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
+        }
+    }
+
+    /**
+     * Generate 160 bit hash key identifier.
+     *
+     * @return Key identifier
+     * @throws CryptoException If generation fails
+     */
+    public byte[] generate160BitSha256HashId() throws CryptoException {
+        /*
+         * RFC 7093: The keyIdentifier is composed of the leftmost 160-bits of the
+         * SHA-256 hash of the value of the BIT STRING subjectPublicKey (excluding
+         * the tag, length, and number of unused bits)
+         */
+
+        return generate160BitHashId(DigestType.SHA256);
+    }
+
+    /**
+     * Generate 160 bit hash key identifier.
+     *
+     * @return Key identifier
+     * @throws CryptoException If generation fails
+     */
+    public byte[] generate160BitSha384HashId() throws CryptoException {
+        /*
+         * RFC 7093: The keyIdentifier is composed of the leftmost 160-bits of the
+         * SHA-384 hash of the value of the BIT STRING subjectPublicKey (excluding
+         * the tag, length, and number of unused bits)
+         */
+
+        return generate160BitHashId(DigestType.SHA384);
+    }
+
+    /**
+     * Generate 160 bit hash key identifier.
+     *
+     * @return Key identifier
+     * @throws CryptoException If generation fails
+     */
+    public byte[] generate160BitSha512HashId() throws CryptoException {
+        /*
+         * RFC 7093: The keyIdentifier is composed of the leftmost 160-bits of the
+         * SHA-512 hash of the value of the BIT STRING subjectPublicKey (excluding
+         * the tag, length, and number of unused bits)
+         */
+
+        return generate160BitHashId(DigestType.SHA512);
+    }
+
+    private byte[] generate160BitHashId(DigestType digestType) throws CryptoException {
+        try {
+            DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
+            return Arrays.copyOfRange(DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), digestType), 0, 20);
         } catch (IOException ex) {
             throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
         }

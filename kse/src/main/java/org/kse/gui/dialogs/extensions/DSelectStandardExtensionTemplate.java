@@ -264,7 +264,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
     }
 
     private void addAuthorityKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
-        byte[] keyIdentifier = new KeyIdentifierGenerator(authorityPublicKey).generate160BitHashId();
+        byte[] keyIdentifier = new KeyIdentifierGenerator(authorityPublicKey).generateDefault();
         if (issuerSki != null) {
             keyIdentifier = issuerSki.getKeyIdentifier();
         }
@@ -275,7 +275,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 
     private void addSubjectKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
         KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
-        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
+        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generateDefault());
         byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded());
         extensionSet.addExtension(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid(), false, skiEncoded);
     }

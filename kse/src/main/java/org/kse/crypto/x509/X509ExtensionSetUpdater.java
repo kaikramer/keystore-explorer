@@ -84,7 +84,7 @@ public class X509ExtensionSetUpdater {
         // extracting old SKI data not necessary because there is only one possible component in SKI extension
 
         KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
-        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
+        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generateDefault());
         byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded(ASN1Encoding.DER));
 
         // update
@@ -102,7 +102,7 @@ public class X509ExtensionSetUpdater {
         BigInteger authorityCertSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
 
         // generate new values
-        byte[] newKeyIdentifier = new KeyIdentifierGenerator(newIssuerPublicKey).generate160BitHashId();
+        byte[] newKeyIdentifier = new KeyIdentifierGenerator(newIssuerPublicKey).generateDefault();
         if (issuerSki != null) {
             newKeyIdentifier = issuerSki.getKeyIdentifier();
         }
