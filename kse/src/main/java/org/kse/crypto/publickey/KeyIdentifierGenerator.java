@@ -60,7 +60,7 @@ public class KeyIdentifierGenerator {
      * @throws CryptoException If generation fails
      */
     public byte[] generateDefault() throws CryptoException {
-        return generate160BitSha256HashId();
+        return generate160BitHashId();
     }
 
     /**
