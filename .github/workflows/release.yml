@@ -42,7 +42,7 @@ jobs:
         uses: signpath/github-action-submit-signing-request@v2
         with:
           project-slug: 'keystore-explorer'
-          signing-policy-slug: 'test-signing'
+          signing-policy-slug: 'release-signing '
           organization-id: '012d4358-74c0-4a1a-ad01-3f4274e54951'
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
@@ -234,7 +234,7 @@ jobs:
         uses: signpath/github-action-submit-signing-request@v2
         with:
           project-slug: 'keystore-explorer'
-          signing-policy-slug: 'test-signing'
+          signing-policy-slug: 'release-signing '
           artifact-configuration-slug: 'setup-exe'
           organization-id: '012d4358-74c0-4a1a-ad01-3f4274e54951'
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
