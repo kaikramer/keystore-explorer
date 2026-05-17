@@ -107,3 +107,14 @@ Use the "Resource Bundle Editor" plugin for JetBrains IDEs to simplify the proce
 ## License
 
 [GNU General Public License v3.0](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
+
+## Sponsors
+
+<table>
+ <tbody>
+  <tr>
+   <td align="center"><img alt="[SignPath]" src="https://avatars.githubusercontent.com/u/34448643" height="30"/></td>
+   <td>Free code signing for Windows provided by <a href="https://signpath.io/">SignPath.io</a>, certificate by <a href="https://signpath.org/">SignPath Foundation</a></td>
+  </tr>
+ </tbody>
+</table>
