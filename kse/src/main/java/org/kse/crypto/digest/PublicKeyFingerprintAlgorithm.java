@@ -19,7 +19,7 @@
  */
 package org.kse.crypto.digest;
 
-import java.util.ResourceBundle;
+import org.kse.gui.util.ResourceBundleCache;
 
 /**
  * Enumeration of hash algorithms supported by the {@link PublicKeyFingerprintAlgorithm} class.
@@ -38,7 +38,11 @@ public enum PublicKeyFingerprintAlgorithm {
 
     // @formatter:on
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
+    // This enumeration is referenced by KsePreferences so its static fields
+    // are initialized before the language setting is populated. Use the
+    // ResourceBundleCache singleton for accessing the resource bundle.
+    private static final String RESOURCE_PATH = "org/kse/crypto/digest/resources";
+    private static ResourceBundleCache res = ResourceBundleCache.INSTANCE;
 
     private final String resBundleKey;
 
@@ -52,7 +56,7 @@ public enum PublicKeyFingerprintAlgorithm {
      * @return Friendly name
      */
     public String friendly() {
-        return res.getString(resBundleKey);
+        return res.getString(RESOURCE_PATH, resBundleKey);
     }
 
     /**

@@ -20,7 +20,7 @@
 
 package org.kse.gui.preferences.data;
 
-import java.util.ResourceBundle;
+import org.kse.gui.util.ResourceBundleCache;
 
 /**
  * Options for RNG type (currently only strong/default)
@@ -30,26 +30,16 @@ public enum RngTypeSetting {
     _default("RngTypeSetting.default");
 
     private String resourceBundleKey;
-    private static ResourceBundle res;
 
     RngTypeSetting(String resourceBundleKey) {
         this.resourceBundleKey = resourceBundleKey;
     }
 
-    /**
-     * Allows to pass a resource bundle (which unfortunately cannot be initialized in this enum)
-     * that is then used to translate the result of the {@code toString()} method.
-     * @param resourceBundle An initialized resource bundle
-     */
-    public static void setResourceBundle(ResourceBundle resourceBundle) {
-        res = resourceBundle;
-    }
-
     @Override
     public String toString() {
-        if (res == null) {
-            return this.name();
-        }
-        return res.getString(this.resourceBundleKey);
+        // This enumeration is referenced by KsePreferences so its static fields
+        // are initialized before the language setting is populated. Use the
+        // ResourceBundleCache singleton for accessing the resource bundle.
+        return ResourceBundleCache.INSTANCE.getString("org/kse/gui/preferences/resources", resourceBundleKey);
     }
 }
