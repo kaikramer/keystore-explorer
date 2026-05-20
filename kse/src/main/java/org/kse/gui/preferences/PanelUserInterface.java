@@ -149,13 +149,11 @@ class PanelUserInterface {
         jcbShowNativeFileChooser.setSelected(preferences.isNativeFileChooserEnabled());
 
         JLabel jlPkcs12Encryption  = new JLabel(res.getString("DPreferences.jlPkcs12Encryption.text"));
-        Pkcs12EncryptionSetting.setResourceBundle(res);
         jcbPkcs12Encryption = new JComboBox<>(Pkcs12EncryptionSetting.values());
         jcbPkcs12Encryption.setSelectedItem(preferences.getPkcs12EncryptionSetting());
         jcbPkcs12Encryption.setToolTipText(res.getString("DPreferences.jcbPkcs12Encryption.tooltip"));
 
         JLabel jlRngType  = new JLabel(res.getString("DPreferences.jlRngType.text"));
-        RngTypeSetting.setResourceBundle(res);
         jcbRngType = new JComboBox<>(RngTypeSetting.values());
         jcbRngType.setSelectedItem(preferences.getRngTypeSetting());
         jcbRngType.setToolTipText(res.getString("DPreferences.jcbRngType.tooltip"));

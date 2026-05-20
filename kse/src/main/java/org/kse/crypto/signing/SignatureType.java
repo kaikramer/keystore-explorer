@@ -42,13 +42,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.ecc.EdDSACurves;
+import org.kse.gui.util.ResourceBundleCache;
 
 /**
  * Enumeration of Signature Types supported by the X509CertUtil class.
@@ -140,9 +140,14 @@ public enum SignatureType {
     SM3_SM2("SM3withSM2", "1.2.156.10197.1.501", SM3, "SignatureType.Sm3withSm2");
     // @formatter:on
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
     private static final String RSASSA_PSS_OID = id_RSASSA_PSS.getId();
     private static final Map<String, SignatureType> ADDITIONAL_OIDS = new HashMap<>();
+
+    // This enumeration is referenced by KsePreferences so its static fields
+    // are initialized before the language setting is populated. Use the
+    // ResourceBundleCache singleton for accessing the resource bundle.
+    private static final String RESOURCE_PATH = "org/kse/crypto/signing/resources";
+    private static ResourceBundleCache res = ResourceBundleCache.INSTANCE;
 
     private String jce;
     private String oid;
@@ -197,7 +202,7 @@ public enum SignatureType {
      * @return Friendly name
      */
     public String friendly() {
-        return res.getString(friendlyKey);
+        return res.getString(RESOURCE_PATH, friendlyKey);
     }
 
     /**

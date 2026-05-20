@@ -54,6 +54,12 @@ public class PublicKeyFingerprintUtil {
             return keyIdentifierGenerator.generate160BitHashId();
         case SKI_METHOD2:
             return keyIdentifierGenerator.generate64BitHashId();
+        case SKI_SHA256:
+            return keyIdentifierGenerator.generate160BitSha256HashId();
+        case SKI_SHA384:
+            return keyIdentifierGenerator.generate160BitSha384HashId();
+        case SKI_SHA512:
+            return keyIdentifierGenerator.generate160BitSha512HashId();
         case SHA1_OVER_SPKI:
             return DigestUtil.getMessageDigest(convertedPublicKey.getEncoded(), DigestType.SHA1);
         case SHA256_OVER_SPKI:

@@ -19,7 +19,7 @@
  */
 package org.kse.crypto.digest;
 
-import java.util.ResourceBundle;
+import org.kse.gui.util.ResourceBundleCache;
 
 /**
  * Enumeration of hash algorithms supported by the {@link PublicKeyFingerprintAlgorithm} class.
@@ -30,29 +30,24 @@ public enum PublicKeyFingerprintAlgorithm {
 
     SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1.text"),
     SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2.text"),
+    SKI_SHA256("PublicKeyFingerprintAlgorithm.SkiSha256.text"),
+    SKI_SHA384("PublicKeyFingerprintAlgorithm.SkiSha384.text"),
+    SKI_SHA512("PublicKeyFingerprintAlgorithm.SkiSha512.text"),
     SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"),
     SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki.text");
 
     // @formatter:on
 
-    private volatile ResourceBundle cachedResourceBundle;
+    // This enumeration is referenced by KsePreferences so its static fields
+    // are initialized before the language setting is populated. Use the
+    // ResourceBundleCache singleton for accessing the resource bundle.
+    private static final String RESOURCE_PATH = "org/kse/crypto/digest/resources";
+    private static ResourceBundleCache res = ResourceBundleCache.INSTANCE;
 
     private final String resBundleKey;
 
     PublicKeyFingerprintAlgorithm(String resBundleKey) {
         this.resBundleKey = resBundleKey;
-    }
-
-    private ResourceBundle getResourceBundle() {
-        if (cachedResourceBundle == null) {
-            synchronized (this) {
-                // Double-check locking pattern (cachedResourceBundle is volatile to ensure visibility)
-                if (cachedResourceBundle == null) {
-                    cachedResourceBundle = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
-                }
-            }
-        }
-        return cachedResourceBundle;
     }
 
     /**
@@ -61,7 +56,7 @@ public enum PublicKeyFingerprintAlgorithm {
      * @return Friendly name
      */
     public String friendly() {
-        return getResourceBundle().getString(resBundleKey);
+        return res.getString(RESOURCE_PATH, resBundleKey);
     }
 
     /**
