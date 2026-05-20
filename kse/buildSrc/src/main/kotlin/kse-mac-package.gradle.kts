@@ -185,68 +185,6 @@ tasks.register("signapp") {
             }
         }
 
-        // Helper function to extract, sign, and repackage jars containing native libraries
-        fun processJarWithNativeLibs(jarPattern: String, jarName: String) {
-            val jarFiles = fileTree("$appBundleDir/$appBundle/Contents/Java") {
-                include("**/$jarPattern")
-            }
-            if (jarFiles.isEmpty) {
-                println("No $jarName jar found, skipping...")
-                return
-            }
-
-            val jar = jarFiles.singleFile
-            val extractDir = "$appBundleDir/$jarName-temp"
-            mkdir(extractDir)
-
-            copy {
-                from(zipTree(jar))
-                into(extractDir)
-            }
-
-            // Find all .dylib files in the extracted content, but not in .dSYM dirs
-            val dylibFiles = fileTree(extractDir) {
-                include("**/*.dylib")
-                exclude("**/*.dSYM/**")
-            }
-            if (dylibFiles.isEmpty) {
-                println("No native libraries found in $jarName jar")
-            } else {
-                dylibFiles.forEach { dylibFile ->
-                    println("Signing $jarName native library: ${dylibFile.absolutePath}")
-                    val result = providers.exec {
-                        workingDir(appBundleDir)
-                        commandLine(
-                            "codesign",
-                            "-vvv",
-                            "--force",
-                            "-s", signingIdentity,
-                            dylibFile.absolutePath
-                        )
-                    }
-                    println("Codesign output: ${result.standardOutput.asText.get()}")
-                    if (result.standardError.asText.get().isNotEmpty()) {
-                        println("Codesign errors: ${result.standardError.asText.get()}")
-                    }
-                }
-            }
-
-            // Repackage the jar with all extracted and signed files
-            ant.withGroovyBuilder {
-                "jar"("destfile" to jar.absolutePath, "update" to true) {
-                    "fileset"("dir" to extractDir) {
-                        "include"("name" to "**/*")
-                    }
-                }
-            }
-            delete(extractDir)
-        }
-
-        // Process jars that contain native libraries
-        processJarWithNativeLibs("vaqua-*.jar", "vaqua")
-        processJarWithNativeLibs("vappearances-*.jar", "vappearances")
-        processJarWithNativeLibs("jnr-*.jar", "jnr")
-
         // Sign Java runtime and app bundle
         val javaBaseDirName = File(System.getProperty("java.home")).parentFile.parentFile.name
         println("java.home: ${System.getProperty("java.home")}")

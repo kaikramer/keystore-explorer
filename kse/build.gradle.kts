@@ -133,8 +133,6 @@ dependencies {
     implementation("com.nimbusds:nimbus-jose-jwt:10.6")
     implementation("com.google.crypto.tink:tink:1.20.0") // nimbus-jose-jwt optional dep for ed25519
 
-    implementation("org.violetlib:vaqua:13")
-
     implementation("io.github.java-diff-utils:java-diff-utils:4.15")
     implementation("org.mozilla:rhino:1.7.15")
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.20.1")

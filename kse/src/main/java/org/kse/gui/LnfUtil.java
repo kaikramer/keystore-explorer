@@ -40,9 +40,6 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
  */
 public class LnfUtil {
 
-    // VAqua LnF class as constant to avoid compile dependency
-    private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
-
     private LnfUtil() {
     }
 
@@ -72,11 +69,6 @@ public class LnfUtil {
 
         // enable "eye" on password fields
         UIManager.put("PasswordField.showRevealButton", true);
-
-        // VAqua is optional
-        if (OperatingSystem.isMacOs() && isVAquaAvailable()) {
-            UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
-        }
     }
 
     /**
@@ -103,8 +95,7 @@ public class LnfUtil {
         return OperatingSystem.isMacOs() &&
                (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) ||
                 lnfClass.equals(FlatMacLightLaf.class.getName()) ||
-                lnfClass.equals(FlatMacDarkLaf.class.getName()) ||
-                lnfClass.equals(VAQUA_LAF_CLASS));
+                lnfClass.equals(FlatMacDarkLaf.class.getName()));
     }
 
     /**
@@ -133,19 +124,6 @@ public class LnfUtil {
         return UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarkLaf.class) ||
                UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatMacDarkLaf.class) ||
                UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarculaLaf.class);
-    }
-
-    /**
-     * Is optional VAqua LaF available?
-     */
-    public static boolean isVAquaAvailable() {
-        try {
-            Class.forName(VAQUA_LAF_CLASS);
-            return true;
-        } catch (ClassNotFoundException e) {
-            // VAqua jar not included
-        }
-        return false;
     }
 
     /**
