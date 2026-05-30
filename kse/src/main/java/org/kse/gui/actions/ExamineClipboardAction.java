@@ -149,7 +149,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 downloadCrl(url, frame);
                 return;
             }
-        } catch (IOException | URISyntaxException | CryptoException e) {
+        } catch (Exception e) {
             // ignore
         }
 

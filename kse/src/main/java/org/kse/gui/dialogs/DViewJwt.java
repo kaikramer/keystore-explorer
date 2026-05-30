@@ -62,16 +62,14 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import com.fasterxml.jackson.jr.ob.JSON;
 import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
-import com.nimbusds.jose.crypto.Ed25519Verifier;
+import org.kse.crypto.signing.BcEd25519Verifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.OctetKeyPair;
@@ -248,14 +246,22 @@ public class DViewJwt extends JEscDialog {
     }
 
     private void populateDialog() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JSON jackson = JSON.std.with(JSON.Feature.PRETTY_PRINT_OUTPUT);
 
         Header header = jwt.getHeader();
-        jtaHeader.setText(gson.toJson(header.toJSONObject()));
+        try {
+            jtaHeader.setText(jackson.asString(header.toJSONObject()));
+        } catch (Exception e) {
+            jtaHeader.setText(header.toJSONObject().toString());
+        }
 
         if (jwt instanceof JWSObject) {
             Payload payload = ((JWSObject) jwt).getPayload();
-            jtaPayload.setText(gson.toJson(payload.toJSONObject()));
+            try {
+                jtaPayload.setText(jackson.asString(payload.toJSONObject()));
+            } catch (Exception e) {
+                jtaPayload.setText(payload.toJSONObject().toString());
+            }
         } else {
             jtaPayload.setText("{}");
         }
@@ -311,7 +317,7 @@ public class DViewJwt extends JEscDialog {
                 }
                 OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
                         Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
-                verifier = new Ed25519Verifier(okp);
+                verifier = new BcEd25519Verifier(okp);
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
                         res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);

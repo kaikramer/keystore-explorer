@@ -130,8 +130,9 @@ dependencies {
     implementation("com.formdev:flatlaf-extras:3.7") {
         exclude(group = "com.formdev", module = "flatlaf")
     }
-    implementation("com.nimbusds:nimbus-jose-jwt:10.6")
-    implementation("com.google.crypto.tink:tink:1.20.0") // nimbus-jose-jwt optional dep for ed25519
+    implementation("com.nimbusds:nimbus-jose-jwt:10.6") {
+        exclude(group = "com.google.crypto.tink", module = "tink")
+    }
 
     implementation("io.github.java-diff-utils:java-diff-utils:4.15")
     implementation("org.mozilla:rhino:1.7.15")

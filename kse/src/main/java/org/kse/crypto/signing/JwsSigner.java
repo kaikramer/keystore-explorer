@@ -30,7 +30,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
-import com.nimbusds.jose.crypto.Ed25519Signer;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.OctetKeyPair;
@@ -68,7 +67,7 @@ public class JwsSigner {
         } else if (JWSAlgorithm.Ed25519 == signatureAlgorithm || JWSAlgorithm.EdDSA == signatureAlgorithm) {
             var params = (Ed25519PrivateKeyParameters) PrivateKeyFactory.createKey(privateKey.getEncoded());
             OctetKeyPair okp = buildOctectKeyAPair(params);
-            signer = new Ed25519Signer(okp);
+            signer = new BcEd25519Signer(okp);
         }
 
         if (provider != null && signer != null) {

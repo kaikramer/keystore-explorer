@@ -43,7 +43,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
-import com.nimbusds.jose.crypto.Ed25519Verifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
@@ -108,12 +107,12 @@ public class JwsSignerTest extends CryptoTestsBase {
         return new ECDSAVerifier(ecKey);
     }
 
-    private static Ed25519Verifier buildEd25519Verifier() throws Exception {
+    private static BcEd25519Verifier buildEd25519Verifier() throws Exception {
         Ed25519PrivateKeyParameters params =
                 (Ed25519PrivateKeyParameters) PrivateKeyFactory.createKey(ed25519KeyPair.getPrivate().getEncoded());
         Base64URL encodedPub = Base64URL.encode(params.generatePublicKey().getEncoded());
         OctetKeyPair publicOkp = new OctetKeyPair.Builder(Curve.Ed25519, encodedPub).build();
-        return new Ed25519Verifier(publicOkp);
+        return new BcEd25519Verifier(publicOkp);
     }
 
     /**
@@ -262,7 +261,7 @@ public class JwsSignerTest extends CryptoTestsBase {
         assertThat(signedJWT.getHeader().getAlgorithm()).isEqualTo(algorithm);
         assertThat(signedJWT.getHeader().getKeyID()).isNull();
 
-        Ed25519Verifier verifier = buildEd25519Verifier();
+        BcEd25519Verifier verifier = buildEd25519Verifier();
         assertThat(signedJWT.verify(verifier)).isTrue();
         assertClaimsPreserved(signedJWT, claimsSet);
         assertRoundTripVerification(signedJWT, verifier);
@@ -280,7 +279,7 @@ public class JwsSignerTest extends CryptoTestsBase {
         assertThat(signedJWT.getState()).isEqualTo(JWSObject.State.SIGNED);
         assertThat(signedJWT.getHeader().getAlgorithm()).isEqualTo(algorithm);
 
-        Ed25519Verifier verifier = buildEd25519Verifier();
+        BcEd25519Verifier verifier = buildEd25519Verifier();
         assertThat(signedJWT.verify(verifier)).isTrue();
     }
 
