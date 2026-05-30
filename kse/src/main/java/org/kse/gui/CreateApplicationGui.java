@@ -41,8 +41,6 @@ import org.kse.utilities.os.OperatingSystem;
 import org.kse.version.JavaVersion;
 import org.kse.version.VersionException;
 
-import com.formdev.flatlaf.FlatLightLaf;
-
 /**
  * Runnable to create and show KeyStore Explorer application.
  */
@@ -150,8 +148,9 @@ public class CreateApplicationGui implements Runnable {
 
         String lookFeelClassName = applicationSettings.getLookAndFeelClass();
 
-        if (lookFeelClassName == null) {
-            lookFeelClassName = FlatLightLaf.class.getName();
+        // Fall back to the platform default when no preference is stored or when the stored L&F class no longer exists
+        if (!LnfUtil.isLnfAvailable(lookFeelClassName)) {
+            lookFeelClassName = LnfUtil.getDefaultLnf();
             applicationSettings.setLookAndFeelClass(lookFeelClassName);
         }
         LnfUtil.useLnf(lookFeelClassName);

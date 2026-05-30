@@ -20,6 +20,9 @@
 package org.kse.gui;
 
 import java.awt.Font;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.LookAndFeel;
@@ -39,6 +42,14 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
  * Look and Feel utility methods.
  */
 public class LnfUtil {
+
+    /** Legacy LAFs that are no longer supported by KSE. */
+    public static final Set<String> EXCLUDED_LAFS = Set.of(
+            "javax.swing.plaf.metal.MetalLookAndFeel",
+            "javax.swing.plaf.nimbus.NimbusLookAndFeel",
+            "com.sun.java.swing.plaf.motif.MotifLookAndFeel",
+            "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel"
+    );
 
     private LnfUtil() {
     }
@@ -82,6 +93,52 @@ public class LnfUtil {
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // ignore
         }
+    }
+
+    /**
+     * Returns the list of L&amp;Fs available in KSE: installed by the JVM or by
+     * {@link #installLnfs()}, deduplicated, and with legacy LAFs removed.
+     *
+     * @return Ordered, deduplicated list of available {@link UIManager.LookAndFeelInfo} entries
+     */
+    public static List<UIManager.LookAndFeelInfo> getAvailableLookAndFeels() {
+        // LinkedHashMap preserves insertion order while deduplicating by class name
+        LinkedHashMap<String, UIManager.LookAndFeelInfo> available = new LinkedHashMap<>();
+        for (UIManager.LookAndFeelInfo lfi : UIManager.getInstalledLookAndFeels()) {
+            if (!EXCLUDED_LAFS.contains(lfi.getClassName())) {
+                available.putIfAbsent(lfi.getClassName(), lfi);
+            }
+        }
+        return List.copyOf(available.values());
+    }
+
+    /**
+     * Check whether the given L&amp;F class is available in KSE.
+     *
+     * @param lnfClassName Fully-qualified L&amp;F class name
+     * @return {@code true} if the class can be used as a L&amp;F in KSE
+     */
+    public static boolean isLnfAvailable(String lnfClassName) {
+        if (lnfClassName == null) {
+            return false;
+        }
+        return getAvailableLookAndFeels().stream().anyMatch(lfi -> lnfClassName.equals(lfi.getClassName()));
+    }
+
+    /**
+     * Return the platform-appropriate default L&amp;F class name.
+     * <ul>
+     *   <li>macOS  – {@link FlatMacLightLaf}</li>
+     *   <li>others – {@link FlatLightLaf}</li>
+     * </ul>
+     *
+     * @return Default L&amp;F class name for the current platform
+     */
+    public static String getDefaultLnf() {
+        if (OperatingSystem.isMacOs()) {
+            return FlatMacLightLaf.class.getName();
+        }
+        return FlatLightLaf.class.getName();
     }
 
     /**

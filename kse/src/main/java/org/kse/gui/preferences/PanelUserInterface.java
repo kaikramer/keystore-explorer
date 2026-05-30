@@ -21,7 +21,6 @@ package org.kse.gui.preferences;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.TreeSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -34,6 +33,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 
+import org.kse.gui.LnfUtil;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.preferences.data.AutoUpdateCheckSettings;
@@ -240,25 +240,17 @@ class PanelUserInterface {
     }
 
     private void initLookAndFeelSelection() {
-        // This may contain duplicates
-        UIManager.LookAndFeelInfo[] lookFeelInfos = UIManager.getInstalledLookAndFeels();
         LookAndFeel currentLookAndFeel = UIManager.getLookAndFeel();
-        TreeSet<String> lookFeelClasses = new TreeSet<>();
 
-        for (UIManager.LookAndFeelInfo lfi : lookFeelInfos) {
-            // Avoid duplicates
-            if (!lookFeelClasses.contains(lfi.getClassName())) {
-                lookFeelClasses.add(lfi.getClassName());
+        for (UIManager.LookAndFeelInfo lfi : LnfUtil.getAvailableLookAndFeels()) {
+            lookFeelInfoList.add(lfi);
+            jcbLookFeel.addItem(lfi.getName());
 
-                lookFeelInfoList.add(lfi);
-                jcbLookFeel.addItem(lfi.getName());
-
-                // Pre-select current look & feel - compare by class as the look
-                // and feel name can differ from the look and feel info name
-                if ((currentLookAndFeel != null)
-                    && (currentLookAndFeel.getClass().getName().equals(lfi.getClassName()))) {
-                    jcbLookFeel.setSelectedIndex(jcbLookFeel.getItemCount() - 1);
-                }
+            // Pre-select current look & feel - compare by class as the look
+            // and feel name can differ from the look and feel info name
+            if (currentLookAndFeel != null
+                && currentLookAndFeel.getClass().getName().equals(lfi.getClassName())) {
+                jcbLookFeel.setSelectedIndex(jcbLookFeel.getItemCount() - 1);
             }
         }
     }
