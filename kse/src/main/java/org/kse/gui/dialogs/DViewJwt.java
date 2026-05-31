@@ -180,6 +180,7 @@ public class DViewJwt extends JEscDialog {
         jtaPublicKey.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         jtaPublicKey.setEditable(true);
         jtaPublicKey.setLineWrap(true);
+        jtaPublicKey.setColumns(66); // 64 + 2 to compensate for text area insets
         jtaPublicKey.setToolTipText(res.getString("DViewJwt.jtaPublicKey.tooltip"));
 
         jspPublicKey = PlatformUtil.createScrollPane(jtaPublicKey, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -195,15 +196,15 @@ public class DViewJwt extends JEscDialog {
         jbVerify.setToolTipText(res.getString("DViewJwt.jbVerify.tooltip"));
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog", "[right]unrel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog", "[]unrel[]", "[][]unrel[][]"));
         pane.add(jlHeader, "");
-        pane.add(jspHeader, "width 400lp:400lp:400lp, height 150lp:150lp:150lp");
-        pane.add(jlPayload, "");
-        pane.add(jspPayload, "width 400lp:400lp:400lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jlPayload, "wrap");
+        pane.add(jspHeader, "sgx cols, h 150lp!");
+        pane.add(jspPayload, "sgx cols, h 150lp!, wrap");
         pane.add(jlEncoded, "");
-        pane.add(jspEncoded, "width 400lp:400lp:400lp, height 200lp:200lp:200lp");
-        pane.add(jlPublicKey, "");
-        pane.add(jspPublicKey, "width 400lp:400lp:400lp, height 200lp:200lp:200lp, wrap");
+        pane.add(jlPublicKey, "wrap");
+        pane.add(jspEncoded, "sgx cols, h 200lp!");
+        pane.add(jspPublicKey, "sgx cols, h 200lp!, wrap");
 
         jpButtons = PlatformUtil.createDialogButtonPanel(jbCopy, jbVerify, "insets 0");
 

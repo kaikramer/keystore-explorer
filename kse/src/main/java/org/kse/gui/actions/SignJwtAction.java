@@ -26,7 +26,6 @@ import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.interfaces.ECPublicKey;
-import java.util.Base64;
 
 import javax.swing.ImageIcon;
 
@@ -36,6 +35,7 @@ import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.signing.JwsSigner;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewJwt;
@@ -106,12 +106,11 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             dSignJwt.setLocationRelativeTo(frame);
             dSignJwt.setVisible(true);
             if (dSignJwt.isOk()) {
-                byte[] dataPublic = cert.getPublicKey().getEncoded();
                 SignedJWT jwt =
                         JwsSigner.signJwt(dSignJwt.getAlgorithm(), dSignJwt.getCurve(), getJwtClaimsSet(dSignJwt),
                                           privateKey, provider);
                 DViewJwt dialog = new DViewJwt(frame, jwt);
-                dialog.setPublicKey(Base64.getEncoder().encodeToString(dataPublic));
+                dialog.setPublicKey(OpenSslPubUtil.getPem(cert.getPublicKey()));
                 dialog.setLocationRelativeTo(frame);
                 dialog.setVisible(true);
             }
