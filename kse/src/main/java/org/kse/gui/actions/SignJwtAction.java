@@ -36,6 +36,7 @@ import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.signing.JwsSigner;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewJwt;
 import org.kse.gui.dialogs.sign.CustomClaim;
@@ -106,7 +107,9 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             dSignJwt.setVisible(true);
             if (dSignJwt.isOk()) {
                 byte[] dataPublic = cert.getPublicKey().getEncoded();
-                SignedJWT jwt = signJwt(dSignJwt, privateKey, provider);
+                SignedJWT jwt =
+                        JwsSigner.signJwt(dSignJwt.getAlgorithm(), dSignJwt.getCurve(), getJwtClaimsSet(dSignJwt),
+                                          privateKey, provider);
                 DViewJwt dialog = new DViewJwt(frame, jwt);
                 dialog.setPublicKey(Base64.getEncoder().encodeToString(dataPublic));
                 dialog.setLocationRelativeTo(frame);
@@ -117,41 +120,17 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         }
     }
 
-    private SignedJWT signJwt(DSignJwt dSignJwt, PrivateKey privateKey, Provider provider) throws Exception {
-
-        JWSSigner signer = null;
-        JWSAlgorithm signatureAlgorithm = dSignJwt.getAlgorithm();
-        if (JWSAlgorithm.Family.RSA.contains(signatureAlgorithm)) {
-            signer = new RSASSASigner(privateKey);
-        } else if (JWSAlgorithm.Family.EC.contains(signatureAlgorithm)) {
-            signer = new ECDSASigner(privateKey, dSignJwt.getCurve());
-        } else if (JWSAlgorithm.Ed25519 == signatureAlgorithm) {
-            Ed25519PrivateKeyParameters params = (Ed25519PrivateKeyParameters) PrivateKeyFactory
-                    .createKey(privateKey.getEncoded());
-            OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
-                    Base64URL.encode(params.generatePublicKey().getEncoded())).d(Base64URL.encode(params.getEncoded()))
-                    .build();
-            signer = new Ed25519Signer(okp);
-        }
-        if (provider != null && signer != null) {
-            signer.getJCAContext().setProvider(provider);
-        }
-
-        Builder builder = new JWTClaimsSet.Builder().jwtID(dSignJwt.getId()).subject(dSignJwt.getSubject())
-                .issuer(dSignJwt.getIssuer()).issueTime(dSignJwt.getIssuedAt())
-                .notBeforeTime(dSignJwt.getNotBefore())
-                .audience(dSignJwt.getAudience())
-                .expirationTime(dSignJwt.getExpiration());
+    private static JWTClaimsSet getJwtClaimsSet(DSignJwt dSignJwt) {
+        Builder builder = new Builder().jwtID(dSignJwt.getId()).subject(dSignJwt.getSubject())
+                                       .issuer(dSignJwt.getIssuer()).issueTime(dSignJwt.getIssuedAt())
+                                       .notBeforeTime(dSignJwt.getNotBefore())
+                                       .audience(dSignJwt.getAudience())
+                                       .expirationTime(dSignJwt.getExpiration());
 
         for (CustomClaim claim : dSignJwt.getCustomClaims()) {
             builder.claim(claim.getName(), claim.getValue());
         }
-        JWTClaimsSet claimsSet = builder.build();
-
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader.Builder(signatureAlgorithm).keyID(null).build(), claimsSet);
-        signedJWT.sign(signer);
-
-        return signedJWT;
+        return builder.build();
     }
 
     /**

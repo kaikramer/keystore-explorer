@@ -49,11 +49,9 @@ import javax.swing.KeyStroke;
 import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.datetime.JDateTime;
-import org.kse.gui.dialogs.DialogHelper;
 import org.kse.utilities.DialogViewer;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -84,7 +82,7 @@ public class DSignJwt extends JEscDialog {
     private JLabel jlAudience;
     private JTextField jtfAudience;
     private JLabel jlSignatureAlgorithm;
-    private JComboBox<SignatureType> jcbSignatureAlgorithm;
+    private JComboBox<JWSAlgorithm> jcbSignatureAlgorithm;
     private JClaims jpClaims;
 
     private JButton jbOK;
@@ -92,7 +90,6 @@ public class DSignJwt extends JEscDialog {
 
     private KeyPairType signKeyPairType;
     private PrivateKey signPrivateKey;
-    private SignatureType signatureType;
 
     private JFrame parent;
 
@@ -156,23 +153,16 @@ public class DSignJwt extends JEscDialog {
 
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
-        // JWS uses specific algorithms. The defaults provide unsupported algorithms.
-        DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
         if (KeyPairType.RSA == signKeyPairType) {
-            // These algorithms are not supported by JWS
-            jcbSignatureAlgorithm.removeItem(SignatureType.RIPEMD160_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA1_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA224_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA1WITHRSAANDMGF1);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA224WITHRSAANDMGF1);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512_RSA);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224WITHRSAANDMGF1);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256WITHRSAANDMGF1);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384WITHRSAANDMGF1);
-            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512WITHRSAANDMGF1);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.RS256);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.RS384);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.RS512);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.PS256);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.PS384);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.PS512);
+        } else if (KeyPairType.ED25519 == signKeyPairType || KeyPairType.EDDSA == signKeyPairType) {
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.EdDSA);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.Ed25519);
         }
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
 
@@ -210,10 +200,9 @@ public class DSignJwt extends JEscDialog {
         pane.add(jlAudience, "");
         pane.add(jtfAudience, "wrap");
 
-        // Don't show the signature algorithm for ECDSA and EDDSA.
+        // Don't show the signature algorithm for ECDSA.
         // The JWS algorithm is derived from the curve.
-        if (KeyPairType.EC != signKeyPairType && KeyPairType.ECDSA != signKeyPairType
-                && KeyPairType.EDDSA != signKeyPairType && KeyPairType.ED25519 != signKeyPairType) {
+        if (KeyPairType.EC != signKeyPairType && KeyPairType.ECDSA != signKeyPairType) {
             pane.add(jlSignatureAlgorithm, "");
             pane.add(jcbSignatureAlgorithm, "wrap");
         }
@@ -260,8 +249,6 @@ public class DSignJwt extends JEscDialog {
 
     private void okPressed() {
         isOk = true;
-        signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
-        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
         closeDialog();
     }
 
@@ -328,53 +315,23 @@ public class DSignJwt extends JEscDialog {
     }
 
     public JWSAlgorithm getAlgorithm() {
-        JWSAlgorithm signatureAlgorithm = null;
-
-        if (KeyPairType.RSA == signKeyPairType) {
-            // For RSA determine JWS algorithm using the signature type
-            switch (signatureType) {
-                case SHA256_RSA:
-                    signatureAlgorithm = JWSAlgorithm.RS256;
-                    break;
-                case SHA384_RSA:
-                    signatureAlgorithm = JWSAlgorithm.RS384;
-                    break;
-                case SHA512_RSA:
-                    signatureAlgorithm = JWSAlgorithm.RS512;
-                    break;
-                case SHA256WITHRSAANDMGF1:
-                    signatureAlgorithm = JWSAlgorithm.PS256;
-                    break;
-                case SHA384WITHRSAANDMGF1:
-                    signatureAlgorithm = JWSAlgorithm.PS384;
-                    break;
-                case SHA512WITHRSAANDMGF1:
-                    signatureAlgorithm = JWSAlgorithm.PS512;
-                    break;
-                default:
-                    break;
-            }
-        } else if (KeyPairType.EC == signKeyPairType) {
-            // For EC determine the algorithm based on the curve not the signature type
+        if (KeyPairType.EC == signKeyPairType || KeyPairType.ECDSA == signKeyPairType) {
+            // For EC the JWS algorithm is derived from the curve, not chosen by the user
             Curve curve = getCurve();
             if (Curve.P_256 == curve) {
-                signatureAlgorithm = JWSAlgorithm.ES256;
+                return JWSAlgorithm.ES256;
             } else if (Curve.P_384 == curve) {
-                signatureAlgorithm = JWSAlgorithm.ES384;
+                return JWSAlgorithm.ES384;
             } else if (Curve.P_521 == curve) {
-                signatureAlgorithm = JWSAlgorithm.ES512;
+                return JWSAlgorithm.ES512;
             } else if (Curve.SECP256K1 == curve) {
-                signatureAlgorithm = JWSAlgorithm.ES256K;
+                return JWSAlgorithm.ES256K;
             }
-        } else if (KeyPairType.EDDSA == signKeyPairType) {
-            // Only Ed25519 is supported. Must figure out the curve if Nimbus JOSE ever adds an Ed448 signer.
-            // Likely use the signatureType since only one signature type is supported for each Edwards curve.
-            signatureAlgorithm = JWSAlgorithm.Ed25519;
-        } else if (KeyPairType.ED25519 == signKeyPairType) {
-            signatureAlgorithm = JWSAlgorithm.Ed25519;
+            return null;
         }
 
-        return signatureAlgorithm;
+        // RSA and EdDSA/Ed25519: return the algorithm selected in the combo box
+        return (JWSAlgorithm) jcbSignatureAlgorithm.getSelectedItem();
     }
 
     public Curve getCurve() {
