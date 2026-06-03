@@ -36,6 +36,7 @@ import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -213,8 +214,16 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
             Key secretKey = currentKeyStore.getKey(alias, password.toCharArray());
 
-            if (!newKeyStoreType.supportsKeyType(SecretKeyType.resolveJce(secretKey.getAlgorithm()))) {
-                return showWarnUnsupportedKey();
+            SecretKeyType secretKeyType = SecretKeyType.resolveJce(secretKey.getAlgorithm());
+            if (secretKeyType != null) {
+                if (!newKeyStoreType.supportsKeyType(secretKeyType)) {
+                    return showWarnUnsupportedKey();
+                }
+            } else {
+                PasswordType passwordType = PasswordType.resolveJce(secretKey.getAlgorithm());
+                if (!newKeyStoreType.supportsPasswordType(passwordType)) {
+                    return showWarnUnsupportedKey();
+                }
             }
 
             if (newKeyStore.containsAlias(alias)) {
