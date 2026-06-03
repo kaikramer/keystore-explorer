@@ -70,6 +70,8 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import org.kse.crypto.signing.BcEd25519Verifier;
+import org.kse.crypto.signing.BcEd448Verifier;
+
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.OctetKeyPair;
@@ -310,15 +312,15 @@ public class DViewJwt extends JEscDialog {
                 verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
             // Works for Java 15+ since OpenSslPubUtil uses the BC provider for loading the key
             } else if (publicKey instanceof EdDSAPublicKey) {
-                // Prevent exceptions in case an Ed448 key is used. There's no JWSVerifier for Ed448 keys.
                 if (EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm())) {
-                    JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
-                            res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
-                    return;
+                    OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed448,
+                            Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
+                    verifier = new BcEd448Verifier(okp);
+                } else {
+                    OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
+                            Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
+                    verifier = new BcEd25519Verifier(okp);
                 }
-                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
-                        Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
-                verifier = new BcEd25519Verifier(okp);
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
                         res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
