@@ -70,6 +70,7 @@ import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.X500NameUtils;
@@ -665,6 +666,12 @@ public class DProperties extends JEscDialog {
 
         if (secretKeyType != null) {
             keyAlg = secretKeyType.friendly();
+        } else {
+            PasswordType passwordType = PasswordType.resolveJce(keyAlg);
+
+            if (passwordType != null) {
+                keyAlg = passwordType.friendly();
+            }
         }
 
         secretKeyNode.add(new DefaultMutableTreeNode(

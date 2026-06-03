@@ -50,6 +50,7 @@ import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.KseX500NameStyle;
@@ -456,6 +457,12 @@ public class KeyStoreTableModel extends ToolTipTableModel {
 
             if (secretKeyType != null) {
                 algorithm = secretKeyType.friendly();
+            } else {
+                PasswordType passwordType = PasswordType.resolveJce(algorithm);
+
+                if (passwordType != null) {
+                    algorithm = passwordType.friendly();
+                }
             }
         }
 
