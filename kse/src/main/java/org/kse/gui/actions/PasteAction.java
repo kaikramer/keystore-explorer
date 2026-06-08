@@ -126,11 +126,9 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 
             if (keyStore.containsAlias(alias)) {
                 if (bufferEntry.isCut()) {
-                    int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
-                            res.getString("PasteAction.PasteExistsReplace" +
-                                    ".message"), alias),
-                            res.getString("PasteAction.Paste.Title"),
-                            JOptionPane.YES_NO_OPTION);
+                    int selected = JOptionPane.showConfirmDialog(frame,
+                            MessageFormat.format(res.getString("PasteAction.PasteExistsReplace.message"), alias),
+                            res.getString("PasteAction.Paste.Title"), JOptionPane.YES_NO_OPTION);
 
                     if (selected != JOptionPane.YES_OPTION) {
                         return false;
@@ -151,10 +149,10 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
             if (!keyStoreType.supportsKeyEntries()) {
+                String friendly = keyStoreType.friendly();
                 JOptionPane.showMessageDialog(frame,
-                                              MessageFormat.format(res.getString("PasteAction.NoPasteKeyEntry.message"),
-                                                                   keyStoreType.friendly()),
-                                              res.getString("PasteAction.Paste.Title"), JOptionPane.WARNING_MESSAGE);
+                        MessageFormat.format(res.getString("PasteAction.NoPasteKeyEntry.message"), friendly),
+                        res.getString("PasteAction.Paste.Title"), JOptionPane.WARNING_MESSAGE);
 
                 return false;
             }

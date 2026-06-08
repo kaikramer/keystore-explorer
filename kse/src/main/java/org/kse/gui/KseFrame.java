@@ -2722,17 +2722,21 @@ public final class KseFrame implements StatusBar {
 
                 // Don't allow for renaming if the key store does not support storing of aliases.
                 jmiKeyPairRename.setEnabled(type.supportsAliases());
-                jmiKeyPairRename.setToolTipText(MessageFormat.format(
-                        res.getString("KseFrame.jmiKeyPairRename." + type.supportsAliases() + ".tooltip"),
-                        type.friendly()));
                 jmiTrustedCertificateRename.setEnabled(type.supportsAliases());
-                jmiTrustedCertificateRename.setToolTipText(MessageFormat.format(
-                        res.getString("KseFrame.jmiKeyPairRename." + type.supportsAliases() + ".tooltip"),
-                        type.friendly()));
                 jmiKeyRename.setEnabled(type.supportsAliases());
-                jmiKeyRename.setToolTipText(MessageFormat.format(
-                        res.getString("KseFrame.jmiKeyPairRename." + type.supportsAliases() + ".tooltip"),
-                        type.friendly()));
+                if (type.supportsAliases()) {
+                    // Clear the tool tip when the rename actions are enabled.
+                    jmiKeyPairRename.setToolTipText(null);
+                    jmiTrustedCertificateRename.setToolTipText(null);
+                    jmiKeyRename.setToolTipText(null);
+                } else {
+                    jmiKeyPairRename.setToolTipText(MessageFormat
+                            .format(res.getString("KseFrame.jmiKeyPairRenameDisabled.tooltip"), type.friendly()));
+                    jmiTrustedCertificateRename.setToolTipText(MessageFormat
+                            .format(res.getString("KseFrame.jmiKeyPairRenameDisabled.tooltip"), type.friendly()));
+                    jmiKeyRename.setToolTipText(MessageFormat
+                            .format(res.getString("KseFrame.jmiKeyPairRenameDisabled.tooltip"), type.friendly()));
+                }
             }
         } else {
             jpmKeyStore.show(jtKeyStore, x, y);
