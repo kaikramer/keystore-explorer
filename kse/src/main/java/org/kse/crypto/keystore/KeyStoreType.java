@@ -127,6 +127,15 @@ public enum KeyStoreType {
     }
 
     /**
+     * Does the key store support user defined aliases?
+     *
+     * @return True if it does, false otherwise
+     */
+    public boolean supportsAliases() {
+        return this != PEM;
+    }
+
+    /**
      * Are key store entries password protected?
      *
      * @return True if it has, false otherwise

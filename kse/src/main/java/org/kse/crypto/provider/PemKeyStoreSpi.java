@@ -57,7 +57,7 @@ import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.passwordmanager.Password;
-import org.kse.utilities.StringUtils;
+import org.kse.utilities.AliasUtil;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
@@ -164,7 +164,6 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
         }
 
         // Build full certificate chain for each key
-        int aliasIndex = 1;
         for (Entry keyEntry : keyEntries) {
 
             X509Certificate leaf = findCertificateForKey(keyEntry.key, x509Certs);
@@ -172,33 +171,16 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
             if (leaf != null) {
                 keyEntry.chain = buildCertificateChain(leaf, bySubject, byIssuer);
 
-                String alias = X509CertUtil.getCertificateAlias(leaf);
-                if (StringUtils.isBlank(alias)) {
-                    alias = "key";
-                }
-                String indexedAlias = alias;
-                while (entries.containsKey(indexedAlias)) {
-                    indexedAlias = alias + aliasIndex++;
-                }
-                entries.put(indexedAlias, keyEntry);
+                entries.put(AliasUtil.uniqueAlias(entries.keySet(), leaf), keyEntry);
             }
         }
 
         // Add standalone certificates
-        aliasIndex = 1;
         for (X509Certificate cert : x509Certs) {
             boolean used = entries.values().stream()
                     .anyMatch(e -> Stream.of(e.chain).anyMatch(c -> c.equals(cert)));
             if (!used) {
-                String alias = X509CertUtil.getCertificateAlias(cert);
-                if (StringUtils.isBlank(alias)) {
-                    alias = "cert";
-                }
-                String indexedAlias = alias;
-                while (entries.containsKey(indexedAlias)) {
-                    indexedAlias = alias + aliasIndex++;
-                }
-                entries.put(indexedAlias, new Entry(cert));
+                entries.put(AliasUtil.uniqueAlias(entries.keySet(), cert), new Entry(cert));
             }
         }
     }

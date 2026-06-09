@@ -42,6 +42,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.AliasUtil;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -120,9 +121,13 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
                 if (KeyStoreUtil.isTrustedCertificateEntry(alias, currentKeyStore)) {
                     Certificate trustedCertificate = currentKeyStore.getCertificate(alias);
 
-                    if (newKeyStore.containsAlias(alias)) {
-                        showNoticeDuplicateAlias();
-                        alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+                    if (newKeyStoreType.supportsAliases()) {
+                        if (newKeyStore.containsAlias(alias)) {
+                            showNoticeDuplicateAlias();
+                            alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+                        }
+                    } else {
+                        alias = AliasUtil.uniqueAlias(newKeyStore, trustedCertificate);
                     }
 
                     newKeyStore.setCertificateEntry(alias, trustedCertificate);
@@ -189,9 +194,13 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             }
         }
 
-        if (newKeyStore.containsAlias(alias)) {
-          showNoticeDuplicateAlias();
-          alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+        if (newKeyStoreType.supportsAliases()) {
+            if (newKeyStore.containsAlias(alias)) {
+                showNoticeDuplicateAlias();
+                alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+            }
+        } else {
+            alias = AliasUtil.uniqueAlias(newKeyStore, certificateChain[0]);
         }
 
         currentState.setEntryPassword(alias, password);
@@ -215,20 +224,29 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             Key secretKey = currentKeyStore.getKey(alias, password.toCharArray());
 
             SecretKeyType secretKeyType = SecretKeyType.resolveJce(secretKey.getAlgorithm());
+            PasswordType passwordType = null;
             if (secretKeyType != null) {
                 if (!newKeyStoreType.supportsKeyType(secretKeyType)) {
                     return showWarnUnsupportedKey();
                 }
             } else {
-                PasswordType passwordType = PasswordType.resolveJce(secretKey.getAlgorithm());
+                passwordType = PasswordType.resolveJce(secretKey.getAlgorithm());
                 if (!newKeyStoreType.supportsPasswordType(passwordType)) {
                     return showWarnUnsupportedKey();
                 }
             }
 
-            if (newKeyStore.containsAlias(alias)) {
-                showNoticeDuplicateAlias();
-                alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+            if (newKeyStoreType.supportsAliases()) {
+                if (newKeyStore.containsAlias(alias)) {
+                    showNoticeDuplicateAlias();
+                    alias = renameAlias(newKeyStoreType.normalizeAlias(alias));
+                }
+            } else {
+                if (secretKeyType != null) {
+                    alias = AliasUtil.uniqueAlias(newKeyStore, secretKeyType);
+                } else {
+                    alias = AliasUtil.uniqueAlias(newKeyStore, passwordType);
+                }
             }
 
             currentState.setEntryPassword(alias, password);
@@ -245,7 +263,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     private String renameAlias(String alias) {
         int suffix = aliasSuffixes.getOrDefault(alias, 0);
         aliasSuffixes.put(alias, ++suffix);
-        return alias + "-" + String.valueOf(suffix);
+        return alias + " (" + String.valueOf(suffix) + ")";
     }
 
     private boolean showWarnNoECC() {

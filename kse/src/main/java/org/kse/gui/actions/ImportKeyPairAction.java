@@ -36,6 +36,7 @@ import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.dialogs.importexport.DImportKeyPair;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.AliasUtil;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -93,26 +94,31 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
             KseKeyStore keyStore = newState.getKeyStore();
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
-            DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
-                                                X509CertUtil.getCertificateAlias(certs[0]));
+            String alias;
+            if (keyStoreType.supportsAliases()) {
+                DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
+                                                    X509CertUtil.getCertificateAlias(certs[0]));
 
-            dGetAlias.setLocationRelativeTo(frame);
-            dGetAlias.setVisible(true);
-            String alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
+                dGetAlias.setLocationRelativeTo(frame);
+                dGetAlias.setVisible(true);
+                alias = keyStoreType.normalizeAlias(dGetAlias.getAlias());
 
-            if (alias == null) {
-                return;
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                String message = MessageFormat.format(res.getString("ImportKeyPairAction.OverWriteEntry.message"),
-                                                      alias);
-
-                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
-                if (selected != JOptionPane.YES_OPTION) {
+                if (alias == null) {
                     return;
                 }
+
+                if (keyStore.containsAlias(alias)) {
+                    String message = MessageFormat.format(res.getString("ImportKeyPairAction.OverWriteEntry.message"),
+                                                          alias);
+
+                    int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
+                            "ImportKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
+                    if (selected != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+            } else {
+                alias = AliasUtil.uniqueAlias(keyStore, certs[0]);
             }
 
             Password password = getNewEntryPassword(keyStoreType,
