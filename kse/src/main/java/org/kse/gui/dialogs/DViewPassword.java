@@ -45,6 +45,7 @@ import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.password.DChangePassword;
+import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
@@ -187,11 +188,12 @@ public class DViewPassword extends JEscDialog {
 
     private void updatePressed() {
         Password password = new Password(jpfPassword.getPassword());
-        DChangePassword dChangePassword = new DChangePassword(this, DEFAULT_MODALITY_TYPE, password, preferences);
+        DGetNewPassword dChangePassword = new DGetNewPassword(this, res.getString("DViewPassword.NewPassphrase.title"),
+                preferences, password);
         dChangePassword.setLocationRelativeTo(this);
         dChangePassword.setVisible(true);
 
-        newPassword = dChangePassword.getNewPassword();
+        newPassword = dChangePassword.getPassword();
         if (newPassword != null) {
             jpfPassword.setText(new String(newPassword.toCharArray()));
         }
