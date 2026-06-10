@@ -62,6 +62,7 @@ class CryptoFileUtilTest extends CryptoTestsBase {
             "keystore.p12, PKCS12_KS",
             "keystore.uber, UBER_KS",
             "keystore.pem, PEM_KS",
+            "keystore.kdb, KDB_KS",
 
             // EC private key formats
             "ec.enc.pem.pkcs8, ENC_PKCS8_PVK",

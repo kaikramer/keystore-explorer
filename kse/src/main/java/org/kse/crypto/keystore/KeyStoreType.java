@@ -21,6 +21,7 @@ package org.kse.crypto.keystore;
 
 import static org.kse.crypto.filetype.CryptoFileType.BCFKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.BKS_KS;
+import static org.kse.crypto.filetype.CryptoFileType.KDB_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JCEKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.PEM_KS;
@@ -53,6 +54,7 @@ public enum KeyStoreType {
     PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, true, null),
     BCFKS("BCFKS", "KeyStoreType.Bcfks", true, true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
     PEM("PEM", "KeyStoreType.Pem", true, true, PEM_KS),
+    KDB("KDB", "KeyStoreType.Kdb", true, true, KDB_KS),
     UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, false, null);
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
@@ -153,11 +155,13 @@ public enum KeyStoreType {
      * is not used.
      * For PEM key stores, there isn't a key store password, but all entries will use the same
      * password so it's treated like a key store with a password.
+     * For CMS key databases (KDB), the database header is signed with the key store password and
+     * all private keys are encrypted with it.
      *
      * @return True if so, false otherwise
      */
     public boolean entrySameAsKeyStorePassword() {
-        return this == PKCS12 || this == KEYCHAIN || this == PEM;
+        return this == PKCS12 || this == KEYCHAIN || this == PEM || this == KDB;
     }
 
     /**
