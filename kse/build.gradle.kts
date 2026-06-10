@@ -130,7 +130,7 @@ dependencies {
     implementation("com.formdev:flatlaf-extras:3.7") {
         exclude(group = "com.formdev", module = "flatlaf")
     }
-    implementation("com.nimbusds:nimbus-jose-jwt:10.6") {
+    implementation("com.nimbusds:nimbus-jose-jwt:10.8") {
         exclude(group = "com.google.crypto.tink", module = "tink")
     }
 

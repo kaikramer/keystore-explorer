@@ -29,9 +29,6 @@ import java.security.interfaces.ECPublicKey;
 
 import javax.swing.ImageIcon;
 
-import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
-import org.bouncycastle.crypto.util.PrivateKeyFactory;
-import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KseKeyStore;
@@ -46,15 +43,7 @@ import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.ECDSASigner;
-import org.kse.crypto.signing.BcEd25519Signer;
-import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
-import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
@@ -145,11 +134,10 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             // Only the standard EC curves are supported (P-256, P-384, P-521)
             isSupported = Curve.forECParameterSpec(((ECPublicKey) publicKey).getParams()) != null;
         }
-        // Nimbus-JOSE does not support signing a JWT with Ed448, ML-DSA, SLH-DSA.
-        boolean isEd448 = EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm());
+        // Nimbus-JOSE does not support signing a JWT with ML-DSA, SLH-DSA.
         boolean isMlDSA = KeyPairType.isMlDSA(KeyPairUtil.getKeyPairType(publicKey));
         boolean isSlhDsa = KeyPairType.isSlhDsa(KeyPairUtil.getKeyPairType(publicKey));
-        isSupported = isSupported && !isEd448 && !isMlDSA && !isSlhDsa;
+        isSupported = isSupported && !isMlDSA && !isSlhDsa;
         if (!isSupported) {
             tooltip = res.getString("SignJwtAction.NotSupported.message");
         }

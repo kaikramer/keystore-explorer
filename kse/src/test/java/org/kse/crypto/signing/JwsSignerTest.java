@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,7 @@ public class JwsSignerTest extends CryptoTestsBase {
     private static KeyPair ecP384KeyPair;
     private static KeyPair ecP521KeyPair;
     private static KeyPair ed25519KeyPair;
+    private static KeyPair ed448KeyPair;
 
     @BeforeAll
     static void setUpKeys() throws Exception {
@@ -72,6 +74,7 @@ public class JwsSignerTest extends CryptoTestsBase {
         ecP384KeyPair = KeyPairUtil.generateECKeyPair("P-384", KSE.BC);
         ecP521KeyPair = KeyPairUtil.generateECKeyPair("P-521", KSE.BC);
         ed25519KeyPair = KeyPairUtil.generateECKeyPair("Ed25519", KSE.BC);
+        ed448KeyPair = KeyPairUtil.generateECKeyPair("Ed448", KSE.BC);
     }
 
     // -----------------------------------------------------------------------
@@ -113,6 +116,14 @@ public class JwsSignerTest extends CryptoTestsBase {
         Base64URL encodedPub = Base64URL.encode(params.generatePublicKey().getEncoded());
         OctetKeyPair publicOkp = new OctetKeyPair.Builder(Curve.Ed25519, encodedPub).build();
         return new BcEd25519Verifier(publicOkp);
+    }
+
+    private static BcEd448Verifier buildEd448Verifier() throws Exception {
+        Ed448PrivateKeyParameters params =
+                (Ed448PrivateKeyParameters) PrivateKeyFactory.createKey(ed448KeyPair.getPrivate().getEncoded());
+        Base64URL encodedPub = Base64URL.encode(params.generatePublicKey().getEncoded());
+        OctetKeyPair publicOkp = new OctetKeyPair.Builder(Curve.Ed448, encodedPub).build();
+        return new BcEd448Verifier(publicOkp);
     }
 
     /**
@@ -248,7 +259,7 @@ public class JwsSignerTest extends CryptoTestsBase {
         );
     }
 
-    @ParameterizedTest(name = "EdDSA sign+verify – {0} (no provider)")
+    @ParameterizedTest(name = "EdDSA sign+verify - {0} (no provider)")
     @MethodSource("edDsaAlgorithms")
     void testSignJwtWithEdDsaAlgorithm(JWSAlgorithm algorithm) throws Exception {
         JWTClaimsSet claimsSet = buildClaimsSet();
@@ -267,7 +278,7 @@ public class JwsSignerTest extends CryptoTestsBase {
         assertRoundTripVerification(signedJWT, verifier);
     }
 
-    @ParameterizedTest(name = "EdDSA sign+verify – {0} (with BC provider)")
+    @ParameterizedTest(name = "EdDSA sign+verify - {0} (with BC provider)")
     @MethodSource("edDsaAlgorithms")
     void testSignJwtWithEdDsaAlgorithmAndBcProvider(JWSAlgorithm algorithm) throws Exception {
         JWTClaimsSet claimsSet = buildClaimsSet();
@@ -280,6 +291,54 @@ public class JwsSignerTest extends CryptoTestsBase {
         assertThat(signedJWT.getHeader().getAlgorithm()).isEqualTo(algorithm);
 
         BcEd25519Verifier verifier = buildEd25519Verifier();
+        assertThat(signedJWT.verify(verifier)).isTrue();
+    }
+
+    // -----------------------------------------------------------------------
+    // EdDSA - Ed448 / EdDSA algorithm identifiers
+    // RFC 8037 uses "EdDSA" while the RFC 9864 specifies "Ed448" and deprecates "EdDSA".
+    // Both must be accepted by JwsSigner.
+    // -----------------------------------------------------------------------
+
+    static Stream<Arguments> ed448Algorithms() {
+        return Stream.of(
+                Arguments.of(JWSAlgorithm.Ed448),
+                Arguments.of(JWSAlgorithm.EdDSA)
+        );
+    }
+
+    @ParameterizedTest(name = "Ed448 sign+verify - {0} (no provider)")
+    @MethodSource("ed448Algorithms")
+    void testSignJwtWithEd448Algorithm(JWSAlgorithm algorithm) throws Exception {
+        JWTClaimsSet claimsSet = buildClaimsSet();
+
+        SignedJWT signedJWT = JwsSigner.signJwt(algorithm, null, claimsSet,
+                ed448KeyPair.getPrivate(), null);
+
+        assertThat(signedJWT).isNotNull();
+        assertThat(signedJWT.getState()).isEqualTo(JWSObject.State.SIGNED);
+        assertThat(signedJWT.getHeader().getAlgorithm()).isEqualTo(algorithm);
+        assertThat(signedJWT.getHeader().getKeyID()).isNull();
+
+        BcEd448Verifier verifier = buildEd448Verifier();
+        assertThat(signedJWT.verify(verifier)).isTrue();
+        assertClaimsPreserved(signedJWT, claimsSet);
+        assertRoundTripVerification(signedJWT, verifier);
+    }
+
+    @ParameterizedTest(name = "Ed448 sign+verify - {0} (with BC provider)")
+    @MethodSource("ed448Algorithms")
+    void testSignJwtWithEd448AlgorithmAndBcProvider(JWSAlgorithm algorithm) throws Exception {
+        JWTClaimsSet claimsSet = buildClaimsSet();
+
+        SignedJWT signedJWT = JwsSigner.signJwt(algorithm, null, claimsSet,
+                ed448KeyPair.getPrivate(), KSE.BC);
+
+        assertThat(signedJWT).isNotNull();
+        assertThat(signedJWT.getState()).isEqualTo(JWSObject.State.SIGNED);
+        assertThat(signedJWT.getHeader().getAlgorithm()).isEqualTo(algorithm);
+
+        BcEd448Verifier verifier = buildEd448Verifier();
         assertThat(signedJWT.verify(verifier)).isTrue();
     }
 
