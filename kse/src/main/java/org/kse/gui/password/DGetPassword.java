@@ -24,19 +24,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.kdb.stash.StashFile;
+import org.kse.gui.CurrentDirectory;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.components.JEscDialog;
+import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.DialogViewer;
 
@@ -54,10 +61,12 @@ public class DGetPassword extends JEscDialog {
     private JLabel jlPassword;
     private JPasswordField jpfPassword;
     private JCheckBox jcbStoreInPasswordManager;
+    private JButton jbLoadStash;
     private JButton jbOK;
     private JButton jbCancel;
 
     private boolean askUserForPasswordManager = false;
+    private KeyStoreType keyStoreType;
     private Password password;
 
     /**
@@ -78,8 +87,22 @@ public class DGetPassword extends JEscDialog {
      * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
      */
     public DGetPassword(JFrame parent, String title, boolean askUserForPasswordManager) {
+        this(parent, title, askUserForPasswordManager, null);
+    }
+
+    /**
+     * Creates new DGetPassword dialog where the parent is a frame.
+     *
+     * @param parent Parent frame
+     * @param title  The dialog's title
+     * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
+     * @param keyStoreType Type of the KeyStore being opened (or null if unknown); for CMS key databases (KDB) a
+     *                     button for loading the password from a stash (.sth) file is shown
+     */
+    public DGetPassword(JFrame parent, String title, boolean askUserForPasswordManager, KeyStoreType keyStoreType) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.askUserForPasswordManager = askUserForPasswordManager;
+        this.keyStoreType = keyStoreType;
         initComponents();
     }
 
@@ -91,6 +114,10 @@ public class DGetPassword extends JEscDialog {
         jcbStoreInPasswordManager = new JCheckBox(res.getString("DGetPassword.jcbStoreInPasswordManager.text"));
         jcbStoreInPasswordManager.setSelected(false);
         jcbStoreInPasswordManager.setVisible(askUserForPasswordManager);
+
+        jbLoadStash = new JButton(res.getString("DGetPassword.jbLoadStash.text"));
+        jbLoadStash.setVisible(keyStoreType == KeyStoreType.KDB);
+        jbLoadStash.addActionListener(evt -> loadStashPressed());
 
         jbOK = new JButton(res.getString("DGetPassword.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -104,6 +131,7 @@ public class DGetPassword extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[grow]", ""));
         pane.add(jlPassword, "");
         pane.add(jpfPassword, "growx, wrap unrelated");
+        pane.add(jbLoadStash, "hidemode 3, spanx, wrap");
         pane.add(jcbStoreInPasswordManager, "hidemode 3, split 2, spanx, wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap unrelated");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
@@ -148,6 +176,25 @@ public class DGetPassword extends JEscDialog {
      */
     public boolean isPasswordManagerWanted() {
         return jcbStoreInPasswordManager.isSelected();
+    }
+
+    private void loadStashPressed() {
+        try {
+            JFileChooser chooser = FileChooserFactory.getSthFileChooser();
+            chooser.setCurrentDirectory(CurrentDirectory.get());
+            chooser.setDialogTitle(res.getString("DGetPassword.LoadStash.Title"));
+            chooser.setMultiSelectionEnabled(false);
+
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File sthFile = chooser.getSelectedFile();
+                if (sthFile != null) {
+                    jpfPassword.setText(StashFile.decodeFile(sthFile.toPath()));
+                    okPressed();
+                }
+            }
+        } catch (Exception ex) {
+            DError.displayError(this, ex);
+        }
     }
 
     private void okPressed() {

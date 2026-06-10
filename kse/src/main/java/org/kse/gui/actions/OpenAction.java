@@ -31,7 +31,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.keystore.KeyStoreLoadException;
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.keystore.Pkcs12KeyStoreAdapter;
@@ -136,6 +138,9 @@ public class OpenAction extends KeyStoreExplorerAction {
                 password = (defaultPassword != null) ? new Password(defaultPassword.toCharArray()) : null;
             }
 
+            // detect type up front so the password dialog can offer type specific help (e.g. stash files for KDB)
+            KeyStoreType keyStoreType = CryptoFileUtil.detectKeyStoreType(keyStoreFile);
+
             KseKeyStore openedKeyStore;
             boolean firstTry = true;
             while (true) {
@@ -148,7 +153,7 @@ public class OpenAction extends KeyStoreExplorerAction {
                 if (password == null) {
                     DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
                             res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()),
-                            askForPasswordManager);
+                            askForPasswordManager, keyStoreType);
                     dGetPassword.setLocationRelativeTo(frame);
                     dGetPassword.setVisible(true);
 
