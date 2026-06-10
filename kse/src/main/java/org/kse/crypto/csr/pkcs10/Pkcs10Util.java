@@ -219,31 +219,32 @@ public class Pkcs10Util {
         byte[] csrBytes = null;
         // Assume file is PEM until we find out otherwise
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
-             InputStreamReader inputStreamReader = new InputStreamReader(bais);
-             LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
+             try (InputStreamReader inputStreamReader = new InputStreamReader(bais)) {
+                 LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
-            String line = lnr.readLine();
-            StringBuilder sbPem = new StringBuilder();
+                 String line = lnr.readLine();
+                 StringBuilder sbPem = new StringBuilder();
 
-            if ((line != null) && (line.trim().equals(BEGIN_CSR_FORM_1) || line.trim().equals(BEGIN_CSR_FORM_2))) {
-                while ((line = lnr.readLine()) != null) {
-                    line = line.trim();
-                    if (line.equals(END_CSR_FORM_1) || line.equals(END_CSR_FORM_2)) {
-                        csrBytes = Base64.decode(sbPem.toString());
-                        break;
+                 if ((line != null) && (line.trim().equals(BEGIN_CSR_FORM_1) || line.trim().equals(BEGIN_CSR_FORM_2))) {
+                    while ((line = lnr.readLine()) != null) {
+                        line = line.trim();
+                        if (line.equals(END_CSR_FORM_1) || line.equals(END_CSR_FORM_2)) {
+                            csrBytes = Base64.decode(sbPem.toString());
+                            break;
+                        }
+
+                        sbPem.append(line);
                     }
+                 }
+                 }
 
-                    sbPem.append(line);
-                }
-            }
-        }
+                 // Not PEM - must be DER encoded
+                 if (csrBytes == null) {
+                 csrBytes = data;
+                 }
 
-        // Not PEM - must be DER encoded
-        if (csrBytes == null) {
-            csrBytes = data;
-        }
-
-        return new PKCS10CertificationRequest(csrBytes);
+                 return new PKCS10CertificationRequest(csrBytes);
+             }
     }
 
     /**
