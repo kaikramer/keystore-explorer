@@ -23,7 +23,7 @@ import static org.kse.gui.password.PasswordDialogHelper.createPasswordInputField
 import static org.kse.gui.password.PasswordDialogHelper.preFillPasswordFields;
 
 import java.awt.Container;
-import java.awt.Dialog;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -34,8 +34,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -76,44 +74,48 @@ public class DGetNewPassword extends JEscDialog {
     /**
      * Creates new DGetNewPassword dialog where the parent is a frame.
      *
-     * @param parent      Parent frame
+     * @param parent      Parent window
      * @param title       The dialog's title
      * @param preferences Preferences
      */
-    public DGetNewPassword(JFrame parent, String title, KsePreferences preferences) {
-        this(parent, title, preferences, false, false);
+    public DGetNewPassword(Window parent, String title, KsePreferences preferences) {
+        this(parent, title, preferences, false, false, null);
+    }
+
+    /**
+     * Creates new DGetNewPassword dialog where the parent is a frame. This constructor
+     * accepts a current password for when a user is still in the process of setting a password.
+     *
+     * @param parent      Parent window
+     * @param title       The dialog's title
+     * @param preferences Preferences
+     * @param password    The current password
+     */
+    public DGetNewPassword(Window parent, String title, KsePreferences preferences, Password password) {
+        this(parent, title, preferences, false, false, password);
     }
 
     /**
      * Creates new DGetNewPassword dialog where the parent is a frame.
      *
-     * @param parent      Parent frame
+     * @param parent      Parent window
      * @param title       The dialog's title
      * @param preferences Preferences
      * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
      * @param usePasswordManagerEnabled Whether the checkbox for using the password manager is initially enabled
      */
-    public DGetNewPassword(JFrame parent, String title, KsePreferences preferences,
-                           boolean askUserForPasswordManager, boolean usePasswordManagerEnabled) {
+    public DGetNewPassword(Window parent, String title, KsePreferences preferences,
+            boolean askUserForPasswordManager, boolean usePasswordManagerEnabled) {
+        this(parent, title, preferences, askUserForPasswordManager, usePasswordManagerEnabled, null);
+    }
+
+    private DGetNewPassword(Window parent, String title, KsePreferences preferences,
+                           boolean askUserForPasswordManager, boolean usePasswordManagerEnabled, Password password) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.preferences = preferences;
         this.askUserForPasswordManager = askUserForPasswordManager;
         this.usePasswordManagerEnabled = usePasswordManagerEnabled;
-        initComponents();
-    }
-
-    /**
-     * Creates new DGetNewPassword dialog where the parent is a dialog.
-     *
-     * @param parent      Parent dialog
-     * @param title       The dialog's title
-     * @param modality    Dialog modality
-     * @param preferences Preferences
-     */
-    public DGetNewPassword(JDialog parent, String title, Dialog.ModalityType modality,
-                           KsePreferences preferences) {
-        super(parent, title, modality);
-        this.preferences = preferences;
+        this.password = password;
         initComponents();
     }
 
@@ -125,8 +127,12 @@ public class DGetNewPassword extends JEscDialog {
         jpfConfirm = new JPasswordField(15);
         jpfConfirm.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
-        if (preferences.getPasswordGeneratorSettings().isEnabled()) {
-            preFillPasswordFields(jpfFirst, jpfConfirm);
+        if (password == null) {
+            if (preferences.getPasswordGeneratorSettings().isEnabled()) {
+                preFillPasswordFields(jpfFirst, jpfConfirm);
+            }
+        } else {
+            preFillPasswordFields(jpfFirst, jpfConfirm, password.toCharArray());
         }
 
         jbOK = new JButton(res.getString("DGetNewPassword.jbOK.text"));

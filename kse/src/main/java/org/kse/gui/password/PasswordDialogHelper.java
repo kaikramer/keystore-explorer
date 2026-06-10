@@ -25,7 +25,12 @@ import javax.swing.JPasswordField;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.utilities.rng.PasswordGenerator;
 
+/**
+ * Utility methods for the password dialog.
+ */
 public class PasswordDialogHelper {
+
+    // Utility pattern
     private PasswordDialogHelper() {
     }
 
@@ -41,18 +46,30 @@ public class PasswordDialogHelper {
     public static void preFillPasswordFields(JComponent jpfFirst, JPasswordField jpfConfirm) {
         var generatorSettings = PreferencesManager.getPreferences().getPasswordGeneratorSettings();
         char[] generatedPassword = PasswordGenerator.generatePassword(generatorSettings);
+        preFillPasswordFields(jpfFirst, jpfConfirm, generatedPassword);
+    }
+
+    /**
+     * Prefills the password fields with a specified password.
+     *
+     * @param jpfFirst   the first password field
+     * @param jpfConfirm the second password field
+     * @param password   the password to pre-fill.
+     */
+    public static void preFillPasswordFields(JComponent jpfFirst, JPasswordField jpfConfirm, char[] password) {
         if (jpfFirst instanceof JPasswordQualityField) {
-            ((JPasswordQualityField) jpfFirst).setPassword(generatedPassword);
+            ((JPasswordQualityField) jpfFirst).setPassword(password);
         } else {
-            ((JPasswordField) jpfFirst).setText(new String(generatedPassword));
+            ((JPasswordField) jpfFirst).setText(new String(password));
         }
-        jpfConfirm.setText(new String(generatedPassword));
+        jpfConfirm.setText(new String(password));
     }
 
     /**
      * Creates a password input field with a quality indicator based on the current password quality settings
      * (or a normal one if password quality indicator is disabled in the settings).
      *
+     * @param passwordQualityConfig The password quality configuration settings
      * @return the password input field
      */
     public static JComponent createPasswordInputField(PasswordQualityConfig passwordQualityConfig) {
@@ -68,6 +85,5 @@ public class PasswordDialogHelper {
             return jPasswordField;
         }
     }
-
 
 }

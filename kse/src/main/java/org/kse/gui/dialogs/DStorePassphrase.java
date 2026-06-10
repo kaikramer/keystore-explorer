@@ -75,7 +75,6 @@ public class DStorePassphrase extends JEscDialog {
     private KeyStoreType keystoreType;
     private PasswordType passwordType;
 
-    private Password passphrase;
     private boolean success = false;
 
     /**
@@ -177,7 +176,7 @@ public class DStorePassphrase extends JEscDialog {
      * @return The passphrase as a Password.
      */
     public Password getPassphrase() {
-        return passphrase;
+        return new Password(jpfPassword.getPassword());
     }
 
     /**
@@ -190,8 +189,13 @@ public class DStorePassphrase extends JEscDialog {
     }
 
     private void setPassPressed() {
+        Password passphrase = null;
+        if (jpfPassword.getPassword() != null && jpfPassword.getPassword().length > 0) {
+            passphrase = new Password(jpfPassword.getPassword());
+        }
+
         DGetNewPassword dPassphrase = new DGetNewPassword((JFrame) getParent(),
-                res.getString("DStorePassphrase.NewPassphrase.Title"), preferences);
+                res.getString("DStorePassphrase.NewPassphrase.Title"), preferences, passphrase);
         dPassphrase.setLocationRelativeTo(this);
         dPassphrase.setVisible(true);
 
@@ -202,7 +206,7 @@ public class DStorePassphrase extends JEscDialog {
     }
 
     private void okPressed() {
-        if (passphrase == null) {
+        if (jpfPassword.getPassword() == null || jpfPassword.getPassword().length == 0) {
             JOptionPane.showMessageDialog(getParent(),
                     res.getString("DStorePassphrase.NoPassphrase.message"),
                     res.getString("DStorePassphrase.Title"), JOptionPane.WARNING_MESSAGE);
