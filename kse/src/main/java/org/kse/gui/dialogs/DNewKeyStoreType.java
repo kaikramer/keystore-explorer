@@ -62,6 +62,7 @@ public class DNewKeyStoreType extends JEscDialog {
     private JRadioButton jrbUberKeyStore;
     private JRadioButton jrbBcfksKeyStore;
     private JRadioButton jrbPemKeyStore;
+    private JRadioButton jrbKdbKeyStore;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -112,6 +113,10 @@ public class DNewKeyStoreType extends JEscDialog {
         PlatformUtil.setMnemonic(jrbPemKeyStore,  res.getString("DNewKeyStoreType.jrbPemKeyStore.mnemonic").charAt(0));
         jrbPemKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbPemKeyStore.tooltip"));
 
+        jrbKdbKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbKdbKeyStore.text"));
+        PlatformUtil.setMnemonic(jrbKdbKeyStore, res.getString("DNewKeyStoreType.jrbKdbKeyStore.mnemonic").charAt(0));
+        jrbKdbKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbKdbKeyStore.tooltip"));
+
         ButtonGroup keyStoreTypesGroup = new ButtonGroup();
         keyStoreTypesGroup.add(jrbPkcs12KeyStore);
         keyStoreTypesGroup.add(jrbJceksKeyStore);
@@ -120,6 +125,7 @@ public class DNewKeyStoreType extends JEscDialog {
         keyStoreTypesGroup.add(jrbUberKeyStore);
         keyStoreTypesGroup.add(jrbBcfksKeyStore);
         keyStoreTypesGroup.add(jrbPemKeyStore);
+        keyStoreTypesGroup.add(jrbKdbKeyStore);
 
         jbOK = new JButton(res.getString("DNewKeyStoreType.jbOK.text"));
 
@@ -136,6 +142,7 @@ public class DNewKeyStoreType extends JEscDialog {
         pane.add(jrbUberKeyStore, "wrap");
         pane.add(jrbBcfksKeyStore, "wrap");
         pane.add(jrbPemKeyStore, "wrap");
+        pane.add(jrbKdbKeyStore, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap unrel");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
@@ -188,6 +195,8 @@ public class DNewKeyStoreType extends JEscDialog {
             keyStoreType = KeyStoreType.BCFKS;
         } else if (jrbPemKeyStore.isSelected()) {
             keyStoreType = KeyStoreType.PEM;
+        } else if (jrbKdbKeyStore.isSelected()) {
+            keyStoreType = KeyStoreType.KDB;
         } else {
             keyStoreType = KeyStoreType.UBER;
         }

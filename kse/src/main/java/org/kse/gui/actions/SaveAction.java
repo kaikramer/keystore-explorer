@@ -106,6 +106,8 @@ public class SaveAction extends SaveAsAction {
             history.setSuppressWatcherEvents(true);
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 
+            updateStashFile(currentState.getKeyStore(), saveFile, password, false);
+
             currentState.setPassword(password);
             currentState.setAsSavedState();
 

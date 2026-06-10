@@ -61,6 +61,11 @@ public enum CryptoFileType {
     PEM_KS("CryptoFileType.PemKs"),
 
     /**
+     * IBM CMS key database (KDB) KeyStore
+     */
+    KDB_KS("CryptoFileType.KdbKs"),
+
+    /**
      * Certificate
      */
     CERT("CryptoFileType.Certificate"),

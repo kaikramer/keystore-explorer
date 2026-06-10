@@ -46,6 +46,8 @@ public class FileChooserFactory {
     public static final String BCFKS_EXT = "bcfks";
     public static final String PKCS12_KEYSTORE_EXT_1 = "p12";
     public static final String PKCS12_KEYSTORE_EXT_2 = "pfx";
+    public static final String KDB_EXT = "kdb";
+    public static final String STH_EXT = "sth";
     public static final String X509_EXT_1 = "cer";
     public static final String X509_EXT_2 = "crt";
     public static final String PKCS7_EXT_1 = "p7b";
@@ -80,7 +82,7 @@ public class FileChooserFactory {
 
     private static final String KEYSTORE_FILE_DESC =
             format(res.getString("FileChooserFactory.KeyStoreFiles"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
-                   KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT);
+                   KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT, KDB_EXT);
 
     private static final String X509_FILE_DESC =
             format(res.getString("FileChooserFactory.CertificateFiles"), X509_EXT_1, X509_EXT_2);
@@ -140,6 +142,8 @@ public class FileChooserFactory {
 
     private static final String PEM_FILE_DESC = format(res.getString("FileChooserFactory.PemFiles"), PEM_EXT);
 
+    private static final String STH_FILE_DESC = format(res.getString("FileChooserFactory.SthFiles"), STH_EXT);
+
     private static final String CMS_FILE_DESC =
             format(res.getString("FileChooserFactory.CmsSigFiles"), CMS_EXT_1, CMS_EXT_2);
 
@@ -193,7 +197,18 @@ public class FileChooserFactory {
         chooser.setFileFilter(
                 new FileNameExtensionFilter(KEYSTORE_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
                                             KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT,
-                                            BCFKS_EXT));
+                                            BCFKS_EXT, KDB_EXT));
+        return chooser;
+    }
+
+    /**
+     * Get a JFileChooser filtered for IBM CMS key database stash (.sth) files.
+     *
+     * @return JFileChooser object
+     */
+    public static JFileChooser getSthFileChooser() {
+        JFileChooser chooser = getFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter(STH_FILE_DESC, STH_EXT));
         return chooser;
     }
 

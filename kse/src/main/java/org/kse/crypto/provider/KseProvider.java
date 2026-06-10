@@ -23,9 +23,10 @@ package org.kse.crypto.provider;
 import java.security.Provider;
 
 import org.kse.KSE;
+import org.kse.crypto.keystore.kdb.KdbKeyStoreSpi;
 
 /**
- * A KSE specific Java Security Provider. Provides the PEM KeyStore.
+ * A KSE specific Java Security Provider. Provides the PEM and KDB KeyStores.
  */
 public class KseProvider extends Provider {
 
@@ -43,6 +44,7 @@ public class KseProvider extends Provider {
         super(PROVIDER_NAME, PROVIDER_VERSION, PROVIDER_INFO);
 
         putService(new Service(this, "KeyStore", "PEM", PemKeyStoreSpi.class.getCanonicalName(), null, null));
+        putService(new Service(this, "KeyStore", "KDB", KdbKeyStoreSpi.class.getCanonicalName(), null, null));
     }
 
 }
