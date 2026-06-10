@@ -703,9 +703,13 @@ public class DProperties extends JEscDialog {
             KseKeyStore keyStore = currentState.getKeyStore();
 
             if (KeyStoreType.resolveJce(keyStore.getType()) != KeyStoreType.PKCS12) {
-                String lastModified = MessageFormat.format(res.getString("DProperties.properties.LastModified"),
-                                                           StringUtils.formatDate(keyStore.getCreationDate(alias)));
-                parentNode.add(new DefaultMutableTreeNode(lastModified));
+                Date creationDate = keyStore.getCreationDate(alias);
+                // some keystore types do not store creation dates for their entries => simply create no node
+                if (creationDate != null) {
+                    String lastModified = MessageFormat.format(res.getString("DProperties.properties.LastModified"),
+                                                               StringUtils.formatDate(creationDate));
+                    parentNode.add(new DefaultMutableTreeNode(lastModified));
+                }
             }
         } catch (ProviderException e) {
             // some keystore types do not provide creation dates for their entries => simply create no node

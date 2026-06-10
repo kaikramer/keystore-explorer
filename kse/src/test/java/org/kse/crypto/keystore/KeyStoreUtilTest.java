@@ -65,6 +65,7 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
             "BKS",
             "UBER",
             "PEM",
+            "KDB",
     })
     // @formatter:on
     void doTests(KeyStoreType keyStoreType) throws Exception {
