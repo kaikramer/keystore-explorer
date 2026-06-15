@@ -124,6 +124,34 @@ class KdbKeyStoreSpiTest extends CryptoTestsBase {
     }
 
     @Test
+    void reEncryptingKeyEntriesChangesTheKeyPassword() throws Exception {
+        // Mirrors how SetPasswordAction changes a KDB key store password: each key pair entry is
+        // re-encrypted with the new password (serialize() does not re-encrypt keys on its own).
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        KeyPair keyPair = generator.generateKeyPair();
+        X509Certificate cert = TestCertificates.selfSigned("CN=Test", keyPair, 365, "SHA256withRSA");
+
+        char[] oldPassword = "old".toCharArray();
+        char[] newPassword = "new".toCharArray();
+
+        KeyStore keyStore = newKdbKeyStore();
+        keyStore.setKeyEntry("key", keyPair.getPrivate(), oldPassword, new Certificate[] { cert });
+
+        Key key = keyStore.getKey("key", oldPassword);
+        keyStore.setKeyEntry("key", key, newPassword, keyStore.getCertificateChain("key"));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        keyStore.store(out, newPassword);
+
+        KeyStore reloaded = KeyStore.getInstance("KDB", "KSE");
+        reloaded.load(new ByteArrayInputStream(out.toByteArray()), newPassword);
+
+        assertThat(reloaded.getKey("key", newPassword)).isEqualTo(keyPair.getPrivate());
+        assertThrows(UnrecoverableKeyException.class, () -> reloaded.getKey("key", oldPassword));
+    }
+
+    @Test
     void loadingWithWrongPasswordFails() throws Exception {
         KeyStore keyStore = newKdbKeyStore();
 

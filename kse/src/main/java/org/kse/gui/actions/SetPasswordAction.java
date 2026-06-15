@@ -20,12 +20,19 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.cert.Certificate;
+import java.util.Collections;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
@@ -108,6 +115,8 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
 
         newState.setPassword(password);
 
+        reEncryptKeyEntriesIfNeeded(currentState, newState, password);
+
         newState.setStoredInPasswordManager(passwordAndDecision.isSavePassword());
 
         currentState.append(newState);
@@ -115,5 +124,40 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
         kseFrame.updateControls(true);
 
         return true;
+    }
+
+    /**
+     * Re-encrypt key pair entries with the new key store password where the key store format does
+     * not do this itself on save.
+     * <p>
+     * A KDB (CMS) key database encrypts every private key with the key store password and writes the
+     * encrypted keys back unchanged when saved. Unlike PKCS #12, storing it with a new password only
+     * re-signs the header - the keys stay encrypted with the old password and would become unreadable
+     * after the change. The keys are therefore re-encrypted here, while the old password is still known.
+     */
+    private void reEncryptKeyEntriesIfNeeded(KeyStoreState currentState, KeyStoreState newState,
+                                             Password newPassword) throws CryptoException {
+        if (currentState.getType() != KeyStoreType.KDB) {
+            return;
+        }
+
+        Password oldPassword = currentState.getPassword();
+        if (oldPassword == null || oldPassword.equals(newPassword)) {
+            return;
+        }
+
+        try {
+            KseKeyStore keyStore = newState.getKeyStore();
+            for (String alias : Collections.list(keyStore.aliases())) {
+                if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                    Key key = keyStore.getKey(alias, oldPassword.toCharArray());
+                    Certificate[] chain = keyStore.getCertificateChain(alias);
+                    keyStore.setKeyEntry(alias, key, newPassword.toCharArray(), chain);
+                    newState.setEntryPassword(alias, new Password(newPassword));
+                }
+            }
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(res.getString("SetPasswordAction.NoReEncryptEntries.exception.message"), ex);
+        }
     }
 }
