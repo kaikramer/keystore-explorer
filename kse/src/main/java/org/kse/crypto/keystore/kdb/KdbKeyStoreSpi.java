@@ -30,6 +30,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -98,11 +99,79 @@ public class KdbKeyStoreSpi extends KeyStoreSpi {
     @Override
     public Certificate[] engineGetCertificateChain(String alias) {
         KdbRecord record = db.find(alias);
-        if (record == null || record.certificates().isEmpty()) {
+        if (record == null || record.certificate() == null) {
             return null;
         }
-        List<X509Certificate> certs = record.certificates();
-        return certs.toArray(new Certificate[0]);
+        // The leaf lives in this record; its signers are separate trusted records. Rebuild
+        // the chain by following issuer links so callers (and PKCS#12 export) see leaf..root.
+        List<X509Certificate> chain = assembleChain(record.certificate());
+        return chain.toArray(new Certificate[0]);
+    }
+
+    /**
+     * Builds an ordered certificate chain (leaf first) from {@code leaf} by following
+     * issuer-to-subject links across every certificate stored in the database. Stops at a
+     * self-signed certificate or when no issuer is present (a partial chain), and guards
+     * against loops.
+     */
+    private List<X509Certificate> assembleChain(X509Certificate leaf) {
+        List<X509Certificate> all = new ArrayList<>();
+        for (KdbRecord record : db.records()) {
+            all.addAll(record.certificates());
+        }
+        List<X509Certificate> chain = new ArrayList<>();
+        X509Certificate current = leaf;
+        while (current != null && !chain.contains(current)) {
+            chain.add(current);
+            if (current.getSubjectX500Principal().equals(current.getIssuerX500Principal())) {
+                break; // self-signed root
+            }
+            current = findIssuer(current, all, chain);
+        }
+        return chain;
+    }
+
+    /**
+     * Finds the issuer of {@code cert} among {@code candidates}, skipping certs already used.
+     * Where several certificates share the issuer's DN — for example a cross-signed (dual-signed)
+     * CA that has been certified by more than one root — the candidate whose public key actually
+     * verifies {@code cert}'s signature is preferred, and a self-signed anchor is preferred over a
+     * further intermediate so assembly heads towards a trust root. Falls back to a DN-only match so
+     * a chain can still be built when the issuer's key is not held in the database.
+     */
+    private static X509Certificate findIssuer(X509Certificate cert, List<X509Certificate> candidates,
+                                              List<X509Certificate> used) {
+        X509Certificate dnMatch = null;
+        X509Certificate verified = null;
+        for (X509Certificate candidate : candidates) {
+            if (used.contains(candidate)
+                    || !candidate.getSubjectX500Principal().equals(cert.getIssuerX500Principal())) {
+                continue;
+            }
+            if (dnMatch == null) {
+                dnMatch = candidate;
+            }
+            if (!signed(cert, candidate)) {
+                continue; // shares the issuer DN but did not actually sign cert
+            }
+            if (candidate.getSubjectX500Principal().equals(candidate.getIssuerX500Principal())) {
+                return candidate; // a verified self-signed anchor is the best possible choice
+            }
+            if (verified == null) {
+                verified = candidate;
+            }
+        }
+        return verified != null ? verified : dnMatch;
+    }
+
+    /** True if {@code issuer}'s public key verifies {@code cert}'s signature. */
+    private static boolean signed(X509Certificate cert, X509Certificate issuer) {
+        try {
+            cert.verify(issuer.getPublicKey());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -171,8 +240,64 @@ public class KdbKeyStoreSpi extends KeyStoreSpi {
             KdbRecord record = KdbRecord.personalRecord(alias, (X509Certificate) chain[0], encryptedKey);
             db.remove(alias);
             db.add(record);
+            // A CMS key database stores the leaf in the personal record and every signer
+            // in the chain as a separate trusted-certificate record, the same way gskcapicmd
+            // does. Persist chain[1..n] so the signing chain is not lost on import.
+            for (int i = 1; i < chain.length; i++) {
+                if (!(chain[i] instanceof X509Certificate)) {
+                    continue;
+                }
+                X509Certificate ca = (X509Certificate) chain[i];
+                if (containsCertificate(ca)) {
+                    continue;
+                }
+                db.add(KdbRecord.caRecord(uniqueLabel(signerLabel(ca)), ca));
+            }
         } catch (Exception e) {
             throw new java.security.KeyStoreException("Could not store private key entry '" + alias + "'", e);
+        }
+    }
+
+    /** True if a certificate equal to {@code cert} is already stored under any label. */
+    private boolean containsCertificate(X509Certificate cert) {
+        for (KdbRecord record : db.records()) {
+            for (X509Certificate existing : record.certificates()) {
+                if (existing.equals(cert)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Derives a signer label from a certificate's subject CN, falling back to the full DN. */
+    private static String signerLabel(X509Certificate cert) {
+        String dn = cert.getSubjectX500Principal().getName();
+        try {
+            for (javax.naming.ldap.Rdn rdn : new javax.naming.ldap.LdapName(dn).getRdns()) {
+                if ("CN".equalsIgnoreCase(rdn.getType())) {
+                    String cn = String.valueOf(rdn.getValue()).trim();
+                    if (!cn.isEmpty()) {
+                        return cn;
+                    }
+                }
+            }
+        } catch (javax.naming.InvalidNameException e) {
+            // fall through to the raw DN
+        }
+        return dn.isEmpty() ? "signer" : dn;
+    }
+
+    /** Makes {@code base} unique among existing labels by appending " (n)" on collision. */
+    private String uniqueLabel(String base) {
+        if (db.find(base) == null) {
+            return base;
+        }
+        for (int n = 2; ; n++) {
+            String candidate = base + " (" + n + ")";
+            if (db.find(candidate) == null) {
+                return candidate;
+            }
         }
     }
 

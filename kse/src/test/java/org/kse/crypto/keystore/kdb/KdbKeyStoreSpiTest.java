@@ -193,6 +193,12 @@ class KdbKeyStoreSpiTest extends CryptoTestsBase {
         return keyStore;
     }
 
+    private static KeyPair newRsaKeyPair() throws Exception {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        return generator.generateKeyPair();
+    }
+
     @Test
     void readsEntryStructureOfNativeKdb() throws Exception {
         KeyStore keyStore = loadNative("mixed.kdb", PASSWORD);
@@ -277,6 +283,78 @@ class KdbKeyStoreSpiTest extends CryptoTestsBase {
 
         assertThat(keyStore.isKeyEntry("server-cert")).isTrue();
         assertThat(keyStore.getKey("server-cert", PASSWORD)).isInstanceOf(PrivateKey.class);
+
+        // The leaf's chain is reassembled from the separate trusted signer entries: leaf, intermediate, root
+        assertThat(keyStore.getCertificateChain("server-cert"))
+                .containsExactly(leaf, intermediate, root);
+    }
+
+    @Test
+    void importingAKeyEntryStoresTheSigningChainAsTrustedEntries() throws Exception {
+        // A kdb keeps the leaf in the personal record and each signer in its own trusted record,
+        // mirroring gskcapicmd. Importing a full chain must therefore split it across records and
+        // reassemble it on the way back out.
+        KeyPair rootKp = newRsaKeyPair();
+        KeyPair intKp = newRsaKeyPair();
+        KeyPair leafKp = newRsaKeyPair();
+        X509Certificate root = TestCertificates.selfSigned("CN=Test Root CA", rootKp, 3650, "SHA256withRSA");
+        X509Certificate intermediate = TestCertificates.sign("CN=Test Intermediate CA", intKp.getPublic(),
+                root, rootKp.getPrivate(), 1825, "SHA256withRSA");
+        X509Certificate leaf = TestCertificates.sign("CN=server.example.com", leafKp.getPublic(),
+                intermediate, intKp.getPrivate(), 825, "SHA256withRSA");
+
+        KeyStore keyStore = newKdbKeyStore();
+        keyStore.setKeyEntry("server-cert", leafKp.getPrivate(), PASSWORD,
+                new Certificate[] { leaf, intermediate, root });
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        keyStore.store(out, PASSWORD);
+
+        KeyStore reloaded = KeyStore.getInstance("KDB", "KSE");
+        reloaded.load(new ByteArrayInputStream(out.toByteArray()), PASSWORD);
+
+        // The signers became their own trusted entries, labelled from their subject CN
+        assertThat(Collections.list(reloaded.aliases()))
+                .containsExactlyInAnyOrder("server-cert", "Test Intermediate CA", "Test Root CA");
+        assertThat(reloaded.isKeyEntry("server-cert")).isTrue();
+        assertThat(reloaded.isCertificateEntry("Test Intermediate CA")).isTrue();
+        assertThat(reloaded.isCertificateEntry("Test Root CA")).isTrue();
+
+        // ...and the leaf entry still reports the full chain
+        assertThat(reloaded.getCertificateChain("server-cert"))
+                .containsExactly(leaf, intermediate, root);
+    }
+
+    @Test
+    void assemblyFollowsSignaturesNotJustNamesAcrossDuplicateIssuerDns() throws Exception {
+        // Two CA certificates share the issuer DN but hold different keys: only one actually
+        // signed the leaf. A DN-only match could pick the impostor and build a chain that does
+        // not verify; assembly must follow the signature and select the real signer regardless
+        // of record order.
+        KeyPair rootKp = newRsaKeyPair();
+        KeyPair realCaKp = newRsaKeyPair();
+        KeyPair impostorCaKp = newRsaKeyPair();
+        KeyPair leafKp = newRsaKeyPair();
+
+        X509Certificate root = TestCertificates.selfSigned("CN=Root CA", rootKp, 3650, "SHA256withRSA");
+        X509Certificate realCa = TestCertificates.sign("CN=Issuing CA", realCaKp.getPublic(),
+                root, rootKp.getPrivate(), 1825, "SHA256withRSA");
+        // Same subject DN as the real CA, different key, never signed the leaf
+        X509Certificate impostorCa = TestCertificates.sign("CN=Issuing CA", impostorCaKp.getPublic(),
+                root, rootKp.getPrivate(), 1825, "SHA256withRSA");
+        X509Certificate leaf = TestCertificates.sign("CN=leaf.example.com", leafKp.getPublic(),
+                realCa, realCaKp.getPrivate(), 825, "SHA256withRSA");
+
+        KeyStore keyStore = newKdbKeyStore();
+        keyStore.setKeyEntry("leaf", leafKp.getPrivate(), PASSWORD, new Certificate[] { leaf });
+        // Insert the impostor first so a naive DN match would pick it
+        keyStore.setCertificateEntry("impostor-ca", impostorCa);
+        keyStore.setCertificateEntry("real-ca", realCa);
+        keyStore.setCertificateEntry("root", root);
+
+        // The chain verifies end to end: leaf -> real issuing CA -> root, never the impostor
+        assertThat(keyStore.getCertificateChain("leaf"))
+                .containsExactly(leaf, realCa, root);
     }
 
     @Test
