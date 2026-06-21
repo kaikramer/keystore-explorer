@@ -35,6 +35,7 @@ import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNKNOWN;
 import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
+import static org.kse.crypto.keystore.KeyStoreType.KDB;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
 import static org.kse.crypto.keystore.KeyStoreType.PEM;
@@ -65,6 +66,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DLSequence;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
+import org.kse.crypto.keystore.kdb.KdbKeyDatabase;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacException;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -315,6 +317,11 @@ public class CryptoFileUtil {
     }
 
     private static KeyStoreType detectKeyStoreType(byte[] data, List<PemInfo> pemInfos) throws IOException {
+
+        // Test for CMS key database (KDB) - starts with magic bytes 37 48 04/06 and type tag "X509KEY"
+        if (KdbKeyDatabase.isKeyDatabase(data)) {
+            return KDB;
+        }
 
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
 

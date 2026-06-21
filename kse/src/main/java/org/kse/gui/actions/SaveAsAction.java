@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 
@@ -31,7 +32,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.crypto.keystore.kdb.stash.StashFile;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
@@ -134,6 +138,8 @@ public class SaveAsAction extends KeyStoreExplorerAction {
             history.setSuppressWatcherEvents(true);
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 
+            updateStashFile(currentState.getKeyStore(), saveFile, password, true);
+
             currentState.setPassword(password);
             history.setFile(saveFile);
             currentState.setAsSavedState();
@@ -154,6 +160,63 @@ public class SaveAsAction extends KeyStoreExplorerAction {
             return false;
         } finally {
             history.setSuppressWatcherEvents(false);
+        }
+    }
+
+    /**
+     * If a CMS key database (KDB) has a sidecar stash file (.sth) that no longer matches the password
+     * the KeyStore was just saved with, offer to update the stash file. If no stash file exists
+     * yet and {@code offerCreate} is set (i.e. the KeyStore was saved to a new file), offer to
+     * create one.
+     *
+     * @param keyStore    The saved KeyStore
+     * @param saveFile    The file the KeyStore was saved to
+     * @param password    The password the KeyStore was saved with
+     * @param offerCreate Whether to offer creating a stash file if none exists
+     */
+    protected void updateStashFile(KseKeyStore keyStore, File saveFile, Password password, boolean offerCreate) {
+        if (!KeyStoreType.KDB.jce().equals(keyStore.getType())) {
+            return;
+        }
+
+        String name = saveFile.getName();
+        int extension = name.lastIndexOf('.');
+        File sthFile = new File(saveFile.getParentFile(),
+                                (extension > 0 ? name.substring(0, extension) : name) + ".sth");
+
+        try {
+            String newPassword = new String(password.toCharArray());
+
+            if (sthFile.isFile()) {
+                byte[] stashBytes = Files.readAllBytes(sthFile.toPath());
+
+                if (newPassword.equals(StashFile.decode(stashBytes))) {
+                    // stash file already matches the keystore password
+                    return;
+                }
+
+                int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
+                                                                     res.getString(
+                                                                             "SaveAsAction.UpdateStashFile.message"),
+                                                                     sthFile.getName()),
+                                                             res.getString("SaveAsAction.UpdateStashFile.Title"),
+                                                             JOptionPane.YES_NO_OPTION);
+                if (selected == JOptionPane.YES_OPTION) {
+                    Files.write(sthFile.toPath(), StashFile.encode(newPassword, StashFile.versionOf(stashBytes)));
+                }
+            } else if (offerCreate) {
+                int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
+                                                                     res.getString(
+                                                                             "SaveAsAction.CreateStashFile.message"),
+                                                                     sthFile.getName()),
+                                                             res.getString("SaveAsAction.CreateStashFile.Title"),
+                                                             JOptionPane.YES_NO_OPTION);
+                if (selected == JOptionPane.YES_OPTION) {
+                    Files.write(sthFile.toPath(), StashFile.encode(newPassword));
+                }
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
         }
     }
 }
