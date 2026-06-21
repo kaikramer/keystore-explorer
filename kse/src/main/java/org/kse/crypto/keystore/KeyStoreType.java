@@ -161,6 +161,7 @@ public enum KeyStoreType {
      * @return True if so, false otherwise
      */
     public boolean entrySameAsKeyStorePassword() {
+        // FIXME PKCS#12 files CAN have per-entry passwords; check usages of this method
         return this == PKCS12 || this == KEYCHAIN || this == PEM || this == KDB;
     }
 
@@ -175,18 +176,18 @@ public enum KeyStoreType {
 
     /**
      * Are certificate chains built when loading the key store?
-     * 
+     *
      * For PKCS #12 key stores, a collection of certificates are stored and then
      * linked to the private key entries. The certificate is chain is built when
      * loading the key store.
      * For PEM key stores, the file contains a collection of certificates, and the
      * certificate is chain is built when loading the key store.
      * For all other key store types, the chain is stored with the private key entry.
-     * 
+     *
      * @return
      */
     public boolean hasDynamicCertificateChains() {
-        return this == PKCS12 || this == PEM; 
+        return this == PKCS12 || this == PEM;
     }
 
     /**
