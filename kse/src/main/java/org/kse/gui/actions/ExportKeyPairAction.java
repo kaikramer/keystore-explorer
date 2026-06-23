@@ -36,6 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
@@ -49,6 +50,8 @@ import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+
+import com.nimbusds.jose.JWEAlgorithm;
 
 /**
  * Action to export the selected key pair entry as PKCS #12.
@@ -107,10 +110,16 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
             Password exportPassword = dExportKeyPair.getExportPassword();
             ExportFormat exportFormat = dExportKeyPair.getExportFormat();
 
-            if (exportFormat == ExportFormat.PKCS12) {
-                exportAsPkcs12(exportFile, alias, privateKey, certificates, exportPassword);
-            } else {
-                exportAsPem(exportFile, privateKey, certificates, exportPassword);
+            switch (exportFormat) {
+                case PKCS12:
+                    exportAsPkcs12(exportFile, alias, privateKey, certificates, exportPassword);
+                    break;
+                case PEM:
+                    exportAsPem(exportFile, privateKey, certificates, exportPassword);
+                    break;
+                case JWK:
+                    exportAsJwk(exportFile, alias, privateKey, certificates, exportPassword);
+                    break;
             }
 
             JOptionPane.showMessageDialog(frame, res.getString("ExportKeyPairAction.ExportKeyPairSuccessful.message"),
@@ -150,5 +159,21 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
         String pemEncodedCerts = X509CertUtil.getCertsEncodedX509Pem(orderedCerts);
 
         Files.writeString(exportFile.toPath(), pemEncodedPrivKey + pemEncodedCerts, StandardCharsets.US_ASCII);
+    }
+
+    private void exportAsJwk(File exportFile, String alias, PrivateKey privateKey, Certificate[] certificates,
+            Password password) throws CryptoException, IOException {
+
+        X509Certificate[] orderedCerts = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificates));
+
+        String jwkString;
+        if (password.isEmpty()) {
+            jwkString = JwkUtil.get(privateKey, alias, orderedCerts);
+        } else {
+            jwkString = JwkUtil.get(privateKey, alias, orderedCerts, JWEAlgorithm.PBES2_HS512_A256KW, password,
+                    false);
+        }
+
+        Files.writeString(exportFile.toPath(), jwkString, StandardCharsets.UTF_8);
     }
 }

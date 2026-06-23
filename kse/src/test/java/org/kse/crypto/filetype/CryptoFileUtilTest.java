@@ -21,6 +21,7 @@
 package org.kse.crypto.filetype;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,10 +74,14 @@ class CryptoFileUtilTest extends CryptoTestsBase {
             "ec.enc.pem.key, ENC_OPENSSL_PVK",
             "ec.unenc.pem.key, UNENC_OPENSSL_PVK",
             "ec.unenc.der.key, UNENC_OPENSSL_PVK",
+            "ec.enc.jwe, ENC_JSON_WEB_KEY",
+            "ec.enc.json, ENC_JSON_WEB_KEY",
+            "ec.unenc.json, UNENC_JSON_WEB_KEY",
 
             // EC public key formats
             "ec.pem.pub, OPENSSL_PUB",
             "ec.der.pub, OPENSSL_PUB",
+            "ec.pubkey.json, JSON_WEB_KEY_PUB",
 
             // RSA private key formats
             "rsa.enc.pem.pkcs8, ENC_PKCS8_PVK",
@@ -88,10 +93,32 @@ class CryptoFileUtilTest extends CryptoTestsBase {
             "rsa.unenc.pem.key, UNENC_OPENSSL_PVK",
             "rsa.enc.pvk, ENC_MS_PVK",
             "rsa.unenc.pvk, UNENC_MS_PVK",
+            "rsa.enc.jwe, ENC_JSON_WEB_KEY",
+            "rsa.enc.json, ENC_JSON_WEB_KEY",
+            "rsa.unenc.json, UNENC_JSON_WEB_KEY",
 
             // RSA public key formats
             "rsa.pem.pub, OPENSSL_PUB",
             "rsa.der.pub, OPENSSL_PUB",
+            "rsa.pubkey.json, JSON_WEB_KEY_PUB",
+
+            // EdDSA private key formats
+            "ed25519.enc.pem.pkcs8, ENC_PKCS8_PVK",
+            "ed25519.enc.der.pkcs8, ENC_PKCS8_PVK",
+            "ed25519.unenc.pem.pkcs8, UNENC_PKCS8_PVK",
+            "ed25519.unenc.der.pkcs8, UNENC_PKCS8_PVK",
+            "ed25519.enc.jwe, ENC_JSON_WEB_KEY",
+            "ed25519.enc.json, ENC_JSON_WEB_KEY",
+            "ed25519.unenc.json, UNENC_JSON_WEB_KEY",
+            "ed448.enc.jwe, ENC_JSON_WEB_KEY",
+            "ed448.enc.json, ENC_JSON_WEB_KEY",
+            "ed448.unenc.json, UNENC_JSON_WEB_KEY",
+
+            // EdDSA public key formats
+            "ed25519.pem.pub, OPENSSL_PUB",
+            "ed25519.der.pub, OPENSSL_PUB",
+            "ed25519.pubkey.json, JSON_WEB_KEY_PUB",
+            "ed448.pubkey.json, JSON_WEB_KEY_PUB",
 
             // CRLs
             "test.pem.crl, CRL",
@@ -122,6 +149,8 @@ class CryptoFileUtilTest extends CryptoTestsBase {
     void detectFileType(String fileName, CryptoFileType expectedResult) throws IOException {
         byte[] data = Files.readAllBytes(new File(TEST_FILES_PATH, fileName).toPath());
 
-        assertEquals(expectedResult, CryptoFileUtil.detectFileType(data));
+        CryptoFileType detectedType = CryptoFileUtil.detectFileType(data);
+        assertEquals(expectedResult, detectedType);
+        assertNotNull(detectedType.friendly()); // ensure that English translation has a string
     }
 }

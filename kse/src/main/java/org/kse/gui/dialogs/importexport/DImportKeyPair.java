@@ -28,6 +28,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.Key;
@@ -39,8 +40,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -61,6 +65,7 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -80,13 +85,14 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.dialogs.DGenerateKeyPairCert;
 import org.kse.gui.dialogs.DViewCertificate;
-import org.kse.gui.dialogs.DViewKeyPair;
 import org.kse.gui.dialogs.DViewPrivateKey;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.net.Downloader;
 
+import com.nimbusds.jose.jwk.JWK;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -119,6 +125,12 @@ public class DImportKeyPair extends JEscDialog {
     private boolean encrypted;
     private PrivateKey privateKey;
     private X509Certificate[] certificateChain;
+
+    // Use an ExecutorService rather than thread synchronization since it provides the
+    // necessary queuing to prevent UI delays if the background task takes a long time (>500 ms).
+    // A thread using wait/notify will miss events or hang the UI for tasks that take longer
+    // than 500 ms.
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
      * Creates a new DImportKeyPair dialog.
@@ -159,6 +171,7 @@ public class DImportKeyPair extends JEscDialog {
                         detectFileType(file);
                     } else {
                         // reset to default if the text is not a file
+                        certificateChain = null;
                         setEnabledPassword(false);
                         setEnabledCertificate(false);
                     }
@@ -196,6 +209,27 @@ public class DImportKeyPair extends JEscDialog {
 
         jpfPassword = new JPasswordField(15);
         jpfPassword.setToolTipText(res.getString("DImportKeyPair.jpfPassword.tooltip"));
+
+        jpfPassword.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                attemptToDecrypt();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                attemptToDecrypt();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                attemptToDecrypt();
+            }
+
+            private void attemptToDecrypt() {
+                executor.submit(() -> attemptDecryption());
+            }
+        });
 
         jlCertificate = new JLabel(res.getString("DImportKeyPair.jlCertificate.text"));
 
@@ -290,6 +324,58 @@ public class DImportKeyPair extends JEscDialog {
         pack();
     }
 
+    // This method attempts to decrypt encrypted key pairs (P12 and JOSE JWE files)
+    // to identify the related certificates in the background.
+    private void attemptDecryption() {
+        // Only attempt to decrypt the private key when the file is
+        // encrypted and the cert chain is null. Shortcut to reduce
+        // unnecessary processing.
+        if (encrypted && certificateChain == null) {
+
+            String privateKeyPath = jtfPrivateKeyPath.getText().trim();
+
+            // Skip if the file hasn't been chosen or doesn't exist.
+            if (privateKeyPath.isEmpty()) {
+                return;
+            }
+
+            File privateKeyFile = new File(privateKeyPath);
+            if (!privateKeyFile.exists()) {
+                return;
+            }
+
+            try {
+                byte[] pvkData = Files.readAllBytes(privateKeyFile.toPath());
+
+                if (jpfPassword.getPassword().length == 0) {
+                    return;
+                }
+                Password password = new Password(jpfPassword.getPassword());
+
+                switch (fileType) {
+                case PKCS12_KS:
+                    loadPkcs12Throws(pvkData, privateKeyFile, password);
+                    break;
+                case ENC_JSON_WEB_KEY:
+                    loadJwkThrows(pvkData, privateKeyFile, password);
+                    break;
+                default:
+                    break;
+                }
+            } catch (Exception e) {
+                // Ignore any exceptions that occurs since it's likely related to
+                // an incorrect password since this thread checks partial passwords, too.
+                // The other UI buttons have the exception handling for proper user
+                // notification of errors.
+                return;
+            }
+
+            if (certificateChain != null) {
+                setCertificateDetected();
+            }
+        }
+    }
+
     private void setEnabledPassword(boolean enabled) {
         jlPassword.setEnabled(enabled);
         jpfPassword.setEnabled(enabled);
@@ -301,8 +387,25 @@ public class DImportKeyPair extends JEscDialog {
     private void setEnabledCertificate(boolean enabled) {
         jlCertificate.setEnabled(enabled);
         jtfCertificatePath.setEnabled(enabled);
+        if (!jtfCertificatePath.isEnabled() && certificateChain != null) {
+            jtfCertificatePath.setText(res.getString("DImportKeyPair.jtfCertificatePath.message"));
+        } else {
+            jtfCertificatePath.setText("");
+        }
         jbCertificateBrowse.setEnabled(enabled);
-        jbCertificateDetails.setEnabled(enabled);
+        // The cert details button is special. It is display
+        // certs loaded via the private key file (P12, PEM, JWK).
+        // So enable it even if the rest of the cert controls are disabled.
+        // This logic works since certificateChain is reset to null each
+        // time a new file is chosen.
+        jbCertificateDetails.setEnabled(enabled || certificateChain != null);
+    }
+
+    private void setCertificateDetected() {
+        jtfCertificatePath.setEnabled(false);
+        jtfCertificatePath.setText(res.getString("DImportKeyPair.jtfCertificatePath.message"));
+        jbCertificateBrowse.setEnabled(false);
+        jbCertificateDetails.setEnabled(true);
     }
 
     private void privateKeyBrowsePressed() {
@@ -340,10 +443,11 @@ public class DImportKeyPair extends JEscDialog {
             fileType = CryptoFileUtil.detectFileType(chosenFile);
 
             if (fileType == CryptoFileType.PKCS12_KS || fileType == CryptoFileType.ENC_PKCS8_PVK
-                    || fileType == CryptoFileType.ENC_OPENSSL_PVK || fileType == CryptoFileType.ENC_MS_PVK) {
+                    || fileType == CryptoFileType.ENC_OPENSSL_PVK || fileType == CryptoFileType.ENC_MS_PVK
+                    || fileType == CryptoFileType.ENC_JSON_WEB_KEY) {
                 encrypted = true;
             } else if (fileType == CryptoFileType.UNENC_PKCS8_PVK || fileType == CryptoFileType.UNENC_OPENSSL_PVK
-                    || fileType == CryptoFileType.UNENC_MS_PVK) {
+                    || fileType == CryptoFileType.UNENC_MS_PVK || fileType == CryptoFileType.UNENC_JSON_WEB_KEY) {
                 encrypted = false;
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DImportKeyPair.NotKeyPairFile.message"),
@@ -369,8 +473,22 @@ public class DImportKeyPair extends JEscDialog {
                     certificateChain = null;
                 }
                 break;
+            case UNENC_JSON_WEB_KEY:
+                    try {
+                        JWK jwk = JwkUtil.load(Files.readAllBytes(chosenFile.toPath()));
+                        certificateChain = getCertificates(jwk);
+                    } catch (CryptoException e) {
+                        // ignore since a failure likely means that there
+                        // are no certificates, which is ok.
+
+                        // Need to reset certificateChain in case the user chose a file that
+                        // had certificates, and then decided to choose a different file that
+                        // does not have certificates.
+                        certificateChain = null;
+                    }
+                    break;
             default:
-                // PKCS #12 or MS PVK -- just reset the certificateChain
+                // PKCS #12, MS PVK, JWE -- just reset the certificateChain
 
                 // Need to reset certificateChain in case the user chose a file that
                 // had certificates, and then decided to choose a different file that
@@ -379,6 +497,8 @@ public class DImportKeyPair extends JEscDialog {
                 break;
             }
 
+            // Allow choosing of certificate file for JWK import even though it is not necessary.
+            // This could cause the user to think that it is required since the field is enabled.
             boolean isSelectCertificateFile = fileType != CryptoFileType.PKCS12_KS && (certificateChain == null
                     || certificateChain.length == 0);
 
@@ -426,19 +546,9 @@ public class DImportKeyPair extends JEscDialog {
             PrivateKey privateKey = loadPrivateKey();
 
             if (privateKey != null) {
-                JDialog dViewDetails;
-                // This condition covers these cases:
-                // 1. The file type is PKCS #12
-                // 2. The file type is PEM with a certificate chain in it
-                if (!jtfCertificatePath.isEnabled() && certificateChain != null && certificateChain.length > 0) {
-                    dViewDetails = new DViewKeyPair(this, MessageFormat.format(
-                            res.getString("DImportKeyPair.ViewKeyPairDetails.Title"), path), privateKey,
-                            certificateChain);
-                } else {
-                    dViewDetails = new DViewPrivateKey(this,
+                JDialog dViewDetails = new DViewPrivateKey(this,
                             MessageFormat.format(res.getString("DImportKeyPair.ViewPrivateKeyDetails.Title"), path),
                             privateKey, Optional.ofNullable(getPrivateKeyFormat()));
-                }
                 dViewDetails.setLocationRelativeTo(this);
                 dViewDetails.setVisible(true);
             }
@@ -461,6 +571,10 @@ public class DImportKeyPair extends JEscDialog {
             case ENC_MS_PVK:
             case UNENC_MS_PVK:
                 format = PrivateKeyFormat.MSPVK;
+                break;
+            case ENC_JSON_WEB_KEY:
+            case UNENC_JSON_WEB_KEY:
+                format = PrivateKeyFormat.JWK;
                 break;
             default:
                 // Ignore the file types since detectFileType filters out unsupported file types.
@@ -512,6 +626,10 @@ public class DImportKeyPair extends JEscDialog {
                 case UNENC_MS_PVK:
                     privateKey = MsPvkUtil.load(pvkData);
                     break;
+                case ENC_JSON_WEB_KEY:
+                case UNENC_JSON_WEB_KEY:
+                    privateKey = loadJwk(pvkData, privateKeyFile, password);
+                    break;
                 default:
                     JOptionPane.showMessageDialog(this, res.getString("DImportKeyPair.NotKeyPairFile.message"),
                             getTitle(), JOptionPane.WARNING_MESSAGE);
@@ -542,56 +660,7 @@ public class DImportKeyPair extends JEscDialog {
 
     private PrivateKey loadPkcs12(byte[] pvkData, File file, Password password) {
         try {
-            KseKeyStore pkcs12 = KeyStoreUtil.load(pvkData, password, KeyStoreType.PKCS12);
-
-            // Find a key pair in the PKCS #12 KeyStore
-            PrivateKey privKey = null;
-            ArrayList<Certificate> certsList = new ArrayList<>();
-
-            // Look for key pair entries first
-            for (Enumeration<String> aliases = pkcs12.aliases(); aliases.hasMoreElements(); ) {
-                String alias = aliases.nextElement();
-
-                if (pkcs12.isKeyEntry(alias)) {
-                    Key key = pkcs12.getKey(alias, password.toCharArray());
-                    if (key instanceof PrivateKey) {
-                        privKey = (PrivateKey) key;
-                        Certificate[] certs = pkcs12.getCertificateChain(alias);
-                        if ((certs != null) && (certs.length > 0)) {
-                            Collections.addAll(certsList, certs);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // No key pair entries found, but a key entry was found, look for certificate entries
-            if (privKey != null && certsList.isEmpty()) {
-                for (Enumeration<String> aliases = pkcs12.aliases(); aliases.hasMoreElements(); ) {
-                    String alias = aliases.nextElement();
-
-                    Certificate certificate = pkcs12.getCertificate(alias);
-                    if (certificate != null) {
-                        certsList.add(certificate);
-                    }
-                }
-                // load in any invisible certificates
-                if (pkcs12 instanceof Pkcs12KeyStoreAdapter) {
-                    certsList.addAll(((Pkcs12KeyStoreAdapter) pkcs12).getInvisibleCerts().stream().map(ce -> ce.cert())
-                            .toList());
-                }
-            }
-
-            if (privKey == null || certsList.isEmpty()) {
-                JOptionPane.showMessageDialog(this, MessageFormat.format(
-                                                      res.getString("DImportKeyPair.NoKeyPairFound.message"),
-                                                      file.getName()), getTitle(), JOptionPane.INFORMATION_MESSAGE);
-                return null;
-            }
-
-            certificateChain = X509CertUtil.convertCertificates(certsList.toArray(Certificate[]::new));
-
-            return privKey;
+            return loadPkcs12Throws(pvkData, file, password);
         } catch (Exception ex) {
             Problem problem = createLoadPkcs12Problem(ex, file);
 
@@ -604,6 +673,123 @@ public class DImportKeyPair extends JEscDialog {
         }
     }
 
+    private PrivateKey loadPkcs12Throws(byte[] pvkData, File file, Password password) throws Exception {
+        KseKeyStore pkcs12 = KeyStoreUtil.load(pvkData, password, KeyStoreType.PKCS12);
+
+        // Find a key pair in the PKCS #12 KeyStore
+        PrivateKey privKey = null;
+        ArrayList<Certificate> certsList = new ArrayList<>();
+
+        // Look for key pair entries first
+        for (Enumeration<String> aliases = pkcs12.aliases(); aliases.hasMoreElements(); ) {
+            String alias = aliases.nextElement();
+
+            if (pkcs12.isKeyEntry(alias)) {
+                Key key = pkcs12.getKey(alias, password.toCharArray());
+                if (key instanceof PrivateKey) {
+                    privKey = (PrivateKey) key;
+                    Certificate[] certs = pkcs12.getCertificateChain(alias);
+                    if ((certs != null) && (certs.length > 0)) {
+                        Collections.addAll(certsList, certs);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // No key pair entries found, but a key entry was found, look for certificate entries
+        if (privKey != null && certsList.isEmpty()) {
+            for (Enumeration<String> aliases = pkcs12.aliases(); aliases.hasMoreElements(); ) {
+                String alias = aliases.nextElement();
+
+                Certificate certificate = pkcs12.getCertificate(alias);
+                if (certificate != null) {
+                    certsList.add(certificate);
+                }
+            }
+            // load in any invisible certificates
+            if (pkcs12 instanceof Pkcs12KeyStoreAdapter) {
+                certsList.addAll(((Pkcs12KeyStoreAdapter) pkcs12).getInvisibleCerts().stream().map(ce -> ce.cert())
+                        .toList());
+            }
+        }
+
+        if (privKey == null || certsList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, MessageFormat.format(
+                                                  res.getString("DImportKeyPair.NoKeyPairFound.message"),
+                                                  file.getName()), getTitle(), JOptionPane.INFORMATION_MESSAGE);
+            return null;
+        }
+
+        certificateChain = X509CertUtil.convertCertificates(certsList.toArray(Certificate[]::new));
+
+        return privKey;
+    }
+
+    private PrivateKey loadJwk(byte[] pvkData, File file, Password password) {
+        try {
+            return loadJwkThrows(pvkData, file, password);
+        } catch (Exception ex) {
+            Problem problem = createLoadKeyProblem(ex, file);
+
+            DProblem dProblem = new DProblem(this, res.getString("DImportKeyPair.ProblemLoadingKey.Title"),
+                                             problem);
+            dProblem.setLocationRelativeTo(this);
+            dProblem.setVisible(true);
+
+            return null;
+        }
+    }
+
+    private PrivateKey loadJwkThrows(byte[] pvkData, File file, Password password) throws CryptoException {
+        JWK jwkKey;
+
+        if (encrypted) {
+            jwkKey = JwkUtil.load(pvkData, password);
+        } else {
+            jwkKey = JwkUtil.load(pvkData);
+        }
+
+        PrivateKey privKey = JwkUtil.toPrivateKey(jwkKey);
+
+        if (privKey == null) {
+            JOptionPane.showMessageDialog(this, MessageFormat.format(
+                                                  res.getString("DImportKeyPair.NoPrivateKeyFound.message"),
+                                                  file.getName()), getTitle(), JOptionPane.INFORMATION_MESSAGE);
+            return null;
+        }
+
+        certificateChain = getCertificates(jwkKey);
+
+        return privKey;
+    }
+
+
+    /**
+     * Gets the certificate chain, if present, from a JWK.
+     *
+     * @param jwkKey The JWK with or without a certificate chain (x5c or x5u).
+     * @return X509Certificate[] if the JWK contains a certificate chain.
+     * @throws CryptoException If the certificate chain cannot be loaded.
+     */
+    private static X509Certificate[] getCertificates(JWK jwkKey) throws CryptoException {
+        X509Certificate[] certificateChain = null;
+
+        List<X509Certificate> jwkCertChain = jwkKey.getParsedX509CertChain();
+        if (jwkCertChain != null) {
+            certificateChain = jwkCertChain.toArray(X509Certificate[]::new);
+        } else if (jwkKey.getX509CertURL() != null) {
+            try {
+                byte[] certData = Downloader.download(jwkKey.getX509CertURL().toURL());
+                certificateChain = X509CertUtil.loadCertificates(certData);
+            } catch (IOException | URISyntaxException e) {
+                // Do nothing. The user must provide the certificate or generate a new
+                // self-signed certificate to import the key pair.
+            }
+        }
+
+        return certificateChain;
+    }
     private Problem createLoadPkcs12Problem(Exception exception, File file) {
         String problemStr = MessageFormat.format(res.getString("DImportKeyPair.NoLoadEncryptedKeyPair.Problem"),
                                                  file.getName());
@@ -636,7 +822,12 @@ public class DImportKeyPair extends JEscDialog {
 
     private void certificateDetailsPressed() {
         try {
-            X509Certificate[] certs = loadCertificates(null);
+            // Use existing certificate chain if already loaded
+            X509Certificate[] certs = certificateChain;
+
+            if (certs == null ) {
+                certs = loadCertificates(null);
+            }
 
             if (certs != null && certs.length != 0) {
                 String path = new File(jtfCertificatePath.getText()).getName();
@@ -789,6 +980,7 @@ public class DImportKeyPair extends JEscDialog {
     }
 
     private void cancelPressed() {
+        executor.shutdown();
         closeDialog();
     }
 

@@ -46,6 +46,7 @@ import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -102,6 +103,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         openFile(file);
     }
 
+    /**
+     * Opens a file by detecting the file type and displaying the most appropriate dialog.
+     *
+     * @param file The file to open.
+     */
     public void openFile(File file) {
         if (file == null) {
             return;
@@ -145,10 +151,13 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             case UNENC_OPENSSL_PVK:
             case ENC_MS_PVK:
             case UNENC_MS_PVK:
+            case ENC_JSON_WEB_KEY:
+            case UNENC_JSON_WEB_KEY:
                 openPrivateKey(file, fileType);
                 break;
             case OPENSSL_PUB:
-                openPublicKey(file);
+            case JSON_WEB_KEY_PUB:
+                openPublicKey(file, fileType);
                 break;
             case UNKNOWN:
             default:
@@ -340,6 +349,18 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             privKey = MsPvkUtil.load(data);
             format = PrivateKeyFormat.MSPVK;
             break;
+        case ENC_JSON_WEB_KEY:
+            password = getPassword(file);
+            if (password == null || password.isNulled()) {
+                return;
+            }
+            privKey = JwkUtil.toPrivateKey(JwkUtil.load(data, password));
+            format = PrivateKeyFormat.JWK;
+            break;
+        case UNENC_JSON_WEB_KEY:
+            privKey = JwkUtil.toPrivateKey(JwkUtil.load(data));
+            format = PrivateKeyFormat.JWK;
+            break;
         default:
             break;
         }
@@ -351,12 +372,24 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         dViewPrivateKey.setVisible(true);
     }
 
-    private void openPublicKey(File file) throws IOException, CryptoException {
+    private void openPublicKey(File file, CryptoFileType fileType) throws IOException, CryptoException {
         byte[] data = decodeIfBase64(Files.readAllBytes(file.toPath()));
-        PublicKey publicKey = OpenSslPubUtil.load(data);
+        PublicKey publicKey = null;
 
-        DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-                res.getString("ExamineFileAction.PublicKeyDetailsFile.Title"), file.getName()), FileNameUtil.removeExtension(file.getName()), publicKey);
+        switch (fileType) {
+        case OPENSSL_PUB:
+            publicKey = OpenSslPubUtil.load(data);
+            break;
+        case JSON_WEB_KEY_PUB:
+            publicKey = JwkUtil.toPublicKey(JwkUtil.load(data));
+            break;
+        default:
+            break;
+        }
+
+        DViewPublicKey dViewPublicKey = new DViewPublicKey(frame,
+                MessageFormat.format(res.getString("ExamineFileAction.PublicKeyDetailsFile.Title"), file.getName()),
+                FileNameUtil.removeExtension(file.getName()), publicKey);
         dViewPublicKey.setLocationRelativeTo(frame);
         dViewPublicKey.setVisible(true);
     }

@@ -44,13 +44,13 @@ import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.jwk.JwkExporter;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 
 /**
  * Dialog used to request the type of private key export.
@@ -76,10 +76,13 @@ public class DExportPrivateKeyType extends JEscDialog {
 
     private KeyPairType keyPairType;
     private PrivateKey privateKey;
+
     /**
      * Creates a new DExportPrivateKeyType dialog.
      *
      * @param parent The parent frame
+     * @param privateKey The private key to export. Used to determine available export options.
+     * @throws CryptoException If an error occurs when determining EC curve support.
      */
     public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -99,7 +102,7 @@ public class DExportPrivateKeyType extends JEscDialog {
             case EC:
                 KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
                 String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
-                return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
+                return JwkUtil.ECKeyExporter.supportsCurve(detailedAlgorithm);
             default:
                 return false;
         }

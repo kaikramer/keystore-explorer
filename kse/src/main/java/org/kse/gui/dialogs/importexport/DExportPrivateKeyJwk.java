@@ -21,14 +21,11 @@
 
 package org.kse.gui.dialogs.importexport;
 
-import net.miginfocom.swing.MigLayout;
-import org.kse.gui.*;
-import org.kse.gui.components.JEscDialog;
-import org.kse.utilities.DialogViewer;
-import org.kse.utilities.io.FileNameUtil;
+import static org.kse.gui.FileChooserFactory.JWK_EXT;
+import static org.kse.gui.FileChooserFactory.OPENSSL_PVK_EXT;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -37,9 +34,40 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import static org.kse.gui.FileChooserFactory.JWK_EXT;
-import static org.kse.gui.FileChooserFactory.OPENSSL_PVK_EXT;
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
+import org.kse.gui.CurrentDirectory;
+import org.kse.gui.CursorUtil;
+import org.kse.gui.FileChooserFactory;
+import org.kse.gui.JavaFXFileChooser;
+import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+import org.kse.gui.password.JPasswordQualityField;
+import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.DialogViewer;
+import org.kse.utilities.io.FileNameUtil;
+
+import com.nimbusds.jose.JWEAlgorithm;
+import net.miginfocom.swing.MigLayout;
+
+/**
+ * Dialog used to display options to export a private key from a KeyStore entry as JWK.
+ */
 public class DExportPrivateKeyJwk extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
@@ -48,22 +76,89 @@ public class DExportPrivateKeyJwk extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
-    private final String entryAlias;
-    private File exportFile;
-    private boolean exportSelected;
+    private JLabel jlEncrypt;
+    private JCheckBox jcbEncrypt;
+    private JLabel jlJweAlg;
+    private JComboBox<JWEAlgorithm> jcbJweAlg;
+    private JLabel jlPassword;
+    private JComponent jpfPassword;
+    private JLabel jlConfirmPassword;
+    private JPasswordField jpfConfirmPassword;
+    private JRadioButton jrbFmtJson;
+    private JRadioButton jrbFmtCompact;
+    private ButtonGroup buttonGroup;
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
     private JButton jbExport;
     private JButton jbCancel;
 
-    public DExportPrivateKeyJwk(JFrame parent, String entryAlias) {
+    private final String entryAlias;
+    private PasswordQualityConfig passwordQualityConfig;
+    private File exportFile;
+    private boolean exportSelected;
+    private boolean encrypt;
+    private JWEAlgorithm jweAlgorithm;
+    private Password exportPassword;
+    private boolean jwkCompactFormat;
+
+    /**
+     * Creates a new DExportPrivateKeyJwk dialog.
+     *
+     * @param parent                The parent frame
+     * @param entryAlias            The KeyStore entry to export private key from
+     * @param passwordQualityConfig Password quality configuration
+     */
+    public DExportPrivateKeyJwk(JFrame parent, String entryAlias, PasswordQualityConfig passwordQualityConfig) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.entryAlias = entryAlias;
+        this.passwordQualityConfig = passwordQualityConfig;
         initComponents();
     }
 
     private void initComponents() {
+
+        jlEncrypt = new JLabel(res.getString("DExportPrivateKeyJwk.jlEncrypt.text"));
+
+        jcbEncrypt = new JCheckBox();
+        jcbEncrypt.setSelected(true);
+        jcbEncrypt.setToolTipText(res.getString("DExportPrivateKeyJwk.jcbEncrypt.tooltip"));
+
+        jlJweAlg = new JLabel(res.getString("DExportPrivateKeyJwk.jlJweAlg.text"));
+
+        jcbJweAlg = new JComboBox<>();
+        populatePbeAlgs();
+        jcbJweAlg.setToolTipText(res.getString("DExportPrivateKeyJwk.jcbJweAlg.tooltip"));
+
+        jlPassword = new JLabel(res.getString("DExportPrivateKeyJwk.jlPassword.text"));
+
+        if (passwordQualityConfig.getEnabled()) {
+            if (passwordQualityConfig.getEnforced()) {
+                jpfPassword = new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
+            } else {
+                jpfPassword = new JPasswordQualityField(15);
+            }
+        } else {
+            jpfPassword = new JPasswordField(15);
+        }
+
+        jpfPassword.setToolTipText(res.getString("DExportPrivateKeyJwk.jpqfPassword.tooltip"));
+
+        jlConfirmPassword = new JLabel(res.getString("DExportPrivateKeyJwk.jlConfirmPassword.text"));
+
+        jpfConfirmPassword = new JPasswordField(15);
+        jpfConfirmPassword.setToolTipText(res.getString("DExportPrivateKeyJwk.jpfConfirmPassword.tooltip"));
+
+        jrbFmtJson = new JRadioButton(res.getString("DExportPrivateKeyJwk.jrbFmtJson.text"));
+        jrbFmtJson.setToolTipText(res.getString("DExportPrivateKeyJwk.jrbFmtJson.tooltip"));
+
+        jrbFmtCompact = new JRadioButton(res.getString("DExportPrivateKeyJwk.jrbFmtCompact.text"));
+        jrbFmtCompact.setToolTipText(res.getString("DExportPrivateKeyJwk.jrbFmtCompact.tooltip"));
+
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(jrbFmtJson);
+        buttonGroup.add(jrbFmtCompact);
+        jrbFmtJson.setSelected(true);
 
         jlExportFile = new JLabel(res.getString("DExportPrivateKeyJwk.jlExportFile.text"));
 
@@ -83,7 +178,17 @@ public class DExportPrivateKeyJwk extends JEscDialog {
         // layout
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
-
+        pane.add(jlEncrypt, "");
+        pane.add(jcbEncrypt, "wrap");
+        pane.add(jlJweAlg, "");
+        pane.add(jcbJweAlg, "growx, pushx, wrap");
+        pane.add(jlPassword, "");
+        pane.add(jpfPassword, "wrap");
+        pane.add(jlConfirmPassword, "");
+        pane.add(jpfConfirmPassword, "wrap");
+        pane.add(new JLabel("Format:"), "");
+        pane.add(jrbFmtJson, "split 2");
+        pane.add(jrbFmtCompact, "wrap");
         pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
@@ -92,6 +197,22 @@ public class DExportPrivateKeyJwk extends JEscDialog {
         pane.add(jbCancel, "tag cancel");
 
         // actions
+
+        jcbEncrypt.addItemListener(evt -> {
+            jcbJweAlg.setEnabled(jcbEncrypt.isSelected());
+            jpfPassword.setEnabled(jcbEncrypt.isSelected());
+            jpfConfirmPassword.setEnabled(jcbEncrypt.isSelected());
+            jrbFmtCompact.setEnabled(jcbEncrypt.isSelected());
+            jrbFmtJson.setEnabled(jcbEncrypt.isSelected());
+            if (!jcbEncrypt.isSelected()) {
+                if (jpfPassword instanceof JPasswordQualityField) {
+                    ((JPasswordQualityField) jpfPassword).setPassword("");
+                } else {
+                    ((JPasswordField) jpfPassword).setText("");
+                }
+                jpfConfirmPassword.setText("");
+            }
+        });
 
         jbBrowse.addActionListener(evt -> {
             try {
@@ -140,12 +261,58 @@ public class DExportPrivateKeyJwk extends JEscDialog {
         pack();
     }
 
+    /**
+     * Has the user chosen to export?
+     *
+     * @return True if they have
+     */
     public boolean exportSelected() {
         return exportSelected;
     }
 
+    /**
+     * Get chosen export file.
+     *
+     * @return Export file
+     */
     public File getExportFile() {
         return exportFile;
+    }
+
+    /**
+     * Encrypt exported private key?
+     *
+     * @return True if encryption selected
+     */
+    public boolean encrypt() {
+        return encrypt;
+    }
+
+    /**
+     * Get JWE algorithm used for encryption.
+     *
+     * @return JWE algorithm
+     */
+    public JWEAlgorithm getJweAlgorithm() {
+        return jweAlgorithm;
+    }
+
+    /**
+     * Get export encryption password.
+     *
+     * @return Export password
+     */
+    public Password getExportPassword() {
+        return exportPassword;
+    }
+
+    /**
+     * Was the option to use the compact format selected?
+     *
+     * @return True if it was
+     */
+    public boolean compactFormat() {
+        return jwkCompactFormat;
     }
 
     private void populateExportFileName() {
@@ -155,7 +322,53 @@ public class DExportPrivateKeyJwk extends JEscDialog {
         jtfExportFile.setText(csrFile.getPath());
     }
 
+    private void populatePbeAlgs() {
+
+        for (JWEAlgorithm jweAlg : JWEAlgorithm.Family.PBES2) {
+            jcbJweAlg.addItem(jweAlg);
+        }
+
+        jcbJweAlg.setSelectedItem(JWEAlgorithm.PBES2_HS256_A128KW);
+    }
+
     private void exportPressed() {
+        encrypt = jcbEncrypt.isSelected();
+
+        if (encrypt) {
+            jweAlgorithm = (JWEAlgorithm) jcbJweAlg.getSelectedItem();
+
+            Password firstPassword;
+
+            if (jpfPassword instanceof JPasswordQualityField) {
+                char[] firstPasswordChars = ((JPasswordQualityField) jpfPassword).getPassword();
+
+                if (firstPasswordChars == null) {
+                    JOptionPane.showMessageDialog(this, res.getString(
+                                                          "DExportPrivateKeyJwk.MinimumPasswordQualityNotMet.message"),
+                                                  res.getString("DExportPrivateKeyJwk.Simple.Title"),
+                                                  JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                firstPassword = new Password(firstPasswordChars);
+            } else {
+                firstPassword = new Password(((JPasswordField) jpfPassword).getPassword());
+            }
+
+            Password confirmPassword = new Password(jpfConfirmPassword.getPassword());
+
+            if (firstPassword.equals(confirmPassword)) {
+                exportPassword = firstPassword;
+            } else {
+                JOptionPane.showMessageDialog(this, res.getString("DExportPrivateKeyJwk.PasswordsNoMatch.message"),
+                                              res.getString("DExportPrivateKeyJwk.Simple.Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+
+        jwkCompactFormat = jrbFmtCompact.isSelected();
+
         String exportFileChars = jtfExportFile.getText().trim();
 
         if (exportFileChars.isEmpty()) {
@@ -223,6 +436,6 @@ public class DExportPrivateKeyJwk extends JEscDialog {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DExportPrivateKeyJwk(new JFrame(), "alias"));
+        DialogViewer.run(new DExportPrivateKeyJwk(new JFrame(), "alias", new PasswordQualityConfig(false, false, 1)));
     }
 }

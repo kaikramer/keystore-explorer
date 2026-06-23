@@ -121,6 +121,21 @@ public enum CryptoFileType {
     OPENSSL_PUB("CryptoFileType.OpenSslPub"),
 
     /**
+     * JSON Web Key (JWK) Public Key only
+     */
+    JSON_WEB_KEY_PUB("CryptoFileType.JwkPub"),
+
+    /**
+     * Unencrypted JSON Web Key (JWK)
+     */
+    UNENC_JSON_WEB_KEY("CryptoFileType.UnencJsonWebKey"),
+
+    /**
+     * Encrypted JSON Web Key (JWK)
+     */
+    ENC_JSON_WEB_KEY("CryptoFileType.EncJsonWebKey"),
+
+    /**
      * JAR file (possibly signed and containing certificates)
      */
     JAR("CryptoFileType.Jar"),
