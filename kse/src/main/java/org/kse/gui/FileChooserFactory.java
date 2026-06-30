@@ -82,7 +82,7 @@ public class FileChooserFactory {
 
     private static final String KEYSTORE_FILE_DESC =
             format(res.getString("FileChooserFactory.KeyStoreFiles"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
-                   KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT, KDB_EXT);
+                   KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT, KDB_EXT, PEM_EXT);
 
     private static final String X509_FILE_DESC =
             format(res.getString("FileChooserFactory.CertificateFiles"), X509_EXT_1, X509_EXT_2);
@@ -197,7 +197,7 @@ public class FileChooserFactory {
         chooser.setFileFilter(
                 new FileNameExtensionFilter(KEYSTORE_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
                                             KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT,
-                                            BCFKS_EXT, KDB_EXT));
+                                            BCFKS_EXT, KDB_EXT, PEM_EXT));
         return chooser;
     }
 

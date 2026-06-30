@@ -85,6 +85,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.ocsp.OcspDigestAlgorithm;
 import org.kse.crypto.x509.X509CertUtil;
@@ -407,7 +408,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             listCertificates.add(certificateEval);
         } else {
             if (keyCertChain != null) {
-                CertPath path = CertificateFactory.getInstance("X509", KSE.BC)
+                CertPath path = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE, KSE.BC)
                         .generateCertPath(Arrays.asList(keyCertChain));
                 List<? extends Certificate> genericCertList = path.getCertificates();
                 for (Certificate cert : genericCertList) {
@@ -419,7 +420,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         // Use the BC provider for the PKIX implementation. Allows for verifying certs with
         // algorithms only supported by Bouncy Castle. For example, Brainpool and SM2 curves.
         CertPathValidator validator = CertPathValidator.getInstance("PKIX", KSE.BC);
-        CertificateFactory factory = CertificateFactory.getInstance("X509");
+        CertificateFactory factory = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE);
         CertPath certPath = factory.generateCertPath(listCertificates);
         PKIXParameters params = new PKIXParameters(trustStore);
         if (xCrl != null) {
@@ -466,7 +467,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 
         KeyStore trustStore = null;
-        trustStore = KeyStore.getInstance("JCEKS");
+        trustStore = KeyStore.getInstance(KeyStoreType.JCEKS.jce());
         trustStore.load(null, null);
         if (keyStoreHistory != null) {
 
