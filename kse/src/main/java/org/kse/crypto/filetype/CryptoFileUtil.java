@@ -22,13 +22,16 @@ package org.kse.crypto.filetype;
 import static org.kse.crypto.csr.CsrType.PKCS10;
 import static org.kse.crypto.filetype.CryptoFileType.CERT;
 import static org.kse.crypto.filetype.CryptoFileType.CRL;
+import static org.kse.crypto.filetype.CryptoFileType.ENC_JSON_WEB_KEY;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.JAR;
+import static org.kse.crypto.filetype.CryptoFileType.JSON_WEB_KEY_PUB;
 import static org.kse.crypto.filetype.CryptoFileType.JSON_WEB_TOKEN;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 import static org.kse.crypto.filetype.CryptoFileType.PEM_KS;
+import static org.kse.crypto.filetype.CryptoFileType.UNENC_JSON_WEB_KEY;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
@@ -52,6 +55,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
@@ -64,11 +68,13 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DLSequence;
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.keystore.kdb.KdbKeyDatabase;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacException;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.privatekey.EncryptionType;
 import org.kse.crypto.privatekey.MsPvkUtil;
@@ -79,6 +85,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
+import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jwt.JWTParser;
 
 /**
@@ -235,6 +242,29 @@ public class CryptoFileUtil {
 
         if (keyStoreType != null) {
             return keyStoreType.getCryptoFileType();
+        }
+
+        EncryptionType jwkEncType = JwkUtil.getEncryptionType(data);
+        if (jwkEncType != null) {
+            try {
+                if (jwkEncType == ENCRYPTED) {
+                    // assume private key only even though the JWE could contain a public key
+                    return ENC_JSON_WEB_KEY;
+                } else if (jwkEncType == UNENCRYPTED) {
+                    JWK jwkKey = JWK.parse(new String(data));
+                    // first check for private key
+                    // Due to the JWK format, a private key will almost always contain the public key, too.
+                    if (JwkUtil.toPrivateKey(jwkKey) != null) {
+                        return UNENC_JSON_WEB_KEY;
+                    }
+                    // next check for public key
+                    if (JwkUtil.toPublicKey(jwkKey) != null) {
+                        return JSON_WEB_KEY_PUB;
+                    }
+                }
+            } catch (CryptoException | ParseException e) {
+                // Data is not JWK key
+            }
         }
 
         if (isJwt(data)) {

@@ -113,7 +113,7 @@ public class Pkcs8Util {
 
             return encryptedPrivateKeyInfo.getEncoded();
         } catch (OperatorCreationException ex) {
-            throw new CryptoException("NoEncryptPkcs8PrivateKey.exception.message", ex);
+            throw new CryptoException(res.getString("NoEncryptPkcs8PrivateKey.exception.message"), ex);
         }
     }
 

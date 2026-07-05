@@ -99,7 +99,7 @@ public class FileChooserFactory {
 
     private static final String KEY_FILE_DESC = format(res.getString("FileChooserFactory.KeyFiles"),
             PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2, P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT, PEM_EXT, PVK_EXT,
-            OPENSSL_PVK_EXT);
+            OPENSSL_PVK_EXT, JWK_EXT);
 
     private static final String PKCS12_FILE_DESC =
             format(res.getString("FileChooserFactory.Pkcs12Files"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2);
@@ -292,7 +292,7 @@ public class FileChooserFactory {
     public static JFileChooser getKeyFileChooser() {
         JFileChooser chooser = getFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter(KEY_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
-                P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT, PEM_EXT, PVK_EXT, OPENSSL_PVK_EXT));
+                P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT, PEM_EXT, PVK_EXT, OPENSSL_PVK_EXT, JWK_EXT));
         return chooser;
     }
 

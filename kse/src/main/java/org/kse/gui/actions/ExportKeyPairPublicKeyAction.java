@@ -22,8 +22,8 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
@@ -34,14 +34,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.keystore.KseKeyStore;
-import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.importexport.DExportPublicKey;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
+
+import com.nimbusds.jose.util.StandardCharset;
 
 /**
  * Action to export the selected key pair entry's public key.
@@ -76,7 +78,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
 
             PublicKey publicKey = getPublicKey(alias);
 
-            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
+            boolean isKeyExportableAsJWK = JwkUtil.isPublicKeyTypeExportable(publicKey);
 
             DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
@@ -98,7 +100,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
                     encoded = OpenSslPubUtil.get(publicKey);
                     break;
                 case JWK:
-                    encoded = JwkPublicKeyExporter.from(publicKey, alias).get();
+                    encoded = JwkUtil.get(publicKey, alias).getBytes(StandardCharset.UTF_8);
                     break;
             }
 
@@ -138,9 +140,6 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
     }
 
     private void exportEncodedPublicKey(byte[] encoded, File exportFile) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(exportFile)) {
-            fos.write(encoded);
-            fos.flush();
-        }
+        Files.write(exportFile.toPath(), encoded);
     }
 }

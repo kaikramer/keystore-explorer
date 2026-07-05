@@ -66,7 +66,8 @@ public class DExportKeyPair extends JEscDialog {
 
     public enum ExportFormat {
         PKCS12,
-        PEM
+        PEM,
+        JWK
     }
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
@@ -76,6 +77,7 @@ public class DExportKeyPair extends JEscDialog {
     private JLabel jlFormat;
     private JRadioButton jrbFormatPkcs12;
     private JRadioButton jrbFormatPEM;
+    private JRadioButton jrbFormatJWK;
     private JLabel jlPassword;
     private JComponent jpfPassword;
     private JLabel jlConfirmPassword;
@@ -120,9 +122,13 @@ public class DExportKeyPair extends JEscDialog {
         jrbFormatPEM = new JRadioButton(res.getString("DExportKeyPair.jrbFormatPEM.text"));
         jrbFormatPEM.setToolTipText(res.getString("DExportKeyPair.jrbFormatPEM.tooltip"));
 
+        jrbFormatJWK = new JRadioButton(res.getString("DExportKeyPair.jrbFormatJWK.text"));
+        jrbFormatJWK.setToolTipText(res.getString("DExportKeyPair.jrbFormatJWK.tooltip"));
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(jrbFormatPkcs12);
         buttonGroup.add(jrbFormatPEM);
+        buttonGroup.add(jrbFormatJWK);
         jrbFormatPkcs12.setSelected(true);
 
         jlPassword = new JLabel(res.getString("DExportKeyPair.jlPassword.text"));
@@ -165,8 +171,9 @@ public class DExportKeyPair extends JEscDialog {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "unrel[]unrel[]"));
         pane.add(jlFormat, "");
-        pane.add(jrbFormatPkcs12, "split 2");
-        pane.add(jrbFormatPEM, "wrap");
+        pane.add(jrbFormatPkcs12, "split 3");
+        pane.add(jrbFormatPEM, "");
+        pane.add(jrbFormatJWK, "wrap");
         pane.add(jlPassword, "");
         pane.add(jpfPassword, "wrap");
         pane.add(jlConfirmPassword, "");
@@ -186,6 +193,12 @@ public class DExportKeyPair extends JEscDialog {
         jrbFormatPEM.addItemListener(evt -> {
             if (jrbFormatPEM.isSelected()) {
                 updateFileExtension(FileChooserFactory.PEM_EXT);
+            }
+        });
+
+        jrbFormatJWK.addItemListener(evt -> {
+            if (jrbFormatJWK.isSelected()) {
+                updateFileExtension(FileChooserFactory.JWK_EXT);
             }
         });
 
@@ -249,6 +262,11 @@ public class DExportKeyPair extends JEscDialog {
         jtfExportFile.setText(csrFile.getPath());
     }
 
+    /**
+     * Get chosen export format.
+     *
+     * @return Export format
+     */
     public ExportFormat getExportFormat() {
         return exportFormat;
     }
@@ -310,6 +328,8 @@ public class DExportKeyPair extends JEscDialog {
 
         if (jrbFormatPkcs12.isSelected()) {
             exportFormat = ExportFormat.PKCS12;
+        } else if (jrbFormatJWK.isSelected()) {
+            exportFormat = ExportFormat.JWK;
         } else {
             exportFormat = ExportFormat.PEM;
         }

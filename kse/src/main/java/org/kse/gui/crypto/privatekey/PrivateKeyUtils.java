@@ -23,8 +23,9 @@ package org.kse.gui.crypto.privatekey;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.PrivateKey;
 import java.security.interfaces.DSAPrivateKey;
@@ -35,16 +36,25 @@ import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.nimbusds.jose.JOSEException;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.privatekey.*;
+import org.kse.crypto.jwk.JwkUtil;
+import org.kse.crypto.privatekey.MsPvkUtil;
+import org.kse.crypto.privatekey.OpenSslPbeType;
+import org.kse.crypto.privatekey.OpenSslPvkUtil;
+import org.kse.crypto.privatekey.Pkcs8PbeType;
+import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyJwk;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyOpenSsl;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyPkcs8;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyPvk;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.preferences.data.KsePreferences;
 
+import com.nimbusds.jose.JWEAlgorithm;
+
+/**
+ * Utilities for exporting private keys.
+ */
 public class PrivateKeyUtils {
 
     /**
@@ -53,10 +63,10 @@ public class PrivateKeyUtils {
      * @param privateKey          Private key
      * @param alias               Name of alias or file name
      * @param frame               The parent frame
-     * @param preferences Password quality configuration
+     * @param preferences         Password quality configuration
      * @param res                 ResourceBundle
-     * @throws CryptoException
-     * @throws IOException
+     * @throws CryptoException    thrown on error during encryption
+     * @throws IOException        thrown on I/O error when writing the file
      */
     public static void exportAsPkcs8(PrivateKey privateKey, String alias, JFrame frame,
                                      KsePreferences preferences, ResourceBundle res)
@@ -125,10 +135,7 @@ public class PrivateKeyUtils {
     }
 
     private static void exportEncodedPrivateKey(byte[] encoded, File exportFile) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(exportFile)) {
-            fos.write(encoded);
-            fos.flush();
-        }
+        Files.write(exportFile.toPath(), encoded);
     }
 
     /**
@@ -139,8 +146,8 @@ public class PrivateKeyUtils {
      * @param frame                 The parent frame
      * @param preferences           Password quality configuration
      * @param res                   ResourceBundle
-     * @throws CryptoException
-     * @throws IOException
+     * @throws CryptoException      thrown on error during encryption
+     * @throws IOException          thrown on I/O error when writing the file
      */
     public static void exportAsPvk(PrivateKey privateKey, String alias, JFrame frame,
                                    KsePreferences preferences, ResourceBundle res)
@@ -188,7 +195,7 @@ public class PrivateKeyUtils {
     }
 
     private static byte[] getPvkEncodedPrivateKey(PrivateKey privateKey, int keyType, Password password,
-                                                  boolean strongEncryption) throws CryptoException, IOException {
+                                                  boolean strongEncryption) throws CryptoException {
         byte[] encoded = null;
 
         if (password != null) {
@@ -214,10 +221,10 @@ public class PrivateKeyUtils {
      * @param privateKey          Private key
      * @param alias               Name of alias or file name
      * @param frame               The parent frame
-     * @param preferences Password quality configuration
+     * @param preferences         Password quality configuration
      * @param res                 ResourceBundle
-     * @throws CryptoException
-     * @throws IOException
+     * @throws CryptoException    thrown on error during encryption
+     * @throws IOException        thrown on I/O error when writing the file
      */
     public static void exportAsOpenSsl(PrivateKey privateKey, String alias, JFrame frame,
                                        KsePreferences preferences, ResourceBundle res)
@@ -264,55 +271,9 @@ public class PrivateKeyUtils {
         }
     }
 
-    /** Exports supported {@link PrivateKey} instances as JWK
-     *
-     * @param privateKey instance of {@link PrivateKey} to be exported
-     * @param alias private key alias; if not null, JWK exporter will use it as "kid" and a file name
-     * @param frame The parent frame
-     * @param preferences {@link KsePreferences} app configuration
-     * @param res {@link ResourceBundle} instance with messages
-     * @throws IOException thrown on I/O error, mostly related to the file operations
-     * @throws JOSEException thrown if JWK exporter fails on underlying JWK related code
-     */
-    public static void exportAsJwk(PrivateKey privateKey, String alias, JFrame frame,
-                                   KsePreferences preferences, ResourceBundle res)
-            throws JOSEException, IOException {
-        File exportFile = null;
-        try {
-            DExportPrivateKeyJwk dExportPrivateKeyJwk =
-                    new DExportPrivateKeyJwk(frame, alias);
-            dExportPrivateKeyJwk.setLocationRelativeTo(frame);
-            dExportPrivateKeyJwk.setVisible(true);
-
-            if (!dExportPrivateKeyJwk.exportSelected()) {
-                return;
-            }
-
-            exportFile = dExportPrivateKeyJwk.getExportFile();
-
-            byte[] encoded = JwkPrivateKeyExporter
-                    .from(privateKey, alias)
-                    .get();
-
-            exportEncodedPrivateKey(encoded, exportFile);
-
-            JOptionPane.showMessageDialog(
-                    frame,
-                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwkSuccessful.message"),
-                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
-                    JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException | NoSuchFileException ex) {
-            String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
-                    exportFile);
-            JOptionPane.showMessageDialog(frame, message,
-                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
-                    JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
     private static byte[] getOpenSslEncodedPrivateKey(PrivateKey privateKey, boolean pemEncoded,
                                                       OpenSslPbeType pbeAlgorithm, Password password)
-            throws CryptoException, IOException {
+            throws CryptoException {
         byte[] encoded = null;
 
         if (pemEncoded) {
@@ -326,5 +287,64 @@ public class PrivateKeyUtils {
         }
 
         return encoded;
+    }
+
+    /** Exports supported {@link PrivateKey} instances as JWK
+     *
+     * @param privateKey instance of {@link PrivateKey} to be exported
+     * @param alias private key alias; if not null, JWK exporter will use it as "kid" and a file name
+     * @param frame The parent frame
+     * @param preferences {@link KsePreferences} app configuration
+     * @param res {@link ResourceBundle} instance with messages
+     * @throws IOException thrown on I/O error when writing the file
+     * @throws CryptoException thrown if JWK exporter fails on underlying JWK related code
+     */
+    public static void exportAsJwk(PrivateKey privateKey, String alias, JFrame frame,
+                                   KsePreferences preferences, ResourceBundle res)
+            throws CryptoException, IOException {
+        File exportFile = null;
+        try {
+            DExportPrivateKeyJwk dExportPrivateKeyJwk =
+                    new DExportPrivateKeyJwk(frame, alias, preferences.getPasswordQualityConfig());
+            dExportPrivateKeyJwk.setLocationRelativeTo(frame);
+            dExportPrivateKeyJwk.setVisible(true);
+
+            if (!dExportPrivateKeyJwk.exportSelected()) {
+                return;
+            }
+
+            exportFile = dExportPrivateKeyJwk.getExportFile();
+            boolean compactFormat = dExportPrivateKeyJwk.compactFormat();
+            boolean encrypt = dExportPrivateKeyJwk.encrypt();
+
+            JWEAlgorithm jweAlgorithm = null;
+            Password exportPassword = null;
+
+            if (encrypt) {
+                jweAlgorithm = dExportPrivateKeyJwk.getJweAlgorithm();
+                exportPassword = dExportPrivateKeyJwk.getExportPassword();
+            }
+
+            String encoded;
+            if (jweAlgorithm != null && exportPassword != null) {
+                encoded = JwkUtil.get(privateKey, alias, jweAlgorithm, exportPassword, compactFormat);
+            } else {
+                encoded = JwkUtil.get(privateKey, alias);
+            }
+
+            exportEncodedPrivateKey(encoded.getBytes(StandardCharsets.UTF_8), exportFile);
+
+            JOptionPane.showMessageDialog(
+                    frame,
+                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwkSuccessful.message"),
+                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException | NoSuchFileException ex) {
+            String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
+                    exportFile);
+            JOptionPane.showMessageDialog(frame, message,
+                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
 }

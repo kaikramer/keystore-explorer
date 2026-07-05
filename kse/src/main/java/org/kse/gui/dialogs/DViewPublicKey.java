@@ -61,8 +61,8 @@ import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
@@ -76,6 +76,7 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 
+import com.nimbusds.jose.util.StandardCharset;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -308,7 +309,7 @@ public class DViewPublicKey extends JEscDialog {
         File exportFile = null;
 
         try {
-            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
+            boolean isKeyExportableAsJWK = JwkUtil.isPublicKeyTypeExportable(publicKey);
 
             DExportPublicKey dExportPublicKey = new DExportPublicKey((Window) getParent(), alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(this);
@@ -330,7 +331,7 @@ public class DViewPublicKey extends JEscDialog {
                 encoded = OpenSslPubUtil.get(publicKey);
                 break;
             case JWK:
-                encoded = JwkPublicKeyExporter.from(publicKey, alias).get();
+                encoded = JwkUtil.get(publicKey, alias).getBytes(StandardCharset.UTF_8);
                 break;
             }
 

@@ -29,8 +29,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,6 +53,7 @@ import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.jwk.JwkUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -74,6 +73,7 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.net.Downloader;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
@@ -175,10 +175,13 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             case UNENC_OPENSSL_PVK:
             case ENC_MS_PVK:
             case UNENC_MS_PVK:
+            case ENC_JSON_WEB_KEY:
+            case UNENC_JSON_WEB_KEY:
                 showPrivateKey(dataAsBytes, fileType);
                 break;
             case OPENSSL_PUB:
-                showPublicKey(dataAsBytes);
+            case JSON_WEB_KEY_PUB:
+                showPublicKey(dataAsBytes, fileType);
                 break;
             case JSON_WEB_TOKEN:
                 showJwt(data);
@@ -207,29 +210,6 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     }
 
 
-
-    private static boolean isRedirect(int status) {
-        // normally, 3xx is redirect
-        if (status != HttpURLConnection.HTTP_OK) {
-            return status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM ||
-                   status == HttpURLConnection.HTTP_SEE_OTHER;
-        }
-        return false;
-    }
-
-    private static byte[] download(URL url) throws IOException, URISyntaxException {
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        int status = urlConn.getResponseCode();
-        if (isRedirect(status)) {
-            String newUrl = urlConn.getHeaderField("Location");
-            url = new URI(newUrl).toURL();
-            urlConn = (HttpURLConnection) url.openConnection();
-        }
-        try (InputStream is = urlConn.getInputStream()) {
-            return is.readAllBytes();
-        }
-    }
-
     /**
      * Downloads and displays the CRL.
      *
@@ -240,7 +220,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
      * @throws CryptoException If the CRL cannot be loaded.
      */
     public static void downloadCrl(URL url, Window window) throws IOException, URISyntaxException, CryptoException {
-        X509CRL crl = X509CertUtil.loadCRL(download(url));
+        X509CRL crl = X509CertUtil.loadCRL(Downloader.download(url));
         if (crl != null) {
             DViewCrl dViewCrl = new DViewCrl(window,
                     MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"),
@@ -262,7 +242,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
      */
     public static void downloadCert(URL url, Window window, KseFrame kseFrame)
             throws IOException, URISyntaxException, CryptoException {
-        X509Certificate[] certs = X509CertUtil.loadCertificates(download(url));
+        X509Certificate[] certs = X509CertUtil.loadCertificates(Downloader.download(url));
         if (certs != null && certs.length > 0) {
             int importExport = kseFrame == null ? DViewCertificate.NONE : DViewCertificate.IMPORT_EXPORT;
             DViewCertificate dViewCertificate = new DViewCertificate(window,
@@ -315,6 +295,18 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             privKey = MsPvkUtil.load(data);
             format = PrivateKeyFormat.MSPVK;
             break;
+        case ENC_JSON_WEB_KEY:
+            password = getPassword();
+            if (password == null || password.isNulled()) {
+                return;
+            }
+            privKey = JwkUtil.toPrivateKey(JwkUtil.load(data, password));
+            format = PrivateKeyFormat.JWK;
+            break;
+        case UNENC_JSON_WEB_KEY:
+            privKey = JwkUtil.toPrivateKey(JwkUtil.load(data));
+            format = PrivateKeyFormat.JWK;
+            break;
         default:
             break;
         }
@@ -332,8 +324,19 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         return dGetPassword.getPassword();
     }
 
-    private void showPublicKey(byte[] data) throws CryptoException {
-        PublicKey publicKey = OpenSslPubUtil.load(data);
+    private void showPublicKey(byte[] data, CryptoFileType fileType) throws CryptoException {
+        PublicKey publicKey = null;
+
+        switch (fileType) {
+        case OPENSSL_PUB:
+            publicKey = OpenSslPubUtil.load(data);
+            break;
+        case JSON_WEB_KEY_PUB:
+            publicKey = JwkUtil.toPublicKey(JwkUtil.load(data));
+            break;
+        default:
+            break;
+        }
 
         DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, res.getString(
                 "ExamineClipboardAction.PublicKeyDetails.Title"), "", publicKey);
