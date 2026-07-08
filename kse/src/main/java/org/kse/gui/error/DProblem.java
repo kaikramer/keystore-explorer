@@ -19,9 +19,10 @@
  */
 package org.kse.gui.error;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
@@ -30,8 +31,6 @@ import java.util.StringTokenizer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
@@ -39,9 +38,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays a problem and its possible causes.
@@ -51,7 +52,6 @@ public class DProblem extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
-    private JPanel jpProblem;
     private JPanel jpProblemHeader;
     private JLabel jlProblemHeader;
     private JPanel jpCauses;
@@ -63,28 +63,13 @@ public class DProblem extends JEscDialog {
     private Problem problem;
 
     /**
-     * Creates new DProblem dialog where the parent is a frame.
+     * Creates new DProblem dialog where the parent is a window.
      *
-     * @param parent  Parent frame
+     * @param parent  Parent window
      * @param title   Dialog title
-     * @param problem
+     * @param problem The problem to display
      */
-    public DProblem(JFrame parent, String title, Problem problem) {
-        super(parent, ModalityType.DOCUMENT_MODAL);
-        setTitle(title);
-        this.problem = problem;
-
-        initComponents();
-    }
-
-    /**
-     * Creates new DProblem dialog where the parent is a dialog.
-     *
-     * @param parent  Parent dialog
-     * @param title   Dialog title
-     * @param problem
-     */
-    public DProblem(JDialog parent, String title, Problem problem) {
+    public DProblem(Window parent, String title, Problem problem) {
         super(parent, ModalityType.DOCUMENT_MODAL);
         setTitle(title);
         this.problem = problem;
@@ -119,10 +104,6 @@ public class DProblem extends JEscDialog {
                                               new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY),
                                                                  new EmptyBorder(0, 5, 5, 10))));
 
-        jpProblem = new JPanel(new BorderLayout(0, 0));
-        jpProblem.add(jpProblemHeader, BorderLayout.NORTH);
-        jpProblem.add(jpCauses, BorderLayout.CENTER);
-
         jbDisplayError = new JButton(res.getString("DProblem.jbDisplayError.text"));
         PlatformUtil.setMnemonic(jbDisplayError, res.getString("DProblem.jbDisplayError.mnemonic").charAt(0));
         jbDisplayError.setToolTipText(res.getString("DProblem.jbDisplayError.tooltip"));
@@ -140,8 +121,11 @@ public class DProblem extends JEscDialog {
 
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDisplayError);
 
-        getContentPane().add(jpProblem, BorderLayout.NORTH);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        pane.add(jpProblemHeader, "growx, wrap");
+        pane.add(jpCauses, "growx, wrap");
+        pane.add(jpButtons, "growx");
 
         setResizable(false);
 

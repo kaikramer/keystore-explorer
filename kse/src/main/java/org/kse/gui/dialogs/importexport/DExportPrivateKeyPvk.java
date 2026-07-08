@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -46,23 +43,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.io.FileNameUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to display options to export a private key from a KeyStore entry
@@ -75,7 +72,6 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
     private JLabel jlKeyType;
     private JRadioButton jrbExchange;
     private JRadioButton jrbSignature;
@@ -125,37 +121,16 @@ public class DExportPrivateKeyPvk extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 3;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-
-        GridBagConstraints gbcEdCtrl = new GridBagConstraints();
-        gbcEdCtrl.gridx = 3;
-        gbcEdCtrl.gridwidth = 3;
-        gbcEdCtrl.gridheight = 1;
-        gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcEdCtrl.anchor = GridBagConstraints.WEST;
-
         jlKeyType = new JLabel(res.getString("DExportPrivateKeyPvk.jlKeyType.text"));
-        GridBagConstraints gbc_jlKeyType = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlKeyType.gridy = 0;
 
         jrbExchange = new JRadioButton(res.getString("DExportPrivateKeyPvk.jrbExchange.text"));
         jrbExchange.setToolTipText(res.getString("DExportPrivateKeyPvk.jrbExchange.tooltip"));
         PlatformUtil.setMnemonic(jrbExchange, res.getString("DExportPrivateKeyPvk.jrbExchange.mnemonic").charAt(0));
         jrbExchange.setSelected(true);
-        GridBagConstraints gbc_jrbExchange = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExchange.gridy = 0;
 
         jrbSignature = new JRadioButton(res.getString("DExportPrivateKeyPvk.jrbSignature.text"));
         jrbSignature.setToolTipText(res.getString("DExportPrivateKeyPvk.jrbSignature.tooltip"));
         PlatformUtil.setMnemonic(jrbSignature, res.getString("DExportPrivateKeyPvk.jrbSignature.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbSignature = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbSignature.gridy = 0;
-        gbc_jrbSignature.gridx = 6;
 
         ButtonGroup keyTypes = new ButtonGroup();
         keyTypes.add(jrbExchange);
@@ -169,40 +144,27 @@ public class DExportPrivateKeyPvk extends JEscDialog {
         }
 
         jlEncrypt = new JLabel(res.getString("DExportPrivateKeyPvk.jlEncrypt.text"));
-        GridBagConstraints gbc_jlEncrypt = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlEncrypt.gridy = 1;
 
         jcbEncrypt = new JCheckBox();
         jcbEncrypt.setSelected(true);
         jcbEncrypt.setToolTipText(res.getString("DExportPrivateKeyPvk.jcbEncrypt.tooltip"));
-        GridBagConstraints gbc_jcbEncrypt = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbEncrypt.gridy = 1;
 
         jlEncryptionStrength = new JLabel(res.getString("DExportPrivateKeyPvk.jlEncryptionStrength.text"));
-        GridBagConstraints gbc_jlEncryptionStrength = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlEncryptionStrength.gridy = 2;
 
         jrbStrong = new JRadioButton(res.getString("DExportPrivateKeyPvk.jrbStrong.text"));
         jrbStrong.setToolTipText(res.getString("DExportPrivateKeyPvk.jrbStrong.tooltip"));
         PlatformUtil.setMnemonic(jrbStrong, res.getString("DExportPrivateKeyPvk.jrbStrong.mnemonic").charAt(0));
         jrbStrong.setSelected(true);
-        GridBagConstraints gbc_jrbStrong = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbStrong.gridy = 2;
 
         jrbWeak = new JRadioButton(res.getString("DExportPrivateKeyPvk.jrbWeak.text"));
         jrbWeak.setToolTipText(res.getString("DExportPrivateKeyPvk.jrbWeak.tooltip"));
         PlatformUtil.setMnemonic(jrbWeak, res.getString("DExportPrivateKeyPvk.jrbWeak.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbWeak = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbWeak.gridy = 2;
-        gbc_jrbWeak.gridx = 6;
 
         ButtonGroup encryptionStrengths = new ButtonGroup();
         encryptionStrengths.add(jrbStrong);
         encryptionStrengths.add(jrbWeak);
 
         jlPassword = new JLabel(res.getString("DExportPrivateKeyPvk.jlPassword.text"));
-        GridBagConstraints gbc_jlPassword = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlPassword.gridy = 3;
 
         if (passwordQualityConfig.getEnabled()) {
             if (passwordQualityConfig.getEnforced()) {
@@ -215,36 +177,20 @@ public class DExportPrivateKeyPvk extends JEscDialog {
         }
 
         jpfPassword.setToolTipText(res.getString("DExportPrivateKeyPvk.jpqfPassword.tooltip"));
-        GridBagConstraints gbc_jpfPassword = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jpfPassword.gridy = 3;
-        gbc_jpfPassword.gridwidth = 6;
 
         jlConfirmPassword = new JLabel(res.getString("DExportPrivateKeyPvk.jlConfirmPassword.text"));
-        GridBagConstraints gbc_jlConfirmPassword = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlConfirmPassword.gridy = 4;
 
         jpfConfirmPassword = new JPasswordField(15);
         jpfConfirmPassword.setToolTipText(res.getString("DExportPrivateKeyPvk.jpfConfirmPassword.tooltip"));
-        GridBagConstraints gbc_jpfConfirmPassword = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jpfConfirmPassword.gridy = 4;
-        gbc_jpfConfirmPassword.gridwidth = 6;
 
         jlExportFile = new JLabel(res.getString("DExportPrivateKeyPvk.jlExportFile.text"));
-        GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportFile.gridy = 5;
 
         jtfExportFile = new JTextField(30);
         jtfExportFile.setToolTipText(res.getString("DExportPrivateKeyPvk.jtfExportFile.tooltip"));
-        GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jtfExportFile.gridy = 5;
-        gbc_jtfExportFile.gridwidth = 6;
 
         jbBrowse = new JButton(res.getString("DExportPrivateKeyPvk.jbBrowse.text"));
         jbBrowse.setToolTipText(res.getString("DExportPrivateKeyPvk.jbBrowse.tooltip"));
         PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportPrivateKeyPvk.jbBrowse.mnemonic").charAt(0));
-        GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jbBrowse.gridy = 5;
-        gbc_jbBrowse.gridx = 9;
 
         jbBrowse.addActionListener(evt -> {
             try {
@@ -254,33 +200,6 @@ public class DExportPrivateKeyPvk extends JEscDialog {
                 CursorUtil.setCursorFree(DExportPrivateKeyPvk.this);
             }
         });
-
-        jpOptions = new JPanel(new GridBagLayout());
-        jpOptions.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
-                                               new EmptyBorder(5, 5, 5, 5)));
-
-        jpOptions.add(jlKeyType, gbc_jlKeyType);
-        jpOptions.add(jrbExchange, gbc_jrbExchange);
-        jpOptions.add(jrbSignature, gbc_jrbSignature);
-
-        jpOptions.add(jlEncrypt, gbc_jlEncrypt);
-        jpOptions.add(jcbEncrypt, gbc_jcbEncrypt);
-
-        jpOptions.add(jrbStrong, gbc_jrbStrong);
-        jpOptions.add(jrbWeak, gbc_jrbWeak);
-
-        jpOptions.add(jlEncryptionStrength, gbc_jlEncryptionStrength);
-        jpOptions.add(jlEncryptionStrength, gbc_jlEncryptionStrength);
-
-        jpOptions.add(jlPassword, gbc_jlPassword);
-        jpOptions.add(jpfPassword, gbc_jpfPassword);
-
-        jpOptions.add(jlConfirmPassword, gbc_jlConfirmPassword);
-        jpOptions.add(jpfConfirmPassword, gbc_jpfConfirmPassword);
-
-        jpOptions.add(jlExportFile, gbc_jlExportFile);
-        jpOptions.add(jtfExportFile, gbc_jtfExportFile);
-        jpOptions.add(jbBrowse, gbc_jbBrowse);
 
         jcbEncrypt.addItemListener(evt -> {
             if (jcbEncrypt.isSelected()) {
@@ -327,11 +246,27 @@ public class DExportPrivateKeyPvk extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.add(jlKeyType, "");
+        pane.add(jrbExchange, "split 2");
+        pane.add(jrbSignature, "wrap");
+        pane.add(jlEncrypt, "");
+        pane.add(jcbEncrypt, "wrap");
+        pane.add(jlEncryptionStrength, "");
+        pane.add(jrbStrong, "split 2");
+        pane.add(jrbWeak, "wrap");
+        pane.add(jlPassword, "");
+        pane.add(jpfPassword, "wrap");
+        pane.add(jlConfirmPassword, "");
+        pane.add(jpfConfirmPassword, "wrap");
+        pane.add(jlExportFile, "");
+        pane.add(jtfExportFile, "");
+        pane.add(jbBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jpButtons, "right, spanx");
 
         addWindowListener(new WindowAdapter() {
             @Override

@@ -19,7 +19,7 @@
  */
 package org.kse.gui.crypto;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -45,14 +45,15 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays information on the currently loaded security providers.
@@ -65,7 +66,6 @@ public class DProviderInfo extends JEscDialog {
     private JPanel jpButtons;
     private JButton jbCopy;
     private JButton jbOK;
-    private JPanel jpProviders;
     private JTree jtrProviders;
     private JScrollPane jspProviders;
 
@@ -106,10 +106,7 @@ public class DProviderInfo extends JEscDialog {
         jbOK = new JButton(res.getString("DProviderInfo.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
-
-        jpProviders = new JPanel(new BorderLayout());
-        jpProviders.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, "insets 0");
 
         jtrProviders = new JTree(createProviderNodes());
         jtrProviders.setRowHeight(Math.max(18, jtrProviders.getRowHeight()));
@@ -120,10 +117,11 @@ public class DProviderInfo extends JEscDialog {
         jspProviders = PlatformUtil.createScrollPane(jtrProviders, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspProviders.setPreferredSize(new Dimension(500, 250));
-        jpProviders.add(jspProviders, BorderLayout.CENTER);
 
-        getContentPane().add(jpProviders, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspProviders, "wrap para");
+        pane.add(jpButtons, "growx");
 
         setTitle(res.getString("DProviderInfo.Title"));
         setResizable(true);

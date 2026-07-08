@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.sign;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -43,11 +40,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.signing.MidletSigner;
 import org.kse.gui.CurrentDirectory;
@@ -59,6 +54,8 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.io.FileNameUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog that displays the presents MIDlet signing options.
@@ -81,7 +78,6 @@ public class DSignMidlet extends JEscDialog {
     private JLabel jlJar;
     private JTextField jtfJar;
     private JButton jbJarBrowse;
-    private JPanel jpOptions;
     private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
@@ -102,41 +98,11 @@ public class DSignMidlet extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 1;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-        gbcLbl.weightx = 0;
-
-        GridBagConstraints gbcCtrl = new GridBagConstraints();
-        gbcCtrl.gridx = 1;
-        gbcCtrl.gridwidth = 1;
-        gbcCtrl.gridheight = 1;
-        gbcCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcCtrl.anchor = GridBagConstraints.WEST;
-        gbcCtrl.fill = GridBagConstraints.NONE;
-        gbcCtrl.weightx = 1;
-
-        GridBagConstraints gbcBrws = new GridBagConstraints();
-        gbcBrws.gridx = 2;
-        gbcBrws.gridwidth = 1;
-        gbcBrws.gridheight = 1;
-        gbcBrws.insets = new Insets(5, 5, 5, 5);
-        gbcBrws.anchor = GridBagConstraints.WEST;
-        gbcBrws.fill = GridBagConstraints.NONE;
-        gbcBrws.weightx = 1;
-
         jlInputJad = new JLabel(res.getString("DSignMidlet.jlInputJad.text"));
-        GridBagConstraints gbc_jlInputJad = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlInputJad.gridy = 0;
 
         jtfInputJad = new JTextField(30);
         jtfInputJad.setCaretPosition(0);
         jtfInputJad.setToolTipText(res.getString("DSignMidlet.jtfInputJad.tooltip"));
-        GridBagConstraints gbc_jtfInputJad = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfInputJad.gridy = 0;
 
         jbInputJadBrowse = new JButton(res.getString("DSignMidlet.jbInputJadBrowse.text"));
         PlatformUtil.setMnemonic(jbInputJadBrowse, res.getString("DSignMidlet.jbInputJadBrowse.mnemonic").charAt(0));
@@ -149,18 +115,12 @@ public class DSignMidlet extends JEscDialog {
                 CursorUtil.setCursorFree(DSignMidlet.this);
             }
         });
-        GridBagConstraints gbc_jbInputJadBrowse = (GridBagConstraints) gbcBrws.clone();
-        gbc_jbInputJadBrowse.gridy = 0;
 
         jlSignDirectly = new JLabel(res.getString("DSignMidlet.jlSignDirectly.text"));
-        GridBagConstraints gbc_jlSignDirectly = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlSignDirectly.gridy = 1;
 
         jcbSignDirectly = new JCheckBox();
         jcbSignDirectly.setSelected(true);
         jcbSignDirectly.setToolTipText(res.getString("DSignMidlet.jcbSignDirectly.tooltip"));
-        GridBagConstraints gbc_jcbSignDirectly = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jcbSignDirectly.gridy = 1;
 
         jcbSignDirectly.addItemListener(evt -> {
             jtfOutputJad.setEnabled(!jcbSignDirectly.isSelected());
@@ -168,15 +128,11 @@ public class DSignMidlet extends JEscDialog {
         });
 
         jlOutputJad = new JLabel(res.getString("DSignMidlet.jlOutputJad.text"));
-        GridBagConstraints gbc_jlOutputJad = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlOutputJad.gridy = 2;
 
         jtfOutputJad = new JTextField(30);
         jtfOutputJad.setEnabled(false);
         jtfOutputJad.setCaretPosition(0);
         jtfOutputJad.setToolTipText(res.getString("DSignMidlet.jtfOutputJad.tooltip"));
-        GridBagConstraints gbc_jtfOutputJad = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfOutputJad.gridy = 2;
 
         jbOutputJadBrowse = new JButton(res.getString("DSignMidlet.jbOutputJadBrowse.text"));
         PlatformUtil.setMnemonic(jbOutputJadBrowse, res.getString("DSignMidlet.jbOutputJadBrowse.mnemonic").charAt(0));
@@ -190,18 +146,12 @@ public class DSignMidlet extends JEscDialog {
                 CursorUtil.setCursorFree(DSignMidlet.this);
             }
         });
-        GridBagConstraints gbc_jbOutputJadBrowse = (GridBagConstraints) gbcBrws.clone();
-        gbc_jbOutputJadBrowse.gridy = 2;
 
         jlJar = new JLabel(res.getString("DSignMidlet.jlJar.text"));
-        GridBagConstraints gbc_jlJar = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlJar.gridy = 3;
 
         jtfJar = new JTextField(30);
         jtfJar.setCaretPosition(0);
         jtfJar.setToolTipText(res.getString("DSignMidlet.jtfJar.tooltip"));
-        GridBagConstraints gbc_jtfJar = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfJar.gridy = 3;
 
         jbJarBrowse = new JButton(res.getString("DSignMidlet.jbJarBrowse.text"));
         PlatformUtil.setMnemonic(jbJarBrowse, res.getString("DSignMidlet.jbJarBrowse.mnemonic").charAt(0));
@@ -214,23 +164,6 @@ public class DSignMidlet extends JEscDialog {
                 CursorUtil.setCursorFree(DSignMidlet.this);
             }
         });
-        GridBagConstraints gbc_jbJarBrowse = (GridBagConstraints) gbcBrws.clone();
-        gbc_jbJarBrowse.gridy = 3;
-
-        jpOptions = new JPanel(new GridBagLayout());
-        jpOptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-        jpOptions.add(jlInputJad, gbc_jlInputJad);
-        jpOptions.add(jtfInputJad, gbc_jtfInputJad);
-        jpOptions.add(jbInputJadBrowse, gbc_jbInputJadBrowse);
-        jpOptions.add(jlSignDirectly, gbc_jlSignDirectly);
-        jpOptions.add(jcbSignDirectly, gbc_jcbSignDirectly);
-        jpOptions.add(jlOutputJad, gbc_jlOutputJad);
-        jpOptions.add(jtfOutputJad, gbc_jtfOutputJad);
-        jpOptions.add(jbOutputJadBrowse, gbc_jbOutputJadBrowse);
-        jpOptions.add(jlJar, gbc_jlJar);
-        jpOptions.add(jtfJar, gbc_jtfJar);
-        jpOptions.add(jbJarBrowse, gbc_jbJarBrowse);
 
         jbOK = new JButton(res.getString("DSignMidlet.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -248,11 +181,23 @@ public class DSignMidlet extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.NORTH);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.add(jlInputJad, "");
+        pane.add(jtfInputJad, "");
+        pane.add(jbInputJadBrowse, "wrap");
+        pane.add(jlSignDirectly, "");
+        pane.add(jcbSignDirectly, "wrap");
+        pane.add(jlOutputJad, "");
+        pane.add(jtfOutputJad, "");
+        pane.add(jbOutputJadBrowse, "wrap");
+        pane.add(jlJar, "");
+        pane.add(jtfJar, "");
+        pane.add(jbJarBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jpButtons, "right, spanx");
 
         addWindowListener(new WindowAdapter() {
             @Override
