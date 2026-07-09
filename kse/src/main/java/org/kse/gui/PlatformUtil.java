@@ -95,7 +95,8 @@ public class PlatformUtil {
      * @return Dialog button panel
      */
     public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton jbOther) {
-        return createDialogButtonPanel(jbPositive, jbNegative, (jbOther == null ? null : new JButton[] { jbOther }));
+        return createDialogButtonPanel(jbPositive, jbNegative, (jbOther == null ? null : new JButton[] {jbOther}),
+                null);
     }
 
     /**
@@ -105,11 +106,12 @@ public class PlatformUtil {
      * @param jbPositive Positive button
      * @param jbNegative Negative button
      * @param jbOther    Other button
+     * @param insets     Insets for panel (MiGLayout constraint)
      * @return Dialog button panel
      */
-    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther) {
+    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther, String insets) {
         return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, jbOther,
-                                       null);
+                                       insets);
     }
 
     /**

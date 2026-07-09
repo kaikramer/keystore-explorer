@@ -19,11 +19,12 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
@@ -42,16 +43,13 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cms.CMSSignedData;
@@ -75,6 +73,8 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Displays an X.509 certificate's PEM'd DER encoding and provides the
  * opportunity to export it to file.
@@ -88,7 +88,6 @@ public class DViewPem extends JEscDialog {
     private JButton jbOK;
     private JButton jbCopy;
     private JButton jbExport;
-    private JPanel jpPem;
     private JScrollPane jspPem;
     private JTextArea jtaPem;
 
@@ -102,42 +101,27 @@ public class DViewPem extends JEscDialog {
     /**
      * Creates a new DViewPem dialog.
      *
-     * @param parent Parent frame
+     * @param parent Parent window
      * @param title  The dialog title
      * @param cert   Certificate to display encoding for
      * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER
      *                         encoding
      */
-    public DViewPem(JFrame parent, String title, X509Certificate cert) throws CryptoException {
+    public DViewPem(Window parent, String title, X509Certificate cert) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.cert = cert;
         initComponents();
     }
 
     /**
-     * Creates new DViewPem dialog where the parent is a dialog.
+     * Creates new DViewPem dialog where the parent is a window.
      *
-     * @param parent Parent dialog
-     * @param title  The dialog title
-     * @param cert   Certificate to display encoding for
-     * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER
-     *                         encoding
-     */
-    public DViewPem(JDialog parent, String title, X509Certificate cert) throws CryptoException {
-        super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.cert = cert;
-        initComponents();
-    }
-
-    /**
-     * Creates new DViewPem dialog where the parent is a dialog.
-     *
-     * @param parent Parent dialog
+     * @param parent Parent window
      * @param title  The dialog title
      * @param crl    CRL to display encoding for
      * @throws CryptoException A problem was encountered getting the CRL's PEM'd DER encoding
      */
-    public DViewPem(JDialog parent, String title, X509CRL crl) throws CryptoException {
+    public DViewPem(Window parent, String title, X509CRL crl) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.crl = crl;
         initComponents();
@@ -146,50 +130,24 @@ public class DViewPem extends JEscDialog {
     /**
      * Creates a new DViewPem dialog.
      *
-     * @param parent    Parent frame
+     * @param parent    Parent window
      * @param title     The dialog title
      * @param pkcs10Csr PKCS10 CSR to display encoding for
      * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER encoding
      */
-    public DViewPem(JFrame parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
+    public DViewPem(Window parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.pkcs10Csr = pkcs10Csr;
         initComponents();
     }
 
     /**
-     * Creates new DViewPem dialog where the parent is a dialog.
-     *
-     * @param parent    Parent dialog
-     * @param title     The dialog title
-     * @param pkcs10Csr PKCS10 CSR to display encoding for
-     * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER encoding
-     */
-    public DViewPem(JDialog parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
-        super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.pkcs10Csr = pkcs10Csr;
-        initComponents();
-    }
-
-    /**
      * @param parent
      * @param title
      * @param privateKey
      * @throws CryptoException
      */
-    public DViewPem(JFrame parent, String title, PrivateKey privateKey) throws CryptoException {
-        super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.privKey = privateKey;
-        initComponents();
-    }
-
-    /**
-     * @param parent
-     * @param title
-     * @param privateKey
-     * @throws CryptoException
-     */
-    public DViewPem(JDialog parent, String title, PrivateKey privateKey) throws CryptoException {
+    public DViewPem(Window parent, String title, PrivateKey privateKey) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privKey = privateKey;
         initComponents();
@@ -201,33 +159,21 @@ public class DViewPem extends JEscDialog {
      * @param publicKey
      * @throws CryptoException
      */
-    public DViewPem(JFrame parent, String title, PublicKey publicKey) throws CryptoException {
+    public DViewPem(Window parent, String title, PublicKey publicKey) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.pubKey = publicKey;
         initComponents();
     }
 
     /**
-     * @param parent
-     * @param title
-     * @param publicKey
-     * @throws CryptoException
-     */
-    public DViewPem(JDialog parent, String title, PublicKey publicKey) throws CryptoException {
-        super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.pubKey = publicKey;
-        initComponents();
-    }
-
-    /**
-     * Creates new DViewPem dialog where the parent is a dialog.
+     * Creates new DViewPem dialog where the parent is a window.
      *
      * @param parent Parent dialog
      * @param title  The dialog title
      * @param cms    CMS data to display encoding for
-     * @throws CryptoException
+     * @throws CryptoException A problem was encountered getting the CMS PEM'd DER encoding
      */
-    public DViewPem(JDialog parent, String title, CMSSignedData cms) throws CryptoException {
+    public DViewPem(Window parent, String title, CMSSignedData cms) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.cms = cms;
         initComponents();
@@ -264,10 +210,7 @@ public class DViewPem extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbCopy, jbExport });
-
-        jpPem = new JPanel(new BorderLayout());
-        jpPem.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbCopy, jbExport }, "insets 0");
 
         jtaPem = new JTextArea(getPemString());
         jtaPem.setCaretPosition(0);
@@ -279,10 +222,11 @@ public class DViewPem extends JEscDialog {
         jspPem = PlatformUtil.createScrollPane(jtaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspPem.setPreferredSize(new Dimension(600, 300));
-        jpPem.add(jspPem, BorderLayout.CENTER);
 
-        getContentPane().add(jpPem, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspPem, "wrap para");
+        pane.add(jpButtons, "growx");
 
         setResizable(true);
 

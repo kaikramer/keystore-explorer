@@ -19,11 +19,10 @@
  */
 package org.kse.gui.tipoftheday;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -54,9 +53,11 @@ import javax.swing.border.MatteBorder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Tip of the Day dialog.
@@ -71,13 +72,9 @@ public class DTipOfTheDay extends JEscDialog {
     private JPanel jpTipOfTheDay;
     private JPanel jpTipMargin;
     private JLabel jlTipMarginBulb;
-    private JPanel jpTipBody;
-    private JPanel jpTipHeader;
     private JLabel jlTipHeader;
     private JEditorPane jepTip;
     private JScrollPane jspTip;
-    private JPanel jpControls;
-    private JPanel jpShowTipsOnStartup;
     private JCheckBox jcbShowTipsOnStartup;
     private JPanel jpNavigation;
     private JButton jbPreviousTip;
@@ -106,11 +103,7 @@ public class DTipOfTheDay extends JEscDialog {
     }
 
     private void initComponents(boolean showTipsOnStartup) {
-        jpTipOfTheDay = new JPanel(new BorderLayout());
-        jpTipOfTheDay.setBorder(
-                new CompoundBorder(new EmptyBorder(10, 10, 5, 10), new LineBorder(Color.LIGHT_GRAY, 1)));
-
-        jpTipMargin = new JPanel(new FlowLayout());
+        jpTipMargin = new JPanel();
         jpTipMargin.setBackground(Color.LIGHT_GRAY);
 
         jlTipMarginBulb = new JLabel(
@@ -118,19 +111,9 @@ public class DTipOfTheDay extends JEscDialog {
 
         jpTipMargin.add(jlTipMarginBulb);
 
-        jpTipBody = new JPanel(new BorderLayout());
-
-        jpTipOfTheDay.add(jpTipMargin, BorderLayout.WEST);
-        jpTipOfTheDay.add(jpTipBody, BorderLayout.CENTER);
-
-        jpTipHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        jpTipHeader.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
         jlTipHeader = new JLabel(res.getString("DTipOfTheDay.jlTipHeader.text"));
         jlTipHeader.setFont(jlTipHeader.getFont().deriveFont(Font.BOLD, 18f));
-        jlTipHeader.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jpTipHeader.add(jlTipHeader);
+        jlTipHeader.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY), new EmptyBorder(10, 10, 10, 5)));
 
         jepTip = new JEditorPane();
         // workaround for rare NPE, see https://community.oracle.com/thread/1478325?start=0&tstart=0
@@ -143,26 +126,21 @@ public class DTipOfTheDay extends JEscDialog {
 
         jspTip = PlatformUtil.createScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jspTip.setPreferredSize(new Dimension(300, 150));
+        jspTip.setPreferredSize(new Dimension(415, 150));
         jspTip.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         jspTip.getViewport().add(jepTip);
 
-        jpTipBody.add(jpTipHeader, BorderLayout.NORTH);
-        jpTipBody.add(jspTip, BorderLayout.CENTER);
-
-        jpShowTipsOnStartup = new JPanel(new FlowLayout());
-        jpShowTipsOnStartup.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpTipOfTheDay = new JPanel(new MigLayout("insets 0, fill", "[]0[]", "[]0[]"));
+        jpTipOfTheDay.setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
+        jpTipOfTheDay.add(jpTipMargin, "aligny top, spany, growy");
+        jpTipOfTheDay.add(jlTipHeader, "growx, wrap");
+        jpTipOfTheDay.add(jspTip, "growx");
 
         jcbShowTipsOnStartup = new JCheckBox(res.getString("DTipOfTheDay.jcbShowTipsOnStartup.text"),
                                              showTipsOnStartup);
         PlatformUtil.setMnemonic(jcbShowTipsOnStartup,
                                  res.getString("DTipOfTheDay.jcbShowTipsOnStartup.mnemonic").charAt(0));
-
-        jpShowTipsOnStartup.add(jcbShowTipsOnStartup);
-
-        jpNavigation = new JPanel(new FlowLayout());
-        jpNavigation.setBorder(new EmptyBorder(5, 10, 10, 10));
 
         jbPreviousTip = new JButton(res.getString("DTipOfTheDay.jbPreviousTip.text"));
         PlatformUtil.setMnemonic(jbPreviousTip, res.getString("DTipOfTheDay.jbPreviousTip.mnemonic").charAt(0));
@@ -206,16 +184,13 @@ public class DTipOfTheDay extends JEscDialog {
             }
         });
 
-        jpNavigation = PlatformUtil.createDialogButtonPanel(jbClose, null, new JButton[] { jbPreviousTip, jbNextTip });
-        jpNavigation.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpNavigation = PlatformUtil.createDialogButtonPanel(jbClose, null, new JButton[] { jbPreviousTip, jbNextTip }, "insets 0");
 
-        jpControls = new JPanel(new BorderLayout());
-        jpControls.add(jpShowTipsOnStartup, BorderLayout.WEST);
-        jpControls.add(jpNavigation, BorderLayout.EAST);
-
-        setLayout(new BorderLayout());
-        add(jpTipOfTheDay, BorderLayout.CENTER);
-        add(jpControls, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jpTipOfTheDay, "growx, wrap para");
+        pane.add(jcbShowTipsOnStartup, "split 2");
+        pane.add(jpNavigation, "gap 30, growx");
 
         getRootPane().setDefaultButton(jbClose);
 
