@@ -48,6 +48,7 @@ import java.util.stream.Stream;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.EncryptionType;
@@ -134,7 +135,7 @@ public class PemKeyStoreSpi extends KeyStoreSpi {
                         break;
 
                     case X509CertUtil.CERT_PEM_TYPE:
-                        CertificateFactory cf = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE);
+                        CertificateFactory cf = CertificateFactory.getInstance(X509CertUtil.X509_CERT_TYPE, KSE.BC);
                         certs.add(cf.generateCertificate(new ByteArrayInputStream(pem.getContent())));
                         break;
                 }

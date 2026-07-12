@@ -72,6 +72,7 @@ import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.keystore.Pkcs12KeyStoreAdapter;
+import org.kse.crypto.privatekey.EncryptionType;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -91,6 +92,8 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.net.Downloader;
+import org.kse.utilities.pem.PemInfo;
+import org.kse.utilities.pem.PemUtil;
 
 import com.nimbusds.jose.jwk.JWK;
 import net.miginfocom.swing.MigLayout;
@@ -442,6 +445,27 @@ public class DImportKeyPair extends JEscDialog {
         try {
             fileType = CryptoFileUtil.detectFileType(chosenFile);
 
+            byte[] fileData = Files.readAllBytes(chosenFile.toPath());
+            if (fileType == CryptoFileType.PEM_KS) {
+                // KSE assumes that the first entry in the PEM file is the private
+                // key. If it's not, then the PEM file should be opened as a key store.
+                PemInfo pemInfo = PemUtil.decode(fileData);
+
+                String pemType = pemInfo.getType();
+                if (Pkcs8Util.PKCS8_ENC_PVK_PEM_TYPE.equals(pemType)) {
+                    fileType = CryptoFileType.ENC_PKCS8_PVK;
+                } else if (Pkcs8Util.PKCS8_UNENC_PVK_PEM_TYPE.equals(pemType)) {
+                    fileType = CryptoFileType.UNENC_PKCS8_PVK;
+                } else {
+                    EncryptionType encryptionType = OpenSslPvkUtil.getEncryptionType(pemInfo);
+                    if (encryptionType == EncryptionType.ENCRYPTED) {
+                        fileType = CryptoFileType.ENC_OPENSSL_PVK;
+                    } else if (encryptionType == EncryptionType.UNENCRYPTED) {
+                        fileType = CryptoFileType.UNENC_OPENSSL_PVK;
+                    }
+                }
+            }
+
             if (fileType == CryptoFileType.PKCS12_KS || fileType == CryptoFileType.ENC_PKCS8_PVK
                     || fileType == CryptoFileType.ENC_OPENSSL_PVK || fileType == CryptoFileType.ENC_MS_PVK
                     || fileType == CryptoFileType.ENC_JSON_WEB_KEY) {
@@ -462,7 +486,11 @@ public class DImportKeyPair extends JEscDialog {
             case UNENC_OPENSSL_PVK:
                 // check for certs in the private key file
                 try {
-                    certificateChain = X509CertUtil.loadCertificates(Files.readAllBytes(chosenFile.toPath()));
+                    // Call orderX509CertChain so that only the longest chain is displayed
+                    // when viewing the certificate details. The goal is to show the certificates
+                    // that will be imported rather than showing the full list of certificates
+                    // present in the file.
+                    certificateChain = X509CertUtil.orderX509CertChain(X509CertUtil.loadCertificates(fileData));
                 } catch (CryptoException e) {
                     // ignore since a failure likely means that there
                     // are no certificates, which is ok.
