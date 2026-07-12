@@ -19,10 +19,9 @@
  */
 package org.kse.gui.error;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
@@ -34,13 +33,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays an error message with the option to display the stack trace.
@@ -50,47 +49,31 @@ public class DError extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
-    private JPanel jpError;
     private JLabel jlError;
-    private JPanel jpButtons;
     private JButton jbDetails;
     private JButton jbOK;
 
     private Throwable error;
 
     /**
-     * Creates new DError dialog where the parent is a frame.
+     * Creates new DError dialog where the parent is a window.
      *
-     * @param parent Parent frame
-     * @param error
+     * @param parent Parent window
+     * @param error  Error to display
      */
-    public DError(JFrame parent, Throwable error) {
-        super(parent, res.getString("DError.Title"), ModalityType.DOCUMENT_MODAL);
-        this.error = error;
-        initComponents();
+    public DError(Window parent, Throwable error) {
+        this(parent, res.getString("DError.Title"), ModalityType.DOCUMENT_MODAL, error);
     }
 
     /**
-     * Creates new DError dialog where the parent is a dialog.
-     *
-     * @param parent Parent dialog
-     * @param error
-     */
-    public DError(JDialog parent, Throwable error) {
-        super(parent, res.getString("DError.Title"), ModalityType.DOCUMENT_MODAL);
-        this.error = error;
-        initComponents();
-    }
-
-    /**
-     * Creates new DError dialog where the parent is a frame.
+     * Creates new DError dialog where the parent is a window.
      *
      * @param modality Create the dialog as modal?
      * @param title    Dialog title
      * @param parent   Parent frame
      * @param error    Error to display
      */
-    public DError(JFrame parent, String title, Dialog.ModalityType modality, Throwable error) {
+    public DError(Window parent, String title, Dialog.ModalityType modality, Throwable error) {
         super(parent, modality);
         setTitle(title);
         this.error = error;
@@ -98,17 +81,14 @@ public class DError extends JEscDialog {
     }
 
     /**
-     * Creates new DError dialog where the parent is a dialog.
+     * Creates new DError dialog where the parent is a window.
      *
-     * @param parent Parent dialog
+     * @param parent Parent window
      * @param title  Dialog title
-     * @param error
+     * @param error  Error to display
      */
-    public DError(JDialog parent, String title, Throwable error) {
-        super(parent, ModalityType.DOCUMENT_MODAL);
-        setTitle(title);
-        this.error = error;
-        initComponents();
+    public DError(Window parent, String title, Throwable error) {
+        this(parent, title, ModalityType.DOCUMENT_MODAL, error);
     }
 
     /**
@@ -150,16 +130,11 @@ public class DError extends JEscDialog {
     }
 
     private void initComponents() {
-        jpError = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpError.setBorder(new EmptyBorder(5, 5, 5, 5));
-
         jlError = new JLabel(formatError());
         ImageIcon icon = new ImageIcon(getClass().getResource("images/error.png"));
         jlError.setIcon(icon);
         jlError.setHorizontalTextPosition(SwingConstants.TRAILING);
         jlError.setIconTextGap(15);
-
-        jpError.add(jlError);
 
         // Buttons
         jbDetails = new JButton(res.getString("DError.jbDetails.text"));
@@ -177,10 +152,11 @@ public class DError extends JEscDialog {
         jbOK = new JButton(res.getString("DError.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDetails);
-
-        getContentPane().add(jpError, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlError, "wrap para");
+        pane.add(jbDetails, "split 2");
+        pane.add(jbOK, "tag ok");
 
         setResizable(false);
 

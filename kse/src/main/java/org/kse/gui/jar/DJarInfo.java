@@ -19,7 +19,7 @@
  */
 package org.kse.gui.jar;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -35,19 +35,19 @@ import java.util.jar.Manifest;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.table.ToolTipTable;
-import org.kse.gui.PlatformUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * A dialog that displays information about the JAR files on the classpath.
@@ -58,8 +58,6 @@ public class DJarInfo extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
 
     private JButton jbOK;
-    private JPanel jpOK;
-    private JPanel jpJarInfoTable;
     private JScrollPane jspJarInfoTable;
     private JTable jtJarInfo;
 
@@ -112,19 +110,15 @@ public class DJarInfo extends JEscDialog {
         jspJarInfoTable = PlatformUtil.createScrollPane(jtJarInfo, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspJarInfoTable.getViewport().setBackground(jtJarInfo.getBackground());
-
-        jpJarInfoTable = new JPanel(new BorderLayout(10, 10));
-        jpJarInfoTable.setPreferredSize(new Dimension(500, 200));
-        jpJarInfoTable.add(jspJarInfoTable, BorderLayout.CENTER);
-        jpJarInfoTable.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jspJarInfoTable.setPreferredSize(new Dimension(500, 200));
 
         jbOK = new JButton(res.getString("DJarInfo.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
-
-        getContentPane().add(jpJarInfoTable, BorderLayout.CENTER);
-        getContentPane().add(jpOK, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspJarInfoTable, "wrap para");
+        pane.add(jbOK, "tag ok");
 
         setResizable(true);
 

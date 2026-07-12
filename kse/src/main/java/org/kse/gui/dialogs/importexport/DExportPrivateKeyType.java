@@ -19,9 +19,8 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -37,10 +36,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -52,6 +49,8 @@ import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Dialog used to request the type of private key export.
  */
@@ -62,7 +61,6 @@ public class DExportPrivateKeyType extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpExportType;
     private JLabel jlExportType;
     private JRadioButton jrbPkcs8;
     private JRadioButton jrbPvk;
@@ -137,16 +135,6 @@ public class DExportPrivateKeyType extends JEscDialog {
         keyStoreTypes.add(jrbOpenSsl);
         keyStoreTypes.add(jrbJwk);
 
-        jpExportType = new JPanel(new GridLayout(5, 1));
-        jpExportType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-        jpExportType.add(jlExportType);
-        jpExportType.add(jrbPkcs8);
-        jpExportType.add(jrbPvk);
-        jpExportType.add(jrbOpenSsl);
-        jpExportType.add(jrbJwk);
-
         jbOK = new JButton(res.getString("DExportPrivateKeyType.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
@@ -163,11 +151,17 @@ public class DExportPrivateKeyType extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpExportType, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlExportType, "wrap");
+        pane.add(jrbPkcs8, "wrap");
+        pane.add(jrbPvk, "wrap");
+        pane.add(jrbOpenSsl, "wrap");
+        pane.add(jrbJwk, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jpButtons, "right, spanx");
 
         addWindowListener(new WindowAdapter() {
             @Override

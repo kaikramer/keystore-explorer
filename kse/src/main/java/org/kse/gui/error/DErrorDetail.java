@@ -19,10 +19,11 @@
  */
 package org.kse.gui.error;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
@@ -31,23 +32,21 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays an error's stack trace. Cause error's stack trace will be show
@@ -58,38 +57,34 @@ public class DErrorDetail extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
-    private JPanel jpButtons;
     private JButton jbCopy;
     private JButton jbOK;
-    private JPanel jpError;
     private JTree jtrError;
     private JScrollPane jspError;
 
     private Throwable error;
 
     /**
-     * Creates new DErrorDetail dialog where the parent is a frame.
+     * Creates new DErrorDetail dialog where the parent is a window.
      *
-     * @param parent   Parent frame
+     * @param parent   Parent window
      * @param modality Dialog modality
      * @param error    Error to display
      */
-    public DErrorDetail(JFrame parent, Dialog.ModalityType modality, Throwable error) {
+    public DErrorDetail(Window parent, Dialog.ModalityType modality, Throwable error) {
         super(parent, modality);
         this.error = error;
         initComponents();
     }
 
     /**
-     * Creates new DErrorDetail dialog where the parent is a dialog.
+     * Creates new DErrorDetail dialog where the parent is a window.
      *
-     * @param parent Parent dialog
-     * @param error
+     * @param parent Parent window
+     * @param error  Error to display
      */
-    public DErrorDetail(JDialog parent, Throwable error) {
-        super(parent, ModalityType.DOCUMENT_MODAL);
-        this.error = error;
-        initComponents();
+    public DErrorDetail(Window parent, Throwable error) {
+        this(parent, ModalityType.DOCUMENT_MODAL, error);
     }
 
     private void initComponents() {
@@ -108,11 +103,6 @@ public class DErrorDetail extends JEscDialog {
         jbOK = new JButton(res.getString("DErrorDetail.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
-
-        jpError = new JPanel(new BorderLayout());
-        jpError.setBorder(new EmptyBorder(10, 10, 10, 10));
-
         jtrError = new JTree(createErrorNodes());
         jtrError.setRowHeight(Math.max(18, jtrError.getRowHeight()));
         jtrError.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -125,10 +115,12 @@ public class DErrorDetail extends JEscDialog {
         jspError = PlatformUtil.createScrollPane(jtrError, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspError.setPreferredSize(new Dimension(500, 250));
-        jpError.add(jspError, BorderLayout.CENTER);
 
-        getContentPane().add(jpError, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspError, "wrap para");
+        pane.add(jbCopy, "split 2");
+        pane.add(jbOK, "tag ok");
 
         setTitle(res.getString("DErrorDetail.Title"));
         setResizable(true);

@@ -19,7 +19,7 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -41,7 +41,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.cms.CMSSignedData;
@@ -49,11 +48,13 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscFrame;
 import org.kse.utilities.asn1.Asn1Dump;
 import org.kse.utilities.asn1.Asn1Exception;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays an ASN.1 dump of the supplied object: an X.509 certificate, private
@@ -67,7 +68,6 @@ public class DViewAsn1Dump extends JEscFrame {
     private JPanel jpButtons;
     private JButton jbCopy;
     private JButton jbOK;
-    private JPanel jpAsn1Dump;
     private JScrollPane jspAsn1Dump;
     private JTextArea jtaAsn1Dump;
 
@@ -160,7 +160,7 @@ public class DViewAsn1Dump extends JEscFrame {
     /**
      * Creates a new DViewAsn1Dump dialog.
      *
-     * @param parent    Parent frame
+     * @param parent    Parent dialog
      * @param pkcs10Csr PKCS#10 request to display dump for
      * @throws Asn1Exception A problem was encountered getting the public key's ASN.1 dump
      * @throws IOException   If an I/O problem occurred
@@ -175,7 +175,7 @@ public class DViewAsn1Dump extends JEscFrame {
     /**
      * Creates a new DViewAsn1Dump dialog.
      *
-     * @param parent Parent frame
+     * @param parent Parent dialog
      * @param spkac  PKCS#10 request to display dump for
      * @throws Asn1Exception A problem was encountered getting the public key's ASN.1 dump
      * @throws IOException   If an I/O problem occurred
@@ -190,7 +190,7 @@ public class DViewAsn1Dump extends JEscFrame {
     /**
      * Creates a new DViewAsn1Dump dialog.
      *
-     * @param parent Parent frame
+     * @param parent Parent dialog
      * @param cms    CMS signature to display dump for
      * @throws Asn1Exception A problem was encountered getting the CMS signature ASN.1 dump
      * @throws IOException   If an I/O problem occurred
@@ -205,7 +205,7 @@ public class DViewAsn1Dump extends JEscFrame {
     /**
      * Creates a new DViewAsn1Dump dialog.
      *
-     * @param parent     Parent frame
+     * @param parent     Parent dialog
      * @param signerInfo CMS signature to display dump for
      * @throws Asn1Exception A problem was encountered getting the signer info ASN.1 dump
      * @throws IOException   If an I/O problem occurred
@@ -235,10 +235,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
         jbOK.addActionListener(evt -> okPressed());
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
-
-        jpAsn1Dump = new JPanel(new BorderLayout());
-        jpAsn1Dump.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, "insets 0");
 
         Asn1Dump asn1Dump = new Asn1Dump();
 
@@ -271,10 +268,11 @@ public class DViewAsn1Dump extends JEscFrame {
         jspAsn1Dump = PlatformUtil.createScrollPane(jtaAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspAsn1Dump.setPreferredSize(new Dimension(800, 400));
-        jpAsn1Dump.add(jspAsn1Dump, BorderLayout.CENTER);
 
-        getContentPane().add(jpAsn1Dump, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspAsn1Dump, "wrap para");
+        pane.add(jpButtons, "growx");
 
         setResizable(true);
 
