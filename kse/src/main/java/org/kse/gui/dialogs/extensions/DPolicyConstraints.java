@@ -118,13 +118,14 @@ public class DPolicyConstraints extends DExtension {
         });
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jlPolicyConstraints, "wrap");
+        // Don't align the first column "right". This dialog looks best left aligned.
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]unrel[]", "[]"));
+        pane.add(jlPolicyConstraints, "left, spanx, wrap");
         pane.add(jlRequireExplicitPolicy);
         pane.add(jtfRequireExplicitPolicy, "wrap");
         pane.add(jlInhibitPolicyMapping);
         pane.add(jtfInhibitPolicyMapping, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

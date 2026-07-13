@@ -52,7 +52,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -209,8 +208,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         pane.add(jlFields, "");
         pane.add(jlFieldValue, "wrap");
         pane.add(jltFields, "grow");
-        pane.add(jspFieldValue, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jspFieldValue, "wrap para");
         pane.add(jbOK, "spanx, tag ok");
 
         setResizable(false);

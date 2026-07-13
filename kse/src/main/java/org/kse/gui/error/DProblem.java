@@ -125,7 +125,7 @@ public class DProblem extends JEscDialog {
         pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
         pane.add(jpProblemHeader, "growx, wrap");
         pane.add(jpCauses, "growx, wrap");
-        pane.add(jpButtons, "growx");
+        pane.add(jpButtons, "spanx, growx");
 
         setResizable(false);
 

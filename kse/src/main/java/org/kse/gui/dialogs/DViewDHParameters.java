@@ -29,7 +29,6 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -45,13 +44,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
-import org.kse.crypto.CryptoException;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
@@ -88,7 +86,7 @@ public class DViewDHParameters extends JEscDialog {
      * @param title    The title of the dialogue
      * @param dhParams The byte array of DER encoded DH Parameters
      */
-    public DViewDHParameters(JFrame parent, String title, byte[] dhParams) throws CryptoException {
+    public DViewDHParameters(JFrame parent, String title, byte[] dhParams) {
 
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.dhParameters = dhParams;
@@ -99,10 +97,8 @@ public class DViewDHParameters extends JEscDialog {
      * Initializes the dialogue panel and associated elements
      *
      * @param dhParams The byte array for the DH Parameters
-     * @throws CryptoException
      */
-    private void initComponents(byte[] dhParams) throws CryptoException {
-        // TODO Generate DH Parameters icon
+    private void initComponents(byte[] dhParams) {
         PemInfo pemInfo = new PemInfo(EB, null, dhParams);
         jtAreaPem = new JTextArea(PemUtil.encode(pemInfo));
         jtAreaPem.setToolTipText(res.getString("DViewDHParameters.jtAreaPem.tooltip"));
@@ -126,7 +122,7 @@ public class DViewDHParameters extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog"));
-        pane.add(jspAreaPem, "span");
+        pane.add(jspAreaPem, "span, wrap para");
         pane.add(jbCopy, "tag Copy");
         pane.add(jbExport, "tag Export");
         pane.add(jbOK, "tag Ok");
@@ -256,7 +252,7 @@ public class DViewDHParameters extends JEscDialog {
     }
 
     // Quick UI test
-    public static void main(String[] args) throws Exception, IOException, GeneralSecurityException {
+    public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
         keySize = 512;
 

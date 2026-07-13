@@ -51,6 +51,9 @@ import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog to choose CRL distribution points.
+ */
 public class DDistributionPointsChooser extends JEscDialog {
 
     private static final long serialVersionUID = 1L;
@@ -78,11 +81,25 @@ public class DDistributionPointsChooser extends JEscDialog {
 
     private DistributionPoint distributionPoint = null;
 
+    /**
+     * Constructs a new DDistributionPointsChooser dialog.
+     *
+     * @param parent            The parent frame
+     * @param title             The dialog title
+     * @param distributionPoint Distribution point
+     */
     public DDistributionPointsChooser(JFrame parent, String title, DistributionPoint distributionPoint) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         initComponents(distributionPoint);
     }
 
+    /**
+     * Constructs a new DDistributionPointsChooser dialog.
+     *
+     * @param parent            The parent frame
+     * @param title             The dialog title
+     * @param distributionPoint Distribution point
+     */
     public DDistributionPointsChooser(JDialog parent, String title, DistributionPoint distributionPoint) {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents(distributionPoint);
@@ -154,8 +171,8 @@ public class DDistributionPointsChooser extends JEscDialog {
         pane.add(jcbAACompromise, "wrap unrel");
         pane.add(jlDistributionPointCrlIssuer, "top");
         pane.add(jgnDistributionPointCrlIssuer, "span 3, wrap unrel");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "spanx, tag ok");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());
@@ -284,6 +301,11 @@ public class DDistributionPointsChooser extends JEscDialog {
         dispose();
     }
 
+    /**
+     * Get selected CRL distribution point.
+     *
+     * @return Distribution point, or null if none
+     */
     public DistributionPoint getDistributionPoint() {
         return distributionPoint;
     }

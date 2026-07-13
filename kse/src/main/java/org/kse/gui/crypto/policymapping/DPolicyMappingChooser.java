@@ -19,11 +19,8 @@
  */
 package org.kse.gui.crypto.policymapping;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -36,16 +33,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.crypto.x509.PolicyMapping;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.oid.JObjectId;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose an policy mapping.
@@ -57,7 +54,6 @@ public class DPolicyMappingChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPolicyMapping;
     private JLabel jlIssuerDomainPolicy;
     private JObjectId joiIssuerDomainPolicy;
     private JLabel jlSubjectDomainPolicy;
@@ -95,58 +91,13 @@ public class DPolicyMappingChooser extends JEscDialog {
     private void initComponents(PolicyMapping policyMapping) {
         jlIssuerDomainPolicy = new JLabel(res.getString("DPolicyMappingChooser.jlIssuerDomainPolicy.text"));
 
-        GridBagConstraints gbc_jlIssuerDomainPolicy = new GridBagConstraints();
-        gbc_jlIssuerDomainPolicy.gridx = 0;
-        gbc_jlIssuerDomainPolicy.gridy = 0;
-        gbc_jlIssuerDomainPolicy.gridwidth = 1;
-        gbc_jlIssuerDomainPolicy.gridheight = 1;
-        gbc_jlIssuerDomainPolicy.insets = new Insets(5, 5, 5, 5);
-        gbc_jlIssuerDomainPolicy.anchor = GridBagConstraints.EAST;
-
         joiIssuerDomainPolicy = new JObjectId(res.getString("DPolicyMappingChooser.IssuerDomainPolicy.Title"));
         joiIssuerDomainPolicy.setToolTipText(res.getString("DPolicyMappingChooser.joiIssuerDomainPolicy.tooltip"));
 
-        GridBagConstraints gbc_joiIssuerDomainPolicy = new GridBagConstraints();
-        gbc_joiIssuerDomainPolicy.gridx = 1;
-        gbc_joiIssuerDomainPolicy.gridy = 0;
-        gbc_joiIssuerDomainPolicy.gridwidth = 1;
-        gbc_joiIssuerDomainPolicy.gridheight = 1;
-        gbc_joiIssuerDomainPolicy.insets = new Insets(5, 5, 5, 5);
-        gbc_joiIssuerDomainPolicy.anchor = GridBagConstraints.WEST;
-
         jlSubjectDomainPolicy = new JLabel(res.getString("DPolicyMappingChooser.jlSubjectDomainPolicy.text"));
-
-        GridBagConstraints gbc_jlSubjectDomainPolicy = new GridBagConstraints();
-        gbc_jlSubjectDomainPolicy.gridx = 0;
-        gbc_jlSubjectDomainPolicy.gridy = 1;
-        gbc_jlSubjectDomainPolicy.gridwidth = 1;
-        gbc_jlSubjectDomainPolicy.gridheight = 1;
-        gbc_jlSubjectDomainPolicy.insets = new Insets(5, 5, 5, 5);
-        gbc_jlSubjectDomainPolicy.anchor = GridBagConstraints.EAST;
 
         joiSubjectDomainPolicy = new JObjectId(res.getString("DPolicyMappingChooser.SubjectDomainPolicy.Title"));
         joiSubjectDomainPolicy.setToolTipText(res.getString("DPolicyMappingChooser.joiSubjectDomainPolicy.tooltip"));
-
-        GridBagConstraints gbc_joiSubjectDomainPolicy = new GridBagConstraints();
-        gbc_joiSubjectDomainPolicy.gridx = 1;
-        gbc_joiSubjectDomainPolicy.gridy = 1;
-        gbc_joiSubjectDomainPolicy.gridwidth = 1;
-        gbc_joiSubjectDomainPolicy.gridheight = 1;
-        gbc_joiSubjectDomainPolicy.insets = new Insets(5, 5, 5, 5);
-        gbc_joiSubjectDomainPolicy.anchor = GridBagConstraints.WEST;
-
-        jpPolicyMapping = new JPanel(new GridBagLayout());
-
-        jpPolicyMapping.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-                                                                                                     new EmptyBorder(5,
-                                                                                                                     5,
-                                                                                                                     5,
-                                                                                                                     5))));
-
-        jpPolicyMapping.add(jlIssuerDomainPolicy, gbc_jlIssuerDomainPolicy);
-        jpPolicyMapping.add(joiIssuerDomainPolicy, gbc_joiIssuerDomainPolicy);
-        jpPolicyMapping.add(jlSubjectDomainPolicy, gbc_jlSubjectDomainPolicy);
-        jpPolicyMapping.add(joiSubjectDomainPolicy, gbc_joiSubjectDomainPolicy);
 
         jbOK = new JButton(res.getString("DPolicyMappingChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -164,11 +115,16 @@ public class DPolicyMappingChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpPolicyMapping);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlIssuerDomainPolicy, "");
+        pane.add(joiIssuerDomainPolicy, "wrap");
+        pane.add(jlSubjectDomainPolicy, "");
+        pane.add(joiSubjectDomainPolicy, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populate(policyMapping);
 

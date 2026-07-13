@@ -20,9 +20,8 @@
 
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,14 +35,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to find a keystore entry
@@ -95,17 +94,14 @@ public class DFindKeyStoreEntry extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        JPanel jpContent = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpContent.add(jlEntryName);
-        jpContent.add(jtfEntryName);
-        jpContent.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                               new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpContent, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlEntryName, "");
+        pane.add(jtfEntryName, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -142,10 +138,18 @@ public class DFindKeyStoreEntry extends JEscDialog {
         closeDialog();
     }
 
+    /**
+     *
+     * @return True if the ok button was pressed.
+     */
     public boolean isSuccess() {
         return success;
     }
 
+    /**
+     *
+     * @return The entry name to search for.
+     */
     public String getEntryName() {
         return entryName;
     }

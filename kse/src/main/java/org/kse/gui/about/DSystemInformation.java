@@ -33,15 +33,13 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.net.IpAddress;
 
 import net.miginfocom.swing.MigLayout;
@@ -57,7 +55,6 @@ public class DSystemInformation extends JEscDialog {
 
     private static final int TEXT_FIELD_WIDTH = 30;
 
-    private JPanel jpSystemInformation;
     private JLabel jlHostname;
     private JTextField jtfHostname;
     private JLabel jlOperatingSystem;
@@ -80,6 +77,7 @@ public class DSystemInformation extends JEscDialog {
     private JTextField jtfAvailableProcessors;
     private JButton jbEnvironmentVariables;
     private JButton jbSystemProperties;
+    private JPanel jpButtons;
     private JButton jbOK;
 
     private Thread memoryUpdater;
@@ -192,36 +190,34 @@ public class DSystemInformation extends JEscDialog {
         jbOK = new JButton(res.getString("DSystemInformation.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpSystemInformation = new JPanel(new MigLayout("", "[right]unrel[grow]", ""));
-        jpSystemInformation.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-        jpSystemInformation.add(jlHostname, "");
-        jpSystemInformation.add(jtfHostname, "growx, wrap");
-        jpSystemInformation.add(jlOperatingSystem, "");
-        jpSystemInformation.add(jtfOperatingSystem, "growx, wrap");
-        jpSystemInformation.add(jlLocale, "");
-        jpSystemInformation.add(jtfLocale, "growx, wrap");
-        jpSystemInformation.add(jlJavaVersion, "");
-        jpSystemInformation.add(jtfJavaVersion, "growx, wrap");
-        jpSystemInformation.add(jlJavaVendor, "");
-        jpSystemInformation.add(jtfJavaVendor, "growx, wrap");
-        jpSystemInformation.add(jlJavaHome, "");
-        jpSystemInformation.add(jtfJavaHome, "growx, wrap");
-        jpSystemInformation.add(jlJvmMaximumMemory, "");
-        jpSystemInformation.add(jtfJvmMaximumMemory, "growx, wrap");
-        jpSystemInformation.add(jlJvmTotalMemory, "");
-        jpSystemInformation.add(jtfJvmTotalMemory, "growx, wrap");
-        jpSystemInformation.add(jlJvmFreeMemory, "");
-        jpSystemInformation.add(jtfJvmFreeMemory, "growx, wrap");
-        jpSystemInformation.add(jlAvailableProcessors, "");
-        jpSystemInformation.add(jtfAvailableProcessors, "growx, wrap");
-        jpSystemInformation.add(jbEnvironmentVariables, "spanx, split 2, gapleft push");
-        jpSystemInformation.add(jbSystemProperties, "");
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets 0, fill", "[grow]", ""));
-        pane.add(jpSystemInformation, "grow, wrap");
-        pane.add(PlatformUtil.createDialogButtonPanel(jbOK), "growx");
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", ""));
+        pane.add(jlHostname, "");
+        pane.add(jtfHostname, "growx, wrap");
+        pane.add(jlOperatingSystem, "");
+        pane.add(jtfOperatingSystem, "growx, wrap");
+        pane.add(jlLocale, "");
+        pane.add(jtfLocale, "growx, wrap");
+        pane.add(jlJavaVersion, "");
+        pane.add(jtfJavaVersion, "growx, wrap");
+        pane.add(jlJavaVendor, "");
+        pane.add(jtfJavaVendor, "growx, wrap");
+        pane.add(jlJavaHome, "");
+        pane.add(jtfJavaHome, "growx, wrap");
+        pane.add(jlJvmMaximumMemory, "");
+        pane.add(jtfJvmMaximumMemory, "growx, wrap");
+        pane.add(jlJvmTotalMemory, "");
+        pane.add(jtfJvmTotalMemory, "growx, wrap");
+        pane.add(jlJvmFreeMemory, "");
+        pane.add(jtfJvmFreeMemory, "growx, wrap");
+        pane.add(jlAvailableProcessors, "");
+        pane.add(jtfAvailableProcessors, "growx, wrap");
+        pane.add(jbEnvironmentVariables, "spanx, split 2");
+        pane.add(jbSystemProperties, "wrap para");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         setResizable(false);
 

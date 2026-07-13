@@ -152,7 +152,7 @@ public class DGetNewPassword extends JEscDialog {
         pane.add(jlConfirm, "");
         pane.add(jpfConfirm, "growx, wrap unrelated");
         pane.add(jcbStoreInPasswordManager, "hidemode 3, split 2, spanx, growx, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap unrelated");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

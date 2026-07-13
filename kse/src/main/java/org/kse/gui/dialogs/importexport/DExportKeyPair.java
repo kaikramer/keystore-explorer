@@ -181,8 +181,8 @@ public class DExportKeyPair extends JEscDialog {
         pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jrbFormatPkcs12.addItemListener(evt -> {
             if (jrbFormatPkcs12.isSelected()) {

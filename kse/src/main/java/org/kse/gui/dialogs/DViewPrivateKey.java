@@ -206,14 +206,14 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jtfFormat, "growx, pushx, wrap");
         pane.add(jlEncoded, "");
         // ECGOST curve names are very long. Grow up to 400 pixels
-        pane.add(jspEncoded, "growx, width 300lp:300lp:400lp, height 100lp:100lp:100lp, wrap");
+        pane.add(jspEncoded, "growx, width 300lp:300lp:400lp, height 100lp:100lp:100lp, wrap para");
 
         pane.add(jbExport, "spanx, split");
         addButtonSeparator(pane, jbExport.isVisible());
         pane.add(jbFields, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");
 
         // actions

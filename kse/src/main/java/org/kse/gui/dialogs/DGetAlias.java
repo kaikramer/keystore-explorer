@@ -20,8 +20,8 @@
 package org.kse.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,15 +36,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used for entering a KeyStore alias.
@@ -56,7 +56,6 @@ public class DGetAlias extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpAlias;
     private JLabel jlAlias;
     private JTextField jtfAlias;
     private JPanel jpButtons;
@@ -126,16 +125,14 @@ public class DGetAlias extends JEscDialog {
             }
         });
 
-        jpAlias = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpAlias.add(jlAlias);
-        jpAlias.add(jtfAlias);
-        jpAlias.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                             new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().add(jpAlias, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlAlias, "");
+        pane.add(jtfAlias, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         addWindowListener(new WindowAdapter() {
             @Override

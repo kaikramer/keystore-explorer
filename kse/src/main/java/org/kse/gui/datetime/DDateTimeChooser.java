@@ -50,7 +50,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -67,9 +66,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.MatteBorder;
 
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -271,7 +270,6 @@ public class DDateTimeChooser extends JEscDialog {
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         JPanel jpDateTime = new JPanel();
-        jpDateTime.setLayout(new BoxLayout(jpDateTime, BoxLayout.Y_AXIS));
         jpDateTime.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, 0),
                                                 new CompoundBorder(new EtchedBorder(), new EmptyBorder(0, 0, 0, 0))));
 
@@ -293,7 +291,7 @@ public class DDateTimeChooser extends JEscDialog {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets panel, fill", "", ""));
         pane.add(jpDateTime, "wrap unrel");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());

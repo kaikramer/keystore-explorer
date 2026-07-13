@@ -143,8 +143,8 @@ public class DExamineSsl extends JEscDialog {
         pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
         pane.add(jcbKeyStore, "sgx, growx");
         pane.add(jbLoadKeystore, "growx, wrap para");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jcbClientAuth.addActionListener(evt -> updateClientAuthComponents());
         jbLoadKeystore.addActionListener(evt -> {

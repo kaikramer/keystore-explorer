@@ -196,6 +196,7 @@ public class DViewJwt extends JEscDialog {
 
         jbVerify = new JButton(res.getString("DViewJwt.jbVerify.text"));
         jbVerify.setToolTipText(res.getString("DViewJwt.jbVerify.tooltip"));
+
         // layout
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog", "[]unrel[]", "[][]unrel[][]"));
@@ -206,12 +207,12 @@ public class DViewJwt extends JEscDialog {
         pane.add(jlEncoded, "");
         pane.add(jlPublicKey, "wrap");
         pane.add(jspEncoded, "sgx cols, h 200lp!");
-        pane.add(jspPublicKey, "sgx cols, h 200lp!, wrap");
+        pane.add(jspPublicKey, "sgx cols, h 200lp!, wrap para");
 
         jpButtons = PlatformUtil.createDialogButtonPanel(jbCopy, jbVerify, "insets 0");
 
         pane.add(jpButtons, "right, spanx");
-        pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
 
         pane.add(jbOK, "spanx, tag ok");
 

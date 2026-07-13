@@ -19,7 +19,7 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -56,7 +56,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -84,6 +83,8 @@ import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 import org.kse.utilities.io.IndentSequence;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Displays the properties of a supplied KeyStore.
  */
@@ -97,7 +98,6 @@ public class DProperties extends JEscDialog {
     private JPanel jpButtons;
     private JButton jbCopy;
     private JButton jbOK;
-    private JPanel jpProperties;
     private JTree jtrProperties;
     private JScrollPane jspProperties;
     private KeyStoreHistory history;
@@ -134,10 +134,7 @@ public class DProperties extends JEscDialog {
         jbOK = new JButton(res.getString("DProperties.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
-
-        jpProperties = new JPanel(new BorderLayout());
-        jpProperties.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, "insets 0");
 
         jtrProperties = new JTree(createPropertiesNodes());
         jtrProperties.setRowHeight(Math.max(18, jtrProperties.getRowHeight()));
@@ -152,10 +149,11 @@ public class DProperties extends JEscDialog {
         jspProperties = PlatformUtil.createScrollPane(jtrProperties, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspProperties.setPreferredSize(new Dimension(400, 250));
-        jpProperties.add(jspProperties, BorderLayout.CENTER);
 
-        getContentPane().add(jpProperties, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspProperties, "wrap para");
+        pane.add(jpButtons, "spanx, growx");
 
         setTitle(MessageFormat.format(res.getString("DProperties.Title"), history.getName()));
         setResizable(true);

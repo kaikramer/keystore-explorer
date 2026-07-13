@@ -36,9 +36,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.table.ToolTipTable;
-import org.kse.gui.PlatformUtil;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -112,8 +112,8 @@ public class DSystemProperties extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspSystemPropertiesTable, "grow, pushy, wrap");
-        pane.add(PlatformUtil.createDialogButtonPanel(jbOK), "growx");
+        pane.add(jspSystemPropertiesTable, "wrap para");
+        pane.add(jbOK, "tag ok");
 
         setResizable(false);
 

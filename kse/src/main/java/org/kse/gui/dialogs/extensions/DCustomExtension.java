@@ -93,6 +93,7 @@ public class DCustomExtension extends DExtension {
      * Creates a new DCustomExtension dialog.
      *
      * @param parent The parent dialog
+     * @param oid    OID of the customer extension
      * @param value  Value of the custom extension DER-encoded
      */
     public DCustomExtension(JDialog parent, String oid, byte[] value) {
@@ -129,12 +130,12 @@ public class DCustomExtension extends DExtension {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
         pane.add(jlCustomOID, "");
         pane.add(joidCustomOID, "growx, pushx, wrap");
         pane.add(jlEncodedHexValue, "");
         pane.add(jspEncodedHexValue, "growx, pushx, height 80lp:80lp:80lp, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 
