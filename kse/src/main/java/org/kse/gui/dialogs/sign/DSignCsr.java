@@ -356,8 +356,8 @@ public class DSignCsr extends JEscDialog {
         pane.add(jtfSerialNumber, "wrap");
         pane.add(jbTransferExtensions, "spanx, split 2");
         pane.add(jbAddExtensions, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populateFields();
 

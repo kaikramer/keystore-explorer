@@ -20,26 +20,13 @@
 
 package org.kse.gui.dialogs;
 
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.util.ResourceBundle;
 
 import javax.crypto.spec.DHParameterSpec;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -48,10 +35,7 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.kse.KSE;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
-
-import net.miginfocom.swing.MigLayout;
 import org.kse.utilities.rng.RNG;
 
 /**
@@ -61,21 +45,13 @@ import org.kse.utilities.rng.RNG;
  * <p>
  * The user may cancel at any time by pressing the cancel button.
  */
-public class DGeneratingDHParameters extends JEscDialog {
+public class DGeneratingDHParameters extends JWaitDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private static final String CANCEL_KEY = "CANCEL_KEY";
-
-    private JLabel jlGenDHParameters;
-    private JProgressBar jpbGenDHParameters;
-    private JButton jbCancel;
-
     private byte[] dhParameters;
     private int keySize;
-    private Thread generator;
-    private boolean successStatus = true;
 
     /**
      * Creates a new DGeneratingDHParameters dialog.
@@ -84,90 +60,17 @@ public class DGeneratingDHParameters extends JEscDialog {
      * @param keySize The key size to generate
      */
     public DGeneratingDHParameters(JFrame parent, int keySize) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, res.getString("DGeneratingDHParameters.Title"),
+                res.getString("DGeneratingDHParameters.jlGenDHParameters.text"), "images/genkp.png",
+                res.getString("DGeneratingDHParameters.jbCancel.text"));
         this.keySize = keySize;
-        initComponents();
-    }
-
-    /**
-     * Initializes the dialogue panel and associated elements
-     */
-    private void initComponents() {
-        jlGenDHParameters = new JLabel(res.getString("DGeneratingDHParameters.jlGenDHParameters.text"));
-        ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
-        jlGenDHParameters.setIcon(icon);
-
-        jpbGenDHParameters = new JProgressBar();
-        jpbGenDHParameters.setIndeterminate(true);
-
-        jbCancel = new JButton(res.getString("DGeneratingDHParameters.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
-        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]unrel"));
-        pane.add(jlGenDHParameters, "wrap");
-        pane.add(jpbGenDHParameters, "growx, wrap");
-        pane.add(jbCancel, "tag Cancel");
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        setTitle(res.getString("DGeneratingDHParameters.Title"));
-        setResizable(false);
-
-        pack();
     }
 
     /**
      * Start DH Parameters generation in a separate thread.
      */
     public void startDHParametersGeneration() {
-        generator = new Thread(new GenerateDHParameters());
-        generator.setPriority(Thread.MIN_PRIORITY);
-        generator.start();
-    }
-
-    /**
-     * Returns the current success status
-     *
-     * @return successStatus The success status boolean
-     */
-    public boolean isSuccessful() {
-        return successStatus;
-    }
-
-    /**
-     * Calls the close dialogue, Sets the success value to false
-     */
-    private void cancelPressed() {
-        if ((generator != null) && (generator.isAlive())) {
-            generator.interrupt();
-        }
-        successStatus = false;
-        closeDialog();
-    }
-
-    /**
-     * Closes the dialogue
-     */
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
+        startTask(new GenerateDHParameters());
     }
 
     /**

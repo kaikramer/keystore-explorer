@@ -20,7 +20,6 @@
 
 package org.kse.gui.error;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -39,14 +38,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -57,7 +55,7 @@ import net.miginfocom.swing.MigLayout;
 public class DErrorCollection extends JEscDialog {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
-    private Map<?, ?> errorMap;
+    private Map<String, String> errorMap;
     private JList<String> jltKeys;
     private JLabel jlblKeys;
     private JTextArea jtaKeyValue;
@@ -67,8 +65,6 @@ public class DErrorCollection extends JEscDialog {
     private JPanel jpButtons;
     private JScrollPane jspLeft;
     private JScrollPane jspRight;
-    private JPanel leftPanel;
-    private JPanel rightPanel;
 
     /**
      * Creates new DErrorCollection dialog where the parent is a frame.
@@ -76,7 +72,7 @@ public class DErrorCollection extends JEscDialog {
      * @param parent Parent frame
      * @param map    Hashmap
      */
-    public DErrorCollection(JFrame parent, Map<?, ?> map) {
+    public DErrorCollection(JFrame parent, Map<String, String> map) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.errorMap = map;
         setTitle(res.getString("DErrorCollection.Title"));
@@ -100,9 +96,7 @@ public class DErrorCollection extends JEscDialog {
         jspLeft = PlatformUtil.createScrollPane(jltKeys, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspLeft.setPreferredSize(new Dimension(250, 200));
-        // left panel
-        leftPanel = new JPanel(new BorderLayout());
-        leftPanel.add(jspLeft);
+
         // label for error
         jlblKeyValue = new JLabel(res.getString("DErrorCollection.jlblKeyValue.text"));
         // jtextarea
@@ -114,9 +108,6 @@ public class DErrorCollection extends JEscDialog {
         jspRight = PlatformUtil.createScrollPane(jtaKeyValue, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspRight.setPreferredSize(new Dimension(250, 200));
-        // right panel
-        rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(jspRight);
 
         // keep uneditable color same as editable
         jlblKeyValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
@@ -126,18 +117,16 @@ public class DErrorCollection extends JEscDialog {
         jbCopy.setToolTipText(res.getString("DErrorCollection.jbCopy.tooltip"));
         PlatformUtil.setMnemonic(jbCopy, res.getString("DErrorCollection.jbCopy.mnemonic").charAt(0));
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(new JButton[] { jbOK }, null, new JButton[] { jbCopy },
-                "insets 0");
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, "insets 0");
 
         // layout
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
         pane.add(jlblKeys, "");
         pane.add(jlblKeyValue, "wrap");
-        pane.add(leftPanel, "");
-        pane.add(rightPanel, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap unrel");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(jspLeft, "");
+        pane.add(jspRight, "wrap para");
+        pane.add(jpButtons, "spanx, growx");
 
         // actions
         jltKeys.addListSelectionListener(evt -> {
@@ -170,7 +159,7 @@ public class DErrorCollection extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(getParent());
 
     }
 
@@ -179,7 +168,7 @@ public class DErrorCollection extends JEscDialog {
      *
      * @param map Hashmap
      */
-    private void populateKeys(Map<?, ?> map) {
+    private void populateKeys(Map<String, String> map) {
         // convert hash map keys to a string array // TODO seems hacky
         String[] listData = map.keySet().toArray(String[]::new);
 

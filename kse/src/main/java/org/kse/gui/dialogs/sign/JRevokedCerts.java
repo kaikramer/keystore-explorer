@@ -61,9 +61,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
@@ -190,7 +187,6 @@ public class JRevokedCerts extends JPanel {
         this.add(jlRevokedCerts, BorderLayout.NORTH);
         this.add(jspRevokedCertsTable, BorderLayout.CENTER);
         this.add(jpRevokedButtons, BorderLayout.EAST);
-        this.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5)));
     }
 
     private void populate() {

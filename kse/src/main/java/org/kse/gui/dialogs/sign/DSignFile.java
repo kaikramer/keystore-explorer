@@ -197,7 +197,7 @@ public class DSignFile extends JEscDialog {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlInputFile, "");
         pane.add(jtfInputFile, "");
         pane.add(jbInputFileBrowse, "wrap");
@@ -216,8 +216,8 @@ public class DSignFile extends JEscDialog {
         pane.add(jcbAddTimestamp, "wrap");
         pane.add(jlTimestampServerUrl, "");
         pane.add(jcbTimestampServerUrl, "wrap para");
-        pane.add(new JSeparator(), "spanx, growx, wrap para");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         // actions
         jbInputFileBrowse.addActionListener(evt -> {

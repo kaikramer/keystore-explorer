@@ -138,7 +138,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
         } else {
 
             distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, false, defaultDN);
-            jpButtons = PlatformUtil.createDialogButtonPanel(jbOK);
+            jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, "insets 0");
         }
 
         // layout
@@ -179,8 +179,8 @@ public class DDistinguishedNameChooser extends JEscDialog {
                 pane.add(jbDefault, "wrap");
             }
         }
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         pack();
         validate();

@@ -121,7 +121,7 @@ public class DProviderInfo extends JEscDialog {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
         pane.add(jspProviders, "wrap para");
-        pane.add(jpButtons, "growx");
+        pane.add(jpButtons, "spanx, growx");
 
         setTitle(res.getString("DProviderInfo.Title"));
         setResizable(true);

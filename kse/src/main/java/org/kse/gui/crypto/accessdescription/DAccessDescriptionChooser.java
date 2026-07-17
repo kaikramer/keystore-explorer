@@ -19,11 +19,8 @@
  */
 package org.kse.gui.crypto.accessdescription;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -36,18 +33,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.bouncycastle.asn1.x509.GeneralName;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.generalname.JGeneralName;
 import org.kse.gui.oid.JObjectId;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose an access description.
@@ -59,7 +56,6 @@ public class DAccessDescriptionChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpAccessDescription;
     private JLabel jlAccessMethod;
     private JObjectId joiAccessMethod;
     private JLabel jlAccessLocation;
@@ -97,56 +93,13 @@ public class DAccessDescriptionChooser extends JEscDialog {
     private void initComponents(AccessDescription accessDescription) {
         jlAccessMethod = new JLabel(res.getString("DAccessDescriptionChooser.jlAccessMethod.text"));
 
-        GridBagConstraints gbc_jlAccessMethod = new GridBagConstraints();
-        gbc_jlAccessMethod.gridx = 0;
-        gbc_jlAccessMethod.gridy = 0;
-        gbc_jlAccessMethod.gridwidth = 1;
-        gbc_jlAccessMethod.gridheight = 1;
-        gbc_jlAccessMethod.insets = new Insets(5, 5, 5, 5);
-        gbc_jlAccessMethod.anchor = GridBagConstraints.EAST;
-
         joiAccessMethod = new JObjectId(res.getString("DAccessDescriptionChooser.AccessMethod.Text"));
         joiAccessMethod.setToolTipText(res.getString("DAccessDescriptionChooser.joiAccessMethod.tooltip"));
 
-        GridBagConstraints gbc_joiAccessMethod = new GridBagConstraints();
-        gbc_joiAccessMethod.gridx = 1;
-        gbc_joiAccessMethod.gridy = 0;
-        gbc_joiAccessMethod.gridwidth = 1;
-        gbc_joiAccessMethod.gridheight = 1;
-        gbc_joiAccessMethod.insets = new Insets(5, 5, 5, 5);
-        gbc_joiAccessMethod.anchor = GridBagConstraints.WEST;
-
         jlAccessLocation = new JLabel(res.getString("DAccessDescriptionChooser.jlAccessLocation.text"));
-
-        GridBagConstraints gbc_jlAccessLocation = new GridBagConstraints();
-        gbc_jlAccessLocation.gridx = 0;
-        gbc_jlAccessLocation.gridy = 1;
-        gbc_jlAccessLocation.gridwidth = 1;
-        gbc_jlAccessLocation.gridheight = 1;
-        gbc_jlAccessLocation.insets = new Insets(5, 5, 5, 5);
-        gbc_jlAccessLocation.anchor = GridBagConstraints.EAST;
 
         jgnAccessLocation = new JGeneralName(res.getString("DAccessDescriptionChooser.AccessLocation.Title"));
         jgnAccessLocation.setToolTipText(res.getString("DAccessDescriptionChooser.jgnAccessLocation.tooltip"));
-
-        GridBagConstraints gbc_jgnAccessLocation = new GridBagConstraints();
-        gbc_jgnAccessLocation.gridx = 1;
-        gbc_jgnAccessLocation.gridy = 1;
-        gbc_jgnAccessLocation.gridwidth = 1;
-        gbc_jgnAccessLocation.gridheight = 1;
-        gbc_jgnAccessLocation.insets = new Insets(5, 5, 5, 5);
-        gbc_jgnAccessLocation.anchor = GridBagConstraints.WEST;
-
-        jpAccessDescription = new JPanel(new GridBagLayout());
-
-        jpAccessDescription.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                         new CompoundBorder(new EtchedBorder(),
-                                                                            new EmptyBorder(5, 5, 5, 5))));
-
-        jpAccessDescription.add(jlAccessMethod, gbc_jlAccessMethod);
-        jpAccessDescription.add(joiAccessMethod, gbc_joiAccessMethod);
-        jpAccessDescription.add(jlAccessLocation, gbc_jlAccessLocation);
-        jpAccessDescription.add(jgnAccessLocation, gbc_jgnAccessLocation);
 
         jbOK = new JButton(res.getString("DAccessDescriptionChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -164,11 +117,16 @@ public class DAccessDescriptionChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpAccessDescription);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlAccessMethod, "");
+        pane.add(joiAccessMethod, "wrap");
+        pane.add(jlAccessLocation, "");
+        pane.add(jgnAccessLocation, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populate(accessDescription);
 

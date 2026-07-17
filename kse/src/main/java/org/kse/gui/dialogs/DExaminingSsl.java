@@ -19,32 +19,13 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.kse.crypto.keystore.KseKeyStore;
-import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.passwordmanager.Password;
@@ -56,26 +37,16 @@ import org.kse.utilities.ssl.SslUtils;
  * Examines an SSL connection's certificates - a process which the user may
  * cancel at any time by pressing the cancel button.
  */
-public class DExaminingSsl extends JEscDialog {
+public class DExaminingSsl extends JWaitDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-    private static final String CANCEL_KEY = "CANCEL_KEY";
-
-    private JPanel jpExaminingSsl;
-    private JLabel jlExaminingSsl;
-    private JPanel jpProgress;
-    private JProgressBar jpbExaminingSsl;
-    private JPanel jpCancel;
-    private JButton jbCancel;
 
     private String sslHost;
     private int sslPort;
     private KseKeyStore keyStore;
     private char[] password;
     private SslConnectionInfos sslInfos;
-    private Thread examiner;
 
     /**
      * Creates a new DExaminingSsl dialog.
@@ -87,7 +58,8 @@ public class DExaminingSsl extends JEscDialog {
      * @param ksh           KeyStore with client certificate
      */
     public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, res.getString("DExaminingSsl.Title"), res.getString("DExaminingSsl.jlExaminingSsl.text"),
+                "images/exssl.png", res.getString("DExaminingSsl.jbCancel.text"));
 
         this.sslHost = sslHost;
         this.sslPort = sslPort;
@@ -101,67 +73,13 @@ public class DExaminingSsl extends JEscDialog {
                 this.password = pwd.toCharArray();
             }
         }
-        initComponents();
-    }
-
-    private void initComponents() {
-        jlExaminingSsl = new JLabel(res.getString("DExaminingSsl.jlExaminingSsl.text"));
-        ImageIcon icon = new ImageIcon(getClass().getResource("images/exssl.png"));
-        jlExaminingSsl.setIcon(icon);
-        jlExaminingSsl.setHorizontalTextPosition(SwingConstants.LEADING);
-        jlExaminingSsl.setIconTextGap(15);
-
-        jpExaminingSsl = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpExaminingSsl.add(jlExaminingSsl);
-        jpExaminingSsl.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jpbExaminingSsl = new JProgressBar();
-        jpbExaminingSsl.setIndeterminate(true);
-
-        jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpProgress.add(jpbExaminingSsl);
-        jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jbCancel = new JButton(res.getString("DExaminingSsl.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
-        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
-
-        getContentPane().add(jpExaminingSsl, BorderLayout.NORTH);
-        getContentPane().add(jpProgress, BorderLayout.CENTER);
-        getContentPane().add(jpCancel, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        setTitle(res.getString("DExaminingSsl.Title"));
-        setResizable(false);
-
-        pack();
     }
 
     /**
      * Start SSL connection examination in a separate thread.
      */
     public void startExamination() {
-        examiner = new Thread(new ExamineSsl());
-        examiner.setPriority(Thread.MIN_PRIORITY);
-        examiner.start();
+        startTask(new ExamineSsl());
     }
 
     /**
@@ -172,18 +90,6 @@ public class DExaminingSsl extends JEscDialog {
      */
     public SslConnectionInfos getSSLConnectionInfos() {
         return sslInfos;
-    }
-
-    private void cancelPressed() {
-        if ((examiner != null) && (examiner.isAlive())) {
-            examiner.interrupt();
-        }
-        closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     private class ExamineSsl implements Runnable {

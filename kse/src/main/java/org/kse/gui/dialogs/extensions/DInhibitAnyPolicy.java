@@ -113,11 +113,12 @@ public class DInhibitAnyPolicy extends DExtension {
         });
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
-        pane.add(jlInhibitAnyPolicy, "wrap");
+        // Don't align the first column "right" so that the two labels line up.
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]unrel[]", "[][]"));
+        pane.add(jlInhibitAnyPolicy, "spanx, wrap");
         pane.add(jlSkipCertificates);
-        pane.add(jtfSkipCertificates, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jtfSkipCertificates, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

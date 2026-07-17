@@ -46,6 +46,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -210,8 +211,10 @@ public class DSignCrl extends JEscDialog {
         pane.add(jcbSignatureAlgorithm, "wrap");
         pane.add(jlCrlNumber, "");
         pane.add(jtfCrlNumber, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jpRevokedCertsTable, "spanx, growx, wrap unrel");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populateFields();
 

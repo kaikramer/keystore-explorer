@@ -19,11 +19,8 @@
  */
 package org.kse.gui.crypto.generalsubtree;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
@@ -37,17 +34,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralSubtree;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.generalname.JGeneralName;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose a general subtree.
@@ -59,7 +56,6 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpGeneralSubtree;
     private JLabel jlBase;
     private JGeneralName jgnBase;
     private JLabel jlMinimum;
@@ -99,79 +95,18 @@ public class DGeneralSubtreeChooser extends JEscDialog {
     private void initComponents(GeneralSubtree generalSubtree) {
         jlBase = new JLabel(res.getString("DGeneralSubtreeChooser.jlBase.text"));
 
-        GridBagConstraints gbc_jlBase = new GridBagConstraints();
-        gbc_jlBase.gridx = 0;
-        gbc_jlBase.gridy = 0;
-        gbc_jlBase.gridwidth = 1;
-        gbc_jlBase.gridheight = 1;
-        gbc_jlBase.insets = new Insets(5, 5, 0, 5);
-        gbc_jlBase.anchor = GridBagConstraints.EAST;
-
         jgnBase = new JGeneralName(res.getString("DGeneralSubtreeChooser.Base.Title"));
         jgnBase.setToolTipText(res.getString("DGeneralSubtreeChooser.jgnBase.tooltip"));
 
-        GridBagConstraints gbc_jgnBase = new GridBagConstraints();
-        gbc_jgnBase.gridx = 1;
-        gbc_jgnBase.gridy = 0;
-        gbc_jgnBase.gridwidth = 1;
-        gbc_jgnBase.gridheight = 1;
-        gbc_jgnBase.insets = new Insets(5, 5, 0, 5);
-        gbc_jgnBase.anchor = GridBagConstraints.WEST;
-
         jlMinimum = new JLabel(res.getString("DGeneralSubtreeChooser.jlMinimum.text"));
-
-        GridBagConstraints gbc_jlMinimum = new GridBagConstraints();
-        gbc_jlMinimum.gridx = 0;
-        gbc_jlMinimum.gridy = 1;
-        gbc_jlMinimum.gridwidth = 1;
-        gbc_jlMinimum.gridheight = 1;
-        gbc_jlMinimum.insets = new Insets(5, 5, 5, 5);
-        gbc_jlMinimum.anchor = GridBagConstraints.EAST;
 
         jtfMinimum = new JTextField(3);
         jtfMinimum.setToolTipText(res.getString("DGeneralSubtreeChooser.jtfMinimum.tooltip"));
 
-        GridBagConstraints gbc_jtfMinimum = new GridBagConstraints();
-        gbc_jtfMinimum.gridx = 1;
-        gbc_jtfMinimum.gridy = 1;
-        gbc_jtfMinimum.gridwidth = 1;
-        gbc_jtfMinimum.gridheight = 1;
-        gbc_jtfMinimum.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfMinimum.anchor = GridBagConstraints.WEST;
-
         jlMaximum = new JLabel(res.getString("DGeneralSubtreeChooser.jlMaximum.text"));
-
-        GridBagConstraints gbc_jlMaximum = new GridBagConstraints();
-        gbc_jlMaximum.gridx = 0;
-        gbc_jlMaximum.gridy = 2;
-        gbc_jlMaximum.gridwidth = 1;
-        gbc_jlMaximum.gridheight = 1;
-        gbc_jlMaximum.insets = new Insets(5, 5, 5, 5);
-        gbc_jlMaximum.anchor = GridBagConstraints.EAST;
 
         jtfMaximum = new JTextField(3);
         jtfMaximum.setToolTipText(res.getString("DGeneralSubtreeChooser.jtfMaximum.tooltip"));
-
-        GridBagConstraints gbc_jtfMaximum = new GridBagConstraints();
-        gbc_jtfMaximum.gridx = 1;
-        gbc_jtfMaximum.gridy = 2;
-        gbc_jtfMaximum.gridwidth = 1;
-        gbc_jtfMaximum.gridheight = 1;
-        gbc_jtfMaximum.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfMaximum.anchor = GridBagConstraints.WEST;
-
-        jpGeneralSubtree = new JPanel(new GridBagLayout());
-
-        jpGeneralSubtree.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                      new CompoundBorder(new EtchedBorder(),
-                                                                         new EmptyBorder(5, 5, 5, 5))));
-
-        jpGeneralSubtree.add(jlBase, gbc_jlBase);
-        jpGeneralSubtree.add(jgnBase, gbc_jgnBase);
-        jpGeneralSubtree.add(jlMinimum, gbc_jlMinimum);
-        jpGeneralSubtree.add(jtfMinimum, gbc_jtfMinimum);
-        jpGeneralSubtree.add(jlMaximum, gbc_jlMaximum);
-        jpGeneralSubtree.add(jtfMaximum, gbc_jtfMaximum);
 
         jbOK = new JButton(res.getString("DGeneralSubtreeChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -189,11 +124,18 @@ public class DGeneralSubtreeChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpGeneralSubtree);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlBase, "");
+        pane.add(jgnBase, "wrap");
+        pane.add(jlMinimum, "");
+        pane.add(jtfMinimum, "wrap");
+        pane.add(jlMaximum, "");
+        pane.add(jtfMaximum, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populate(generalSubtree);
 

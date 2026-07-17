@@ -162,14 +162,14 @@ public class DViewSecretKey extends JEscDialog {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlAlgorithm, "");
-        pane.add(jtfAlgorithm, "growx, pushx, wrap");
+        pane.add(jtfAlgorithm, "growx, wrap");
         pane.add(jlKeySize, "");
-        pane.add(jtfKeySize, "growx, pushx, wrap");
+        pane.add(jtfKeySize, "growx, wrap");
         pane.add(jlFormat, "");
-        pane.add(jtfFormat, "growx, pushx, wrap");
+        pane.add(jtfFormat, "growx, wrap");
         pane.add(jlEncoded, "");
         pane.add(jspEncoded, "width 260lp:260lp:260lp, height 50lp:50lp:50lp, wrap"); // sp determines dialog size
-        pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         if (editable) {
             pane.add(jbCancel, "spanx, split 2, tag cancel");
             pane.add(jbOK, "tag ok");

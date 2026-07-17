@@ -173,8 +173,8 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
         pane.add(jbP11LibraryBrowse, "wrap");
         pane.add(jlSlotListIndex, "skip");
         pane.add(jspSlotListIndex, "wrap para");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jbP11LibraryBrowse.addActionListener(evt -> {
             try {

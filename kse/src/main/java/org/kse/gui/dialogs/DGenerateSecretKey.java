@@ -118,7 +118,7 @@ public class DGenerateSecretKey extends JEscDialog {
         pane.add(jcbKeyAlg, "growx, pushx, wrap");
         pane.add(jlKeySize, "");
         pane.add(jsKeySize, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

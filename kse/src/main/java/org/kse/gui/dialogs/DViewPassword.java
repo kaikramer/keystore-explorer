@@ -44,7 +44,6 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.password.DChangePassword;
 import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.preferences.PreferencesManager;
@@ -119,7 +118,7 @@ public class DViewPassword extends JEscDialog {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlAlgorithm, "");
-        pane.add(jtfAlgorithm, "growx, pushx, wrap");
+        pane.add(jtfAlgorithm, "growx, wrap");
         pane.add(jlPassword, "");
         if (editable) {
             pane.add(jpfPassword, "growx");
@@ -127,7 +126,7 @@ public class DViewPassword extends JEscDialog {
         } else {
             pane.add(jpfPassword, "growx, wrap");
         }
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         if (editable) {
             pane.add(jbCancel, "spanx, split 2, tag cancel");
             pane.add(jbOK, "tag ok");

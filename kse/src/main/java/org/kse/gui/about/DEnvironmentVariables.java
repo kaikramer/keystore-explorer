@@ -19,8 +19,6 @@
  */
 package org.kse.gui.about;
 
-import net.miginfocom.swing.MigLayout;
-
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -38,9 +36,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.table.ToolTipTable;
-import org.kse.gui.PlatformUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * A dialog that displays the Environment variables.
@@ -112,8 +112,8 @@ public class DEnvironmentVariables extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspEnvironmentVariablesTable, "cell 0 0, grow, pushy");
-        pane.add(jbOK, "cell 0 1, align right, growx 0");
+        pane.add(jspEnvironmentVariablesTable, "wrap para");
+        pane.add(jbOK, "tag ok");
 
         setResizable(false);
 
