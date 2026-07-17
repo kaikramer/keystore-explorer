@@ -130,7 +130,7 @@ public class DCustomExtension extends DExtension {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlCustomOID, "");
         pane.add(joidCustomOID, "growx, pushx, wrap");
         pane.add(jlEncodedHexValue, "");
