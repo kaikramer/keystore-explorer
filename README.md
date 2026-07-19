@@ -33,6 +33,8 @@ Official website: https://keystore-explorer.org/
  
 ## Building
 
+A Java Development Kit (JDK) version **17 or higher** is required to build KSE. The build is regularly tested with Java 17, 21 and 25.
+
 To do a clean build, issue the following command from the `kse` directory:
 ```sh
 ./gradlew clean build
@@ -80,6 +82,8 @@ For the AppImage package (requires Linux and appimagetool):
 ```
 
 ## Running
+
+A Java Runtime Environment (JRE) version **17 or higher** is required to run KSE. Java 21 and 25 are also supported.
 
 To run the application, issue the following command from the `kse` directory:
 

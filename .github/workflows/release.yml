@@ -169,7 +169,7 @@ jobs:
           MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
         run: |
           chmod +x .github/scripts/macos-build.sh
-          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.1_8.tar.gz"
+          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3%2B9/OpenJDK25U-jdk_x64_mac_hotspot_25.0.3_9.tar.gz"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v6
         with:
@@ -192,7 +192,7 @@ jobs:
           MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
         run: |
           chmod +x .github/scripts/macos-build.sh
-          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.1_8.tar.gz"
+          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3%2B9/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.3_9.tar.gz"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v6
         with:

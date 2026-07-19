@@ -18,7 +18,6 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.apache.tools.ant.taskdefs.condition.Os
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.*
@@ -113,9 +112,16 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 17
+}
+
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 val appbundler by configurations.creating
+
+// Keep packaged JavaFX compatible with the Java 17 minimum runtime.
+val javaFxVersion = "17.0.19"
 
 dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
@@ -140,30 +146,30 @@ dependencies {
     implementation("com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.20.1")
 
     if (gradle.startParameter.taskNames.any { it in listOf("innosetup", "zip") }) {
-        implementation("org.openjfx:javafx-base:17.0.17:win")
-        implementation("org.openjfx:javafx-graphics:17.0.17:win")
-        implementation("org.openjfx:javafx-swing:17.0.17:win")
+        implementation("org.openjfx:javafx-base:$javaFxVersion:win")
+        implementation("org.openjfx:javafx-graphics:$javaFxVersion:win")
+        implementation("org.openjfx:javafx-swing:$javaFxVersion:win")
     }
     if (gradle.startParameter.taskNames.any { it in listOf("buildDeb", "buildRpm", "buildAppImage", "zip") }) {
-        implementation("org.openjfx:javafx-swing:17.0.17:linux")
-        implementation("org.openjfx:javafx-base:17.0.17:linux")
-        implementation("org.openjfx:javafx-graphics:17.0.17:linux")
+        implementation("org.openjfx:javafx-swing:$javaFxVersion:linux")
+        implementation("org.openjfx:javafx-base:$javaFxVersion:linux")
+        implementation("org.openjfx:javafx-graphics:$javaFxVersion:linux")
     }
     if (gradle.startParameter.taskNames.any { it in listOf("appbundler", "dmg") }) {
         if (System.getProperty("os.arch") == "aarch64") {
-            implementation("org.openjfx:javafx-base:17.0.17:mac-aarch64")
-            implementation("org.openjfx:javafx-graphics:17.0.17:mac-aarch64")
-            implementation("org.openjfx:javafx-swing:17.0.17:mac-aarch64")
+            implementation("org.openjfx:javafx-base:$javaFxVersion:mac-aarch64")
+            implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac-aarch64")
+            implementation("org.openjfx:javafx-swing:$javaFxVersion:mac-aarch64")
         } else {
-            implementation("org.openjfx:javafx-base:17.0.17:mac")
-            implementation("org.openjfx:javafx-graphics:17.0.17:mac")
-            implementation("org.openjfx:javafx-swing:17.0.17:mac")
+            implementation("org.openjfx:javafx-base:$javaFxVersion:mac")
+            implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+            implementation("org.openjfx:javafx-swing:$javaFxVersion:mac")
         }
     }
     if (gradle.startParameter.taskNames.any { it in listOf("zip") }) {
-        implementation("org.openjfx:javafx-base:17.0.17:mac")
-        implementation("org.openjfx:javafx-graphics:17.0.17:mac")
-        implementation("org.openjfx:javafx-swing:17.0.17:mac")
+        implementation("org.openjfx:javafx-base:$javaFxVersion:mac")
+        implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+        implementation("org.openjfx:javafx-swing:$javaFxVersion:mac")
     }
 
     appbundler("com.evolvedbinary.appbundler:appbundler:1.3.1")
@@ -241,9 +247,10 @@ tasks.register<Copy>("copyDependencies") {
 
 tasks.register<Exec>("jlink") {
     outputs.dir(jlinkOutDir)
-    doFirst {
-        delete("$jlinkOutDir/jre")
-    }
+
+    // jlink uses the runtime JDK and OS-specific modules, which are easier to resolve
+    // at execution time than to serialize into the configuration cache.
+    notCompatibleWithConfigurationCache("Uses runtime Java home and OS detection")
 
     onlyIf {
         JavaVersion.current() != JavaVersion.VERSION_17
@@ -251,37 +258,48 @@ tasks.register<Exec>("jlink") {
 
     workingDir(layout.buildDirectory)
 
-    val javaHome = System.getProperty("java.home")
-    commandLine(
-        "$javaHome/bin/jlink",
-        "--module-path", "$javaHome/jmods",
-        "--compress", "2",
-        "--strip-debug",
-        "--no-header-files",
-        "--no-man-pages",
-        "--include-locales=en,de,fr",
-        "--add-modules",
-        "java.base," +
-                "java.datatransfer," +
-                "java.desktop," +
-                "java.logging," +
-                "java.naming," +
-                "java.net.http," +
-                "java.prefs," +
-                "java.scripting," +
-                "jdk.accessibility," +
-                "jdk.localedata," +
-                "jdk.net," +
-                "jdk.charsets," +
-                "jdk.security.auth," +
-                "jdk.crypto.ec," +
-                "jdk.crypto.cryptoki," +
-                if (Os.isFamily(Os.FAMILY_WINDOWS)) "jdk.crypto.mscapi," else "" +
-                "jdk.zipfs," +
-                "jdk.unsupported," +
-                "jdk.dynalink",
-        "--output", "$jlinkOutDir/jre"
-    )
+    // Delay command-line construction to execution time so the configuration cache
+    // does not have to serialize build-script object references.
+    doFirst {
+        delete("$jlinkOutDir/jre")
+
+        val javaHome = System.getProperty("java.home")
+        val modules = buildList {
+            add("java.base")
+            add("java.datatransfer")
+            add("java.desktop")
+            add("java.logging")
+            add("java.naming")
+            add("java.net.http")
+            add("java.prefs")
+            add("java.scripting")
+            add("jdk.accessibility")
+            add("jdk.localedata")
+            add("jdk.net")
+            add("jdk.charsets")
+            add("jdk.security.auth")
+            add("jdk.crypto.ec")
+            add("jdk.crypto.cryptoki")
+            if (System.getProperty("os.name")?.lowercase()?.contains("windows") == true) {
+                add("jdk.crypto.mscapi")
+            }
+            add("jdk.zipfs")
+            add("jdk.unsupported")
+            add("jdk.dynalink")
+        }.joinToString(",")
+
+        commandLine(
+            "$javaHome/bin/jlink",
+            "--module-path", "$javaHome/jmods",
+            "--compress", "zip-6",
+            "--strip-debug",
+            "--no-header-files",
+            "--no-man-pages",
+            "--include-locales=en,de,fr",
+            "--add-modules", modules,
+            "--output", "$jlinkOutDir/jre"
+        )
+    }
 }
 
 windowsPackage {
