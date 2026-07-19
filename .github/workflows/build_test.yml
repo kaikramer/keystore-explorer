@@ -8,12 +8,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: ['17', '21', '25']
     steps:
     - uses: actions/checkout@v6
-    - name: 'Set up JDK'
+    - name: 'Set up JDK ${{ matrix.java-version }}'
       uses: actions/setup-java@v5
       with:
-        java-version: '17'
+        java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
     - name: 'Grant execute permission for gradlew'
       run: chmod +x gradlew
@@ -24,12 +28,12 @@ jobs:
     - name: 'Publish Test Report'
       uses: actions/upload-artifact@v6
       with:
-        name: 'test-report'
+        name: 'test-report-java-${{ matrix.java-version }}'
         path: kse/build/reports/tests/test/*
     - name: 'Publish Build'
       uses: actions/upload-artifact@v6
       with:
-        name: 'artifacts'
+        name: 'artifacts-java-${{ matrix.java-version }}'
         path: |
           kse/build/libs/kse.jar
           kse/build/distributions/kse-*.zip
