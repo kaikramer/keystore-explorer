@@ -7,6 +7,9 @@ then launches KeyStore Explorer with the newest JRE.
 The launcher searches first for a local folder with the name "jre" and uses this
 Java runtime preferredly. This allows bundling a specific Java version with KSE.
 
+KeyStore Explorer requires a Java Runtime Environment version **17 or higher**.
+Java 21 and 25 are also supported.
+
 ## Requirements
 
 - Install rustup (see https://www.rust-lang.org/tools/install)
