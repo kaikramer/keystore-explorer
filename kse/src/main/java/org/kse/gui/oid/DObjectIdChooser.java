@@ -114,8 +114,8 @@ public class DObjectIdChooser extends JEscDialog {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
         pane.add(jlObjectId, "");
-        pane.add(jObjectIdEditor, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+        pane.add(jObjectIdEditor, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

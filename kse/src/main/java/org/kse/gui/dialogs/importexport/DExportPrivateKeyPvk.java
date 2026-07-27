@@ -249,7 +249,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
         jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlKeyType, "");
         pane.add(jrbExchange, "split 2");
         pane.add(jrbSignature, "wrap");
@@ -265,8 +265,8 @@ public class DExportPrivateKeyPvk extends JEscDialog {
         pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         addWindowListener(new WindowAdapter() {
             @Override

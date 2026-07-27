@@ -118,7 +118,7 @@ public class DAuthorityInformationAccess extends DExtension {
         pane.setLayout(new MigLayout("insets dialog, fill", "[]"));
         pane.add(jlAccessDescriptions, "wrap");
         pane.add(jadAccessDescriptions, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

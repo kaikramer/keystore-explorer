@@ -156,7 +156,7 @@ public class DGeneralNameChooser extends JEscDialog {
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
         pane.add(jlGeneralNameType, "spanx, wrap");
         pane.add(jrbDirectoryName, "");
         pane.add(jrbDnsName, "");
@@ -166,9 +166,9 @@ public class DGeneralNameChooser extends JEscDialog {
         pane.add(jrbUniformResourceIdentifier, "");
         pane.add(jrbPrincipalName, "wrap");
         pane.add(jlGeneralNameValue, "spanx");
-        pane.add(jpGeneralNameValue, "spanx, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(jpGeneralNameValue, "spanx, wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         // actions
         jrbDirectoryName.addItemListener(evt -> generalNameTypeChanged());

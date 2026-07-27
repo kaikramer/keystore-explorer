@@ -182,8 +182,8 @@ public class DCrlReason extends JEscDialog {
         pane.add(jrbRemoveFromCR);
         pane.add(jrbPrivilegeWithdrawn, "wrap");
         pane.add(jrbAACompromise, "skip, left, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());

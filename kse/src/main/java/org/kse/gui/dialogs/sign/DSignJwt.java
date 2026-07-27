@@ -44,6 +44,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
@@ -216,9 +217,11 @@ public class DSignJwt extends JEscDialog {
             pane.add(jlSignatureAlgorithm, "");
             pane.add(jcbSignatureAlgorithm, "wrap");
         }
-        pane.add(jpClaims, "spanx, growx, wrap unrel");
 
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jpClaims, "spanx, growx, wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populateFields();
         jbGenId.addActionListener(evt -> genIdPressed());

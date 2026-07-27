@@ -19,59 +19,30 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.security.KeyPair;
 import java.security.Provider;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.gui.components.JEscDialog;
-import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 
 /**
  * Generates a key pair which the user may cancel at any time by pressing the
  * cancel button.
  */
-public class DGeneratingKeyPair extends JEscDialog {
+public class DGeneratingKeyPair extends JWaitDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-    private static final String CANCEL_KEY = "CANCEL_KEY";
-
-    private JPanel jpGenKeyPair;
-    private JLabel jlGenKeyPair;
-    private JPanel jpProgress;
-    private JProgressBar jpbGenKeyPair;
-    private JPanel jpCancel;
-    private JButton jbCancel;
 
     private KeyPairType keyPairType;
     private int keySize;
     private String curveName;
     private KeyPair keyPair;
-    private Thread generator;
 
     private Provider provider;
 
@@ -84,11 +55,11 @@ public class DGeneratingKeyPair extends JEscDialog {
      * @param provider    The security provider to use
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, int keySize, Provider provider) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, res.getString("DGeneratingKeyPair.Title"), res.getString("DGeneratingKeyPair.jlGenKeyPair.text"),
+                "images/genkp.png", res.getString("DGeneratingKeyPair.jbCancel.text"));
         this.keyPairType = keyPairType;
         this.keySize = keySize;
         this.provider = provider;
-        initComponents();
     }
 
     /**
@@ -99,10 +70,10 @@ public class DGeneratingKeyPair extends JEscDialog {
      * @param provider    The security provider to use
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, Provider provider) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, "DGeneratingKeyPair.Title", "DGeneratingKeyPair.jlGenKeyPair.text", "images/genkp.png",
+                "DGeneratingKeyPair.jbCancel.text");
         this.keyPairType = keyPairType;
         this.provider = provider;
-        initComponents();
     }
 
 
@@ -115,83 +86,18 @@ public class DGeneratingKeyPair extends JEscDialog {
      * @param provider    The security provider to use
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName, Provider provider) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, "DGeneratingKeyPair.Title", "DGeneratingKeyPair.jlGenKeyPair.text", "images/genkp.png",
+                "DGeneratingKeyPair.jbCancel.text");
         this.keyPairType = keyPairType;
         this.curveName = curveName;
         this.provider = provider;
-        initComponents();
-    }
-
-    private void initComponents() {
-        jlGenKeyPair = new JLabel(res.getString("DGeneratingKeyPair.jlGenKeyPair.text"));
-        ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
-        jlGenKeyPair.setIcon(icon);
-        jlGenKeyPair.setHorizontalTextPosition(SwingConstants.LEADING);
-        jlGenKeyPair.setIconTextGap(15);
-
-        jpGenKeyPair = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpGenKeyPair.add(jlGenKeyPair);
-        jpGenKeyPair.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jpbGenKeyPair = new JProgressBar();
-        jpbGenKeyPair.setIndeterminate(true);
-
-        jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpProgress.add(jpbGenKeyPair);
-        jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jbCancel = new JButton(res.getString("DGeneratingKeyPair.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
-        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
-
-        getContentPane().add(jpGenKeyPair, BorderLayout.NORTH);
-        getContentPane().add(jpProgress, BorderLayout.CENTER);
-        getContentPane().add(jpCancel, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        setTitle(res.getString("DGeneratingKeyPair.Title"));
-        setResizable(false);
-
-        pack();
     }
 
     /**
      * Start key pair generation in a separate thread.
      */
     public void startKeyPairGeneration() {
-        generator = new Thread(new GenerateKeyPair());
-        generator.setPriority(Thread.MIN_PRIORITY);
-        generator.start();
-    }
-
-    private void cancelPressed() {
-        if ((generator != null) && (generator.isAlive())) {
-            generator.interrupt();
-        }
-        closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
+        startTask(new GenerateKeyPair());
     }
 
     /**

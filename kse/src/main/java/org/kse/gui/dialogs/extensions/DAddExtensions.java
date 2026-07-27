@@ -420,8 +420,8 @@ public class DAddExtensions extends JEscDialog {
         pane.add(jbSelectStandardTemplate, "right, spanx, split 3");
         pane.add(jbLoadTemplate);
         pane.add(jbSaveTemplate);
-        pane.add(new JSeparator(), "spanx, growx");
-        pane.add(jpButtons, "right, growx, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         addWindowListener(new WindowAdapter() {
             @Override

@@ -184,7 +184,7 @@ public class DSignMidlet extends JEscDialog {
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlInputJad, "");
         pane.add(jtfInputJad, "");
         pane.add(jbInputJadBrowse, "wrap");
@@ -196,8 +196,8 @@ public class DSignMidlet extends JEscDialog {
         pane.add(jlJar, "");
         pane.add(jtfJar, "");
         pane.add(jbJarBrowse, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         addWindowListener(new WindowAdapter() {
             @Override

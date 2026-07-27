@@ -35,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
@@ -44,6 +45,9 @@ import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog adding/editing a custom claim to a JWT.
+ */
 public class DCustomClaim extends JEscDialog {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
@@ -60,6 +64,13 @@ public class DCustomClaim extends JEscDialog {
     private String name;
     private String value;
 
+    /**
+     * Constructs a new DCustomClaim dialog.
+     *
+     * @param parent The parent frame.
+     * @param name   The custom claim name.
+     * @param value  The custom claim value.
+     */
     public DCustomClaim(JFrame parent, String name, String value) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.name = name;
@@ -92,7 +103,8 @@ public class DCustomClaim extends JEscDialog {
 
         pane.add(jlValue, "");
         pane.add(jtfValue, "wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());
@@ -127,14 +139,23 @@ public class DCustomClaim extends JEscDialog {
         jtfValue.setText(value);
     }
 
+    /**
+     * @return True if the dialog OK button was clicked. False, if not.
+     */
     public boolean isOk() {
         return isOk;
     }
 
+    /**
+     * @return The custom claim name.
+     */
     public String getClaimName() {
         return name;
     }
 
+    /**
+     * @return The custom claim value.
+     */
     public String getClaimValue() {
         return value;
     }

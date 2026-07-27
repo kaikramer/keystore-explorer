@@ -19,7 +19,6 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -51,10 +50,10 @@ import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.gui.components.JEscDialog;
-import org.kse.gui.preferences.data.KeyGenerationSettings;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+import org.kse.gui.preferences.data.KeyGenerationSettings;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -222,7 +221,7 @@ public class DGenerateKeyPair extends JEscDialog {
         mlkemKeySelector.setPreferredParameterSet(mlkemParameterSet);
         slhDsaKeySelector.setPreferredParameterSet(slhDsaParameterSet);
 
-        JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets dialog");
+        JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
         JTabbedPane jtpAlgorithms = new JTabbedPane();
         jtpAlgorithms.addTab(res.getString("DGenerateKeyPair.Tab.Standard"), createStandardPanel());
@@ -252,10 +251,9 @@ public class DGenerateKeyPair extends JEscDialog {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new BorderLayout());
-
-        pane.add(jtpAlgorithms, BorderLayout.CENTER);
-        pane.add(jpButtons, BorderLayout.SOUTH);
+        pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        pane.add(jtpAlgorithms, "wrap");
+        pane.add(jpButtons, "spanx, growx");
 
         focusKeyPair(jtpAlgorithms);
 

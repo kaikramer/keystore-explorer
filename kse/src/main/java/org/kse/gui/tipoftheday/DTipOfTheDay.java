@@ -126,7 +126,7 @@ public class DTipOfTheDay extends JEscDialog {
 
         jspTip = PlatformUtil.createScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jspTip.setPreferredSize(new Dimension(415, 150));
+        jspTip.setPreferredSize(new Dimension(350, 150));
         jspTip.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         jspTip.getViewport().add(jepTip);
@@ -134,7 +134,7 @@ public class DTipOfTheDay extends JEscDialog {
         jpTipOfTheDay = new JPanel(new MigLayout("insets 0, fill", "[]0[]", "[]0[]"));
         jpTipOfTheDay.setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
         jpTipOfTheDay.add(jpTipMargin, "aligny top, spany, growy");
-        jpTipOfTheDay.add(jlTipHeader, "growx, wrap");
+        jpTipOfTheDay.add(jlTipHeader, "growx, push, wrap");
         jpTipOfTheDay.add(jspTip, "growx");
 
         jcbShowTipsOnStartup = new JCheckBox(res.getString("DTipOfTheDay.jcbShowTipsOnStartup.text"),

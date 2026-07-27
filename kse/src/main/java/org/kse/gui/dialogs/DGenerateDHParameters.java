@@ -106,17 +106,17 @@ public class DGenerateDHParameters extends JEscDialog {
         jbCancel = new JButton(res.getString("DGenerateDHParameters.jbCancel.text"));
         jbOK = new JButton(res.getString("DGenerateDHParameters.jbOK.text"));
 
-        JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
+        JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[indent][][]", ""));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[indent][right]unrel[]", ""));
         MiGUtil.addSeparator(pane, res.getString("DGenerateDHParameters.jpContent.text"));
-        pane.add(jlDHKeySize, "skip, align right");
+        pane.add(jlDHKeySize, "skip");
         pane.add(jcbDHKeySize, "wrap");
-        pane.add(jmllFooter, "growx, spanx, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(buttons, "right, spanx");
+        pane.add(jmllFooter, "growx, spanx, wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15"); // push causes too much gap before the buttons
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());

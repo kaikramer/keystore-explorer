@@ -34,7 +34,6 @@ import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.x509Certificate;
 import static org.bouncycastle.util.encoders.Base64.decode;
 import static org.kse.KSE.BC;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -65,13 +64,11 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -183,9 +180,6 @@ public class DPkcs12Info extends JEscDialog {
         JButton jbCancel = new JButton(res.getString("DPkcs12Info.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
 
-        JPanel jpP12Content = new JPanel(new BorderLayout());
-        jpP12Content.setBorder(new EmptyBorder(0, 0, 0, 0));
-
         jtrP12Content = new JTree(createPropertiesNodes());
         jtrP12Content.setRowHeight(Math.max(18, jtrP12Content.getRowHeight()));
         jtrP12Content.setShowsRootHandles(true);
@@ -200,12 +194,11 @@ public class DPkcs12Info extends JEscDialog {
                 PlatformUtil.createScrollPane(jtrP12Content, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspP12Content.setPreferredSize(new Dimension(500, 400));
-        jpP12Content.add(jspP12Content, BorderLayout.CENTER);
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets panel, fill", "", ""));
-        pane.add(jpP12Content, "span, grow, push, wrap unrel");
+        pane.setLayout(new MigLayout("insets dialog, fill", "", ""));
+        pane.add(jspP12Content, "span, grow, push, wrap para");
         pane.add(jbCopy, "spanx, split 3");
         pane.add(jbCancel, "tag cancel");
         pane.add(jbOpen, "tag ok");

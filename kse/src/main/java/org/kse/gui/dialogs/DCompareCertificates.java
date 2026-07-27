@@ -71,7 +71,7 @@ import com.github.difflib.text.DiffRowGenerator;
 
 import net.miginfocom.swing.MigLayout;
 
-/*
+/**
  * Displays the differences of two certificates
  */
 public class DCompareCertificates extends JEscFrame {
@@ -192,6 +192,9 @@ public class DCompareCertificates extends JEscFrame {
         pane.add(jpButtons, "spanx, growx");
 
         setResizable(true);
+
+        getRootPane().setDefaultButton(jbOK);
+
         pack();
 
         // as the compare window can become quite large, we adjust its size depending on

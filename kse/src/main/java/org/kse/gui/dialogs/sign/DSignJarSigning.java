@@ -20,12 +20,6 @@
 
 package org.kse.gui.dialogs.sign;
 
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -35,38 +29,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.dialogs.JWaitDialog;
 import org.kse.gui.error.DError;
-
-import net.miginfocom.swing.MigLayout;
 
 /**
  * <h1>Jar Signing</h1> The class initiates jar signing.
  * <p>
  * The user may cancel at any time by pressing the cancel button.
  */
-public class DSignJarSigning extends JEscDialog {
+public class DSignJarSigning extends JWaitDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
-
-    private static final String CANCEL_KEY = "CANCEL_KEY";
-
-    private JLabel jlSignJar;
-    private JProgressBar jpbSignJar;
-    private JButton jbCancel;
 
     private Map<String, String> fileExceptions;
     private File[] inputJarFiles;
@@ -80,18 +60,27 @@ public class DSignJarSigning extends JEscDialog {
     private String tsaUrl;
     private Provider provider;
 
-    private Thread signerThread;
-    private boolean successStatus = true;
-
     /**
      * Creates a new DSignJarSigning dialog.
      *
-     * @param parent  The parent frame
+     * @param parent         The parent frame
+     * @param inputJarFiles  Array of jar files to be signed.
+     * @param outputJarFiles Array of output jar files for writing the signature. Must match 1:1
+     *                          with the inputJarFiles. The names can be identical to the inputJarFile names.
+     * @param privateKey     The private key for signing the jars.
+     * @param certs          The certificate chain associated with the private key.
+     * @param signatureType  The signature algorithm to use for signing.
+     * @param signatureName  The signature name for the signature block file name.
+     * @param signer         The signer name for the jar file manifest.
+     * @param digestType     The message digest algorithm to use for hashing.
+     * @param tsaUrl         The time stamp authority URL for the time stamp counter signature (optional).
+     * @param provider       The security provider to use.
      */
     public DSignJarSigning(JFrame parent, File[] inputJarFiles, List<File> outputJarFiles, PrivateKey privateKey,
                            X509Certificate[] certs, SignatureType signatureType, String signatureName, String signer,
                            DigestType digestType, String tsaUrl, Provider provider) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, res.getString("DSignJarSigning.Title"), res.getString("DSignJarSigning.jlSignJar.text"), null,
+                res.getString("DSignJarSigning.jbCancel.text"));
         this.inputJarFiles = inputJarFiles;
         this.outputJarFiles = outputJarFiles;
         this.privateKey = privateKey;
@@ -102,87 +91,14 @@ public class DSignJarSigning extends JEscDialog {
         this.digestType = digestType;
         this.tsaUrl = tsaUrl;
         this.provider = provider;
-        initComponents();
-    }
-
-    /**
-     * Initializes the dialogue panel and associated elements
-     */
-    private void initComponents() {
-
-        jlSignJar = new JLabel(res.getString("DSignJarSigning.jlSignJar.text"));
-
-        jpbSignJar = new JProgressBar(0, inputJarFiles.length);
-        jpbSignJar.setIndeterminate(false);
-
-        jbCancel = new JButton(res.getString("DSignJarSigning.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
-        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]unrel"));
-        pane.add(jlSignJar, "wrap");
-        pane.add(jpbSignJar, "growx, wrap");
-        pane.add(jbCancel, "tag Cancel");
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        setTitle(res.getString("DSignJarSigning.Title"));
-        setResizable(false);
-
-        pack();
+        initProgressBar(0, inputJarFiles.length);
     }
 
     /**
      * Start signing in a separate thread.
      */
     public void startDSignJarSigning() {
-        signerThread = new Thread(new signJars());
-        signerThread.setPriority(Thread.MIN_PRIORITY);
-        signerThread.start();
-    }
-
-    /**
-     * Returns the current success status
-     *
-     * @return successStatus The success status boolean
-     */
-    public boolean isSuccessful() {
-        return successStatus;
-    }
-
-    /**
-     * Calls the close dialogue, Sets the success value to false
-     */
-    private void cancelPressed() {
-        if ((signerThread != null) && (signerThread.isAlive())) {
-            signerThread.interrupt();
-        }
-        successStatus = false;
-        closeDialog();
-    }
-
-    /**
-     * Closes the dialogue
-     */
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
+        startTask(new SignJars());
     }
 
     /**
@@ -202,7 +118,7 @@ public class DSignJarSigning extends JEscDialog {
      * <p>
      * Errors generated during the signing are set to the map.
      */
-    private class signJars implements Runnable {
+    private class SignJars implements Runnable {
         @Override
         public void run() {
             try {
@@ -222,8 +138,7 @@ public class DSignJarSigning extends JEscDialog {
                     catch (Exception e) {
                         fileExceptions.put(inputJarFiles[i].getName(), e.toString());
                     }
-                    // update the progress bar
-                    jpbSignJar.setValue(i);
+                    updateProgress(i);
                 }
 
                 SwingUtilities.invokeLater(() -> {

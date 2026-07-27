@@ -288,7 +288,7 @@ public class DImportKeyPair extends JEscDialog {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlPrivateKey, "");
         pane.add(jtfPrivateKeyPath, "");
         pane.add(jbPrivateKeyBrowse, "");
@@ -299,7 +299,7 @@ public class DImportKeyPair extends JEscDialog {
         pane.add(jtfCertificatePath, "");
         pane.add(jbCertificateBrowse, "");
         pane.add(jbCertificateDetails, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbImport, "right, spanx, split, tag ok");
         pane.add(jbCancel, "tag cancel");
 

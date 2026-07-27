@@ -111,14 +111,14 @@ public class DListCertificatesKS extends JEscDialog {
         JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog", "[left]rel[]", "[]"));
+        pane.setLayout(new MigLayout("insets dialog", "[]unrel[]", "[]"));
 
         pane.add(jlKeyStore, "split");
         pane.add(jcbKeyStore);
         pane.add(jbLoadKeystore, "wrap");
         pane.add(jListCertificates, "spanx, push, grow, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jcbKeyStore.addActionListener(evt -> {
             updateCertificateControls();

@@ -160,8 +160,8 @@ public class DExportPrivateKeyType extends JEscDialog {
         pane.add(jrbPvk, "wrap");
         pane.add(jrbOpenSsl, "wrap");
         pane.add(jrbJwk, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         addWindowListener(new WindowAdapter() {
             @Override

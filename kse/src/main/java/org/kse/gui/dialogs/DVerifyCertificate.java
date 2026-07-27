@@ -204,8 +204,8 @@ public class DVerifyCertificate extends JEscDialog {
         pane.add(new JLabel(res.getString("DVerifyCertificate.jlKeyStore.text")), "gapleft indent, split 3");
         pane.add(jcbKeyStore, "growx");
         pane.add(jbLoadKeystore, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jrbCrlCheckDistPoint.addActionListener(evt -> updateVerifyControls());
         jrbCrlCheckFile.addActionListener(evt -> updateVerifyControls());

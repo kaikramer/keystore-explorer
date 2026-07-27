@@ -250,12 +250,12 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
         pane.add(jspExtensionsTable, "growx, wrap");
         pane.add(jlExtensionValue, "wrap");
-        pane.add(jspExtensionValue, "wrap");
+        pane.add(jspExtensionValue, "wrap para");
         pane.add(jbCopy, "right, spanx, split 4");
         addButtonSeparator(pane, true);
         pane.add(jbSaveTemplate);
         pane.add(jbAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");
 
         setResizable(false);

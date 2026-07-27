@@ -19,12 +19,8 @@
  */
 package org.kse.gui.crypto.policyinformation;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -39,19 +35,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.x509.DisplayText;
 import org.bouncycastle.asn1.x509.NoticeReference;
 import org.bouncycastle.asn1.x509.UserNotice;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose a user notice.
@@ -63,13 +59,11 @@ public class DUserNoticeChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpUserNotice;
     private JPanel jpNoticeReference;
     private JLabel jlOrganization;
     private JTextField jtfOrganization;
     private JLabel jlNoticeNumbers;
     private JTextField jtfNoticeNumbers;
-    private JPanel jpExplicitText;
     private JLabel jlExplicitText;
     private JTextField jtfExplicitText;
     private JPanel jpButtons;
@@ -105,71 +99,26 @@ public class DUserNoticeChooser extends JEscDialog {
     private void initComponents(UserNotice userNotice) {
         jlOrganization = new JLabel(res.getString("DUserNoticeChooser.jlOrganization.text"));
 
-        GridBagConstraints gbc_jlOrganization = new GridBagConstraints();
-        gbc_jlOrganization.gridx = 0;
-        gbc_jlOrganization.gridy = 0;
-        gbc_jlOrganization.gridwidth = 1;
-        gbc_jlOrganization.gridheight = 1;
-        gbc_jlOrganization.insets = new Insets(5, 5, 5, 5);
-        gbc_jlOrganization.anchor = GridBagConstraints.EAST;
-
         jtfOrganization = new JTextField(40);
         jtfOrganization.setToolTipText(res.getString("DUserNoticeChooser.jtfOrganization.tooltip"));
 
-        GridBagConstraints gbc_jtfOrganization = new GridBagConstraints();
-        gbc_jtfOrganization.gridx = 1;
-        gbc_jtfOrganization.gridy = 0;
-        gbc_jtfOrganization.gridwidth = 1;
-        gbc_jtfOrganization.gridheight = 1;
-        gbc_jtfOrganization.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfOrganization.anchor = GridBagConstraints.WEST;
-
         jlNoticeNumbers = new JLabel(res.getString("DUserNoticeChooser.jlNoticeNumbers.text"));
-
-        GridBagConstraints gbc_jlNoticeNumbers = new GridBagConstraints();
-        gbc_jlNoticeNumbers.gridx = 0;
-        gbc_jlNoticeNumbers.gridy = 1;
-        gbc_jlNoticeNumbers.gridwidth = 1;
-        gbc_jlNoticeNumbers.gridheight = 1;
-        gbc_jlNoticeNumbers.insets = new Insets(5, 5, 5, 5);
-        gbc_jlNoticeNumbers.anchor = GridBagConstraints.EAST;
 
         jtfNoticeNumbers = new JTextField(20);
         jtfNoticeNumbers.setToolTipText(res.getString("DUserNoticeChooser.jtfNoticeNumbers.tooltip"));
 
-        GridBagConstraints gbc_jtfNoticeNumbers = new GridBagConstraints();
-        gbc_jtfNoticeNumbers.gridx = 1;
-        gbc_jtfNoticeNumbers.gridy = 1;
-        gbc_jtfNoticeNumbers.gridwidth = 1;
-        gbc_jtfNoticeNumbers.gridheight = 1;
-        gbc_jtfNoticeNumbers.insets = new Insets(5, 5, 5, 5);
-        gbc_jtfNoticeNumbers.anchor = GridBagConstraints.WEST;
-
-        jpNoticeReference = new JPanel(new GridBagLayout());
+        jpNoticeReference = new JPanel(new MigLayout("insets 5, fill", "[right]rel[]", "[]unrel[]"));
         jpNoticeReference.setBorder(new TitledBorder(res.getString("DUserNoticeChooser.jpNoticeReference.text")));
 
-        jpNoticeReference.add(jlOrganization, gbc_jlOrganization);
-        jpNoticeReference.add(jtfOrganization, gbc_jtfOrganization);
-        jpNoticeReference.add(jlNoticeNumbers, gbc_jlNoticeNumbers);
-        jpNoticeReference.add(jtfNoticeNumbers, gbc_jtfNoticeNumbers);
+        jpNoticeReference.add(jlOrganization, "");
+        jpNoticeReference.add(jtfOrganization, "wrap");
+        jpNoticeReference.add(jlNoticeNumbers, "");
+        jpNoticeReference.add(jtfNoticeNumbers, "wrap");
 
         jlExplicitText = new JLabel(res.getString("DUserNoticeChooser.jlExplicitText.text"));
 
         jtfExplicitText = new JTextField(40);
         jtfExplicitText.setToolTipText(res.getString("DUserNoticeChooser.jtfExplicitText.tooltip"));
-
-        jpExplicitText = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        jpExplicitText.add(jlExplicitText);
-        jpExplicitText.add(jtfExplicitText);
-
-        jpUserNotice = new JPanel(new BorderLayout());
-
-        jpUserNotice.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-        jpUserNotice.add(jpNoticeReference, BorderLayout.CENTER);
-        jpUserNotice.add(jpExplicitText, BorderLayout.SOUTH);
 
         jbOK = new JButton(res.getString("DUserNoticeChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -187,11 +136,15 @@ public class DUserNoticeChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpUserNotice);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jpNoticeReference, "spanx, wrap");
+        pane.add(jlExplicitText, "");
+        pane.add(jtfExplicitText, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populate(userNotice);
 

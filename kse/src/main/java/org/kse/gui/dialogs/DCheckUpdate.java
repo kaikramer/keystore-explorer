@@ -19,30 +19,11 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
-import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.version.Version;
@@ -52,21 +33,11 @@ import org.kse.version.VersionCheck;
  * Check for an updated version of KeyStore Explorer. This check works over the
  * net so the user may cancel at any time by pressing the cancel button.
  */
-public class DCheckUpdate extends JEscDialog {
+public class DCheckUpdate extends JWaitDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private static final String CANCEL_KEY = "CANCEL_KEY";
-
-    private JPanel jpCheckUpdate;
-    private JLabel jlCheckUpdate;
-    private JPanel jpProgress;
-    private JProgressBar jpbCheckUpdate;
-    private JPanel jpCancel;
-    private JButton jbCancel;
-
-    private Thread checker;
     private Version latestVersion;
 
     /**
@@ -75,81 +46,15 @@ public class DCheckUpdate extends JEscDialog {
      * @param parent The parent frame
      */
     public DCheckUpdate(JFrame parent) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        initComponents();
-    }
-
-    private void initComponents() {
-        jlCheckUpdate = new JLabel(res.getString("DCheckUpdate.jlCheckUpdate.text"));
-        ImageIcon icon = new ImageIcon(getClass().getResource("images/chkup.png"));
-        jlCheckUpdate.setIcon(icon);
-        jlCheckUpdate.setHorizontalTextPosition(SwingConstants.LEADING);
-        jlCheckUpdate.setIconTextGap(15);
-
-        jpCheckUpdate = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpCheckUpdate.add(jlCheckUpdate);
-        jpCheckUpdate.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jpbCheckUpdate = new JProgressBar();
-        jpbCheckUpdate.setIndeterminate(true);
-        jpbCheckUpdate.setString("DCheckUpdate.jlCheckUpdate.text");
-
-        jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpProgress.add(jpbCheckUpdate);
-        jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        jbCancel = new JButton(res.getString("DCheckUpdate.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
-        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
-
-        getContentPane().add(jpCheckUpdate, BorderLayout.NORTH);
-        getContentPane().add(jpProgress, BorderLayout.CENTER);
-        getContentPane().add(jpCancel, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        setTitle(res.getString("DCheckUpdate.Title"));
-        setResizable(false);
-
-        pack();
+        super(parent, res.getString("DCheckUpdate.Title"), res.getString("DCheckUpdate.jlCheckUpdate.text"),
+                "images/chkup.png", res.getString("DCheckUpdate.jbCancel.text"));
     }
 
     /**
      * Start key pair generation in a separate thread.
      */
     public void startCheck() {
-        checker = new Thread(new CheckForUpdate());
-        checker.setPriority(Thread.MIN_PRIORITY);
-        checker.start();
-    }
-
-    private void cancelPressed() {
-        if ((checker != null) && (checker.isAlive())) {
-            checker.interrupt();
-        }
-        closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
+        startTask(new CheckForUpdate());
     }
 
     /**

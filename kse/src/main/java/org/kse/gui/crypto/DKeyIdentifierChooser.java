@@ -170,7 +170,7 @@ public class DKeyIdentifierChooser extends JEscDialog {
         pane.add(jrb160BitHash512, "wrap");
         pane.add(jrbSha1OverSpki, "wrap");
         pane.add(jrbSha256OverSpki, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

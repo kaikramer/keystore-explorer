@@ -156,7 +156,7 @@ public class DKeyUsage extends DExtension {
         pane.add(jcbDataEncipherment);
         pane.add(jcbEncipherOnly);
         pane.add(jcbNonRepudiation, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 
