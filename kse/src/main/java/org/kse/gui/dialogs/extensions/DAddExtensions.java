@@ -49,7 +49,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -747,7 +747,7 @@ public class DAddExtensions extends JEscDialog {
     }
 
     private void loadTemplatePressed() {
-        JFileChooser chooser = FileChooserFactory.getCetFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCetFileChooser();
 
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("DAddExtensions.LoadCet.Title"));
@@ -756,7 +756,7 @@ public class DAddExtensions extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DAddExtensions.CetLoad.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File loadFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(loadFile);
 
@@ -794,14 +794,14 @@ public class DAddExtensions extends JEscDialog {
      * @param parentComponent  The parent JDialog of the newly created save dialog window.
      */
     public static void saveTemplatePressed(X509ExtensionSet extensionsToSave, JDialog parentComponent) {
-        JFileChooser chooser = FileChooserFactory.getCetFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCetFileChooser();
 
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("DAddExtensions.SaveCet.Title"));
         chooser.setMultiSelectionEnabled(false);
 
         int rtnValue = chooser.showSaveDialog(parentComponent);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File saveFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(saveFile);
 

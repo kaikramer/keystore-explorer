@@ -34,7 +34,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,7 +47,6 @@ import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
@@ -415,7 +414,7 @@ public class DExportCertificates extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = null;
+        SystemFileChooser chooser = null;
 
         if (jrbExportX509.isSelected()) {
             chooser = FileChooserFactory.getX509FileChooser();
@@ -439,10 +438,8 @@ public class DExportCertificates extends JEscDialog {
         chooser.setDialogTitle(res.getString("DExportCertificates.ChooseExportFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DExportCertificates.ChooseExportFile.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DExportCertificates.ChooseExportFile.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfExportFile.setText(chosenFile.toString());

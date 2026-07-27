@@ -29,7 +29,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 
 import org.bouncycastle.cms.CMSSignedData;
@@ -168,14 +168,14 @@ public class SignFileAction extends KeyStoreExplorerAction {
     }
 
     private File chooseContentFile() {
-        JFileChooser chooser = FileChooserFactory.getNoFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getNoFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("SignFileAction.ChooseContent.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("SignFileAction.ChooseContent.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File importFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(importFile);
             return importFile;

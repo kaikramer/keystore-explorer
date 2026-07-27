@@ -43,7 +43,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -62,7 +62,6 @@ import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.utilities.DialogViewer;
@@ -279,7 +278,7 @@ public class DGenerateCsr extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = null;
+        SystemFileChooser chooser = null;
 
         if (jrbPkcs10.isSelected()) {
             chooser = FileChooserFactory.getPkcs10FileChooser();
@@ -299,10 +298,8 @@ public class DGenerateCsr extends JEscDialog {
         chooser.setDialogTitle(res.getString("DGenerateCsr.ChooseCsrFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DGenerateCsr.ChooseCsrFile.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DGenerateCsr.ChooseCsrFile.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfCsrFile.setText(chosenFile.toString());

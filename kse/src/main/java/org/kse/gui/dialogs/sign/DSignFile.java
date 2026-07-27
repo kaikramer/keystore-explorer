@@ -40,7 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -420,7 +420,7 @@ public class DSignFile extends JEscDialog {
      * Get input file
      */
     private void inputFileBrowsePressed() {
-        JFileChooser chooser;
+        SystemFileChooser chooser;
 
         chooser = FileChooserFactory.getAllFileChooser();
         chooser.setDialogTitle(res.getString("DSignFile.ChooseInputFile.Sign.Title"));
@@ -429,7 +429,7 @@ public class DSignFile extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DSignFile.InputFileChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             inputFile = chosenFile;
@@ -442,14 +442,14 @@ public class DSignFile extends JEscDialog {
      * Get output file
      */
     private void outputFileBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
         chooser.setDialogTitle(res.getString("DSignFile.ChooseOutputFile.Title"));
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("DSignFile.OutputFileChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             outputFile = chosenFile;

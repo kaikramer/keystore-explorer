@@ -31,7 +31,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -180,12 +180,12 @@ public class DGetPassword extends JEscDialog {
 
     private void loadStashPressed() {
         try {
-            JFileChooser chooser = FileChooserFactory.getSthFileChooser();
+            SystemFileChooser chooser = FileChooserFactory.getSthFileChooser();
             chooser.setCurrentDirectory(CurrentDirectory.get());
             chooser.setDialogTitle(res.getString("DGetPassword.LoadStash.Title"));
             chooser.setMultiSelectionEnabled(false);
 
-            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            if (chooser.showOpenDialog(this) == SystemFileChooser.APPROVE_OPTION) {
                 File sthFile = chooser.getSelectedFile();
                 if (sthFile != null) {
                     jpfPassword.setText(StashFile.decodeFile(sthFile.toPath()));

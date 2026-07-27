@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -66,14 +66,14 @@ public class JChangeKeyStorePathButton extends JButton {
     private void changeKeyStorePath() {
         File oldPath = new File(keystorePathField.getText());
 
-        JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
         chooser.setCurrentDirectory(oldPath.getParentFile());
         chooser.setDialogTitle(res.getString("DPreferences.storedPasswords.changeKeyStore.chooser.title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("DPreferences.storedPasswords.changeKeyStore.chooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this.getParent());
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File newPath = chooser.getSelectedFile();
 
             if (newPath.equals(oldPath)) {

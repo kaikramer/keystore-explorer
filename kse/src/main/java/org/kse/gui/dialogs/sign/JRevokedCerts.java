@@ -52,7 +52,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -375,13 +375,13 @@ public class JRevokedCerts extends JPanel {
 
     private File chooseCertFile() {
 
-        JFileChooser chooser = FileChooserFactory.getCertFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCertFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("JRevokedCerts.OpenFile.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("JRevokedCerts.OpenFile.button"));
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(openFile);
             return openFile;
@@ -391,13 +391,13 @@ public class JRevokedCerts extends JPanel {
 
     private File chooseFileCrl() {
 
-        JFileChooser chooser = FileChooserFactory.getCrlFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCrlFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("JRevokedCerts.OpenFile.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("JRevokedCerts.OpenFile.button"));
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(openFile);
             return openFile;

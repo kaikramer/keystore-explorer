@@ -33,7 +33,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -52,6 +51,8 @@ import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewSignature;
 import org.kse.gui.error.DError;
+
+import com.formdev.flatlaf.util.SystemFileChooser;
 
 /**
  * Action to verify a PKCS #7 / CMS digital signature.
@@ -146,14 +147,14 @@ public class VerifySignatureAction extends AuthorityCertificatesVerifyAction {
     }
 
     private File chooseSignatureFile() {
-        JFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("VerifySignatureAction.ChooseSignature.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("VerifySignatureAction.ChooseSignature.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File importFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(importFile);
             return importFile;
@@ -162,14 +163,14 @@ public class VerifySignatureAction extends AuthorityCertificatesVerifyAction {
     }
 
     private File chooseContentFile() {
-        JFileChooser chooser = FileChooserFactory.getNoFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getNoFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("VerifySignatureAction.ChooseContent.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("VerifySignatureAction.ChooseContent.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File importFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(importFile);
             return importFile;

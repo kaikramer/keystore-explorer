@@ -42,7 +42,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -235,7 +235,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = FileChooserFactory.getLibFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getLibFileChooser();
 
         String selectedItem = jtfP11Library.getSelectedItem() != null ? (String) jtfP11Library.getSelectedItem() : "";
         File currentLibFile = new File(selectedItem.trim());
@@ -252,7 +252,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DOpenPkcs11KeyStore.SelectLib.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             String libPath = chosenFile.toString();

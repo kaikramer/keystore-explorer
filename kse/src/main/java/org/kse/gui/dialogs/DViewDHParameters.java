@@ -33,20 +33,17 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
@@ -54,6 +51,7 @@ import org.kse.utilities.DialogViewer;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -203,18 +201,16 @@ public class DViewDHParameters extends JEscDialog {
 
         String title = res.getString("DViewDHParameters.ExportPem.Title");
 
-        JFileChooser chooser = new JFileChooser();
+        SystemFileChooser chooser = new SystemFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(title);
         chooser.setMultiSelectionEnabled(false);
-        chooser.setFileFilter(new FileNameExtensionFilter("Pem files (*.pem)", "pem"));
+        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Pem files (*.pem)", "pem"));
         chooser.setAcceptAllFileFilterUsed(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DViewDHParameters.ChooseExportFile.button"));
+        int rtnValue = chooser.showDialog(this, res.getString("DViewDHParameters.ChooseExportFile.button"));
 
-        if (rtnValue != JFileChooser.APPROVE_OPTION) {
+        if (rtnValue != SystemFileChooser.APPROVE_OPTION) {
             return;
         }
 

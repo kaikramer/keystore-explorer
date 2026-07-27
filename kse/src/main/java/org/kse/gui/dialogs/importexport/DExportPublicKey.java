@@ -33,11 +33,12 @@ import javax.swing.*;
 
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
+
+import com.formdev.flatlaf.util.SystemFileChooser;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -254,7 +255,7 @@ public class DExportPublicKey extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = getPublicKeyFileChooser();
+        SystemFileChooser chooser = getPublicKeyFileChooser();
 
         File currentExportFile = new File(jtfExportFile.getText().trim());
 
@@ -268,10 +269,8 @@ public class DExportPublicKey extends JEscDialog {
         chooser.setDialogTitle(res.getString("DExportPublicKey.ChooseExportFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DExportPublicKey.ChooseExportFile.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DExportPublicKey.ChooseExportFile.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfExportFile.setText(chosenFile.toString());

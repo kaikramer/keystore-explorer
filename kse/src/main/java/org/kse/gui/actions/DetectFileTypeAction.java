@@ -26,7 +26,7 @@ import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -67,7 +67,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
         File detectTypeFile = null;
 
         try {
-            JFileChooser chooser = FileChooserFactory.getAllFileChooser();
+            SystemFileChooser chooser = FileChooserFactory.getAllFileChooser();
             chooser.setCurrentDirectory(CurrentDirectory.get());
             chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
             chooser.setMultiSelectionEnabled(false);
@@ -75,7 +75,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
 
             int rtnValue = chooser.showOpenDialog(frame);
 
-            if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
                 detectTypeFile = chooser.getSelectedFile();
                 CurrentDirectory.updateForFile(detectTypeFile);
             }

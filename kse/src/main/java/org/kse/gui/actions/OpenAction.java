@@ -27,7 +27,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -80,13 +80,13 @@ public class OpenAction extends KeyStoreExplorerAction {
      */
     @Override
     protected void doAction() {
-        JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("OpenAction.OpenKeyStore.Title"));
         chooser.setMultiSelectionEnabled(false);
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(openFile);
 

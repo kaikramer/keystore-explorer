@@ -28,7 +28,7 @@ import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -102,19 +102,19 @@ public class SaveAsAction extends KeyStoreExplorerAction {
                 }
             }
 
-            JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+            SystemFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
             chooser.setCurrentDirectory(CurrentDirectory.get());
             chooser.setDialogTitle(res.getString("SaveAsAction.SaveKeyStoreAs.Title"));
             chooser.setMultiSelectionEnabled(false);
 
             int rtnValue = chooser.showSaveDialog(frame);
-            if (rtnValue != JFileChooser.APPROVE_OPTION) {
+            if (rtnValue != SystemFileChooser.APPROVE_OPTION) {
                 return false;
             }
             saveFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(saveFile);
 
-            // TODO check for response if JavaFX file dialog (because overwrite dialog is shown 2x)
+            // TODO check if native save dialog already shows overwrite confirmation (to avoid showing it 2x)
             if (saveFile.isFile()) {
                 String message = MessageFormat.format(res.getString("SaveAsAction.OverWriteFile.message"), saveFile);
 

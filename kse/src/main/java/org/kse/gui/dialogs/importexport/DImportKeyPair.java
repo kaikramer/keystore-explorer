@@ -50,7 +50,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -412,7 +412,7 @@ public class DImportKeyPair extends JEscDialog {
     }
 
     private void privateKeyBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getKeyFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getKeyFileChooser();
 
         File currentFile = new File(jtfPrivateKeyPath.getText());
 
@@ -428,7 +428,7 @@ public class DImportKeyPair extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DImportKeyPair.PrivateKeyFileChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
 
@@ -543,7 +543,7 @@ public class DImportKeyPair extends JEscDialog {
     }
 
     private void certificateBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getCertFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCertFileChooser();
 
         File currentFile = new File(jtfCertificatePath.getText());
 
@@ -559,7 +559,7 @@ public class DImportKeyPair extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DImportKeyPair.CertificateFileChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfCertificatePath.setText(chosenFile.toString());

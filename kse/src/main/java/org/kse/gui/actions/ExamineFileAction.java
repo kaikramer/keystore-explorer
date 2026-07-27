@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -412,14 +412,14 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
     }
 
     private File chooseFile() {
-        JFileChooser chooser = FileChooserFactory.getAllFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getAllFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("ExamineFileAction.ExamineFile.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(openFile);
             return openFile;

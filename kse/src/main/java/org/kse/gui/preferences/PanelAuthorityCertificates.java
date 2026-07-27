@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -137,7 +137,7 @@ class PanelAuthorityCertificates {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
         File caCertsFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
 
         if ((caCertsFile.getParentFile() != null) && (caCertsFile.getParentFile().exists())) {
@@ -151,7 +151,7 @@ class PanelAuthorityCertificates {
         chooser.setApproveButtonText(res.getString("DPreferences.CaCertificatesKeyStoreFileChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(parent);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfCaCertificatesFile.setText(chosenFile.toString());

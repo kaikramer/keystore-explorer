@@ -142,33 +142,6 @@ dependencies {
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.20.1")
     implementation("com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.20.1")
 
-    if (gradle.startParameter.taskNames.any { it in listOf("innosetup", "zip") }) {
-        implementation("org.openjfx:javafx-base:17.0.17:win")
-        implementation("org.openjfx:javafx-graphics:17.0.17:win")
-        implementation("org.openjfx:javafx-swing:17.0.17:win")
-    }
-    if (gradle.startParameter.taskNames.any { it in listOf("buildDeb", "buildRpm", "buildAppImage", "zip") }) {
-        implementation("org.openjfx:javafx-swing:17.0.17:linux")
-        implementation("org.openjfx:javafx-base:17.0.17:linux")
-        implementation("org.openjfx:javafx-graphics:17.0.17:linux")
-    }
-    if (gradle.startParameter.taskNames.any { it in listOf("appbundler", "dmg") }) {
-        if (System.getProperty("os.arch") == "aarch64") {
-            implementation("org.openjfx:javafx-base:17.0.17:mac-aarch64")
-            implementation("org.openjfx:javafx-graphics:17.0.17:mac-aarch64")
-            implementation("org.openjfx:javafx-swing:17.0.17:mac-aarch64")
-        } else {
-            implementation("org.openjfx:javafx-base:17.0.17:mac")
-            implementation("org.openjfx:javafx-graphics:17.0.17:mac")
-            implementation("org.openjfx:javafx-swing:17.0.17:mac")
-        }
-    }
-    if (gradle.startParameter.taskNames.any { it in listOf("zip") }) {
-        implementation("org.openjfx:javafx-base:17.0.17:mac")
-        implementation("org.openjfx:javafx-graphics:17.0.17:mac")
-        implementation("org.openjfx:javafx-swing:17.0.17:mac")
-    }
-
     appbundler("com.evolvedbinary.appbundler:appbundler:1.3.1")
 
     testImplementation("org.assertj:assertj-core:3.27.7")

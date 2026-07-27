@@ -42,7 +42,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -211,14 +211,14 @@ public class VerifyJarAction extends AuthorityCertificatesVerifyAction {
     }
 
     private File chooseJarFile() {
-        JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("VerifyJarAction.ChooseJar.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("VerifyJarAction.ChooseJar.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File importFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(importFile);
             return importFile;

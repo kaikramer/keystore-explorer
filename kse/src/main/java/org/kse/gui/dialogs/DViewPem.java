@@ -43,7 +43,7 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -66,7 +66,6 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
@@ -282,7 +281,7 @@ public class DViewPem extends JEscDialog {
         try {
             String certPem = jtaPem.getText();
 
-            JFileChooser chooser;
+            SystemFileChooser chooser;
             if (cert != null) {
                 chooser = FileChooserFactory.getX509FileChooser();
             } else if (crl != null) {
@@ -303,11 +302,9 @@ public class DViewPem extends JEscDialog {
             chooser.setDialogTitle(title);
             chooser.setMultiSelectionEnabled(false);
 
-            int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                           chooser.showSaveDialog(this) :
-                           chooser.showDialog(this, res.getString("DViewPem.ChooseExportFile.button"));
+            int rtnValue = chooser.showDialog(this, res.getString("DViewPem.ChooseExportFile.button"));
 
-            if (rtnValue != JFileChooser.APPROVE_OPTION) {
+            if (rtnValue != SystemFileChooser.APPROVE_OPTION) {
                 return;
             }
 

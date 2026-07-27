@@ -33,7 +33,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,7 +49,6 @@ import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
@@ -299,7 +298,7 @@ public class DExportKeyPair extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = FileChooserFactory.getPkcs12FileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getPkcs12FileChooser();
 
         File currentExportFile = new File(jtfExportFile.getText().trim());
 
@@ -313,10 +312,8 @@ public class DExportKeyPair extends JEscDialog {
         chooser.setDialogTitle(res.getString("DExportKeyPair.ChooseExportFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DExportKeyPair.ChooseExportFile.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DExportKeyPair.ChooseExportFile.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfExportFile.setText(chosenFile.toString());

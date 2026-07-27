@@ -35,7 +35,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -48,7 +48,6 @@ import org.kse.crypto.signing.MidletSigner;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
@@ -345,7 +344,7 @@ public class DSignMidlet extends JEscDialog {
     }
 
     private void inputJadBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getJadFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getJadFileChooser();
 
         File currentFile = new File(jtfInputJad.getText());
 
@@ -363,7 +362,7 @@ public class DSignMidlet extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DSignMidlet.InputJadChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfInputJad.setText(chosenFile.toString());
@@ -382,7 +381,7 @@ public class DSignMidlet extends JEscDialog {
     }
 
     private void outputJadBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getJadFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getJadFileChooser();
 
         File currentFile = new File(jtfOutputJad.getText());
 
@@ -397,10 +396,8 @@ public class DSignMidlet extends JEscDialog {
 
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DSignMidlet.OutputJadChooser.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DSignMidlet.OutputJadChooser.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfOutputJad.setText(chosenFile.toString());
@@ -409,7 +406,7 @@ public class DSignMidlet extends JEscDialog {
     }
 
     private void jarBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
 
         File currentFile = new File(jtfJar.getText());
 
@@ -426,7 +423,7 @@ public class DSignMidlet extends JEscDialog {
         chooser.setApproveButtonText(res.getString("DSignMidlet.JarChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfJar.setText(chosenFile.toString());

@@ -30,7 +30,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.keystore.KeyStoreType;
@@ -232,14 +232,14 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
     }
 
     private File chooseCaFile() {
-        JFileChooser chooser = FileChooserFactory.getCaReplyFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCaReplyFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("ImportCaReplyFromFileAction.ImportCaReply.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(openFile);
             return openFile;

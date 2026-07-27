@@ -44,7 +44,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -567,14 +567,14 @@ public class DSignJar extends JEscDialog {
      * Get input JAR files
      */
     private void inputJarBrowsePressed() {
-        JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
         chooser.setMultiSelectionEnabled(true);
         chooser.setApproveButtonText(res.getString("DSignJar.InputJarChooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File[] chosenFiles = chooser.getSelectedFiles();
 
             // check if selected are JAR files

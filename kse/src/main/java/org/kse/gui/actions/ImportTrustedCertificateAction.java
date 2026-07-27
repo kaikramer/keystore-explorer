@@ -26,7 +26,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -257,14 +257,14 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
     }
 
     private File chooseTrustedCertificateFile() {
-        JFileChooser chooser = FileChooserFactory.getX509FileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getX509FileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("ImportTrustedCertificateAction.ImportTrustCert.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("ImportTrustedCertificateAction.ImportTrustCert.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File importFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(importFile);
             return importFile;

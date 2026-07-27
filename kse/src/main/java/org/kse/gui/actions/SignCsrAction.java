@@ -35,7 +35,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -305,14 +305,14 @@ public class SignCsrAction extends KeyStoreExplorerAction {
     }
 
     private File chooseCsrFile() {
-        JFileChooser chooser = FileChooserFactory.getCsrFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCsrFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("SignCsrAction.ChooseCsr.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("SignCsrAction.ChooseCsr.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File importFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(importFile);
             return importFile;

@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -46,7 +46,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
@@ -185,7 +184,7 @@ public class DExportCsv extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = FileChooserFactory.getCsvFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getCsvFileChooser();
 
         File currentExportFile = new File(jtfExportFile.getText().trim());
 
@@ -199,10 +198,8 @@ public class DExportCsv extends JEscDialog {
         chooser.setDialogTitle(res.getString("DExportCsv.ChooseExportFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DExportCsv.ChooseExportFile.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DExportCsv.ChooseExportFile.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfExportFile.setText(chosenFile.toString());

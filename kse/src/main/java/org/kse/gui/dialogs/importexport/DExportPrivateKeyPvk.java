@@ -36,7 +36,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -51,7 +51,6 @@ import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.password.JPasswordQualityField;
@@ -348,7 +347,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = FileChooserFactory.getPvkFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getPvkFileChooser();
 
         File currentExportFile = new File(jtfExportFile.getText().trim());
 
@@ -362,10 +361,8 @@ public class DExportPrivateKeyPvk extends JEscDialog {
         chooser.setDialogTitle(res.getString("DExportPrivateKeyPvk.ChooseExportFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
-        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
-                       chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DExportPrivateKeyPvk.ChooseExportFile.button"));
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        int rtnValue = chooser.showDialog(this, res.getString("DExportPrivateKeyPvk.ChooseExportFile.button"));
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             jtfExportFile.setText(chosenFile.toString());

@@ -26,7 +26,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.keystore.KeyStoreType;
@@ -193,14 +193,14 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
     }
 
     private File chooseAppendCertificateFile() {
-        JFileChooser chooser = FileChooserFactory.getX509FileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getX509FileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("AppendToCertificateChainAction.AppendCertificate.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
-        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+        if (rtnValue == SystemFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(openFile);
             return openFile;
