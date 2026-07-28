@@ -143,7 +143,7 @@ public class DNewKeyStoreType extends JEscDialog {
         pane.add(jrbBcfksKeyStore, "wrap");
         pane.add(jrbPemKeyStore, "wrap");
         pane.add(jrbKdbKeyStore, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

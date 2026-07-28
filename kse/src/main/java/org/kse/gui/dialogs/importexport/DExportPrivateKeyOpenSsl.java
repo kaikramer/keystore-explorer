@@ -171,7 +171,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlEncrypt, "");
         pane.add(jcbEncrypt, "wrap");
         pane.add(jlPbeAlg, "");
@@ -185,7 +185,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
         pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbExport, "right, spanx, split, tag ok");
         pane.add(jbCancel, "tag cancel");
 

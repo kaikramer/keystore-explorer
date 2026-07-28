@@ -19,7 +19,6 @@
  */
 package org.kse.gui.crypto;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Font;
@@ -51,7 +50,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.KSE;
@@ -62,9 +60,9 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.HexUtil;
@@ -82,7 +80,6 @@ public class DViewCertificateFingerprint extends JEscDialog {
     private JPanel jpButtons;
     private JButton jbCopy;
     private JButton jbOK;
-    private JPanel jpFingerprint;
     private JScrollPane jspFingerprint;
     private JLabel jlFingerprint;
     private JTextArea jtaFingerprint;
@@ -140,10 +137,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
         jbOK = new JButton(res.getString("DViewCertificateFingerprint.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
-
-        jpFingerprint = new JPanel(new BorderLayout());
-        jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, "insets 0");
 
         jlFingerprint = new JLabel(res.getString("DViewCertificateFingerprint.jlFingerprint.text"));
         jtaFingerprint = newJtaFingerprint("DViewCertificateFingerprint.jtaFingerprint.tooltip");
@@ -172,8 +166,8 @@ public class DViewCertificateFingerprint extends JEscDialog {
         pane.add(jlBase64Fingerprint, "");
         pane.add(jspBase64Fingerprint, "growx, height 60lp:60lp:60lp, wrap");
 
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "spanx, tag ok");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         setTitle(MessageFormat.format(res.getString("DViewCertificateFingerprint.Title"), fingerprintAlg.friendly()));
         setResizable(true);

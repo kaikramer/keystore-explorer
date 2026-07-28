@@ -159,8 +159,8 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
         pane.add(jrbSslServer, "wrap");
         pane.add(jrbSslClient, "wrap");
         pane.add(jrbCodeSigning, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(evt -> okPressed());
 

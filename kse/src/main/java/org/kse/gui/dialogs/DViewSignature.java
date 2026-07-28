@@ -246,7 +246,7 @@ public class DViewSignature extends JEscDialog {
         pane.add(jlSigningTime, "");
         pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
-        pane.add(jtfSignatureAlgorithm, "wrap");
+        pane.add(jtfSignatureAlgorithm, "wrap para");
         pane.add(jbTimeStamp, "spanx, split");
         pane.add(jbSignerAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");

@@ -117,8 +117,8 @@ public class DSubjectKeyIdentifier extends DExtension {
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
         pane.add(jlKeyIdentifier);
-        pane.add(jkiKeyIdentifier, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jkiKeyIdentifier, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

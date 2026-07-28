@@ -36,6 +36,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.ASN1Encoding;
@@ -110,10 +111,11 @@ public class DCrlDistributionPoints extends DExtension {
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
-        pane.add(jlCrlDistributionPoints, "top");
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jlCrlDistributionPoints, "wrap");
         pane.add(jdpDistributionPoints, "wrap unrel");
-        pane.add(jpButtons, "spanx, tag ok");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;

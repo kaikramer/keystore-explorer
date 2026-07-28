@@ -136,7 +136,7 @@ public class DExportPublicKey extends JEscDialog {
         pane.add(jbBrowse, "cell 0 3, align left, wrap");
 
         // Add separator and buttons
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbExport, "right, spanx, split 2, tag ok");
         pane.add(jbCancel, "tag cancel");
 

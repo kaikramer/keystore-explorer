@@ -264,16 +264,16 @@ public class DViewCrl extends JEscDialog {
         pane.add(jlNextUpdate, "");
         pane.add(jtfNextUpdate, "wrap");
         pane.add(jlSignatureAlgorithm, "");
-        pane.add(jtfSignatureAlgorithm, "wrap");
-        pane.add(jbCrlExtensions, "split, spanx, right");
+        pane.add(jtfSignatureAlgorithm, "wrap para");
+        pane.add(jbCrlExtensions, "spanx, split");
         pane.add(jbCrlPem, "");
         pane.add(jbCrlAsn1, "wrap unrel");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jlRevokedCerts, "split, wrap");
-        pane.add(jspRevokedCertsTable, "split, spanx, growx, wrap");
-        pane.add(jbCrlEntryExtensions, "split, spanx, right, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jbOK, "split, spanx, right, tag ok");
+        pane.add(jspRevokedCertsTable, "spanx, growx, wrap para");
+        pane.add(jbCrlEntryExtensions, "spanx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jbOK, "spanx, tag ok");
 
         populateDialog();
 

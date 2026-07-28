@@ -243,8 +243,8 @@ public class DSignJar extends JEscDialog {
         pane.add(jcbAddTimestamp, "wrap");
         pane.add(jlTimestampServerUrl, "skip");
         pane.add(jcbTimestampServerUrl, "sgx, wrap para");
-        pane.add(new JSeparator(), "spanx, growx, wrap para");
-        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         // actions
         jbInputJarBrowse.addActionListener(evt -> {

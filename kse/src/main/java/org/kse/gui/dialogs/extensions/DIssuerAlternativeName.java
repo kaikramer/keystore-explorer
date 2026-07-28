@@ -114,7 +114,7 @@ public class DIssuerAlternativeName extends DExtension {
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
         pane.add(jlAlternativeName, "wrap");
         pane.add(jgnAlternativeName, "wrap");
-        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
 

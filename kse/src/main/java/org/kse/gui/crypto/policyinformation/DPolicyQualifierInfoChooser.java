@@ -22,12 +22,8 @@ package org.kse.gui.crypto.policyinformation;
 import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
 import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -43,20 +39,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.bouncycastle.asn1.x509.UserNotice;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose an policy qualifier info.
@@ -68,7 +64,6 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPolicyQualifierInfo;
     private JLabel jlPolicyQualifierInfoType;
     private JRadioButton jrbCps;
     private JRadioButton jrbUserNotice;
@@ -114,37 +109,16 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
         jlPolicyQualifierInfoType = new JLabel(
                 res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoType.text"));
 
-        GridBagConstraints gbc_jlPolicyQualifierInfoType = new GridBagConstraints();
-        gbc_jlPolicyQualifierInfoType.gridx = 0;
-        gbc_jlPolicyQualifierInfoType.gridy = 0;
-        gbc_jlPolicyQualifierInfoType.gridwidth = 1;
-        gbc_jlPolicyQualifierInfoType.gridheight = 1;
-        gbc_jlPolicyQualifierInfoType.anchor = GridBagConstraints.EAST;
-
         jrbCps = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbCps.text"));
         PlatformUtil.setMnemonic(jrbCps, res.getString("DPolicyQualifierInfoChooser.jrbCps.mnemonic").charAt(0));
         jrbCps.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbCps.tooltip"));
         jrbCps.addItemListener(evt -> policyQualifierInfoTypeChanged());
-
-        GridBagConstraints gbc_jrbCps = new GridBagConstraints();
-        gbc_jrbCps.gridx = 1;
-        gbc_jrbCps.gridy = 0;
-        gbc_jrbCps.gridwidth = 1;
-        gbc_jrbCps.gridheight = 1;
-        gbc_jrbCps.anchor = GridBagConstraints.WEST;
 
         jrbUserNotice = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.text"));
         PlatformUtil.setMnemonic(jrbUserNotice,
                                  res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.mnemonic").charAt(0));
         jrbUserNotice.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.tooltip"));
         jrbUserNotice.addItemListener(evt -> policyQualifierInfoTypeChanged());
-
-        GridBagConstraints gbc_jrbUserNotice = new GridBagConstraints();
-        gbc_jrbUserNotice.gridx = 2;
-        gbc_jrbUserNotice.gridy = 0;
-        gbc_jrbUserNotice.gridwidth = 1;
-        gbc_jrbUserNotice.gridheight = 1;
-        gbc_jrbUserNotice.anchor = GridBagConstraints.WEST;
 
         ButtonGroup bgPolicyQualifierInfoType = new ButtonGroup();
         bgPolicyQualifierInfoType.add(jrbCps);
@@ -153,39 +127,12 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
         jlPolicyQualifierInfoValue = new JLabel(
                 res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoValue.text"));
 
-        GridBagConstraints gbc_jlPolicyQualifierInfoValue = new GridBagConstraints();
-        gbc_jlPolicyQualifierInfoValue.gridx = 0;
-        gbc_jlPolicyQualifierInfoValue.gridy = 1;
-        gbc_jlPolicyQualifierInfoValue.gridwidth = 1;
-        gbc_jlPolicyQualifierInfoValue.gridheight = 1;
-        gbc_jlPolicyQualifierInfoValue.anchor = GridBagConstraints.EAST;
-
         jtfCps = new JTextField(30);
         junUserNotice = new JUserNotice(res.getString("DPolicyQualifierInfoChooser.UserNotice.Title"));
 
-        jpPolicyQualifierInfoValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        GridBagConstraints gbc_jpPolicyQualifierInfoValue = new GridBagConstraints();
-        gbc_jpPolicyQualifierInfoValue.gridx = 1;
-        gbc_jpPolicyQualifierInfoValue.gridy = 1;
-        gbc_jpPolicyQualifierInfoValue.gridwidth = 2;
-        gbc_jpPolicyQualifierInfoValue.gridheight = 1;
-        gbc_jpPolicyQualifierInfoValue.insets = new Insets(0, 0, 0, 0);
-        gbc_jpPolicyQualifierInfoValue.anchor = GridBagConstraints.WEST;
+        jpPolicyQualifierInfoValue = new JPanel();
 
         jpPolicyQualifierInfoValue.add(jtfCps);
-
-        jpPolicyQualifierInfo = new JPanel(new GridBagLayout());
-
-        jpPolicyQualifierInfo.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                           new CompoundBorder(new EtchedBorder(),
-                                                                              new EmptyBorder(5, 5, 5, 5))));
-
-        jpPolicyQualifierInfo.add(jlPolicyQualifierInfoType, gbc_jlPolicyQualifierInfoType);
-        jpPolicyQualifierInfo.add(jrbCps, gbc_jrbCps);
-        jpPolicyQualifierInfo.add(jrbUserNotice, gbc_jrbUserNotice);
-        jpPolicyQualifierInfo.add(jlPolicyQualifierInfoValue, gbc_jlPolicyQualifierInfoValue);
-        jpPolicyQualifierInfo.add(jpPolicyQualifierInfoValue, gbc_jpPolicyQualifierInfoValue);
 
         jbOK = new JButton(res.getString("DPolicyQualifierInfoChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -203,11 +150,17 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpPolicyQualifierInfo);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlPolicyQualifierInfoType, "");
+        pane.add(jrbCps, "split 2");
+        pane.add(jrbUserNotice, "wrap");
+        pane.add(jlPolicyQualifierInfoValue, "");
+        pane.add(jpPolicyQualifierInfoValue, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populate(policyQualifierInfo);
 

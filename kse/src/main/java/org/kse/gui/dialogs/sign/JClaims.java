@@ -43,9 +43,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
@@ -188,7 +185,6 @@ public class JClaims extends JPanel {
         this.add(jlClaims, BorderLayout.NORTH);
         this.add(jspClaimsTable, BorderLayout.CENTER);
         this.add(jpClaimsButtons, BorderLayout.EAST);
-        this.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5)));
     }
 
     protected void maybeEditClaim(MouseEvent evt) {

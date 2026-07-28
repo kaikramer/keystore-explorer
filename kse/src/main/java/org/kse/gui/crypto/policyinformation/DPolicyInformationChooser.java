@@ -19,12 +19,9 @@
  */
 package org.kse.gui.crypto.policyinformation;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -40,10 +37,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -51,10 +46,12 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 import org.kse.gui.oid.JObjectId;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose policy information.
@@ -66,7 +63,6 @@ public class DPolicyInformationChooser extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPolicyInformation;
     private JLabel jlPolicyIdentifier;
     private JObjectId joiPolicyIdentifier;
     private JLabel jlPolicyQualifiers;
@@ -108,57 +104,14 @@ public class DPolicyInformationChooser extends JEscDialog {
     private void initComponents(PolicyInformation policyInformation) throws IOException {
         jlPolicyIdentifier = new JLabel(res.getString("DPolicyInformationChooser.jlPolicyIdentifier.text"));
 
-        GridBagConstraints gbc_jlPolicyIdentifier = new GridBagConstraints();
-        gbc_jlPolicyIdentifier.gridx = 0;
-        gbc_jlPolicyIdentifier.gridy = 0;
-        gbc_jlPolicyIdentifier.gridwidth = 1;
-        gbc_jlPolicyIdentifier.gridheight = 1;
-        gbc_jlPolicyIdentifier.insets = new Insets(5, 5, 5, 5);
-        gbc_jlPolicyIdentifier.anchor = GridBagConstraints.EAST;
-
         joiPolicyIdentifier = new JObjectId(res.getString("DPolicyInformationChooser.PolicyIdentifier.Text"));
         joiPolicyIdentifier.setToolTipText(res.getString("DPolicyInformationChooser.joiPolicyIdentifier.tooltip"));
 
-        GridBagConstraints gbc_joiPolicyIdentifier = new GridBagConstraints();
-        gbc_joiPolicyIdentifier.gridx = 1;
-        gbc_joiPolicyIdentifier.gridy = 0;
-        gbc_joiPolicyIdentifier.gridwidth = 1;
-        gbc_joiPolicyIdentifier.gridheight = 1;
-        gbc_joiPolicyIdentifier.insets = new Insets(5, 5, 5, 5);
-        gbc_joiPolicyIdentifier.anchor = GridBagConstraints.WEST;
-
         jlPolicyQualifiers = new JLabel(res.getString("DPolicyInformationChooser.jlPolicyQualifiers.text"));
-
-        GridBagConstraints gbc_jlPolicyQualifiers = new GridBagConstraints();
-        gbc_jlPolicyQualifiers.gridx = 0;
-        gbc_jlPolicyQualifiers.gridy = 1;
-        gbc_jlPolicyQualifiers.gridwidth = 1;
-        gbc_jlPolicyQualifiers.gridheight = 1;
-        gbc_jlPolicyQualifiers.insets = new Insets(5, 5, 5, 5);
-        gbc_jlPolicyQualifiers.anchor = GridBagConstraints.NORTHEAST;
 
         jpqPolicyQualifiers = new JPolicyQualifierInfo(
                 res.getString("DPolicyInformationChooser.PolicyQualifierInfo.Title"));
         jpqPolicyQualifiers.setPreferredSize(new Dimension(400, 150));
-
-        GridBagConstraints gbc_jpqPolicyQualifiers = new GridBagConstraints();
-        gbc_jpqPolicyQualifiers.gridx = 1;
-        gbc_jpqPolicyQualifiers.gridy = 1;
-        gbc_jpqPolicyQualifiers.gridwidth = 1;
-        gbc_jpqPolicyQualifiers.gridheight = 1;
-        gbc_jpqPolicyQualifiers.insets = new Insets(5, 5, 5, 5);
-        gbc_jpqPolicyQualifiers.anchor = GridBagConstraints.WEST;
-
-        jpPolicyInformation = new JPanel(new GridBagLayout());
-
-        jpPolicyInformation.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                         new CompoundBorder(new EtchedBorder(),
-                                                                            new EmptyBorder(5, 5, 5, 5))));
-
-        jpPolicyInformation.add(jlPolicyIdentifier, gbc_jlPolicyIdentifier);
-        jpPolicyInformation.add(joiPolicyIdentifier, gbc_joiPolicyIdentifier);
-        jpPolicyInformation.add(jlPolicyQualifiers, gbc_jlPolicyQualifiers);
-        jpPolicyInformation.add(jpqPolicyQualifiers, gbc_jpqPolicyQualifiers);
 
         jbOK = new JButton(res.getString("DPolicyInformationChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -176,11 +129,16 @@ public class DPolicyInformationChooser extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(BorderLayout.CENTER, jpPolicyInformation);
-        getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+        pane.add(jlPolicyIdentifier, "");
+        pane.add(joiPolicyIdentifier, "wrap");
+        pane.add(jlPolicyQualifiers, "top");
+        pane.add(jpqPolicyQualifiers, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jpButtons, "spanx, growx");
 
         populate(policyInformation);
 

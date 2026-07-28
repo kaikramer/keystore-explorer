@@ -172,7 +172,7 @@ public class PlatformUtil {
 
         if (jbOthers != null) {
             for (JButton jButton : jbOthers) {
-                panel.add(jButton, "sgx");
+                panel.add(jButton, "tag left, sgx");
             }
         }
 

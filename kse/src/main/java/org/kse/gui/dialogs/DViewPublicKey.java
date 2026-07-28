@@ -214,13 +214,13 @@ public class DViewPublicKey extends JEscDialog {
         pane.add(jlEncoded, "");
         pane.add(jspEncoded, "growx, height 150lp:150lp:150lp, wrap");
         pane.add(jlFingerprint, "");
-        pane.add(jcfFingerprint, "wrap");
+        pane.add(jcfFingerprint, "wrap para");
         pane.add(jbExport, "spanx, split");
         addButtonSeparator(pane, jbExport.isVisible());
         pane.add(jbFields, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");
 
         // actions

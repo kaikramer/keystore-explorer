@@ -107,6 +107,14 @@ public class DExportCertificates extends JEscDialog {
         initComponents();
     }
 
+    /**
+     * Creates a new DExportCertificate dialog.
+     *
+     * @param parent              The parent frame
+     * @param certificateAlias    A possible file name for the certificate (chain) to export
+     * @param chain               Exporting a chain?
+     * @param certificateSelected Exporting selected certificates?
+     */
     public DExportCertificates(JFrame parent, String certificateAlias, boolean chain, boolean certificateSelected) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.certificateAlias = certificateAlias;
@@ -185,7 +193,7 @@ public class DExportCertificates extends JEscDialog {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         if (chain) {
             pane.add(jlExportLength, "");
             pane.add(jrbExportHead, "split");
@@ -201,7 +209,7 @@ public class DExportCertificates extends JEscDialog {
         pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbExport, "right, spanx, split, tag ok");
         pane.add(jbCancel, "tag cancel");
 
