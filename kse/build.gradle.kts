@@ -120,9 +120,6 @@ gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 val appbundler by configurations.creating
 
-// Keep packaged JavaFX compatible with the Java 17 minimum runtime.
-val javaFxVersion = "17.0.19"
-
 dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
     implementation("com.miglayout:miglayout-swing:11.4.2")
@@ -146,30 +143,30 @@ dependencies {
     implementation("com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.20.1")
 
     if (gradle.startParameter.taskNames.any { it in listOf("innosetup", "zip") }) {
-        implementation("org.openjfx:javafx-base:$javaFxVersion:win")
-        implementation("org.openjfx:javafx-graphics:$javaFxVersion:win")
-        implementation("org.openjfx:javafx-swing:$javaFxVersion:win")
+        implementation("org.openjfx:javafx-base:17.0.17:win")
+        implementation("org.openjfx:javafx-graphics:17.0.17:win")
+        implementation("org.openjfx:javafx-swing:17.0.17:win")
     }
     if (gradle.startParameter.taskNames.any { it in listOf("buildDeb", "buildRpm", "buildAppImage", "zip") }) {
-        implementation("org.openjfx:javafx-swing:$javaFxVersion:linux")
-        implementation("org.openjfx:javafx-base:$javaFxVersion:linux")
-        implementation("org.openjfx:javafx-graphics:$javaFxVersion:linux")
+        implementation("org.openjfx:javafx-swing:17.0.17:linux")
+        implementation("org.openjfx:javafx-base:17.0.17:linux")
+        implementation("org.openjfx:javafx-graphics:17.0.17:linux")
     }
     if (gradle.startParameter.taskNames.any { it in listOf("appbundler", "dmg") }) {
         if (System.getProperty("os.arch") == "aarch64") {
-            implementation("org.openjfx:javafx-base:$javaFxVersion:mac-aarch64")
-            implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac-aarch64")
-            implementation("org.openjfx:javafx-swing:$javaFxVersion:mac-aarch64")
+            implementation("org.openjfx:javafx-base:17.0.17:mac-aarch64")
+            implementation("org.openjfx:javafx-graphics:17.0.17:mac-aarch64")
+            implementation("org.openjfx:javafx-swing:17.0.17:mac-aarch64")
         } else {
-            implementation("org.openjfx:javafx-base:$javaFxVersion:mac")
-            implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac")
-            implementation("org.openjfx:javafx-swing:$javaFxVersion:mac")
+            implementation("org.openjfx:javafx-base:17.0.17:mac")
+            implementation("org.openjfx:javafx-graphics:17.0.17:mac")
+            implementation("org.openjfx:javafx-swing:17.0.17:mac")
         }
     }
     if (gradle.startParameter.taskNames.any { it in listOf("zip") }) {
-        implementation("org.openjfx:javafx-base:$javaFxVersion:mac")
-        implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac")
-        implementation("org.openjfx:javafx-swing:$javaFxVersion:mac")
+        implementation("org.openjfx:javafx-base:17.0.17:mac")
+        implementation("org.openjfx:javafx-graphics:17.0.17:mac")
+        implementation("org.openjfx:javafx-swing:17.0.17:mac")
     }
 
     appbundler("com.evolvedbinary.appbundler:appbundler:1.3.1")

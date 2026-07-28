@@ -83,7 +83,7 @@ For the AppImage package (requires Linux and appimagetool):
 
 ## Running
 
-A Java Runtime Environment (JRE) version **17 or higher** is required to run KSE. Java 21 and 25 are also supported.
+A Java Runtime Environment (JRE) version **17 or higher** is required to run KSE.
 
 To run the application, issue the following command from the `kse` directory:
 
