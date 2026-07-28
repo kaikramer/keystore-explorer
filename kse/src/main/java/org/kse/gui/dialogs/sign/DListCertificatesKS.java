@@ -116,8 +116,8 @@ public class DListCertificatesKS extends JEscDialog {
         pane.add(jlKeyStore, "split");
         pane.add(jcbKeyStore);
         pane.add(jbLoadKeystore, "wrap");
-        pane.add(jListCertificates, "spanx, push, grow, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jListCertificates, "spanx, grow, push, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15"); // don't push so that the list can grow
         pane.add(jpButtons, "spanx, growx");
 
         jcbKeyStore.addActionListener(evt -> {

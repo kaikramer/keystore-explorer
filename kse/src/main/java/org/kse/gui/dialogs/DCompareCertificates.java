@@ -179,16 +179,16 @@ public class DCompareCertificates extends JEscFrame {
 
         jpCompareCert = new JPanel();
         jpCompareCert.setLayout(new MigLayout("insets 0", "[]", "[]"));
-        jpCompareCert.add(editorLeft, "");
+        jpCompareCert.add(editorLeft, "grow, push");
         jpCompareCert.add(new JSeparator(SwingConstants.VERTICAL), "");
-        jpCompareCert.add(editorRight, "");
+        jpCompareCert.add(editorRight, "grow, push");
 
         jspCompareCert = PlatformUtil.createScrollPane(jpCompareCert, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
-        pane.add(jspCompareCert, "wrap, growx");
+        pane.add(jspCompareCert, "grow, push, wrap");
         pane.add(jpButtons, "spanx, growx");
 
         setResizable(true);

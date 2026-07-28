@@ -118,7 +118,7 @@ public class DErrorDetail extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspError, "wrap para");
+        pane.add(jspError, "grow, push, wrap para");
         pane.add(jbCopy, "split 2");
         pane.add(jbOK, "tag ok");
 

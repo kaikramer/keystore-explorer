@@ -112,10 +112,10 @@ public class DEnvironmentVariables extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspEnvironmentVariablesTable, "wrap para");
+        pane.add(jspEnvironmentVariablesTable, "grow, push, wrap para");
         pane.add(jbOK, "tag ok");
 
-        setResizable(false);
+        setResizable(true);
 
         addWindowListener(new WindowAdapter() {
             @Override

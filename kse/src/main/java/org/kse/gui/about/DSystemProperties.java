@@ -112,10 +112,10 @@ public class DSystemProperties extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspSystemPropertiesTable, "wrap para");
+        pane.add(jspSystemPropertiesTable, "grow, push, wrap para");
         pane.add(jbOK, "tag ok");
 
-        setResizable(false);
+        setResizable(true);
 
         addWindowListener(new WindowAdapter() {
             @Override

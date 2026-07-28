@@ -271,7 +271,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspAsn1Dump, "wrap para");
+        pane.add(jspAsn1Dump, "grow, push, wrap para");
         pane.add(jpButtons, "spanx, growx");
 
         setResizable(true);
