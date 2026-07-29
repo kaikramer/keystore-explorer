@@ -27,5 +27,5 @@ jobs:
     - name: 'Publish Compile'
       uses: actions/upload-artifact@v6
       with:
-        name: 'libs-kse'
+        name: libs-kse
         path: kse/build/libs/kse.jar

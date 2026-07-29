@@ -115,7 +115,7 @@ tasks.register("appbundler") {
                     "jmod"("name" to "jdk.dynalink")
                     "jmod"("name" to "jdk.unsupported")
 
-                    "argument"("value" to "--compress=2")
+                    "argument"("value" to "--compress=zip-6")
                     "argument"("value" to "--no-header-files")
                     "argument"("value" to "--no-man-pages")
                     "argument"("value" to "--strip-debug")
