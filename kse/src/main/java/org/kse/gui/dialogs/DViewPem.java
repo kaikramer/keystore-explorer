@@ -225,7 +225,7 @@ public class DViewPem extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspPem, "wrap para");
+        pane.add(jspPem, "grow, push, wrap para");
         pane.add(jpButtons, "spanx, growx");
 
         setResizable(true);

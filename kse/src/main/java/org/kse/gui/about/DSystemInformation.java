@@ -265,14 +265,12 @@ public class DSystemInformation extends JEscDialog {
 
     private void systemPropertiesPressed() {
         DSystemProperties dSystemProperties = new DSystemProperties(this);
-        dSystemProperties.setResizable(true);
         dSystemProperties.setLocationRelativeTo(this);
         dSystemProperties.setVisible(true);
     }
 
     private void environmentVariablesPressed() {
         DEnvironmentVariables dEnvironmentVariables = new DEnvironmentVariables(this);
-        dEnvironmentVariables.setResizable(true);
         dEnvironmentVariables.setLocationRelativeTo(this);
         dEnvironmentVariables.setVisible(true);
     }

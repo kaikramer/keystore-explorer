@@ -157,16 +157,16 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-        pane.add(jlFingerprint, "");
-        pane.add(jspFingerprint, "growx, height 80lp:80lp:80lp, width 30lp:400lp:n, wrap");
+        pane.add(jlFingerprint, "top");
+        pane.add(jspFingerprint, "grow, push, height 80lp:80lp:n, width 30lp:400lp:n, wrap");
 
-        pane.add(jlFormatFingerprint, "");
-        pane.add(jspFormatFingerprint, "growx, height 100lp:100lp:100lp, wrap");
+        pane.add(jlFormatFingerprint, "top");
+        pane.add(jspFormatFingerprint, "grow, push, height 100lp:100lp:n, wrap");
 
-        pane.add(jlBase64Fingerprint, "");
-        pane.add(jspBase64Fingerprint, "growx, height 60lp:60lp:60lp, wrap");
+        pane.add(jlBase64Fingerprint, "top");
+        pane.add(jspBase64Fingerprint, "grow, push, height 60lp:60lp:n, wrap");
 
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15"); // don't push so that the text areas can grow
         pane.add(jpButtons, "spanx, growx");
 
         setTitle(MessageFormat.format(res.getString("DViewCertificateFingerprint.Title"), fingerprintAlg.friendly()));

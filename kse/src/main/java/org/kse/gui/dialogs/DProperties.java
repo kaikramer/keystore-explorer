@@ -152,7 +152,7 @@ public class DProperties extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspProperties, "wrap para");
+        pane.add(jspProperties, "grow, push, wrap para");
         pane.add(jpButtons, "spanx, growx");
 
         setTitle(MessageFormat.format(res.getString("DProperties.Title"), history.getName()));

@@ -117,7 +117,7 @@ public class DJarInfo extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspJarInfoTable, "wrap para");
+        pane.add(jspJarInfoTable, "grow, push, wrap para");
         pane.add(jbOK, "tag ok");
 
         setResizable(true);
