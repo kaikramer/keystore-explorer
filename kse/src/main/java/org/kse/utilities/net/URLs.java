@@ -40,12 +40,9 @@ public class URLs {
     public static final String LATEST_VERSION_ADDRESS = "https://keystore-explorer.org/version.txt";
     public static final String DOWNLOADS_WEB_ADDRESS = "https://keystore-explorer.org/downloads.html";
 
-    // URL of page that forwards to unlimited strength policy download site for the respective Java version
-    public static final String JCE_POLICY_DOWNLOAD_URL = "https://keystore-explorer.org/jcePolicyDownload" +
-                                                         ".html?jreversion={0}";
-
     // list of contributors
-    public static final String KSE_WEBSITE_CONTRIBUTORS = "https://keystore-explorer.org/contribute.html#contributions";
+    public static final String KSE_WEBSITE_CONTRIBUTORS =
+            "https://github.com/kaikramer/keystore-explorer/blob/main/CONTRIBUTING.md#list-of-contributions";
 
     // list of TSA servers for sign jar dialog
     public static final String[] TSA_URLS = new String[] { "http://timestamp.digicert.com",
