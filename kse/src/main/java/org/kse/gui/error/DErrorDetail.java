@@ -44,7 +44,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -52,7 +52,7 @@ import net.miginfocom.swing.MigLayout;
  * Displays an error's stack trace. Cause error's stack trace will be show
  * recursively also.
  */
-public class DErrorDetail extends JEscDialog {
+public class DErrorDetail extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
@@ -136,6 +136,10 @@ public class DErrorDetail extends JEscDialog {
 
         pack();
 
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
+
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
@@ -204,10 +208,5 @@ public class DErrorDetail extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 }

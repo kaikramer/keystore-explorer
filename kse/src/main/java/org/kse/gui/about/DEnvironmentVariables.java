@@ -37,7 +37,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.table.ToolTipTable;
 
 import net.miginfocom.swing.MigLayout;
@@ -45,7 +45,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * A dialog that displays the Environment variables.
  */
-public class DEnvironmentVariables extends JEscDialog {
+public class DEnvironmentVariables extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
@@ -128,15 +128,14 @@ public class DEnvironmentVariables extends JEscDialog {
 
         pack();
 
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
+
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 }

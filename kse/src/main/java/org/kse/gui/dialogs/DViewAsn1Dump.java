@@ -50,7 +50,7 @@ import org.kse.crypto.x509.X509Ext;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscFrame;
+import org.kse.gui.components.JResizableFrame;
 import org.kse.utilities.asn1.Asn1Dump;
 import org.kse.utilities.asn1.Asn1Exception;
 
@@ -60,7 +60,7 @@ import net.miginfocom.swing.MigLayout;
  * Displays an ASN.1 dump of the supplied object: an X.509 certificate, private
  * key, public key, CRL, Extension, or CMS.
  */
-public class DViewAsn1Dump extends JEscFrame {
+public class DViewAsn1Dump extends JResizableFrame {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -279,13 +279,17 @@ public class DViewAsn1Dump extends JEscFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                closeFrame();
             }
         });
 
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -299,11 +303,6 @@ public class DViewAsn1Dump extends JEscFrame {
     }
 
     private void okPressed() {
-        closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
+        closeFrame();
     }
 }

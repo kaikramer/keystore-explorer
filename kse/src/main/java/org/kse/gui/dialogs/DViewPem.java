@@ -68,7 +68,7 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 
@@ -78,7 +78,7 @@ import net.miginfocom.swing.MigLayout;
  * Displays an X.509 certificate's PEM'd DER encoding and provides the
  * opportunity to export it to file.
  */
-public class DViewPem extends JEscDialog {
+public class DViewPem extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -240,6 +240,10 @@ public class DViewPem extends JEscDialog {
 
         pack();
 
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
+
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
@@ -334,11 +338,6 @@ public class DViewPem extends JEscDialog {
 
         JOptionPane.showMessageDialog(this, res.getString("DViewPem.ExportPemCertificateSuccessful.message"), title,
                                       JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     // for quick testing
