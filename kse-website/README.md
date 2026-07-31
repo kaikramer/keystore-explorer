@@ -46,6 +46,12 @@ To produce a production build (output written to `dist/`):
 npm run build
 ```
 
+To view the production build locally:
+
+```bash
+npm run preview
+```
+
 The site is deployed automatically to GitHub Pages via the workflow in
 [.github/workflows/deploy.yml](.github/workflows/deploy.yml) whenever changes are pushed to `main`.
 
