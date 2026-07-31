@@ -1,0 +1,431 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Release Notes" editPath="src/pages/release52.astro">
+
+<div class="page-header">
+    <h1>Release 5.2.2 <small class="text-muted">27 Nov 2016</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            This release comes with another translation: German (contributed by Frank Dietrich).
+            <p>
+                <p>
+                    It also includes the following bug fixes:
+                    <ul>
+                        <li>Fixed problem that Java runtimes with three-digit version number (e.g. 8u101) were not found
+                            by the Windows launcher (kse.exe).</li>
+                        <li>Fixed authorityCertIssuer in AKI extension (patch contributed by Peter Breur).</li>
+                        <li>Fixed problem when generating EC keys with crypto devices (patch provided by Andreas Schwier).</li>
+                        <li>Ignoring unsupported certificate types now (patch provided by Andreas Schwier).</li>
+                        <li>Java 8 update 101 finally fixed a problem with duplicate aliases in MSCAPI keystore,
+                            which caused an exception in the workaround code in KSE when opening the Windows-MY keystore. The
+                            workaround code has been removed now from KSE (reported by Helmut Schulz).</li>
+                        <li>Fixed compatibility problems of jar signatures in combination with older Java versions (reported by dmacjr).</li>
+                        <li>Fixed problem with missing start menu entries in Windows 10 (reported by bennypi).</li>
+                        <li>Fixed last used PKCS#11 libraries not being stored in preferences (reported by Uri Blumenthal).</li>
+                        <li>Removal of crypto restrictions works again now.</li>
+                    </ul>
+                </p>
+                <p>
+                    The included Bouncy Castle library has been updated to version 1.55.
+                </p>
+            </p>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel522_ger.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Release 5.2.1 <small class="text-muted">13 Aug 2016</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KeyStore Explorer 5.2.1 is a maintenance release. It includes fixes for the following issues:
+            <ul>
+                <li>On Mac OS X opening a file froze KSE when there are other applications installed that use the accessability API (reported by ke5stl and Markus Rudel).
+                    As a workaround for this incompatibility the native file dialog has been removed for OS X.</li>
+                <li>The shell script (kse.sh) didn't start through a symlink because it incorrectly detected its parent folder (fix contributed by Josef Ludvicek).</li>
+                <li>NPE in NameConstraints extension when there is no max. value in excludedSubtrees (reported by Ruffin).</li>
+                <li>After opening a MSCAPI or PKCS11 keystore, the restrictions for export etc. were applied to all other keystore types as well.</li>
+                <li>ExamineFile/ExamineClipboard: When there were multiple concatenated PEM certs in one file, KSE showed only the first one.</li>
+                <li>A very rarely occurring bug in JEditorPane's constructor caused exceptions on startup.</li>
+            </ul>
+        </p>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Release 5.2 <small class="text-muted">15 May 2016</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>KeyStore Explorer version 5.2 is a huge feature release, adding more than 30 new features and enhancements.</p>
+        <p>It is the first version of KSE that can access hardware keystores like smart cards and hardware security modules (HSMs)
+            using the PKCS#11 and MSCAPI providers.
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">New Feature: MSCAPI Keystore Type</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Since Java 6 the <b>SunMSCAPI provider</b> is part of the JRE, enabling software written in Java to access the
+            native cryptographic services and key containers of the Windows platform.
+        </p>
+        <p>
+            So far KSE only allowed to use "Windows-ROOT" as a truststore ("Preferences" -&gt; "Authority Certificates").
+        </p>
+        <p>
+            In KSE 5.2 you can now open the "<b>Windows-MY</b>" keystore (s. screenshot), which contains the user's personal certificates
+            and associated private keys. This includes keys that are located on a smart card, as long as the matching middleware
+            is installed.
+        </p>
+        <p>
+            Note that due to restrictions of the SunMSCAPI provider not all features are available, that would be available
+            for other keystore types.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_windowsmy.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">New Feature: PKCS#11 Keystore Type</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            PKCS#11 is a standard that defines an API for accessing cryptographic devices. In Java the <b>SunPKCS11
+                provider</b> wraps the PKCS#11 API and transforms it into the keystore API.
+        </p>
+        <p>
+            There are two ways to use a PKCS#11 library in KSE:
+            <ol>
+                <li>Add the SunPKCS11 provider to the Java Security properties file. This is described in detail in the <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/security/p11guide.html">Java PKCS#11 Reference Guide</a> and also often in the documentation of the cryptographic device. You can then simply select it in KSE
+                    in the "Open PKCS#11 KeyStore" dialog.
+                </li>
+                <li>
+                    Alternatively, KSE can register the SunPKCS11 provider itself, if you provide the path to the
+                    PKCS#11 library and the right slot index.
+                </li>
+            </ol>
+        </p>
+        <p>
+            Note that because PKCS#11 libraries are native code you have to make sure that both the JRE and the
+            PKCS#11 library are either 32 or 64 bit.
+        </p>
+        <p>
+            The combination of SunPKCS11 provider, middleware and hardware often does not work very well together:
+            Sometimes the token can be opened, but not be used for signing, sometimes not even opening the token works.
+            As a rule of thumb, if it works with keytool/jarsigner, then it should work with KSE as well. Please avoid
+            opening bug reports about device xy not working in KSE. It's only a bug if it works in keytool/jarsigner
+            but not in KSE.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_openpkcs11.png" class="img-responsive align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release52/rel52_pkcs11.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">New Feature: Timestamping Jar Signatures</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE can now generate and store a signature timestamp when signing a JAR file. All you have to do is select
+            the option "Add Timestamp" in the sign jar dialog and choose a <b>Time Stamping Authority (TSA)</b> from a list
+            (or enter the URL of another TSA).
+        </p>
+        <p>
+            The following URLs of TSAs are pre-defined:
+            <ul>
+                <li>https://timestamp.geotrust.com/tsa</li>
+                <li>http://tsa.starfieldtech.com</li>
+                <li>http://www.startssl.com/timestamp</li>
+                <li>http://timestamp.globalsign.com/scripts/timstamp.dll</li>
+                <li>http://timestamp.comodoca.com/rfc3161</li>
+            </ul>
+        </p>
+        <p>
+            KSE communicates with the TSA using the Time-Stamp Protocol (TSP) defined in <b>RFC 3161</b>. The timestamp token
+            returned by the TSA is stored along with the signature in the signature block file.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_timestamp.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Improved Extension Viewer</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>The certificate extension viewer has been vastly improved. Almost 40 additional extensions are recognized:
+            <ul>
+                <li><b>RFC 3739 QC private extensions</b>: BiometricInfo (1.3.6.1.5.5.7.1.2), QCStatements (1.3.6.1.5.5.7.1.3)</li>
+                <li><b>RFC 2560 private extensions</b>: OCSPNoCheck (1.3.6.1.5.5.7.48.1.5)</li>
+                <li><b>Common PKI 2.0</b>: LiabilityLimitationFlag (0.2.262.1.10.12.0), DateOfCertGen (1.3.36.8.3.1),
+                    Procuration (1.3.36.8.3.2), Admission (1.3.36.8.3.3), MonetaryLimit (1.3.36.8.3.4),
+                    DeclarationOfMajority (1.3.36.8.3.5), ICCSN (1.3.36.8.3.5), Restriction (1.3.36.8.3.8),
+                    AdditionalInformation (1.3.36.8.3.15)</li>
+                <li><b>Microsoft</b>: MSEnrollCerttypeExtension (1.3.6.1.4.1.311.20.2), MSCaVersion (1.3.6.1.4.1.311.21.1),
+                    MSCACertificateHash (1.3.6.1.4.1.311.21.2), MSCRLNextPublish (1.3.6.1.4.1.311.21.4),
+                    MSCertificateTemplate (1.3.6.1.4.1.311.21.7), MSApplicationPolicies (1.3.6.1.4.1.311.21.10)</li>
+                <li><b>RFC 3851</b>: SMIMECapabilities (1.2.840.113549.1.9.15)</li>
+                <li><b>RFC 3709</b>: LogoType (1.3.6.1.5.5.7.1.12)</li>
+                <li><b>CDC (TU Darmstadt)</b>: ValidityModel (1.3.6.1.4.1.8301.3.5)</li>
+                <li><b>SET (Secure Electronic Transaction)</b>: SETHashedRootKey (2.23.42.7.0), SETCertificateType (2.23.42.7.1),
+                    SETMerchantData (2.23.42.7.2), SETCardCertRequired (2.23.42.7.3), SETTunneling (2.23.42.7.4),
+                    SETSetExtensions (2.23.42.7.5), SETSetQualifier (2.23.42.7.6)</li>
+                <li><b>VeriSign</b>: VeriSignCZAG (2.16.840.1.113733.1.6.3), VeriSignNonVerified (2.16.840.1.113733.1.6.4),
+                    VeriSignFidelityToken (2.16.840.1.113733.1.6.5), VeriSignInBoxV1 (2.16.840.1.113733.1.6.6),
+                    VeriSignSerialNumberRollover (2.16.840.1.113733.1.6.7), VeriSignTokenType (2.16.840.1.113733.1.6.8),
+                    VeriSignNetscapeInBoxV2 (2.16.840.1.113733.1.6.10), VeriSignOnSiteJurisdictionHash (2.16.840.1.113733.1.6.11),
+                    VeriSignUnknown (2.16.840.1.113733.1.6.13), VeriSignDnbDunsNumber (2.16.840.1.113733.1.6.15)</li>
+            </ul>
+        </p>
+        <p>The following <b>additional extended key usages</b> (EKUs) are now recognized as well:
+            <ul>
+                <li>DocumentSigningExtKeyUsage (1.3.6.1.4.1.311.10.3.12)</li>
+                <li>AdobePDFSigningExtKeyUsage (1.2.840.113583.1.1.5)</li>
+                <li>EncryptedFileSystemExtKeyUsage (1.3.6.1.4.1.311.10.3.4)</li>
+                <li>SmartcardLogonExtKeyUsage (1.3.6.1.4.1.311.20.2.2)</li>
+                <li>AnyExtendedKeyUsageExtKeyUsage (2.5.29.37.0)</li>
+                <li>MicrosoftSGCExtKeyUsage (1.3.6.1.4.1.311.10.3.3)</li>
+                <li>NetscapeSGCExtKeyUsage (2.16.840.1.113730.4.1)</li>
+                <li>VeriSignSGCExtKeyUsage (2.16.840.1.113733.1.8.1)</li>
+            </ul>
+        </p>
+        <p>
+            URLs in extensions (like CDP or CPS) are now clickable. Linked certificates or CRLs are shown right in KSE.
+            Other URLs are opened in the browser.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_extensionviewer.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Additional ExtendedKeyUsage Types for Certificate Generation</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Five additional types can now be added to the ExtendedKeyUsage (EKU) extension.
+        </p>
+        <p>
+            These are:
+        </p>
+        <table class="table table-striped">
+            <tr>
+                <th>Name</th>
+                <th>OID</th>
+            </tr>
+            <tr class="plain_odd">
+                <td>DocumentSigningExtKeyUsage</td>
+                <td>1.3.6.1.4.1.311.10.3.12</td>
+            </tr>
+            <tr class="plain_even">
+                <td>AdobePDFSigningExtKeyUsage</td>
+                <td>1.2.840.113583.1.1.5</td>
+            </tr>
+            <tr class="plain_odd">
+                <td>EncryptedFileSystemExtKeyUsage</td>
+                <td>1.3.6.1.4.1.311.10.3.4</td>
+            </tr>
+            <tr class="plain_even">
+                <td>SmartcardLogonExtKeyUsage</td>
+                <td>1.3.6.1.4.1.311.20.2.2</td>
+            </tr>
+            <tr class="plain_odd">
+                <td>AnyExtendedKeyUsageExtKeyUsage</td>
+                <td>2.5.29.37.0</td>
+            </tr>
+        </table>
+        <p>
+            This is a user contribution by Uri Blumenthal.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_EKUs.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Examine File</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The three previously separate features "Examine Certificate", "Examine CSR" and "Examine CRL" have been
+            combined into "Examine File". KSE detects the content of the file and opens it if it is certificate,
+            a CSR, a CRL or a keystore.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_examinefile.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">System Clipboard Integration</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Sometimes you have a PEM encoded certificate or CSR in a mail, on a website or in a larger text document
+            and want to see the content. Normally this means to copy the lines into a new text file, save it somewhere
+            on the hard disk and then open the file with KSE or another certificate viewer. It would be so much easier
+            to directly open the certificate from the clipboard. That's what "Examine Clipboard" does.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_examineclipboard.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            If you have transmitted a CSR and the CA shows the issued certificate in PEM format on its website or sends
+            it in PEM format in an email, then you can simply copy it and use the new "Import CA reply from Clipboard"
+            feature.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_importcareply.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">New Option: Use System Proxy Settings</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            In previous versions of KSE it was necessary to enter the proxy configuration manually. KSE 5.2 can now
+            detect and use the proxy settings of the operating system, which should work in most cases.
+        </p>
+        <p>
+            This is the new default setting.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_systemproxy.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">New Look&amp;Feel: Darcula</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Darcula is the nice dark L&amp;F of IntelliJ IDEA. It has been made available by the developer as a separate <a href="https://github.com/bulenkov/Darcula">project on GitHub</a>.
+        </p>
+        <p>
+            Unfortunately it is an older version, which is not suited for high DPI displays. If you have one of those,
+            it might help to add a comment <a href="https://github.com/bulenkov/Darcula/issues/10">here</a>.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_darcula.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">French Translation</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The first translation of KSE was contributed by Davy Defaud.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release52/rel52_french.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Other Enhancements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <ul>
+            <li>Switched to Oracle's PKCS#12 Implementation because it is more reliable and fits better in the keystore
+                model. This fixes several bugs. The key passwords, which were previously hidden because they are
+                set to the same value as they keystore password, are now unveiled.</li>
+            <li>Added automatic update check</li>
+            <li>Added IPv6 addresses for SubjAltName (contributed by Chris Ridd)</li>
+            <li>Support viewing of non-CRT RSA private key fields (contributed by Chris Kistner)</li>
+            <li>Added otherName UPN as an option for SubjectAlternativeName extension</li>
+            <li>Native file dialogs where JavaFX is available (usually Java 8 and higher)</li>
+            <li>Installing the JCE Unlimited Crypto Strength policy is no longer necessary (contributed by Kevin Herron)</li>
+            <li>Added retry on password error</li>
+            <li>KSE now opens certificates, CRLs and CSRs that were passed as command line parameters</li>
+            <li>Default LaF for Linux is now GTK+ (if available)</li>
+            <li>Localized date format</li>
+            <li>Trying default password ('changeit') first now when opening cacerts (before asking the user)</li>
+            <li>Added bigger application icons (256x256 and 512x512) to the ZIP package</li>
+            <li>Added credits button to about dialog; moved system infos to help menu</li>
+            <li>Preferences node moved to /org/kse</li>
+            <li>Added check for existence of configured cacerts file</li>
+            <li>Added a SPEC file to the sources to build an RPM (contributed by Davy Defaud)</li>
+            <li>Accepting the license is no longer required to install/run KSE</li>
+            <li>Path for GenerateCSR file name suggestion is now generated from keystore path</li>
+            <li>New default setting for both trust checks (import CA reply and import trusted cert) is false</li>
+        </ul>
+    </div>
+</div>
+
+<h2 class="h3">Bug Fixes</h2>
+<div class="row">
+    <div class="col-md-6">
+        <ul>
+            <li>Fixed problems with SNI (Examine SSL)</li>
+            <li>Fixed Authority Key Identity extension (contributed by Filip Jirsák)</li>
+            <li>Fixed application name in Gnome 3 top bar</li>
+            <li>Fixed some issues with high DPI displays</li>
+            <li>Fixed bugs in GeneralNames editor (reported by devdas77)</li>
+            <li>Fixed secret (symmetric) keys not being available for BKS-V1</li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Older Release Notes</h1>
+</div>
+<p>
+    <a href="release51.html">KeyStore Explorer Release 5.1.0 and 5.1.1</a>
+</p>
+<p>
+    <a href="release50.html">KeyStore Explorer Release 5.0.0 and 5.0.1</a>
+</p>
+</Layout>

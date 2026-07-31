@@ -1,0 +1,50 @@
+---
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+<head>
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const theme = stored === 'light' || stored === 'dark'
+          ? stored
+          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-bs-theme', theme);
+      })();
+    </script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="KeyStore Explorer is an open source GUI replacement for the Java command-line utilities keytool and jarsigner. KeyStore Explorer presents their functionality, and more, via an intuitive graphical user interface.">
+    <meta name="keywords" content="KeyStore Explorer, kse, Java, keystore, keytool, GUI" />
+    <meta name="author" content="Kai Kramer">
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+
+    <title>{title || 'KeyStore Explorer'}</title>
+
+    <link rel="stylesheet" href="/css/kse.css">
+</head>
+
+<script>
+import 'bootstrap';
+import tocbot from 'tocbot';
+
+if (document.querySelector('nav#toc')) {
+  tocbot.init({
+    tocSelector: 'nav#toc',
+    contentSelector: 'body',
+    headingSelector: 'h2, h3',
+    ignoreSelector: '[data-toc-skip]',
+    orderedList: false,
+    listClass: 'nav navbar-nav',
+    linkClass: 'nav-link',
+    activeLinkClass: 'active',
+    listItemClass: 'nav-item',
+    scrollSmooth: false,
+  });
+}
+</script>

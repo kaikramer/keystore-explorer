@@ -1,0 +1,323 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - Trusted Certificates" version="5.4" editPath="src/pages/doc/5.4/trustedCertificates.astro">
+
+<h1>Trusted Certificates</h1>
+<hr />
+
+A Trusted Certificate contains a single certificate. Trusted Certificate entries
+are represented in KeyStore Explorer by the following icon: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/trustcert_entry.png" />
+
+<p>
+    Trusted Certificates are used to form chains of trust during operations such
+    as <a href="keyPairs.html#import-a-ca-reply">importing a CA Reply</a>.
+</p>
+
+<h2 id="import-a-trusted-certificate">Import a Trusted Certificate</h2>
+<hr />
+
+To import a Trusted Certificate:
+
+<ol>
+    <li>
+        From the <b>Tools</b> menu, choose <b>Import Trusted Certificate</b>.
+        Alternatively click on the <b>Import Trusted Certificate</b> tool bar
+        button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/importcert.png" />
+    </li>
+
+
+    <li>The <b>Import Trusted Certificate</b> dialog will appear.</li>
+
+
+    <li>Select the drive and folder where the certificate file is stored.</li>
+
+
+    <li>
+        Click on the required certificate file or type the filename into the <b>File Name</b> text box.
+    </li>
+
+
+    <li>Click on the <b>Import</b> button.</li>
+
+
+    <li>
+        If the <a href="preferences.html#trust-checks-configuration">Import Trusted Certificate Trust Check</a> is enabled and KeyStore Explorer cannot establish a trust path from the
+        certificate in the file to an existing self-signed Trusted Certificate in
+        your KeyStore or the <a href="preferences.html#authority-certificates-configuration">Authority Certificates</a>:
+
+
+        <ol>
+            <li>The <b>Certificate Details</b> dialog will be displayed.</li>
+
+
+            <li>
+                After viewing the details close the dialog by pressing the <b>OK</b> button.
+            </li>
+
+
+            <li>
+                A further dialog will appear asking if you wish accept the certificate.
+            </li>
+
+
+            <li>
+                Press the <b>Yes</b> button if you wish to trust the certificate and
+                import it and <b>No</b> if you do not. If you answer <b>No</b> the
+                import will abort.
+            </li>
+        </ol>
+    </li>
+
+    <li>The <b>Trusted Certificate Alias</b> dialog will appear.</li>
+
+
+    <li>Enter the alias of the new Trusted Certificate and press <b>OK</b>.</li>
+
+
+    <li>
+        The new Trusted Certificate entry will appear in the KeyStore Entries table
+        with the chosen alias.
+    </li>
+</ol>
+
+<h2 id="view-a-trusted-certificate">View a Trusted Certificate</h2>
+<hr />
+
+To view a Trusted Certificate:
+
+<ol>
+    <li>
+        Right-click on the Trusted Certificate entry in the KeyStore Entries table.
+        Select the <b>View Details</b> sub-menu from the pop-up menu and from there
+        choose <b>Certificate Details</b>. Alternatively, double-click the Trusted
+        Certificate entry.
+    </li>
+
+
+    <li>
+        The <b>Certificate Details</b> dialog will appear. After viewing the details
+        close the dialog by pressing the <b>OK</b> button.
+    </li>
+</ol>
+
+<h2 id="view-a-trusted-certificate-s-public-key">View a Trusted Certificate's Public Key</h2>
+<hr />
+
+To view a Trusted Certificate's public key:
+
+<ol>
+    <li>
+        Right-click on the Trusted Certificate entry in the KeyStore Entries table.
+        Select the <b>View Details</b> sub-menu from the pop-up menu and from there
+        choose <b>Public Key Details</b>.
+    </li>
+
+
+    <li>
+        The <b>Public Key Details</b> dialog will appear. After viewing the details
+        close the dialog by pressing the <b>OK</b> button.
+    </li>
+</ol>
+
+<h2 id="export-a-trusted-certificate">Export a Trusted Certificate</h2>
+<hr />
+
+To export a Trusted Certificate:
+
+<ol>
+    <li>
+        Right-click on the Trusted Certificate entry in the KeyStore Entries table.
+        Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Certificate</b>.
+    </li>
+
+
+    <li>The <b>Export Certificate</b> dialog is displayed.</li>
+
+
+    <li>Select an <b>Export Format</b>. The options available are:</li>
+
+    <ul>
+        <li><b>X.509</b> ITU-T standard for public key infrastructure.</li>
+        <li><b>PKCS #7</b> RSA public key cryptography standard.</li>
+        <li><b>PKI Path</b> Certification path.</li>
+        <li>
+            <b>SPC</b> Software Publisher Certificate, Microsoft's certificate format.
+        </li>
+    </ul>
+
+    <li>
+        Check the <b>PEM</b> checkbox if the exported certificate is to be PEM
+        encoded. PEM encoding is not available for <b>PKI Path</b> and <b>SPC</b> format exports.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h2 id="drag-export-a-trusted-certificate">Drag Export a Trusted Certificate</h2>
+<hr />
+
+To drag export a Trusted Certificate:
+
+<ol>
+    <li>
+        Select the Trusted Certificate entry for dragging by pressing and holding
+        the left mouse button over it in the KeyStore entries table.
+    </li>
+
+
+    <li>
+        Use the mouse to drag the entry to the desired export location. For example:
+        the desktop, a folder or an open text document.
+    </li>
+
+
+    <li>Release the left mouse button over the export location.</li>
+
+
+    <li>The entry will be exported. The export format is <b>X.509 PEM</b>.</li>
+</ol>
+
+<h2 id="export-a-trusted-certificate-s-public-key-as-openssl">Export a Trusted Certificate's Public Key as OpenSSL</h2>
+<hr />
+
+To export a Trusted Certificate's public key as OpenSSL:
+
+<ol>
+    <li>
+        Right-click on the Trusted Certificate entry in the KeyStore Entries table.
+        Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Public Key</b>.
+    </li>
+
+
+    <li>The <b>Export Public Key as OpenSSL</b> dialog is displayed.</li>
+
+
+    <li>
+        Check the <b>PEM</b> checkbox if the exported public key is to be PEM
+        encoded.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h2 id="cut-and-paste-a-trusted-certificate">Cut and Paste a Trusted Certificate</h2>
+<hr />
+
+To cut and paste a Trusted Certificate:
+
+<ol>
+    <li>Click on the Trusted Certificate entry to select it.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Cut</b>. Alternatively click on the <b>Cut</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/cut.png" />
+    </li>
+
+
+    <li>Select the target KeyStore by clicking on its tab.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Paste</b>. Alternatively click on the <b>Paste</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/paste.png" />
+    </li>
+
+
+    <li>
+        The Trusted Certificate entry will appear in the target KeyStore Entries
+        table.
+    </li>
+</ol>
+
+<p>
+    <b>Note:</b> KeyStore Explorer has an internal clipboard for cut, copy and paste
+    operations called the <b>buffer</b>. Therefore KeyStore entries cannot be cut or
+    copied from KeyStore Explorer to other applications and vice versa.
+</p>
+
+
+<h2 id="copy-and-paste-a-trusted-certificate">Copy and Paste a Trusted Certificate</h2>
+<hr />
+
+To copy and paste a Trusted Certificate:
+
+<ol>
+    <li>Click on the Trusted Certificate entry to select it.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Copy</b>. Alternatively click on the <b>Copy</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/copy.png" />
+    </li>
+
+
+    <li>If copying to a different KeyStore select it by clicking on its tab.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Paste</b>. Alternatively click on the <b>Paste</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/paste.png" />
+    </li>
+
+
+    <li>
+        A copy of the Trusted Certificate entry will appear in the target KeyStore
+        Entries table.
+    </li>
+</ol>
+
+<p>
+    <b>Note:</b> KeyStore Explorer has an internal clipboard for cut, copy and paste
+    operations called the <b>buffer</b>. Therefore KeyStore entries cannot be cut or
+    copied from KeyStore Explorer to other applications and vice versa.
+</p>
+
+<h2 id="delete-a-trusted-certificate">Delete a Trusted Certificate</h2>
+<hr />
+
+To delete a Trusted Certificate:
+
+<ol>
+    <li>
+        Right-click on the Trusted Certificate entry in the KeyStore Entries table.
+        Select <b>Delete</b> from the pop-up menu.
+    </li>
+
+
+    <li>
+        The Trusted Certificate entry will disappear from the KeyStore Entries
+        table.
+    </li>
+</ol>
+
+<h2 id="rename-a-trusted-certificate">Rename a Trusted Certificate</h2>
+<hr />
+
+To rename a Trusted Certificate:
+
+<ol>
+    <li>
+        Right-click on the Trusted Certificate entry in the KeyStore Entries table.
+        Select <b>Rename</b> from the pop-up menu.
+    </li>
+
+
+    <li>The <b>New Entry Alias</b> dialog will appear.</li>
+
+
+    <li>
+        Enter the new alias into the dialog and click on the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        The Trusted Certificate entry will be renamed in the KeyStore Entries table.
+    </li>
+</ol>
+</Layout>

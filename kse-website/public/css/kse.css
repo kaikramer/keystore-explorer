@@ -1,0 +1,330 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+}
+
+/* Bootstrap 5 bumps every container class (incl. container-xl) to 1320px at
+   the new xxl breakpoint (>=1400px); keep the old Bootstrap 4 cap of 1140px.
+   Selector is more specific than Bootstrap's single-class rule so it wins
+   regardless of CSS injection order (bootstrap.css loads after this file
+   in dev but the two are same-specificity, so order isn't guaranteed). */
+@media (min-width: 1400px) {
+  body .container {
+    max-width: 1140px;
+  }
+}
+
+/* body content links: Bootstrap's default (#0d6efd, always underlined)
+   reads as generic next to the accent blue already used for the TOC
+   sidebar hover state. Reuse a similar blue here and drop the underline
+   until hover/focus, matching the rest of the site's link styling.
+   #0088cc is Bootstrap 2's old default link color — lighter/brighter
+   than #0056b3, which read too close to body text at a glance.
+   Scoped to [role="main"] (where all page content lives, but the navbar
+   does not) rather than a bare `a` selector: a bare `a` ties Bootstrap's
+   own same-specificity `a` rule (order-dependent, see comment above) and
+   also out-specifies single-class component selectors like `.nav-link`
+   once combined with `:not()`, which would repaint the navbar too.
+   `:not(.btn)` excludes the one anchor-as-button in page content (the
+   Download CTA on the homepage) so it keeps its Bootstrap button style. */
+[role="main"] a:not(.btn) {
+  color: #0088cc;
+  text-decoration: none;
+}
+[role="main"] a:not(.btn):hover,
+[role="main"] a:not(.btn):focus-visible {
+  text-decoration: underline;
+}
+[data-bs-theme="dark"] [role="main"] a:not(.btn) {
+  color: #6ea8fe;
+}
+
+/* theme toggle button */
+[data-bs-theme="light"] #theme-toggle .theme-icon-dark,
+[data-bs-theme="dark"] #theme-toggle .theme-icon-light {
+  display: none;
+}
+
+/* #theme-toggle id selector needed to outrank Bootstrap's same-specificity
+   .btn color rule, since bootstrap.css can load after this file in dev */
+#theme-toggle.theme-toggle-btn {
+  color: rgba(255, 255, 255, 0.75);
+  border: none;
+}
+#theme-toggle.theme-toggle-btn:hover,
+#theme-toggle.theme-toggle-btn:focus {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* navbar search box + live results dropdown */
+.nav-search {
+  position: relative;
+  margin: 0 0.5rem;
+}
+
+.nav-search form {
+  position: relative;
+  align-items: center;
+}
+
+.nav-search-icon {
+  position: absolute;
+  left: 0.5rem;
+  color: #adb5bd;
+  pointer-events: none;
+}
+
+.nav-search input#nav-search-input {
+  width: 180px;
+  padding-left: 1.75rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+.nav-search input#nav-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.nav-search input#nav-search-input:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  box-shadow: none;
+}
+
+.nav-search-results {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  width: 340px;
+  max-width: 90vw;
+  max-height: 60vh;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+  z-index: 1050;
+}
+[data-bs-theme="dark"] .nav-search-results {
+  background-color: #212529;
+  border-color: #495057;
+}
+
+.nav-search-message {
+  padding: 0.75rem 1rem;
+  color: #6c757d;
+}
+
+.nav-search-result {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid #f1f1f1;
+}
+[data-bs-theme="dark"] .nav-search-result {
+  border-bottom-color: #343a40;
+}
+.nav-search-result:hover,
+.nav-search-result:focus {
+  background-color: #f8f9fa;
+}
+[data-bs-theme="dark"] .nav-search-result:hover,
+[data-bs-theme="dark"] .nav-search-result:focus {
+  background-color: #2b3035;
+}
+
+.nav-search-result-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.nav-search-result-excerpt {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+.nav-search-result-excerpt mark {
+  background-color: #ffd43b;
+  color: #402b00;
+  border-radius: 2px;
+  padding: 0 0.15em;
+}
+
+.nav-search-view-all {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.nav-search-view-all:hover,
+.nav-search-view-all:focus {
+  background-color: #f8f9fa;
+}
+[data-bs-theme="dark"] .nav-search-view-all:hover,
+[data-bs-theme="dark"] .nav-search-view-all:focus {
+  background-color: #2b3035;
+}
+
+@media (max-width: 991.98px) {
+  .nav-search {
+    margin: 0.5rem 0;
+  }
+  .nav-search input#nav-search-input,
+  .nav-search input#nav-search-input:focus {
+    width: 100%;
+  }
+  .nav-search-results {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* keyboard element */
+/* scoped to [data-bs-theme="light"] (not bare `kbd`) so this reliably
+   outranks Bootstrap's own same-specificity kbd rule, which inverts to a
+   solid dark badge and otherwise wins whenever bootstrap.css happens to
+   load after this file (it's bundled after kse.css in the production
+   build) */
+[data-bs-theme="light"] kbd {
+  background-color: #eee;
+  border-radius: 3px;
+  border: 1px solid #b4b4b4;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.2),
+    0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+  color: #333;
+  display: inline-block;
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+[data-bs-theme="dark"] kbd {
+  background-color: #2b2f33;
+  border-color: #555;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.4),
+    0 2px 0 0 rgba(255, 255, 255, 0.05) inset;
+  color: #eee;
+}
+
+/* page-header from bootstrap 3 */
+.page-header {
+  padding-bottom: 9px;
+  margin: 40px 0 20px;
+  border-bottom: 1px solid #eee;
+}
+
+[data-bs-theme="dark"] .page-header {
+  border-bottom-color: #444;
+}
+
+/* TOC sidebar navigation */
+
+nav#toc .nav > li > a {
+  display: block;
+  padding: 4px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #767676;
+}
+nav#toc .nav > li > a:hover,
+nav#toc .nav > li > a:focus {
+  padding-left: 19px;
+  text-decoration: none;
+  color: #0056b3;
+  background-color: transparent;
+  border-left: 1px solid #0056b3;
+}
+nav#toc .nav-link.active,
+nav#toc .nav-link.active:hover,
+nav#toc .nav-link.active:focus {
+  padding-left: 18px;
+  font-weight: bold;
+  color: #0056b3;
+  background-color: transparent;
+  border-left: 2px solid #0056b3;
+}
+
+[data-bs-theme="dark"] nav#toc .nav > li > a {
+  color: #adb5bd;
+}
+[data-bs-theme="dark"] nav#toc .nav > li > a:hover,
+[data-bs-theme="dark"] nav#toc .nav > li > a:focus {
+  color: #6ea8fe;
+  border-left-color: #6ea8fe;
+}
+[data-bs-theme="dark"] nav#toc .nav-link.active,
+[data-bs-theme="dark"] nav#toc .nav-link.active:hover,
+[data-bs-theme="dark"] nav#toc .nav-link.active:focus {
+  color: #6ea8fe;
+  border-left-color: #6ea8fe;
+}
+
+nav#toc .nav .nav > li > a {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 30px;
+  font-size: 13px;
+  font-weight: normal;
+}
+nav#toc .nav .nav > li > a:hover,
+nav#toc .nav .nav > li > a:focus {
+  padding-left: 29px;
+}
+nav#toc .nav .nav > li > .active,
+nav#toc .nav .nav > li > .active:hover,
+nav#toc .nav .nav > li > .active:focus {
+  padding-left: 28px;
+  font-weight: 500;
+}
+
+nav#toc .nav-link.active + ul {
+  display: block;
+}
+
+nav#toc {
+  top: 42px;
+}
+
+/* small screens */
+@media (max-width: 768px) {
+  /* override stickyness so that the navigation does not follow scrolling */
+  nav#toc {
+    margin-bottom: 42px;
+    position: static;
+  }
+
+  /* PICK ONE */
+  /* don't expand nested items, which pushes down the rest of the page when navigating */
+  nav#toc .nav .active .nav {
+    display: none;
+  }
+  /* alternatively, if you *do* want the second-level navigation to be shown (as seen on this page on mobile), use this */
+  /*
+  nav[data-toggle='toc'] .nav .nav {
+    display: block;
+  }
+  */
+}
+
+/* Pagefind search UI (see /search page): re-theme its CSS custom properties
+   to follow the site's light/dark toggle instead of the browser's
+   prefers-color-scheme, which is what Pagefind's own stylesheet reacts to
+   by default. */
+[data-bs-theme="dark"] .pagefind-ui {
+  --pagefind-ui-primary: #7db8ff;
+  --pagefind-ui-text: #dee2e6;
+  --pagefind-ui-background: #212529;
+  --pagefind-ui-border: #495057;
+  --pagefind-ui-tag: #343a40;
+}

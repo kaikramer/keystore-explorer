@@ -1,0 +1,237 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - Secret Keys" version="5.5" editPath="src/pages/doc/5.5/keys.astro">
+
+<h1>Secret Keys</h1>
+<hr />
+
+A Secret Key entry contains a single symmetric cryptographic key. Key entries are represented
+in KeyStore Explorer by the following icon: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/key_entry.png" />
+<p>
+  Key entries are protected by a password. In KeyStore Explorer such entries are
+  described as being <b>locked</b> and have a closed padlock displayed against
+  them: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/locked_entry.png" />
+</p>
+<p>
+  To access the key the entry must be <b>unlocked</b> by supplying the correct password. If an entry is successfully unlocked then
+  an open padlock is displayed against it: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/unlocked_entry.png" />
+</p>
+<p>
+  If a Key Pair entry is unlocked once during a KeyStore Explorer session it
+  does not need to be unlocked again. A Key Pair entry may be unlocked
+  explicitly or as part of an operation that requires the private key.
+</p>
+<p>
+  As key entries do not contain any certificates no value is shown for them in
+  the <b>Certificate Expiry</b> column of the KeyStore table.
+</p>
+
+<h2 id="unlock-a-key">Unlock a Key</h2>
+<hr />
+
+To unlock a Key:
+
+<ol>
+  <li>
+    Right-click on the Key entry in the KeyStore Entries table. Select <b>Unlock</b> from the pop-up menu.
+  </li>
+
+
+  <li>
+    The <b>Unlock Entry</b> dialog will be displayed. Enter the Key Pair entry's
+    password and press the <b>OK</b> button.
+  </li>
+
+
+  <li>
+    The Key entry's lock status will be changed to unlocked in the KeyStore
+    Entries table.
+  </li>
+</ol>
+
+<h2 id="view-a-key-s-details">View a Key's Details</h2>
+<hr />
+
+To view a Key's details:
+
+<ol>
+  <li>
+    Right-click on the Key entry in the KeyStore Entries table. Choose <b>Key Details</b>.
+  </li>
+
+
+  <li>
+    If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+    entry's password and press the <b>OK</b> button.
+  </li>
+
+
+  <li>
+    The <b>Key Details</b> dialog will appear. After viewing the details close
+    the dialog by pressing the <b>OK</b> button.
+  </li>
+</ol>
+
+<h2 id="set-a-key-s-password">Set a Key's Password</h2>
+<hr />
+
+To set a Key entry's password:
+
+<ol>
+  <li>
+    Right-click on the Key entry in the KeyStore Entries table. Select <b>Set Password</b> from the pop-up menu.
+  </li>
+
+
+  <li>The <b>Set Key Entry Password</b> dialog will appear.</li>
+
+
+  <li>
+    Complete the dialog's fields with the old password, new password and new
+    password confirmation. If the Key entry is unlocked then the old password
+    field will already be completed.
+  </li>
+
+
+  <li>Press the <b>OK</b> button to confirm the dialog.</li>
+</ol>
+
+<h2 id="delete-a-key">Delete a Key</h2>
+<hr />
+
+To delete a Key:
+
+<ol>
+  <li>
+    Right-click on the Key entry in the KeyStore Entries table. Select <b>Delete</b> from the pop-up menu.
+  </li>
+
+
+  <li>The Key entry will disappear from the KeyStore Entries table.</li>
+</ol>
+
+<h2 id="rename-a-key">Rename a Key</h2>
+<hr />
+
+To rename a Key:
+
+<ol>
+  <li>
+    Right-click on the Key entry in the KeyStore Entries table. Select <b>Rename</b> from the pop-up menu.
+  </li>
+
+
+  <li>
+    If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+    entry's password and press the <b>OK</b> button.
+  </li>
+
+
+  <li>The <b>New Entry Alias</b> dialog will appear.</li>
+
+
+  <li>
+    Enter the new alias into the dialog and acknowledge it by pressing the <b>OK</b> button.
+  </li>
+
+
+  <li>The Key entry will be renamed in the KeyStore Entries table.</li>
+</ol>
+
+<h2 id="cut-and-paste-a-key">Cut and Paste a Key</h2>
+<hr />
+
+To cut and paste a Key:
+
+<ol>
+  <li>Click on the Key entry to select it.</li>
+
+
+  <li>
+    From the <b>Edit</b> menu, choose <b>Cut</b>. Alternatively click on the <b>Cut</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img
+      src="images/cut.png"
+    />
+  </li>
+
+
+  <li>
+    If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+    entry's password and press the <b>OK</b> button.
+  </li>
+
+
+  <li>Select the target KeyStore by clicking on its tab.</li>
+
+
+  <li>
+    From the <b>Edit</b> menu, choose <b>Paste</b>. Alternatively click on the <b>Paste</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img
+      src="images/paste.png"
+    />
+  </li>
+
+
+  <li>
+    The Key entry will appear in the target KeyStore Entries table. The Key
+    entry's password will remain unchanged.
+  </li>
+</ol>
+
+<b>Notes:</b>
+
+<ul>
+  <li>
+    KeyStore Explorer has an internal clipboard for cut, copy and paste
+    operations called the <b>buffer</b>. Therefore KeyStore entries cannot be
+    cut or copied from KeyStore Explorer to other applications and vice versa.
+  </li>
+</ul>
+
+<h2 id="copy-and-paste-a-key">Copy and Paste a Key</h2>
+<hr />
+
+To copy and paste a Key:
+
+<ol>
+  <li>Click on the Key entry to select it.</li>
+
+
+  <li>
+    From the <b>Edit</b> menu, choose <b>Copy</b>. Alternatively click on the <b>Copy</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img
+      src="images/copy.png"
+    />
+  </li>
+
+
+  <li>
+    If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+    entry's password and press the <b>OK</b> button.
+  </li>
+
+
+  <li>If copying to a different KeyStore select it by clicking on its tab.</li>
+
+
+  <li>
+    From the <b>Edit</b> menu, choose <b>Paste</b>. Alternatively click on the <b>Paste</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img
+      src="images/paste.png"
+    />
+  </li>
+
+
+  <li>
+    A copy of the Key entry will appear in the target KeyStore Entries table.
+    The Key entry's password will be the same as the original's.
+  </li>
+</ol>
+
+<b>Notes:</b>
+
+<ul>
+  <li>
+    KeyStore Explorer has an internal clipboard for cut, copy and paste
+    operations called the <b>buffer</b>. Therefore KeyStore entries cannot be
+    cut or copied from KeyStore Explorer to other applications and vice versa.
+  </li>
+</ul>
+</Layout>

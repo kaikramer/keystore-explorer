@@ -1,0 +1,149 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - User Interface Overview" version="5.6" editPath="src/pages/doc/5.6/overview.astro">
+
+<h1>User Interface Overview</h1>
+<hr />
+
+<h2 id="main-window">Main Window</h2>
+
+<p>
+KeyStore Explorer utilizes a Multiple Document Interface (MDI)
+to display and edit <a href="keyStoreManagement.html">KeyStores</a>:
+</p>
+<p>
+<img class="img-fluid" src="images/interface.png">
+</p>
+
+<p>
+The main elements of the interface are described in the following
+sections.
+</p>
+
+<h2 id="menu-bar">Menu Bar</h2>
+
+<img src="images/menubar.png">
+
+<p>
+
+KeyStore files can be created, opened, saved and closed via the <b>File</b> menu.
+</p>
+
+<p>
+
+Operations can be undone and redone, and KeyStore entries can be cut, copied
+or pasted using the <b>Edit</b> menu.
+</p>
+
+<p>
+
+Various options to alter the application's display are available via
+the <b>View</b> menu.
+</p>
+
+<p>
+
+General KeyStore maintenance operations are accessible through
+the <b>Tools</b> menu.  These general operations include the capability
+to examine the content of certificate files, to import trusted
+certificates, to generate Key Pairs and change KeyStore type.
+</p>
+
+<p>
+
+The contents of Certificate and CRL files and TLS/SSL connections
+can be examined through items in the <b>Examine</b> menu.
+</p>
+
+<p>
+
+Help, licensing and various diagnostic dialogs are available via the <b>Help</b> menu.
+</p>
+
+<h2 id="tool-bar">Tool Bar</h2>
+
+<img class="img-fluid" src="images/toolbar.png">
+
+<p>
+
+Many of the operations found in the <b>File</b>, <b>Edit</b>, <b>Tools</b> and <b>Examine</b> menus are also available on the <a href="toolBar.html">tool bar</a>.  In addition, most operations
+also have <a href="keyboardShortcuts.html">keyboard shortcuts</a>.
+</p>
+
+<h2 id="tabs">Tabs</h2>
+
+<img src="images/tabs.png">
+
+<p>
+
+All open KeyStores are displayed in a tabbed interface.  The currently
+active KeyStore is selected by clicking on the appropriate tab.
+</p>
+
+<h2 id="keystore-entries">KeyStore Entries</h2>
+
+<img class="img-fluid" src="images/entries.png">
+
+<p>
+
+The entries contained within the currently active KeyStore are displayed
+as a table with the following columns:
+
+<ul>
+    <li>
+        <img src="images/type_heading.png">&nbsp;Type -
+        &nbsp;<img src="images/trustcert_entry.png"> <a href="trustedCertificates.html">Trusted Certificate</a>,
+        &nbsp;<img src="images/keypair_entry.png"> <a href="keyPairs.html">Key Pair</a> or
+        &nbsp;<img src="images/key_entry.png"> <a href="keys.html">Key</a>.
+    </li>
+    <li>
+        <img src="images/lock_status_heading.png">&nbsp;Lock Status -
+        &nbsp;<img src="images/locked_entry.png"> <b>Locked</b> or
+        &nbsp;<img src="images/unlocked_entry.png"> <b>Unlocked</b> for <a href="keyPairs.html">Key Pair</a> entries.
+    </li>
+    <li>
+        <img src="images/cert_expiry_status_heading.png">&nbsp;Certificate Expiry Status -
+        &nbsp;<img src="images/cert_unexpired_entry.png"> <b>Unexpired</b> or
+        &nbsp;<img src="images/cert_expired_entry.png"> <b>Expired</b> for <a href="trustedCertificates.html">Trusted Certificate</a> and <a href="keyPairs.html">Key Pair</a> entries.
+    </li>
+    <li>
+        Entry Name - entry's alias name.
+    </li>
+    <li>
+        Algorithm - entry's key algorithm.
+    </li>
+    <li>
+        Certificate Expiry - entry's certificate expiry date and time.
+    </li>
+    <li>
+        Last Modified - entry's last modification date and time.
+    </li>
+</ul>
+</p>
+
+<h2 id="entry-menus">Entry Menus</h2>
+
+Operations specific to a KeyStore entry can be accessed by
+right-clicking on the particular entry in the table and selecting
+the required operation from the pop-up menu.  The options
+available in the pop-up menu differ depending on the KeyStore entry
+type.
+
+<p>
+
+For example, <b>Trusted Certificate</b> entries can be examined,
+deleted or renamed.  <b>Key Pair</b> entries can additionally
+have their passwords set, be used to generate CSRs, etc.  <b>Key</b> entries can be deleted.
+</p>
+
+<h2 id="status-bar">Status Bar</h2>
+
+<img src="images/statusbar.png">
+
+<p>
+
+Below the entry table is a status bar displaying the KeyStore's type,
+number of entries and file path.
+</p>
+</Layout>

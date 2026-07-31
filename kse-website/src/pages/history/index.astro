@@ -1,0 +1,700 @@
+---
+import Layout from '../../layouts/History.astro';
+---
+<Layout title="KeyStore Explorer - History" editPath="src/pages/history/index.astro">
+
+<h1>History</h1>
+<hr />
+
+<div class="alert alert-info d-flex align-items-center" role="alert">
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" class="flex-shrink-0 me-2" role="img" aria-label="Info:">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+</svg>
+<div>
+Since Wayne Grant's blog pages are no longer publicly available, the blog entries about the history of KeyStore Explorer have been copied here.
+</div>
+</div>
+
+<h2 id="a-history-of-keystore-explorer-part-one-2011-12-22">A History of KeyStore Explorer – Part One (2011-12-22)</h2>
+
+<p>
+KeyStore Explorer (KSE) has existed, in one form or another, since
+2002. These days it is a freeware offering but it has not always been
+that way. KSE started as an open source project before morphing into a
+commercial project. It is only relatively recently that it was
+re-licensed to be free for all to use once again. As the utility is now
+almost ten years old I feel it is a good time to write a potted history
+of KSE.
+</p>
+
+<h3 id="inception">Inception</h3>
+<p>
+Back in mid-2001 I was a relatively green programmer with only four
+years of industry experience, mostly in C/C++ and RDBMS. I had just
+joined an ISV in Glasgow to cross-train as a Java developer. Many things
+interested me about the language notably its simplicity when compared to
+C++, the principle of Write Once Run Anywhere (WORA) and the
+cross-platform GUI toolkit: Swing.
+</p>
+<p>
+(WORA and Swing are much maligned but not by me. If you put in the
+effort into each you can reap the benefits. I may dip into these topics
+in later postings).
+</p>
+<p>
+All was well in my world. My employer looked to be going places, the
+fallout from the Dot Com bubble hadn’t yet bitten and I was working with
+interesting technology. However, to get the full benefit of working with
+Java and Swing what I really needed was a side-project, something
+outside of work where I would be free to develop as a chose, free from
+interference. As a bonus it would be great if the side-project was
+something new. The last thing I wanted to do was write yet another text
+editor or world clock, something that had been done a hundred times
+before.
+</p>
+<p>
+It was then, in the course of my day job, that I came across keytool.
+What keytool did intrigued me as I had no previous exposure to
+Cryptography. How it presented itself, on the other hand, with its ugly
+command-line interface provided me with an opportunity. I decided I
+would use Swing to recreate keytool in the form of a friendly GUI. I did
+some research and discovered that nobody had yet written a decent GUI
+alternative for keytool. I had found my side-project.
+</p>
+<p>
+Thanks to the <a href="https://web.archive.org/">Way Back Machine</a> I have been able to retrieve my exact thoughts at the time. Back then I
+wrote on the original tool’s website under the heading of “Why
+Bother”:
+</p>
+
+<blockquote class="px-5 fst-italic">
+<p>
+“As mentioned above Sun already supply keytool with the Java SDK and
+the KeyTool GUI is just a GUI implementation of (approximately) the same
+functionality. So why bother?
+</p>
+<p>
+I found keytool to be a bugger to use with it’s many and various
+options. Command-line tools are, after all, invariably harder to use
+than equivalent GUIs. Secondly keytool forces its users to type in
+keystore and protected entry passwords in the clear on the command-line.
+This, of course, defeats the whole purpose of protecting keys in a
+keystore in the first place! Thirdly I needed a wee project to get me up
+and running using Swing.
+</p>
+So in an attempt to create an alternative to the command-line keytool
+utility (and get some practise with Swing) I’ve put together the KeyTool
+GUI.”
+</blockquote>
+
+<h3 id="keytool-gui">KeyTool GUI</h3>
+<p>
+<img src="/history/images/ktg-17.png" title="KeyTool GUI"
+class="img-fluid float-end ms-3 mb-2" alt="KeyTool GUI 1.7 Image" />
+So KeyTool GUI (KTG) was born with the aim for the application being
+that it not be “a bugger to use”. At first progress was slow as
+everything was new to me. My Java experience was limited, as was my
+exposure to GUI programming and UI design and I knew next to nothing
+about cryptography or PKI. However, it was great fun developing all
+these new skills. My core Java skills improved far more rapidly than
+they would have done through my day job alone. I also greatly improved
+as a UI designer by learning as much as I could from existing
+applications and various publications. However, what turned out to most
+challenging was the world of cryptography and PKI. Fortunately with the
+aid of many books and the Java Cryptography Extensions (JCE) and the
+Bouncy castle JCE provider I was able to progress in this area
+rapidly.
+</p>
+<p>
+Early on I decided to open source my efforts so that others could
+benefit from my work. I settled on the GPL without too much thought. The
+idea of open source was new to me too and it struck me as being the most
+popular license at the time.
+</p>
+<p>
+I worked for a year to produce version 1.0 releasing alpha and beta
+candidates during this time. When released in April 2002 version 1.0 was
+fairly feature rich allowing users to utilise a UI to create, modify and
+save JKS KeyStores. They could also generate RSA and DSA key pairs,
+import trusted certificates, create CSRs, import CA Replies and delete
+and rename KeyStore entries. In other words, the core functionality of
+keytool.
+</p>
+<p>
+Over the next 20 months six more versions were released culminating
+in version 1.7 in January 2004. Many additions were made during this
+time including extending KeyStore support to include the JCEKS, PKCS
+#12, BKS and UBER types, the ability to examine Certificates and CRLs,
+CA Certificates support, PKCS #12 key pair import, a Windows installer
+as well as many usability improvements.
+</p>
+<p>
+By version 1.7 KTG could be described as a complete replacement for
+keytool. However, there was still plenty of room for improvement so I
+planned to release more versions. After all there was no reason to be
+limited to simply imitating what keytool could do. Some of the
+improvements planned included converting the single document interface
+to support multiple files, to extend support to include more crypto
+algorithms and file formats and to create installers for other platforms
+like Mac OSX and Linux.
+</p>
+<p>
+<img src="/history/images/ktg-17-ui.png" title="KeyTool GUI 1.7 UI"
+class="img-fluid float-start me-3 mb-2" alt="KeyTool GUI 1.7 UI Image" />
+Also, despite effort being lavished on making the UI easy to use, it was
+still a bit ugly, especially in the icon department. The icons were
+those provided by Sun’s look and feel guide for Swing and some I had
+cobbled together myself. I had no idea how I could source high quality
+icons but I was determined to improve what was in KTG at the time.
+However, I still like the splash screen that I put together for KTG
+which featured my own set of key ring. In fact I still use the swiss
+army knife featured on the splash screen above.
+</p>
+<p>
+Regardless of its limitations the tool was proving popular with over
+2,000 downloads a month and I received overwhelmingly positive feedback
+from users. This helped spur me to carry on development.
+</p>
+<p>
+In early 2004 I was working on KTG 1.8. Despite this version 1.7
+proved to be the last version of KTG released as 1.8 never saw the light
+of day. I will detail why KTG was abandoned when I continue this history
+in <a href="#a-history-of-keystore-explorer-part-two-2012-02-21">Part
+Two</a>.
+</p>
+
+<h2 id="a-history-of-keystore-explorer-part-two-2012-02-21">A History of KeyStore Explorer – Part Two (2012-02-21)</h2>
+<p>
+KeyStore Explorer (KSE) has existed, in one form or another, since
+2002. These days it is a freeware offering but it has not always been
+that way. KSE started as an open source project before morphing into a
+commercial project. It is only relatively recently that it was
+re-licensed to be free for all to use once again. As the utility is now
+almost ten years old I feel it is a good time to write a potted history
+of KSE.
+</p>
+<p>
+This post continues from <a
+href="#a-history-of-keystore-explorer-part-one-2011-12-22">Part
+One</a>.
+</p>
+<h3 id="money-talks">Money Talks</h3>
+<p>
+This history continues in early 2004. At the time version 1.8 of the
+open source KeyTool GUI (KTG) was under development. Out of the blue I
+received an email from an IT Security company who had a proposition for
+me. The company was interested in integrating KTG into one of their
+products. However, KTG was licensed under the GPL which was not suitable
+for their purposes. Would I consider, for a fee, re-licensing the source
+code to them under their own license?
+</p>
+<p>
+My answer was a maybe and negotiations commenced. This got me
+thinking. If a proper, grown-up company was prepared to pay good money
+for a source code license then perhaps end-users would pay for a
+commercial version of KTG. I decided that they might and started
+planning a new venture to test this out.
+</p>
+<p>
+KTG would have to be forked, closed and re-licensed. I also decided
+to rename it. Firstly because “KeyTool GUI” was a bit of a naff name and
+secondly to reduce confusion when the tool became a paid-for offering.
+The plan was to stop working on the open source KTG and start working on
+the new commercial offering. I settled on the name “KeyStore Explorer”
+and got to work on finalising the features that had originally been
+earmarked for KTG 1.8 (notably unencrypted PKCS #8 private key support).
+I also had to quickly implement runtime license support and a
+time-bombed evaluation mode. Source code obfuscation was also added and
+the code was re-licensed commercially.
+</p>
+<p>
+(At the time I received some criticism for my decision to re-license
+the GPL’d KTG source code. Some people suggested that I couldn’t do
+this. Rather than engage in a debate I left them to their delusions. I
+own the copyright to the code whether it is licensed under the GPL or
+not. As such I can re-license it under another license should I choose.
+In addition my permission is required before any of my GPL code can be
+re-licensed under any other license. I plan to expand on this and the
+many other open source misconceptions I have encountered over the years
+in a future post).
+</p>
+<p>
+I was determined to run the new venture legitimately and therefore
+formed a company: Lazgo Software Ltd. I had never run a business before
+but was looking forward to familiarising myself with the inner workings
+of a real company. I would have to get to grips with taxes, payroll,
+dividends, company accounts, marketing and everything else. It may sound
+perverse but all of this interested me purely because it was all so
+unfamiliar.
+</p>
+<p>
+Next came web hosting, the company website and a simple integration
+with PayPal to enable purchasing. I had to get the hang of PHP and MySQL
+very quickly to accomplish all of this. Early 2004 proved to be a very
+busy time for me as I continued with my full-time employment.
+</p>
+<p>
+Over this time a deal was agreed for a source code license with the
+IT Security company, contracts were exchanged and a tidy sum
+materialized in the Lazgo company bank account. I had an initial
+injection of cash and was ready to release KSE a few weeks later.
+Selling a single source code license was one thing. Would users pay for
+runtime licenses? I really had no idea at the time whether or not anyone
+would be interested in buying a license for KSE.
+</p>
+<h3 id="keystore-explorer">KeyStore Explorer</h3>
+<p>
+<img src="/history/images/kse-20.png" title="KSE 2.0"
+class="img-fluid float-end ms-3" alt="KSE 2.0 Image" /> KSE 2.0 went
+on sale in May 2004. I offered single, five and ten user licenses as
+well as site licenses. Over the next few months I was pleasantly
+surprised to see the sales projections in my business plan smashed. It
+looked like there was a market for KSE after all and I duly got working
+on new features. August and December 2004 saw the release of versions
+2.1 and 2.2 respectively. In these versions many UI improvements made an
+appearance, the Help feature was greatly improved with the introduction
+of Java Help and functionality relating to CSR, JAR and MIDlet signing
+were all added.
+</p>
+<p>
+Providing new features so quickly proved to be a good move when KTG
+was again forked, but not by me. While I worked on KSE I had abandoned
+my open source work on KTG. However, there was nothing to stop others
+from continuing my work. That is, after all, one of the main advantages
+of open source. I suddenly had competition in the form of Portecle. This
+was essentially KTG under a another name and again licensed under the
+GPL. I could also expect the maintainer of Portecle to to start adding
+new features in future releases. I reckoned that I would have to work
+very hard to compete with a free offering. To be competing with my own
+work was odd to say the least.
+</p>
+<p>
+With sales going well I turned to streamlining the e-commerce side of
+the business. Initially I had manually fulfilled sales upon notification
+of purchases from PayPal. This quickly became unsustainable. I moved
+away from PayPal and signed up with a professional web payments service
+with a better integration offering. I carried out work to fully automate
+all aspects of purchasing with license keys and invoices being
+automatically emailed out on purchase. With most of the drudgery of
+sales eliminated I had more time to focus on the product.
+</p>
+<p>
+<img src="/history/images/kse-23.png" title="KSE 2.3"
+class="img-fluid float-start me-3" alt="KSE 2.3 Image" /> Three more
+releases followed between March 2005 and February 2006 taking KSE to
+version 2.5. I focussed on support for new key formats including
+encrypted PKCS #8, and Microsoft’s hideous PVK private key format. I
+also invested time and money in making the product look more
+professional. First impressions are everything and I had to make KSE
+look as slick as possible if I was going to persuade users to part with
+their hard-earned cash. It is my belief that the best application in the
+world will struggle more than it should if it does not look
+professional.
+</p>
+<p>
+To describe KTG’s icons as amateurish is being generous and they were
+still present in KSE up until 2.2. I tackled this by purchasing a
+license for the excellent <a href="https://www.iconexperience.com/">Icon
+Experience</a> icon set and integrated those into version 2.3. I also
+reworked the splash screen and was quite pleased with the results.
+</p>
+<p>
+Besides enjoying the development and creative sides of KSE I really
+thrived on progressing my business skills. During the time KSE was
+available commercially I experimented with different price-points,
+promotions and carried out marketing via Adwords. Everything was a new
+experience to me and that in itself made it all enjoyable.
+</p>
+<h3 id="kse-tng">KSE: TNG</h3>
+<p>
+With the release of KSE 2.5 I decided it was time for some major
+changes in the product. I had basically been piling features onto the
+same old creaky UI that had been created for KTG. There were many areas
+ripe for improvement. At the time the tool sported a single document
+interface which was unacceptable for a modern application. Users could
+not utilise copy/paste or drag and drop in the application either nor
+was there any undo/redo support. Installation options were also lacking
+with only Windows or manual installations available. The application was
+written in Java and worked perfectly well on Mac OS X and Linux so why
+not cater directly to those users? As a commercial application, users
+would expect all of these features and more.
+</p>
+<p>
+<img src="/history/images/kse-30.png" title="KSE 3.0"
+class="img-fluid float-end ms-3" alt="KSE 3.0 Image" /> KSE versions
+3.0 – 3.3 were written and released between March 2006 and November
+2009. I included many new features including a tabbed multiple document
+interface, cut/copy/paste support, drag and drop export, undo/redo, a
+Mac OS X disk image, a Linux/Unix self-extracting install, a new Quick
+Start welcome UI, Tip of the Day, support for many new key and
+certificate formats (PKI Path and SPC certs, Netscape SPKAC CSRs,
+OpenSSL keys), support to edit X.509 extensions and many more
+improvements too numerous to mention here. I also continued to improve
+the look and feel of the application with custom icons commissioned from <a href="http://www.iconaholic.com/">Iconaholic</a> (see the modern KSE
+application and KeyStore icons for examples of their awesome work) and
+continued by obsession with tweaking the splash screen.
+</p>
+<p>
+<img src="/history/images/kse-xp-261.png" title="KSE 2.6.1 UI"
+class="img-fluid float-start me-3" alt="KSE 2.6.1 UI Image" /> For the
+first time KSE felt to me like a grown-up desktop application. In
+addition I was miles ahead of any of the competition in terms of
+features (many open source keytool UIs had sprung up in the intervening
+years). I had invested heavily in terms of my time and reinvested some
+of the profits wisely in terms of icons, third party libraries and the
+many books I had studied over the years on general security, PKI, UI
+design and business. However, it was all worth it. Sales were still good
+and I could now say that I knew how to run a profitable business.
+</p>
+<p>
+Unfortunately by late 2009 a lot of the fun and excitement had
+evaporated. I had greatly enjoyed the experience up until then but was
+growing a little bored with running Lazgo Software. I had streamlined
+all I could but increasingly dreaded my quarterly weekend session with
+the accounts, dealing with the tax man and the plethora of other really
+dull things that are involved in running a business. Running the
+business was not a challenge any more, just a bit boring. Worse still I
+had no idea what direction I could take KSE in. It supported every
+relevant crypto format and was feature rich. It just seemed done to
+me.
+</p>
+<p>
+So the business definitely had to go. When something isn’t fun any
+more it isn’t worth it no matter the money it brings in (when I told
+people this at the time they looked at me like I was nuts, maybe I am).
+I still had to decide what to do with KSE, however. I will detail what
+happened next when I conclude this history in Part Three.
+</p>
+
+<h2 id="a-history-of-keystore-explorer-part-three-2012-05-18">A History of KeyStore Explorer – Part Three (2012-05-18)</h2>
+<p>
+KeyStore Explorer (KSE) has existed, in one form or another, since
+2002. These days it is a freeware offering but it has not always been
+that way. KSE started as an open source project before morphing into a
+commercial project. It is only relatively recently that it was
+re-licensed to be free for all to use once again. As the utility is now
+almost ten years old I feel it is a good time to write a potted history
+of KSE.
+</p>
+<p>
+This post continues from <a
+href="#a-history-of-keystore-explorer-part-two-2012-02-21">Part Two</a> and concludes the history.
+</p>
+<h3 id="kse-freeware">KSE Freeware</h3>
+<p>
+This history continues in late 2009. At the time version 3.4 of the
+commercial KeyStore Explorer (KSE) was under development but I was
+growing bored with it. Managing a business was losing its appeal and I
+was running out of ideas for new features.
+</p>
+<p>
+First of all I resolved to close Lazgo Software as an enterprise so
+that I could reclaim the time it was taking to run it. However, before I
+could do that I would have to cease selling KSE. I was reluctant to go
+back to an open source model so decided to try something different again
+by making KSE freeware. This would allow me to keep the utility
+available to those who had paid for it and make it available to a larger
+audience without giving away my IP. After putting so much effort into
+the code I was reluctant to give it away again.
+</p>
+<p>
+To differentiate the freeware version from the commercial versions I
+gave it a new major version number of 4.0. Despite the version jump the
+only difference between 4.0 and 3.3 was the inclusion of the minor
+features I had already developed for 3.4 and an absence of any licensing
+code. KSE 4.0 was released in April 2010. I started the process of
+killing Lazgo Software Ltd immediately after that.
+</p>
+<p>
+With version 4.0 released I started development of 4.1. I wanted to
+see if I retained any interest in KSE now that I was free of the
+shackles of the business. The focus of 4.1 was to expand the selection
+of signature algorithms to include the various extended length SHA
+variations. This would be tricky as it would require an upgrade of the <a href="https://www.bouncycastle.org/">Bouncy Castle</a> libraries and
+therefore the provision of a mechanism for users to upgrade their JRE’s
+crypto strength. I got some way through the implementation but it took
+many months to get there. Finally I simply ran out of steam. It was time
+to park KSE and come back to a decision on its future at a later
+date.
+</p>
+<p>
+I took a break and dabbled in a few other pet projects instead. The
+most enjoyable was my time spent writing a turn-based zombie strategy
+game, inspired by the classic game <a
+href="https://en.wikipedia.org/wiki/Laser_Squad">Laser Squad</a>, using
+Microsoft C# and XNA. That was great fun although I have never finished
+it. I did a lot of studying and dabbled in mathematics and meteorology.
+It was also during this time that I started blogging on topics including
+my experiences with scrum, agile and amateur meteorology. It was great
+having so much free time again. Nine months passed pleasantly without my
+touching KSE or deciding what to do with it.
+</p>
+<h3 id="blogtastic">Blogtastic</h3>
+<p>
+In September 2011 I picked KSE development back up again. I can’t
+remember why but I just had an urge one morning to start hacking away at
+it again. It was tough getting back into it after so long away.
+Nonetheless I quickly found I was enjoying it again. My enthusiasm for
+KSE was back and I resolved to get 4.1 out the door as soon as
+possible.
+</p>
+<p>
+In the 18 months since 4.0 had been released I had noticed a marked
+increase in the number of downloads KSE was enjoying. It was a
+no-brainer working out why that was happening. An application will be
+more popular if it is free as opposed to paid-for. I reckoned that I may
+be able to leverage the application’s growing user base by combining it
+with my new-found interest in blogging.
+</p>
+<p>
+The idea was to start telling users exactly what I had planned for
+KSE and to publicly invite suggestions for enhancements. Even if I ran
+out of ideas to progress KSE’s feature set a motivated user-base never
+would. In addition I could offer a beta test programme for 4.0 and get
+extra testing from real users. This would be a massive help to me if it
+worked out.
+</p>
+<p>
+Using this blog I posted the development updates, invited users to
+submit enhancements and got a beta test program up and running. The
+reaction from users was pretty awesome. Many people gave up their time
+to test and submit bug reports and many more provided their own ideas to
+improve KSE. I have no doubt that the first beta test programme for 4.1
+led to a better finished product. In addition the backlog of user
+submitted enhancements I am even now working through will continue this
+process of improvement.
+</p>
+<p>
+Buoyed by the feedback I hammered through the remaining features of
+4.1 making a final release available in March 2012. The expanded
+signature algorithm support was the main feature but many smaller
+enhancements were also included.
+</p>
+<p>
+It is now May 2012 so that pretty much brings the history up to date.
+Work on 4.2 has started and is progressing well. Of the enhancements
+that will feature in 4.2 every single one is based on a user suggestion.
+I’m now confident that running out of ideas is no longer going to be an
+issue so I’ll be continuing development of KSE for the foreseeable
+future.
+</p>
+
+<h2 id="new-owner-wanted-for-keystore-explorer-2012-10-18">New Owner Wanted for KeyStore Explorer (2012-10-18)</h2>
+<p>
+Update – <a
+href="#new-owner-found-for-keystore-explorer-2013-07-30">New Owner
+Found</a>.
+</p>
+<blockquote class="px-5 fst-italic">
+<div class="alert alert-success" role="alert">
+“Owner wanted for a ten year old freeware key management application
+that answers to the name KeyStore Explorer. KeyStore Explorer is fun and
+rewarding to maintain, has a clean codebase and comes packed with
+utility. However, this mature application still has a lot of potential
+for a new owner to add useful functionality. KeyStore Explorer’s author
+can no longer take care of it and so KeyStore Explorer requires a new
+home to get the love and attention it deserves.”
+</div>
+</blockquote>
+<p>
+Okay, so KeyStore Explorer (KSE) is not an old dog looking for a
+home. However, it does require help if it is to continue to evolve.
+</p>
+<p>
+Since KSE went freeware it has become increasingly popular. With more
+than 1,500 downloads every month I like to think that it is helping lots
+of folks out. However, it pains me to admit that, after ten years of
+development, I am no longer the best person to look after KSE. this is
+because I no longer have the time to maintain it, far less drive it
+forward.
+</p>
+<p>
+What I do not want is for KSE to die a slow death because I am not
+prepared to let go of the helm. So I am using this blog post as an
+advertisement to attract a new steward for the utility. I am open to
+ideas as to what type of ownership this would entail although open
+sourcing the application seems a logical choice which I am in no way
+opposed to. Continuing the application as a freeware application or
+commercialising it are other (less attractive) options that have
+occurred to me.
+</p>
+<p>
+You may ask why I don’t just open source it myself. Well there are
+two reasons. Reason number one is that open sourcing and simply casting
+the application to the void is not enough to ensure the application’s
+future. I believe that there has to be a defined owner or owners to take
+charge of its direction. Reason number two is that there are a couple of
+impediments that will need to be overcome before the codebase is open
+source compliant. These impediments are not trivial but nor are they, in
+my opinion, insurmountable with the current availability of open source
+alternatives.
+</p>
+<p>
+You may get the impression from the paragraph above that I just want
+to chuck the codebase at a willing participant and walk away. What I
+propose instead is that I provide the successful applicant(s) with the
+following:
+</p>
+<ul>
+<li>The full codebase including the mostly complete, unreleased version
+4.2 features.</li>
+<li>Licenses for all supporting tools and third party libraries.</li>
+<li>Ownership of the existing [Lazgo Software] domain for long term use
+or as a means of redirect to a new home for KSE.</li>
+<li>My ongoing support via email with any questions regarding the
+application and codebase.</li>
+</ul>
+<p>
+All I require, as the original author, is that my name remain
+associated with KSE.
+</p>
+<p>
+If you would like to be the new owner of KSE and think you can do the
+application justice then drop me a line at the Lazgo Software contact
+page. We can talk details and I will endeavour to answer any questions
+you may have. If a deal is struck I will post the outcome on this
+blog.
+</p>
+
+<h2 id="new-owner-found-for-keystore-explorer-2013-07-30">New Owner Found for KeyStore Explorer (2013-07-30)</h2>
+<p>
+In October last year I wrote a <a
+href="#new-owner-wanted-for-keystore-explorer-2012-10-18">post</a> asking for a new owner to take over and open source my neglected
+KeyStore Explorer application. I am pleased to say that someone has
+stepped up to the plate. The individual concerned is an experienced
+developer currently employed in the PKI industry.
+</p>
+<p>
+I have handed the code over to the new owner who has started the
+process of removing the various impediments to open sourcing the
+project. Current expectations are that it could take 1-2 months to
+complete this task but this could change as it is a fairly large job.
+The current choice of OSS license is LGPL – again this could change
+before the OSS release.
+</p>
+<p>
+I will provide more details closer to the OSS conversion work being
+completed.
+</p>
+
+<h2 id="keystore-explorer-oss-update-2013-08-31">KeyStore Explorer – OSS Update (2013-08-31)</h2>
+<p>
+A month ago <a
+href="#new-owner-found-for-keystore-explorer-2013-07-30">I wrote
+about</a> a new owner having been identified for KeyStore Explorer
+(KSE). This post comprises an interim update on the new owner’s progress
+in taking over the application.
+</p>
+<p>
+The new owner has been very busy over the last four weeks and has, in
+a relatively short space of time, removed all impediments to open
+sourcing the code base. This involved replacing a third party ASN.1
+library (which was used extensively by KSE) with calls to Bouncy
+Castle.
+</p>
+<p>
+In addition most of KSE’s icons were sourced from the commercial <a
+href="https://www.iconexperience.com/">Icon Experience</a> set. The new
+owner has replaced these icons with the <a
+href="https://p.yusukekamiyamane.com/">Fugue</a> set created by Yusuke
+Kamiyamane.
+</p>
+<p>
+The new icons give the application a new look:
+</p>
+<figure>
+<img src="/history/images/kse-oss.png" title="KSE OSS"
+class="img-fluid d-block mx-auto" alt="KSE OSS Image" />
+</figure>
+<p>
+We have have also settled on an OSS license we are both comfortable
+with: GPL v3.
+</p>
+<p>
+Upcoming work by the new owner will complete my unfinished work on
+new features for version 4.2 and perhaps add a few more items of
+functionality.
+</p>
+<p>
+There is still a lot of work to be done but I am confident that KSE
+is in good hands.
+</p>
+
+
+<h2 id="keystore-explorer-now-open-source-2013-10-19">KeyStore Explorer Now Open Source (2013-10-19)</h2>
+<p>
+KeyStore Explorer (KSE), in its various guises, is a PKI desktop
+application project I have worked solo on since 2001. While it started
+as open source software it has been a closed project for most of the
+subsequent time. For the last year development has stalled due to a lack
+of motivation on my part. My concern has been that my lack of activity
+would lead to the whole project dying.
+</p>
+<p>
+I am therefore happy to report that KSE is now officially open source
+software. The new owner <a href="https://github.com/kaikramer">Kai
+Kramer</a> answered my <a
+href="#new-owner-wanted-for-keystore-explorer-2012-10-18">call to
+arms</a> and has been busy since late July remediating all of the
+impediments to open sourcing the application, completing the features I
+had slated for version 4.2 and adding extra functionality. The result is <strong>KSE 5.0</strong> which is licensed under <strong>GPL Version
+3</strong>.
+</p>
+<p>
+The old KSE website […] has been decomissioned and now redirects to
+KSE’s new home at SourceForge […].
+</p>
+<p>
+Release notes for 5.0 are available <a
+href="https://keystore-explorer.org/release50.html">here</a>. Executable
+downloads for the usual supported platforms are available <a
+href="https://keystore-explorer.org/downloads.html">here</a>. Finally
+the highlight is the availability, for the first time since 2004, of the <a href="https://github.com/kaikramer/keystore-explorer">source
+code</a>.
+</p>
+<p>
+For my own part, I will be stepping back completely from the project
+to let Kai and the community take KSE forward.
+</p>
+
+
+<h2 id="source">Source</h2>
+
+Thanks to the <a href="https://web.archive.org/">Way Back Machine</a>:
+<ul>
+  <li>
+    <a href="https://web.archive.org/web/20250329174303/https://waynedgrant.wordpress.com/2011/12/22/a-history-of-keystore-explorer-part-one/">
+      A History of KeyStore Explorer – Part One
+    </a>
+  </li>
+  <li>
+    <a href="https://web.archive.org/web/20250403072257/https://waynedgrant.wordpress.com/2012/02/21/a-history-of-keystore-explorer-part-two/">
+      A History of KeyStore Explorer – Part Two
+    </a>
+  </li>
+  <li>
+    <a href="https://web.archive.org/web/20250330003024/https://waynedgrant.wordpress.com/2012/05/18/a-history-of-keystore-explorer-part-three/">
+      A History of KeyStore Explorer – Part Three
+    </a>
+  </li>
+  <li>
+    <a href="https://web.archive.org/web/20250401031316/https://waynedgrant.wordpress.com/2012/10/18/new-owner-wanted-for-keystore-explorer/">
+      New Owner Wanted for KeyStore Explorer
+    </a>
+  </li>
+  <li>
+    <a href="https://web.archive.org/web/20220128230943/https://waynedgrant.wordpress.com/2013/07/30/new-owner-found-for-keystore-explorer/">
+      New Owner Found for KeyStore Explorer
+    </a>
+  </li>
+  <li>
+    <a href="https://web.archive.org/web/20250401044326/https://waynedgrant.wordpress.com/2013/08/31/keystore-explorer-oss-update/">
+      KeyStore Explorer – OSS Update
+    </a>
+  </li>
+  <li>
+    <a href="https://web.archive.org/web/20250329184713/https://waynedgrant.wordpress.com/2013/10/19/keystore-explorer-now-open-source/">
+      KeyStore Explorer Now Open Source
+    </a>
+  </li>
+</ul></Layout>

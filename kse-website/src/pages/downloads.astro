@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Download" active="downloads" editPath="src/pages/downloads.astro">
+
+<div class="page-header">
+    <h1>Downloads</h1>
+</div>
+
+<p>
+    Getting up and running with KeyStore Explorer is quick and easy. There are packages for all common operating systems.
+</p>
+
+<h2 class="h3">Latest Release</h2>
+<table class="table table-striped">
+    <tr>
+        <th>Platform</th>
+        <th>File</th>
+        <th>Details</th>
+    </tr>
+    <tr class="plain_odd">
+        <td>Windows</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse-561-setup.exe">kse-561-setup.exe</a></td>
+        <td>
+            Windows installer (InnoSetup), all possible command line parameters (e.g. for silent or non-administrative install) are listed here: <a href="https://jrsoftware.org/ishelp/index.php?topic=setupcmdline">Setup Command Line Parameters</a>. Includes a custom Java runtime.
+        </td>
+    </tr>
+    <tr class="plain_odd">
+        <td>Windows</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse-561-setup-no-jre.exe">kse-561-setup-no-jre.exe</a></td>
+        <td>
+            Same as above, but you have to download and install a Java runtime environment (minimum is Java 17) yourself.
+        </td>
+    </tr>
+    <tr class="plain_even">
+        <td>macOS</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse-561-arm64.dmg">kse-561-arm64.dmg</a></td>
+        <td>
+            Download for Apple Silicon (M1, M2, ...). Double-click the disk image to mount it, then drag KeyStore Explorer to the Applications folder. The application bundle contains a custom Java runtime.
+        </td>
+    </tr>
+    <tr class="plain_even">
+        <td>macOS</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse-561-x64.dmg">kse-561-x64.dmg</a></td>
+        <td>
+            Download for Macs with Intel CPU. Double-click the disk image to mount it, then drag KeyStore Explorer to the Applications folder. The application bundle contains a custom Java runtime.
+        </td>
+    </tr>
+    <tr class="plain_odd">
+        <td>Linux</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse_5.6.1_all.deb">kse_5.6.1_all.deb</a></td>
+        <td>
+            DEB for Ubuntu/Debian/Mint etc.
+        </td>
+    </tr>
+    <tr class="plain_even">
+        <td>Linux</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse-5.6.1-1.noarch.rpm">kse-5.6.1-1.noarch.rpm</a></td>
+        <td>
+            RPM for Fedora/RHEL/Nobara etc.
+        </td>
+    </tr>
+    <tr class="plain_odd">
+        <td>All</td>
+        <td><a href="https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse-561.zip">kse-561.zip</a></td>
+        <td>
+            ZIP with <code>kse.exe</code> for Windows and <code>kse.sh</code> for Linux/macOS, see included <code>readme.txt</code> for more infos.
+            Requires a Java runtime environment (minimum is Java 17).
+        </td>
+    </tr>
+</table>
+
+<p>
+SHA-256 checksums for all files can be found here: <a href="https://github.com/kaikramer/keystore-explorer/releases">KSE Releases on GitHub</a>
+</p>
+
+<h2 class="h3">Older Releases and Source Code</h2>
+<p>
+    The source code of KeyStore Explorer and older releases since v5.0 are available here: <a href="https://github.com/kaikramer/keystore-explorer/releases">KSE Releases on GitHub</a>
+</p>
+
+<h2 class="h3">3rd Party Packages</h2>
+<p>
+    Besides the official KSE downloads here on this website or on the
+    GitHub release page, KSE is also packaged by volunteers for
+    package management software like Chocolatey, Pacman or Homebrew.
+</p>
+<p>
+    The website <a href="https://repology.org/">Repology</a> tracks updates in
+    those software repositories and gives a good overview of the available
+    3rd-party packages for KSE and their status:
+</p>
+<p>
+    <a href="https://repology.org/project/keystore-explorer/versions">https://repology.org/project/keystore-explorer/versions</a>
+</p>
+</Layout>

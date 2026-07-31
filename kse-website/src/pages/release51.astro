@@ -1,0 +1,270 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Release Notes" editPath="src/pages/release51.astro">
+
+<div class="page-header">
+    <h1>Release 5.1.1 <small class="text-muted">28 Mar 2015</small></h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KeyStore Explorer 5.1.1 is a maintenance release. It includes the following bugfixes:
+            <ul>
+                <li>Fixed ECC not available in BKS-V1 keystores</li>
+                <li>Fixed Linux start script, it works now if called from outside the KSE folder (ticket #12, thanks to David Harper for his contribution)</li>
+                <li>Fixed "KeyStore Explorer.app is damaged and can't be opened" under Mac OS; KSE now requires Oracle/OpenJDK 7 or higher, it no longer works with Apple's Java 6 (tickets #13 and #16, thanks to Steve Lessard and Stefano L for reporting)</li>
+                <li>Fixed wrong order of RDNs in extensions (ticket #14, thanks to Chris Ridd for reporting)</li>
+                <li>Fixed typo "Cerificate Serial Number" (ticket #14, thanks to Chris Ridd for reporting)</li>
+                <li>Fixed import of EC keys (ticket #15, thanks to Mouse for his patch)</li>
+                <li>Updated Bouncy Castle to <a href=" https://www.bouncycastle.org/releasenotes.html">version 1.52</a> (ticket #11, thanks to based for reporting)</li>
+                <li>Fixed focus problem in password dialog</li>
+                <li>Added program infos for windows uninstaller</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            Also, the ZIP package now contains a folder with application icons in sizes from 16x16 to 128x128 pixels. Together with the fixed start script this allows for easy integration into your Linux desktop environment, like for example here in Cinnamon:
+        </p>
+        <p>
+            <img src="images/releases/release51/Screenshot_Cinnamon_KSE_Link_75.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<div class="page-header">
+    <h1>Release 5.1 <small class="text-muted">02 Aug 2014</small></h1>
+</div>
+
+<p>
+    KeyStore Explorer Release 5.1 includes many new features, improvements and bugfixes.
+</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h3">New Feature: Sign New Key Pair</h2>
+
+        <p>
+            This new feature makes it really easy to create complete certificate hierarchies in KSE (with root CAs, sub CAs and end entity certificates).
+        </p>
+        <p>
+            Prior to version 5.1 one would have to do the following steps:
+            <ul>
+                <li>Create a self-signed root CA certificate</li>
+                <li>Create a new key pair (which includes creating a useless self-signed certificate)</li>
+                <li>Create a CSR from the key pair</li>
+                <li>Sign the CSR with the CA certificate</li>
+                <li>Import the CA reply</li>
+            </ul>
+        </p>
+        <p>
+            Since KSE 5.1:
+            <ul>
+                <li>Create a self-signed root CA certificate</li>
+                <li>Right click on CA certificate and select "Sign New Key Pair"</li>
+            </ul>
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_sign_new.png" class="img-responsive align-top" />
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h3">New Configuration Setting: Default Name</h2>
+
+        <p>
+            A new configuration setting allows to store default values for certificate distinguished names (DNs). When you create a new certificate, the input fields for Common Name, Organizational Unit, Organization etc. are pre-filled with the values from the preferences.
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_defaultdn.png" class="img-responsive align-top" />
+        </p>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h3">Added Support for ECC (Elliptic Curve Cryptography)</h2>
+
+        <p>
+            Java 7 introduced the SunEC provider for Elliptic Curve algorithms which allows keytool and jarsigner to create and use EC keys in JKS and JCEKS keystores. Third party JCE providers like Bouncy Castle have been supporting ECC in their keystore types (BKS, UBER) for some time now.
+        </p>
+        <p>
+            Elliptic curves are defined by a number of domain parameters. Because it is difficult to find "good" domain parameters, several organizations (e.g. NIST, SECG, ANSI, ECC Brainpool) have published domain parameters of elliptic curves for several common field sizes. These "named curves" can be referenced by name or OID.
+        </p>
+        <p>
+            EC key sizes are generally smaller than comparable RSA key sizes. The name usually contains the key size, e.g. "sect571k1" (571 bits) or "B-409" (409 bits).
+        </p>
+        <p>
+            In KSE EC key generation is done by selecting a named curve:
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_ecc.png" class="img-responsive align-top" />
+        </p>
+        <p>
+            Which named curves are available in KSE depends on two factors: Java version and keystore type.
+
+            The following table gives an overview on the available curves:
+
+            <table class="table table-striped">
+                <tr class="plain">
+                    <th class="plain">Curve Set</th>
+                    <th class="plain">Java 6 (JKS, JCEKS, P12)</th>
+                    <th class="plain">Java 7+ (JKS, JCEKS, P12)</th>
+                    <th class="plain">Java 6+ (BKS, UBER)</th>
+                </tr>
+                <tr class="plain">
+                    <td class="plain">ANSI</td>
+                    <td class="plain">0</td>
+                    <td class="plain">15</td>
+                    <td class="plain">15</td>
+                </tr>
+                <tr class="plain">
+                    <td class="plain">SEC</td>
+                    <td class="plain">0</td>
+                    <td class="plain">33</td>
+                    <td class="plain">33</td>
+                </tr>
+                <tr class="plain">
+                    <td class="plain">NIST</td>
+                    <td class="plain">0</td>
+                    <td class="plain">15</td>
+                    <td class="plain">15</td>
+                </tr>
+                <tr class="plain">
+                    <td class="plain">Brainpool</td>
+                    <td class="plain">0</td>
+                    <td class="plain">0</td>
+                    <td class="plain">14</td>
+                </tr>
+            </table>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h3">Added Support for Certificate Extensions and unstructuredName Attribute in PKCS#10 CSRs</h2>
+
+        <p>
+            Some CAs support certificate requests (CSRs) that contain X.509 extensions (for example and especially SubjectAlternativeName).
+        </p>
+        <p>
+            With KSE 5.1 you can create such CSRs. All you have to do is to create a new key pair, add the extensions and when exporting the CSR click the check box "Add certificate extensions to request".
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_extreq.png" class="img-responsive align-top" />
+        </p>
+        <p>
+            When examining CSRs in KSE it is now also possible to view the extensions.
+        </p>
+        <p>
+            Another addition to PKCS#10 requests is the unstructuredName attribute (see http://www.ietf.org/rfc/rfc2985.txt). In
+            OpenSSL this is called "An optional company name" when generating requests, so KSE uses the same phrase.
+            <pre>
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+            </pre>
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h3">Improved "Examine SSL"</h2>
+
+        <p>
+            Two enhancements were made to the "Examine SSL" dialog:
+            <ul>
+                <li>History of last used SSL hosts/ports</li>
+                <li>SSL client authentication</li>
+            </ul>
+        </p>
+        <p>
+            Because "Examine SSL" is rarely used only once with the same server, a list of the 10 last used hosts and ports is saved between sessions. The saved hosts and ports can be selected via a drop down box.
+        </p>
+        <p>
+            The new feature "SSL client authentication" is useful for testing keystores. You have just to select a keystore and the private key from keystore is used to authenticate against the SSL server. If there is more than one private key in the keystore that could be used for client authentication, then standard Java mechanisms are used to find the right one.
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_ssl.png" class="img-responsive align-top" />
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h3">New KeyStore Type BKS Version 2</h2>
+
+        <p>
+            The keystore type BKS had been changed in Bouncy Castle version 1.47. This new version of BKS was incompatible, so with the release of Bouncy Castle version 1.49 BKS-V1 was re-introduced as an additional store type.
+        </p>
+        <p>
+            Older versions of KSE always generated BKS-V1 keystores. KSE 5.1 can generate and process both versions of BKS.
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_bks.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h3">Filename Suggestions</h2>
+
+        <p>
+            In dialogs that include an input field for a file name (like all the export dialogs or "Generate CSR" or "Sign Jar"), this input field is pre-filled with a suggestion for the file name and path. The path suggestion is determined by either input files or last used path. The file name suggestion depends on factors like the alias of the keystore entry or the name of an input file and the type of file.
+        </p>
+        <p>
+            For example when you want to export the certificate chain of an keystore entry with alias "example", current working directory is "E:\KeyStore-Explorer\testdata\" and you choose PKCS#7 as export format, then "E:\KeyStore-Explorer\testdata\example.p7b" is suggested.
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_filename.png" class="img-responsive align-top" />
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h3">New Packaging and Local JRE</h2>
+
+        The redundant distribution packages kse-X-install.tar.gz and kse-X-manual.zip have been combined into kse-X.zip. This ZIP file contains (in addition to the content of the old ZIP file):
+        <ul>
+            <li>kse.sh - Shell script from .tar.gz for Linux, Solaris, Mac OS X etc.</li>
+            <li>kse.exe - Executable for Windows</li>
+        </ul>
+        <p>
+            Both the shell script and the exe first search for a local Java Runtime Environment (JRE), i.e. a directory with name "jre" in the KSE directory. If it exists, the JRE in it is used for running KSE. This allows to use another JRE for KSE than the default system JRE, which is useful for example if you have to use IBM JDK, which is not compatible with KSE.
+        </p>
+        <p>
+            <img src="images/releases/release51/rel51_zip.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Improved Drag&amp;Drop</h2>
+
+<p>
+    In previous versions of KSE only keystores could be opened by drag&amp;drop. In KSE 5.1 this also works for certificates, CSRs and CRLs.
+</p>
+<p>
+    If you drag&amp;drop multiple files at once on the KSE window, then all of them are opened one after the other.
+</p>
+<p>
+    <img src="images/releases/release51/rel51_dnd.png" class="img-responsive align-top" />
+</p>
+
+<h2 class="h3">Other changes</h2>
+
+<ul>
+    <li>Added links to theSourceForge project site, the bug reports and the user discussion forum to menu "Help -&gt; Online Resources"</li>
+    <li>Added new secret key algorithms: ChaCha, Threefish and XSalsa20</li>
+    <li>When copying a key pair from a PKCS#12 store type to any other store type, a reminder is shown that the password for the key pair is set to 'password'</li>
+    <li>ASN1 dump view is now non-modal, allowing to compare ASN1 dumps</li>
+    <li>Updated to Bouncy Castle 1.50</li>
+    <li>Fixed bug: export multiple certificates</li>
+    <li>Fixed NPE in import function of certificate view when user cancels new keystore dialog</li>
+    <li>Fixed problem with pinning KSE to taskbar under Windows 8.1 and newer Java versions</li>
+</ul>
+
+<div class="page-header">
+    <h1>Older Release Notes</h1>
+</div>
+<p>
+    <a href="release50.html">KeyStore Explorer Release 5.0 and 5.0.1</a>
+</p>
+</Layout>

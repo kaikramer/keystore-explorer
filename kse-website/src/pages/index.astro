@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer" editPath="src/pages/index.astro">
+
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-sm-6 col-md-9">
+                <h1 class="display-3">KeyStore Explorer</h1>
+                <p class="lead">
+                    <b>KeyStore Explorer is an open source GUI replacement for the Java command-line utilities keytool and jarsigner.
+                        KeyStore Explorer presents their functionality, and more, via an intuitive graphical user interface.</b>
+                </p>
+                <p class="lead"><a href="downloads.html" class="btn btn-success btn-lg" role="button">Download</a></p>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <img src="images/KeyStore Explorer_256x256.png" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2 class="h3">Simplified Development of Secure Java</h2>
+        <p>
+            A software developer should be able to focus on the problem at hand
+            without struggling with obtuse command-line tools. With KeyStore
+            Explorer difficult security tasks such as key pair generation and code
+            signing become quick and simple.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2 class="h3">Manage KeyStores</h2>
+        <p>
+            KeyStore Explorer can be used to create and navigate KeyStores via
+            its intuitive graphical interface. The contents of KeyStores can be
+            created and modified, imported and exported using just a few simple
+            dialogs.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2 class="h3">Signing</h2>
+        <p>
+            KeyStore Explorer provides the capability to digitally sign Java
+            applications, JWTs (JSON Web Token), certificates and CRLs.
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <h2 class="h3">Extensive Format Support</h2>
+        <p>
+            KeyStore Explorer supports a variety of KeyStore, key pair, private
+            key and certificate formats and can convert between them. See <a href="features.html">features</a> for a list of supported formats.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2 class="h3">Basic CA Features</h2>
+        <p>
+            KeyStore Explorer can be used to create your own CA certificate and
+            sign certificates and CRLs with it. A wide range of certificate extensions
+            is supported, see <a href="/doc/5.6/specifications.html">specifications</a>.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2 class="h3">Run Almost Anywhere</h2>
+        <p>
+            KeyStore Explorer is written in Java and will run on any machine that
+            has a Java runtime installed. Its capabilities are therefore available
+            on Windows, macOS and Linux.
+        </p>
+    </div>
+</div>
+</Layout>

@@ -1,0 +1,32 @@
+---
+import Head from '../components/Head.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  editPath: string;
+}
+const { title, editPath } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<Head title={title} />
+
+<body role="document">
+    <Nav active="history" />
+    <div class="container" role="main">
+        <div class="row">
+            <div class="col-sm-8 text-justify">
+                <slot />
+            </div>
+            <div class="col-sm-4 mt-5 pt-4">
+                <nav id="toc" class="sticky-top"></nav>
+            </div>
+        </div>
+        <hr />
+        <Footer editPath={editPath} />
+    </div>
+</body>
+
+</html>

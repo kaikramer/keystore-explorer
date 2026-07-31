@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Features" active="features" editPath="src/pages/features.astro">
+
+<div class="page-header">
+    <h1>Features</h1>
+</div>
+
+<p>
+    KeyStore Explorer currently supports the following features. Note that the application
+    is being continuously developed and future versions will contain additional features to
+    those listed below.
+</p>
+
+<p>
+    <a href="/doc/5.6/specifications.html">Full specifications</a> are available for KeyStore Explorer,
+    including supported algorithms, key sizes and file formats.
+</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h3">KeyStore Management Features</h2>
+
+        <ul class="level1">
+            <li>Create, load and save various KeyStore types:</li>
+            <ul class="level2">
+                <li>JKS</li>
+                <li>JCEKS</li>
+                <li>PKCS #12</li>
+                <li>BKS (V1 and V2)</li>
+                <li>UBER</li>
+                <li>BCFKS</li>
+            </ul>
+            <li>Conversion between these types.</li>
+            <li>Change KeyStore passwords.</li>
+            <li>Delete or rename KeyStore entries.</li>
+            <li>Cut/copy/paste KeyStore entries.</li>
+            <li>Search for KeyStore entries.</li>
+            <li>Configure a CA Certs KeyStore for use with KeyStore operations.</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h3">Key Pair Features</h2>
+
+        <ul class="level1">
+            <li>Generate RSA, DSA and EC (incl. Ed25519/Ed448) key pairs with self-signed X.509 certificates.</li>
+            <li>Apply X.509 certificate extensions to generated key pairs and Certificate Signing Requests (CSRs).</li>
+            <li>Import key pairs from PKCS #12 files.</li>
+            <li>Import key pairs from PKCS #8 private key/certificate combination files.</li>
+            <li>Import key pairs from Microsoft PVK private key/certificate combination files.</li>
+            <li>Import key pairs from OpenSSL private key/certificate combination files.</li>
+            <li>Generate CSRs in PKCS #10 and SPKAC formats.</li>
+            <li>Import Certificate Authority (CA) replies.</li>
+            <li>Export key pairs as PKCS #12.</li>
+            <li>Export private keys as PKCS #8.</li>
+            <li>Export private keys as Microsoft PVK.</li>
+            <li>Export private keys as OpenSSL.</li>
+            <li>Export public and private keys as JWK.</li>
+            <li>Change the password of key pair entries.</li>
+            <li>Append certificates to key pair certificate chains.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h3">Certificate Features</h2>
+
+        <ul class="level1">
+            <li>Import X.509 certificate files as trusted certificates.</li>
+            <li>View the details of certificates contained within KeyStore entries, certificate files and TLS/SSL web sites.</li>
+            <li>Export certificates in a variety of formats (X.509, PKCS #7, PKI Path, SPC).</li>
+            <li>Export certificate public keys in OpenSSL (SubjectPublicKeyInfo) format.</li>
+            <li>View the details of Certificate Revocation List (CRL) files.</li>
+            <li>View X.509 Certificate, CRL and CRL entry X.509 V3 extensions.</li>
+            <li>Validation of certificates (signature verification, path validation, revocation status checks).</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h3">Digital Signature Features</h2>
+
+        <ul class="level1">
+            <li>Sign CSRs in PKCS #10 and SPKAC formats.</li>
+            <li>Create and sign key pairs with a CA certificate in one step.</li>
+            <li>Sign CRLs (Certificate Revocation Lists)</li>
+            <li>Sign Java Archive (JAR) files.</li>
+            <li>Add a timestamp to jar signatures.</li>
+            <li>Sign J2ME MIDlet Applications files.</li>
+            <li>Sign and Verify JWT (JSON Web Token) files.</li>
+            <li>Sign and Verify PKCS#7/CMS files.</li>
+        </ul>
+    </div>
+</div>
+</Layout>

@@ -1,0 +1,737 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Release Notes" editPath="src/pages/release55.astro">
+
+<div class="page-header">
+    <h1>Release 5.5.3 <small class="text-muted">29 Dec 2023</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h5 class="h5">Improvements</h5>
+        <ul>
+            <li>Comparing certificates - two ways to compare certificates have been added:</li>
+            <ol>
+                <li>Side-by-side textual comparison: By selecting two certificates in the main view and choosing "Compare" in the
+                    context menu, a summary of the most important certificate data and an ASN.1 dump of both certificates
+                    is displayed side by side and the differences are marked in a contrasting color (contributed by Jairo Graterón).
+                </li>
+                <li>Multiple certificate view dialogs: The certificate viewer dialog is now non-modal, which means several instances
+                    of this dialog can be kept open at the same time. This allows to view multiple certificates at the same time
+                    (contributed by Piotr Kubiak).</li>
+            </ol>
+            <li>Added new configuration options:
+                <ul>
+                    <li>Size of generated certificate serial number (contributed by dedabob)</li>
+                    <li>FlatLaf macOS themes</li>
+                </ul>
+            </li>
+            <li>Added functionality to examine JWT in system clipboard (contributed by Afonso Fernandes)</li>
+            <li>Added PBES2 algorithms as encryption options for PKCS#8 export of private keys:
+                <ul>
+                    <li>PBES2 with SHA-1 and TDES</li>
+                    <li>PBES2 with SHA-1 and AES-128</li>
+                    <li>PBES2 with SHA-1 and AES-256</li>
+                    <li>PBES2 with SHA-256 and AES-256</li>
+                </ul>
+            </li>
+            <li>Added export button in private key view dialog (contributed by Jairo Graterón)</li>
+            <li>Added verify button in the CSR view dialog to check its signature</li>
+            <li>Added start of certificate validity as additional optional column for main table view (contributed by Björn Michael)</li>
+            <li>Improved certificate key usage and EKU dialogs by adding tooltips with additional details (contributed by The-Lum):
+                <ul>
+                    <li>For the key usage extension the number of the bit (for example 0 for digitalSignature)</li>
+                    <li>For extended key usage the OID of the key usage</li>
+                </ul>
+            </li>
+            <li>Enlarged default size of ASN.1 dump window, hex dumps are now displayed in two columns of 8 bytes instead of one
+                (contributed by The-Lum)</li>
+            <li>Added total number of revoked certs to CRL view</li>
+            <li>Added length info to OCTETSTRING and BITSTRING in ASN1 viewer</li>
+            <li>HTTP redirects for downloads of CRLs and CRTs are now supported (contributed by Jairo Graterón)</li>
+            <li>Made several adjustments to file extensions used as filters in file chooser dialogs and as default extensions for
+                export files. The reasons were to adapt to existing official standards and also to avoid conflicts with other file
+                types (thanks to Sergey Ponomarev for his investigations):
+                <ul>
+                    <li>Changed default file extension for <i>private key export as DER-encoded PKCS#8</i> from ".pkcs8" to ".p8" as
+                        this extension was registered with IANA (contributed by Sergey Ponomarev)</li>
+                    <li>Changed default file extension for <i>private key export as DER-encoded PKCS#1/ECPrivateKey</i> from ".key"
+                        to ".privkey" (".key" is used for PGP/GPG files and also for Keynote presentations and there seems to be no
+                        "official" file extension for these formats)</li>
+                    <li>Changed default file extension for <i>public key export as DER-encoded RFC 5280 SubjectPublicKeyInfo</i> from ".pub" to ".pubkey" (".pub" is used for MS Publisher files)</li>
+                    <li>Changed default file extension for <i>PEM-encoded files</i> to ".pem" (usually in combination with a prefix
+                        for the actual content like ".p8.pem" or ".pubkey.pem)"</li>
+                    <li>Added ".p8", ".p8e" and ".pk8" as file extension filters for selecting / importing PKCS#8 files (contributed
+                        by Sergey Ponomarev)</li>
+                    <li>Added ".pem" as file extension filter to all file chooser dialogs that could possibly open PEM files</li>
+                </ul>
+            </li>
+            <li>Changed dialogs for key pair generation and signing CSRs to display serial number as hex string</li>
+            <li>Improved certificate chain detection</li>
+            <li>Adjusted password quality meter to show more realistic results</li>
+            <li>Replaced IdenTrust's TSA with QuoVadis'</li>
+            <li>Improved handling of invalid PEM files</li>
+            <li>The certificates selection dialog is now resizable</li>
+            <li>Fixed typo in tooltips for public key fingerprint</li>
+            <li>Improved French translation (by The-Lum)</li>
+            <li>Improved German translation</li>
+            <li>Updated third-party libraries to latest versions, BC is now at version 1.77</li>
+        </ul>
+        <h5 class="h5">Bug Fixes</h5>
+        <ul>
+            <li>Fixed handling of GeneralName/OtherName/UPN (reported by Björn Michael)</li>
+            <li>Fixed handling of explicitly specified EC curve parameters (reported by Arnieh)</li>
+            <li>Fixed calender selection issue in certificate generation dialog (reported by freedom1b2830)</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h5 class="h5">&nbsp;</h5>
+        <p>
+            <img src="images/releases/release55/rel553_compare1.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel553_compare2.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel553_preferences.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel553_examine_jwt.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<div class="page-header">
+    <h1>Release 5.5.2 <small class="text-muted">22 Jan 2023</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h5 class="h5">UI Improvements</h5>
+        <ul>
+            <li>Improvements in public key details dialog:</li>
+            <ol>
+                <li>Added public key fingerprint with four algorithms:</li>
+                <ol>
+                    <li>RFC 5280 SubjectKeyIdentifier (SKI) method 1</li>
+                    <li>RFC 5280 SubjectKeyIdentifier (SKI) method 2</li>
+                    <li>SHA-1 calculated over SubjectPublicKeyInfo ASN.1 structure</li>
+                    <li>SHA-256 calculated over SubjectPublicKeyInfo ASN.1 structure</li>
+                </ol>
+                <li>Improved detail infos for EC keys (showing the named curve and public key fields)</li>
+            </ol>
+            <li>Redesigned Preferences dialog (contributed by Colbix)</li>
+            <li>Added a setting for PKCS#12 encryption to preferences. This allows to use a less secure encryption algorithm and is
+                basically a workaround for Windows Server 2016
+                which does not support PBES2 with AES256, which is the standard encryption for PKCS#12 files in newer Java versions.
+                This has no effect if the Java runtime still uses the old encryption algorithm.
+            </li>
+            <li>Added "eye" (reveal) button on password fields (this works only with look&amp;feel set to "Flat Light", "Flat Dark", "Flat IntelliJ" or "Flat Darcula")</li>
+            <li>Generate Certificate: New button "Transfer Name and Extensions" was added that allows to select an existing
+                certificate as a template for the new one (contributed by Jairo Graterón)</li>
+            <li>List certificates dialog was improved, it reflects the main table now (contributed by Jairo Graterón)</li>
+            <li>The icons for expiry status in the main table do not only differ in color now but also
+                in shape and symbols, making it easier for users with color deficiencies to differentiate between them.
+            </li>
+        </ul>
+        <h5 class="h5">Other Improvements</h5>
+        <ul>
+            <li>Added support for Base64 encoded DER keys/CSRs in "Examine File/Clipboard" (in addition to PEM and binary DER)</li>
+            <li>Added support for DN attribute "organizationIdentifier" 2.5.4.97</li>
+            <li>Updated JavaFXFileChooser to include setSelectedExtensionFilter (contributed by Colbix)</li>
+            <li>Updated DErrorCollection (contributed by Colbix)</li>
+            <li>Generated CSRs are now also copied to system clipboard</li>
+            <li>Improved focus order in DN chooser: You can now use the tab key to go to the next input field.</li>
+            <li>TSA list: Added timestamp.identrust.com (replacing tsa.starfieldtech.com)</li>
+            <li>Updated libraries to latest versions, BC is now at version 1.72</li>
+        </ul>
+        <h5 class="h5">Removals</h5>
+        <ul>
+            <li>Removed support for obsolete BKS-V1 keystore type</li>
+            <li>Removed obsolete hash algorithms: MD2, MD4, RIPEMD128, RIPEMD256</li>
+        </ul>
+        <p>
+        <h5 class="h5">Bug Fixes</h5>
+        <ul>
+            <li>Fixed parsing of MsCrlNextPublish extension (reported by The-Lum)</li>
+            <li>Fixed UI freeze on auto update check when packets are dropped (reported by SanskritFritz)</li>
+            <li>PAC: included standalone Nashorn; replaced pac JS with Java code (reported by poel)</li>
+            <li>Fixed top left icon for ASN.1 dump window (reported by The-Lum)</li>
+            <li>Fixed detection of local JRE (reported by FranLa and Tabiskabis)</li>
+        </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release55/rel55_pub_key_details.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_preferences.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_password.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_transfer.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_validity_icons.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Release 5.5.1 <small class="text-muted">27 Jan 2022</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            A new feature for signing JWT (JSON Web Token) has been contributed by Jairo Graterón.
+            It came just a little too late for the 5.5.0 release, so it is included in this update:
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_menu_sign_jwt.png" class="img align-top" />
+        </p>
+        <p>
+            The French translation has been extended and improved by The-Lum.
+        </p>
+        <p>
+            Bug fixes:
+            <ul>
+                <li>Fixed import of CA reply failing for EC keys (reported by Stanislav Izmalkov).</li>
+                <li>Incorrect display name CRL SELF CDP for OID 1.3.6.1.4.1.311.21.14 on 'CRL Extensions' screen (reported by The-Lum).</li>
+                <li>Fixed missing menu item for certificate verification feature for trusted certificates (contributed by The-Lum).</li>
+                <li>Fixed issues with dark mode (namely "tip of the day" and "date picker" backgrounds) (reported by The-Lum).</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release55/rel55_sign_jwt.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Release 5.5.0 <small class="text-muted">5 Dec 2021</small></h1>
+</div>
+<p>
+    This release includes the following new features, enhancements and bugfixes:
+</p>
+
+
+<h2 class="h3">CRL Signing</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Previous versions of KSE had some basic CA features like signing X.509
+            certificates, key creation, PKCS#10 requests, support for many
+            X.509 extensions, extension profiles, but revokating certificates
+            by creating/signing a certificate revocation list (CRL) has been
+            missing so far.
+        </p>
+        <p>
+            This has changed in version 5.5.0. In the context menu of key
+            pair entries is now a new item called "Sign CRL", which opens the
+            dialog on the right.
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_sign_crl_menu.png" class="img align-top" />
+        </p>
+        <p>
+            Certificates can be added to the CRL in three ways:
+            <ul>
+                <li>By selecting a certificate from a keystore file.</li>
+                <li>By selecting a certificate file.</li>
+                <li>By selecting an older CRL from the same issuer certificate.</li>
+            </ul>
+        </p>
+        <p>
+            The generated CRL can then be saved to the file system in PEM or DER format.
+        </p>
+        <p>
+            The feature uses an automatically created file with the issuer serial number as its name and ".db"
+            as its extension to save meta data like CRL serial number, the revoked certificates and the validity
+            period. This makes creating subsequent CRLs much easier.
+        </p>
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release55/rel55_sign_crl.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_save_crl.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Certificate Validation</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE can now do a certificate validation - including a check of the revocation status
+            with four different methods.
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_verify_cert_menu.png" class="img align-top">
+        </p>
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release55/rel55_verify_cert_dialog.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">EdDSA</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Support for the (twisted) Edwards curves has been added. This includes key
+            generation and EdDSA signature scheme:
+            <ul>
+                <li>Ed25519</li>
+                <li>Ed448</li>
+            </ul>
+        </p>
+        <p>
+            Choosing an elliptic curve that is both secure and efficient has
+            not been easy in the past. The Edwards curves are therefore a useful
+            addition to KSE.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_eddsa.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">RSASSA-PSS</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            In contrast to the older PKCS#1 v1.5 signature scheme the
+            Probabilistic Signature Scheme (PSS) from PKCS#1 v2.1
+            is provably secure. This does not mean that the v1.5 scheme is
+            unsecure, but PSS should be preferred if possible.
+        </p>
+        <p>
+            The PSS versions of the signature algorithms can be recognized by
+            the appended "and MGF1":
+            <ul>
+                <li>SHA-1 with RSA and MGF1</li>
+                <li>SHA-224 with RSA and MGF1</li>
+                <li>SHA-256 with RSA and MGF1</li>
+                <li>SHA-384 with RSA and MGF1</li>
+                <li>SHA-512 with RSA and MGF1</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_pss.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">CRL Distribution Points Extension</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The CRL Distribution Points (CDP) extension is one of the standard certificate extensions
+            from RFC 5280. With KSE being able to create CRLs, this extension is even more relevant now.
+        </p>
+        <p>
+            The extension can contain multiple distribution points and every distribution point has three
+            optional fields:
+            <ul>
+                <li>One or more "General Names" (usually an URL pointing to the current CRL)</li>
+                <li>Reason Flags (for segmenting CRLs by reason code)</li>
+                <li>CRL Issuer (the distinguished name from the issuer field of the CRL)</li>
+            </ul>
+        </p>
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_cdp.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Custom Certificate Extensions</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            When generating a certificate with KSE, a wide range of commonly
+            used certificate extensions can be added. There are however some
+            exotic or non-public extensions that are completely out of
+            scope for a tool like KSE. With this new feature any extension can
+            be added to a new certificate by entering the object ID (OID) of
+            the extension and the value as a hex encoded string.
+        </p>
+        <p>
+            The value has to be entered as the hexadecimal encoding of the
+            DER-encoded ASN.1 value of the extension without the encapsulating
+            OCTET STRING tag and length bytes.
+        </p>
+        <p>
+            <b>Examples:</b>
+        <ol>
+            <li>
+                <p>
+                    The "OCSP No Check" extension is one of the most simple
+                    X.509 extensions because it has ASN.1 "NULL" as its
+                    value. Just leave the input field for the extension empty
+                    in this case.
+                    <table class="table table-bordered">
+                        <tr>
+                            <th scope="row">Object ID</th>
+                            <td>1.3.6.1.5.5.7.48.1.5</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Value</th>
+                            <td>(empty)</td>
+                        </tr>
+                    </table>
+                </p>
+            </li>
+            <li>
+                <p>
+                    The old and obsolete Netscape extensions were removed in
+                    KSE 5.5.0 but you can still add them as a custom extension.
+                    The OID "2.16.840.1.113730.1.1" represents
+                    netscape-cert-type and 03020410 is the hexadecimal encoding
+                    of the DER-encoded ASN.1 value for type "Object Signing":
+                    BIT STRING (tag "03") with length "02" bytes, 4 unused bits
+                    ("04") and '10'H='00010000'B (bit 3 = Object Signing)
+                    <table class="table table-bordered">
+                        <tr>
+                            <th scope="row">Object ID</th>
+                            <td>2.16.840.1.113730.1.1</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Value</th>
+                            <td>03020410</td>
+                        </tr>
+                    </table>
+                </p>
+            </li>
+            <li>
+                <p>
+                    More complex extensions are of course also possible, it is
+                    only a matter of encoding the value correctly. For a CRL
+                    Distribution Points extension with URL
+                    "http://dodgycert.example.com/evca.crl" you would enter the
+                    following OID and value:
+                    <table class="table table-bordered">
+                        <tr>
+                            <th scope="row">Object ID</th>
+                            <td>2.5.29.31</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Value</th>
+                            <td>302d302ba029a0278625687474703a2f2f646f64<br>
+                                6779636572742e6578616d706c652e636f6d2f65<br>
+                                    7663612e63726c</td>
+                        </tr>
+                    </table>
+                </p>
+
+            </li>
+        </ol>
+        </p>
+        <p>
+            This is definitely a feature for advanced users who know what they are doing,
+            but it has been repeatedly requested.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release55/rel55_custom_ext_sel.png" class="img align-top" />
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_custom_ext_input.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Additional Name Components for Distinguished Names</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The distinguished name (DN) chooser/viewer dialog has been extended with seven additional
+            name components:
+            <ul>
+                <li>Name (OID 2.5.4.41)</li>
+                <li>Street (OID 2.5.4.9)</li>
+                <li>Title (OID 2.5.4.12)</li>
+                <li>Initials (OID 2.5.4.43)</li>
+                <li>Pseudonym (OID 2.5.4.65)</li>
+                <li>DN Qualifier (OID 2.5.4.46)</li>
+                <li>Generation Qualifier (OID 2.5.4.44)</li>
+            </ul>
+        </p>
+        <p>
+            The first three were added by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_dn_chooser.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Sign Multiple Jars</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            With KSE 5.5.0 it is now possible to sign multiple jar files at once.
+        </p>
+        <p>
+            The browse button now opens a file chooser dialog that allows to select multiple files.
+            Next to the button is an indicator showing the number of selected files.
+        </p>
+        <p>
+            As before it is possible to either replace the original jar file with the signed one or
+            create a new file. In the latter case the file name of the signed jar is created
+            by adding a prefix and/or a suffix. The suffix is added <i>before</i> the file extension.
+        </p>
+        <p>
+            This feature was contributed by Colbix.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_sign_jar.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Find KeyStore Entries</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            You can now search the current keystore.
+        </p>
+        <p>
+            The keyboard shortcut for "Examine File" (Ctrl-F) has been changed
+            to Ctrl-E in KSE 5.5.0 so that the more intuitive Ctrl-F can be
+            used for this new find feature.
+        </p>
+        <p>
+            <img src="images/releases/release55/rel55_find.png" class="img align-top" />
+        </p>
+        <p>
+            Every keystore entry with a matching name is selected after the search was executed.
+            The number of selected entries has been added to the status bar, which gives an overview
+            of the search result, which is useful if not all found entries fit into the window.
+        </p>
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_find_result.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Input Suggestions for Object Identifiers (OIDs)</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            OIDs are hard to remember and it is easy to make mistakes when entering them.
+        </p>
+        <p>
+            Wherever you can enter OIDs in KSE, this new feature makes suggestions
+            that you can select from a drop down list. Of course - if none of the suggestions
+            should match, you can still enter another OID just like before.
+        </p>
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_oid.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Diffie-Hellman Parameters</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            This new feature allows to create a Diffie-Hellman (DH) key exchange parameters PEM file
+            that can be used for example in OpenVPN.
+        </p>
+        <p>
+            The Java implementation of the DH parameter generation is pretty slow, so especially for
+            key sizes above 2048 OpenSSL is still the better tool for this task.
+        </p>
+        <p>
+            This feature was contributed by Colbix.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_dh.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">New Windows Launcher ("kse.exe")</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE 5.5.0 comes with a completely new launcher executable for Windows. It was written
+            especially for KSE and uses <a href="https://github.com/Bill-Stewart/JavaInfo">Bill Stewart's JavaInfo.dll</a> for detecting Java installations.
+        </p>
+        <p>
+            The launcher searches for Java in the following locations in exactly this order:
+        <ol>
+            <li>In a folder named "jre" next to kse.exe.</li>
+            <li>In the paths where the environment variables JAVA_HOME, JDK_HOME and JRE_HOME point to.</li>
+            <li>In the folders of the Path environment variable if there is a java.exe.</li>
+            <li>The registry in the following locations:</li>
+            <ul>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft</li>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\IBM</li>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\AdoptOpenJDK</li>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\Eclipse Adoptium</li>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\Eclipse Foundation</li>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\Semeru</li>
+                <li>HKEY_LOCAL_MACHINE\SOFTWARE\Azul Systems\Zulu</li>
+            </ul>
+        </ol>
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">New Windows Installer</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The Windows installer for KSE is now made with InnoSetup and comes with the following improvements:
+            <ul>
+                <li>HKLM\SOFTWARE\Classes or HKCU\Software\Classes are used instead of HKEY_CLASSES_ROOT</li>
+                <li>kse.exe is added to "Software\Microsoft\Windows\CurrentVersion\App Paths"</li>
+                <li>A ProgId is created for selected file types</li>
+                <li>Values to OpenWithProgIds subkey are added for selected file types</li>
+                <li>Localization: You can choose your language for the installation (currently English and German)</li>
+                <li>Detection of a currently running KSE process</li>
+            </ul>
+            Also, there are two versions of the Windows installer now:
+            <ul>
+                <li><b>kse-550-setup.exe</b>: This is the recommended version. It includes a custom, size optimized Java runtime (27 MB vs 160 MB).</li>
+                <li><b>kse-550-setup-no-jre.exe</b>: This version is for those users who want to use a specific Java runtime with KSE.</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-3">
+        <p>
+            <img src="images/releases/release55/rel55_installer.png" class="img align-top" />
+        </p>
+    </div>
+</div>
+
+
+
+<h2 class="h3">Other Enhancements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>Improved usage of JavaFX file chooser in various ways (contributed by Colbix)</li>
+                <li>ExamineClipboard works now also with URLs if they end with one of the following extensions: .cer, .crt, .pem and .crl (contributed by Jairo Graterón)</li>
+                <li>"Sign CSR" can save the certificate now in several formats</li>
+                <li>Added certificate serial number to configurable columns for main window</li>
+                <li>Added option to show hidden files in file chooser</li>
+                <li>Updated list of timestamp authorities (TSAs) in jar sign dialog</li>
+                <li>Certificate serial number is now shown as both hexadecimal and decimal in certificate viewer</li>
+                <li>SHA-256 is now default algorithm for signing jars, removed MD2/5</li>
+                <li>Added popup menu for multiple entry selection</li>
+                <li>Added handler for viewing files via system clipboard (copy file, then do "Examine System Clipboard")</li>
+                <li>Added jar/apk files to "Examine File" feature, which shows the signature certificates for signed jars (dragging and dropping a jar file onto KSE works as well)</li>
+                <li>Added SAN extension to TLS/SSL server template</li>
+                <li>Subject DNs can be empty now (explicitly allowed in RFC 5280)</li>
+                <li>Removed old Netscape extensions from AddExtensions dialog</li>
+                <li>Added OIDs of three private Apple certificate extensions to extension viewer</li>
+                <li>Increased maximum number of items in recent files menu from 6 to 9</li>
+                <li>Flat Laf Light is now the default theme for all platforms</li>
+                <li>macOS: Updated VAqua look&amp;feel to v8</li>
+                <li>macOS: Updated DMG background image (144dpi, arrow, text)</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Bugfixes</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>Fixed display and entering of IP subnets (reported by Natan Abolafya and fix contributed by Jairo Graterón)</li>
+                <li>Fixed not remembering last used key type and size/curve in key generation dialog (reported by Benny Prange)</li>
+                <li>Fixed display name in ASN.1 view for UPN/1.3.6.1.4.1.311.20.2.3 (reported by Michael Osipov)</li>
+                <li>Fixed bug when signing fat jars (reported by Pavel Yankelevich)</li>
+                <li>Workaround for display issue in verify function of jarsigner (reported by Pavel Yankelevich)</li>
+                <li>Fixed root node in certificate viewer selected instead of leaf (reported by chinkinsei and Maurice Perry)</li>
+                <li>Fixed scaling issue with splash image (reported by Kevin Herron)</li>
+                <li>Fixed error in file type detection (reported by Basti Schneider)</li>
+                <li>Fixed spacing in some dialogs</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Older Release Notes</h1>
+</div>
+<p>
+    <a href="release54.html">KeyStore Explorer Release 5.4.0, 5.4.1, 5.4.2, 5.4.3 and 5.4.4</a>
+</p>
+<p>
+    <a href="release53.html">KeyStore Explorer Release 5.3.0, 5.3.1 and 5.3.2</a>
+</p>
+<p>
+    <a href="release52.html">KeyStore Explorer Release 5.2.0, 5.2.1 and 5.2.2</a>
+</p>
+<p>
+    <a href="release51.html">KeyStore Explorer Release 5.1.0 and 5.1.1</a>
+</p>
+<p>
+    <a href="release50.html">KeyStore Explorer Release 5.0.0 and 5.0.1</a>
+</p>
+</Layout>

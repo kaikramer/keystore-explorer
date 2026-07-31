@@ -1,0 +1,20 @@
+{
+  "name": "kaikramer.github.io",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build && pagefind --site dist && node scripts/duplicate-index-pages.mjs",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.1.6",
+    "bootstrap": "^5.3.8",
+    "tocbot": "^4.36.8"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
+  }
+}

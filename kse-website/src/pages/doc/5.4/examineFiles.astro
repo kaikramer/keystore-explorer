@@ -1,0 +1,163 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - Examine" version="5.4" editPath="src/pages/doc/5.4/examineFiles.astro">
+
+<h1>Examine a File</h1>
+<hr />
+
+To examine a file (certificate, CSR, CRL or keystore):
+
+<ol>
+  <li>
+    From the <b>Examine</b> menu, choose <b>Examine File</b>. Alternatively
+    click on the <b>Examine File</b> tool bar button:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/examinefile.png" />
+  </li>
+
+
+  <li>Select the drive and folder where the file is stored.</li>
+
+
+  <li>
+    Click on the file or type the filename into the <b>File Name</b> text box.
+  </li>
+
+
+  <li>Click on the <b>Examine</b> button.</li>
+
+
+  <li>The <b>Certificate/CSR/CRL Details</b> dialog will appear.</li>
+
+
+  <li>
+    After viewing the details close the dialog by clicking on the <b>OK</b> button.
+  </li>
+</ol>
+
+<h1>Examine Clipboard Content</h1>
+<hr />
+
+To examine the content of the system clipboard (PEM encoded certificate, CSR or
+CRL):
+
+<ol>
+  <li>
+    From the <b>Examine</b> menu, choose <b>Examine Clipboard</b>. Alternatively
+    click on the <b>Examine Clipboard</b> tool bar button:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img
+      src="images/examineclipboard.png"
+    />
+  </li>
+
+
+  <li>
+    Either the <b>Certificate/CSR/CRL Details</b> dialog will appear or a
+    message that the system clipboard does not contain any of the supported data
+    types.
+  </li>
+
+  <li>
+    After viewing the details close the dialog by clicking on the <b>OK</b> button.
+  </li>
+</ol>
+
+<h1>Examine an SSL Connection</h1>
+<hr />
+
+To examine an SSL connection's certificates:
+
+<ol>
+  <li>
+    From the <b>Examine</b> menu, choose <b>Examine SSL</b>. Alternatively click
+    on the <b>Examine SSL</b> tool bar button:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/examinessl.png" />
+  </li>
+
+
+  <li>The <b>Examine SSL</b> dialog will appear.</li>
+
+
+  <li>
+    Enter the <b>SSL Host</b> and <b>Port</b> of the connection to be examined.
+    Your last ten input values are saved and available via the drop down box.
+  </li>
+
+
+  <li>
+    Optionally you can activate <b>client authentication</b>. You have just to
+    select a KeyStore and the private key from KeyStore is used to authenticate
+    against the SSL server. If there is more than one private key in the
+    KeyStore that could be used for client authentication, then standard Java
+    mechanisms are used to find the right one.
+  </li>
+
+
+  <li>Click on the <b>OK</b> button.</li>
+
+
+  <li>The <b>Certificate Details for SSL Connection</b> dialog will appear.</li>
+
+
+  <li>
+    After viewing the details close the dialog by clicking on the <b>OK</b> button.
+  </li>
+</ol>
+
+<h1>Detect a Cryptographic File's Type</h1>
+<hr />
+
+To detect a cryptographic file's type:
+
+<ol>
+  <li>
+    From the <b>Examine</b> menu, choose <b>Detect File Type</b>. Alternatively
+    click on the <b>Detect File Type</b> tool bar button:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/detectfiletype.png" />
+  </li>
+
+
+  <li>The <b>Detect File Type</b> dialog will appear.</li>
+
+
+  <li>Select the drive and folder where the file is stored.</li>
+
+
+  <li>
+    Click on the required certificate file or type the filename into the <b>File Name</b> text box.
+  </li>
+
+
+  <li>Click on the <b>Detect Type</b> button.</li>
+
+
+  <li>The <b>Cryptographic File Type</b> dialog will appear.</li>
+
+
+  <li>
+    After viewing the file type details close the dialog by clicking on the <b>OK</b> button.
+  </li>
+</ol>
+
+<b>Note:</b> KeyStore Explorer can detect files of the following cryptographic
+types:
+
+<ul>
+  <li>JKS KeyStore</li>
+  <li>JCEKS KeyStore</li>
+  <li>PKCS #12 KeyStore</li>
+  <li>BKS KeyStore</li>
+  <li>BKS-V1 KeyStore</li>
+  <li>UBER KeyStore</li>
+  <li>Certificate</li>
+  <li>Certificate Signing Request (CSR)</li>
+  <li>Certificate Revocation List (CRL)</li>
+  <li>Encrypted PKCS #8 Private Key</li>
+  <li>Unencrypted PKCS #8 Private Key</li>
+  <li>Encrypted Microsoft PVK Private Key</li>
+  <li>Unencrypted Microsoft PVK Private Key</li>
+  <li>Encrypted OpenSSL Private Key</li>
+  <li>Unencrypted OpenSSL Private Key</li>
+  <li>OpenSSL Public Key</li>
+</ul>
+</Layout>

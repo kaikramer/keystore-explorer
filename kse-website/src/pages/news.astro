@@ -1,0 +1,365 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - News" active="news" editPath="src/pages/news.astro">
+
+<div class="page-header">
+    <h1>News</h1>
+</div>
+
+<h2 class="h3 page-header">KSE 5.6.1 Released - 3 Jan 2026</h2>
+<p>
+    The highlights of this release are:
+    <ul>
+        <li>Verification of JAR files</li>
+        <li>Post Quantum Cryptography (PQC) algorithms: ML-DSA, ML-KEM and SLH-DSA</li>
+        <li>Support for SM2 and ECGOST algorithms</li>
+        <li>Many usability improvements</li>
+    </ul>
+</p>
+<p>
+    The complete and detailed list of changes can be found in the <a href="releases.html">release notes</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.6.0 Released - 17 May 2025</h2>
+<p>
+    KeyStore Explorer 5.6.0 contains more than 50 new features, improvements and bug fixes.
+    The highlights of this release are:
+    <ul>
+        <li>A password manager for keystore passwords</li>
+        <li>Extended JWT support (verification of JWTs and key export in JWK format)</li>
+        <li>Signing of arbitrary files with PKCS#7/CMS and verification of those signatures</li>
+        <li>Improvements for PKCS#12 (low level content viewer, same password for all keys)</li>
+    </ul>
+</p>
+<p>
+Also included are three new translations:
+    <ul>
+        <li>Spanish</li>
+        <li>Russian</li>
+        <li>Chinese</li>
+    </ul>
+</p>
+<p>
+    Internally a lot has changed as well. The way the application settings are managed and stored has been completely
+    rewritten. The minimum supported Java version is now Java 11. This allowed to remove many workarounds for older Java
+    versions.
+</p>
+<p>
+    As always, the complete and detailed list of changes can be found in the <a href="releases.html">release notes</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.5.3 Released - 29 Dec 2023</h2>
+<p>
+    This release contains lots of small improvements and a few bug fixes.
+</p>
+<p>
+    The complete list of changes can be found in the <a href="releases.html">release notes</a>.
+</p>
+
+<h2 class="h3 page-header">The 10th Anniversary of the First Open Source Release - 19 Oct 2023</h2>
+<p>
+    <p>Today we are celebrating a decade of KeyStore Explorer as open source software. On October 19, 2013 version 5.0.0
+      of KeyStore Explorer was released under the GPLv3 license on Sourceforge. </p>
+
+    <p>The history of KSE up to this date and how it became open source was
+    documented by its creator Wayne in a very captivating manner in his blog. If you haven't read this story yet, here are
+    the links:</p>
+    <p>
+      <ul>
+        <li>
+          <a href="history.html#a-history-of-keystore-explorer-part-one-2011-12-22">
+            A History of KeyStore Explorer – Part One
+          </a>
+        </li>
+        <li>
+          <a href="history.html#a-history-of-keystore-explorer-part-two-2012-02-21">
+            A History of KeyStore Explorer – Part Two
+          </a>
+        </li>
+        <li>
+          <a href="history.html#a-history-of-keystore-explorer-part-three-2012-05-18">
+            A History of KeyStore Explorer – Part Three
+          </a>
+        </li>
+        <li>
+          <a href="history.html#new-owner-wanted-for-keystore-explorer-2012-10-18">
+            New Owner Wanted for KeyStore Explorer
+          </a>
+        </li>
+        <li>
+          <a href="history.html#new-owner-found-for-keystore-explorer-2013-07-30">
+            New Owner Found for KeyStore Explorer
+          </a>
+        </li>
+        <li>
+          <a href="history.html#keystore-explorer-oss-update-2013-08-31">
+            KeyStore Explorer – OSS Update
+          </a>
+        </li>
+        <li>
+          <a href="history.html#keystore-explorer-now-open-source-2013-10-19">
+            KeyStore Explorer Now Open Source
+          </a>
+        </li>
+      </ul>
+    </p>
+    <p>In those last 10 years more than 100 new features have been added in 18 releases. To name just a few of the most important ones:
+    <ul>
+      <li>Support for ECC (Elliptic Curve Cryptography), EdDSA (Ed25519 and Ed448) and RSASSA-PSS signatures</li>
+      <li>Support for MSCAPI and PKCS#11, allowing the use of smart cards and HSMs with KSE</li>
+      <li>System clipboard integration</li>
+      <li>More CA features like extension templates, custom certificate extensions and CRL creation</li>
+      <li>JWT (JSON Web Token) creation</li>
+    </ul>
+    </p>
+    <p>Many of those features were user contributions. All in all almost 30 persons have contributed code or translations to
+      this project and I want to thank all of them for making this project what it is today! The top 5 contributors are:
+      <table  class="table table-striped">
+        <tr>
+          <th>Contributor</th>
+          <th>Commits</th>
+          <th>Additions</th>
+        </tr>
+        <tr>
+          <td>Jairo Graterón</td>
+          <td>49</td>
+          <td>6,825</td>
+        </tr>
+        <tr>
+          <td>Frank Dietrich</td>
+          <td>48</td>
+          <td>4,630</td>
+        </tr>
+        <tr>
+          <td>Colbix</td>
+          <td>38</td>
+          <td>3,170</td>
+        </tr>
+        <tr>
+          <td>Davy Defaud</td>
+          <td>32</td>
+          <td>11,376</td>
+        </tr>
+        <tr>
+          <td>The-Lum</td>
+          <td>18</td>
+          <td>1,595</td>
+        </tr>
+      </table>
+    </p>
+    <p>There has been a constant rise in the user count over the last 10 years as well. In 2013, monthly downloads averaged
+      1,500, but today, that figure has increased to around 35,000.</p>
+    <p>What is planned for the future? KSE v5.6.0 will be the next big feature release, and it will focus on the following topics:</p>
+    <ul>
+      <li>Improved PKCS#12 support</li>
+      <li>Extended verification features (verifying signatures of jars and CSRs)</li>
+      <li>Extended JWT support (for example key import/export in JWK format)</li>
+    </ul>
+</p>
+
+
+<h2 class="h3 page-header">KSE 5.5.2 Released - 22 Jan 2023</h2>
+<p>
+    This release contains lots of small improvements and a few bug fixes.
+</p>
+<p>
+    Highlights:
+    <ul>
+        <li>Improved key details dialogs with more information about the keys.</li>
+        <li>The subject DN and extensions for a new certificate can now be obtained from another certificate (button "Transfer
+          Name and Extensions").</li>
+        <li>A redesigned preferences dialog.</li>
+    </ul>
+</p>
+<p>
+    The complete list of changes can be found in the <a href="releases.html">release notes</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.5.1 Released - 27 Jan 2022</h2>
+<p>
+    Highlights of this release:
+    <ul>
+        <li>KSE can now create and sign JWTs (JSON Web Tokens).</li>
+        <li>The French translation has been extended and improved.</li>
+        <li>A bug that made the import of CA replies with EC keys impossible has been fixed.</li>
+    </ul>
+</p>
+<p>
+    The complete list of changes can be found in the <a href="releases.html">release notes</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.5.0 Released - 5 Dec 2021</h2>
+<p>
+    KeyStore Explorer 5.5.0 contains more than 40 new features, improvements
+    and bug fixes. As always the complete and detailed list of changes can be
+    found in the <a href="releases.html">release notes</a>.
+</p>
+<p>
+    The downloads are <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">One Million Downloads - 14 Oct 2020</h2>
+<p>
+    Today KeyStore Explorer has crossed one million downloads on GitHub. <img src="images/party-popper-icon.png" alt=""
+    height="24" width="24" style="vertical-align: baseline;"/>
+    This includes all releases since November 2015. Not included are downloads from the time when KSE was hosted on
+    Sourceforge (2013 - 2015) or when KSE was Closed Source (2004 - 2013). It took around three years to reach 500,000
+    downloads and then only two more years for one million, which shows that the number of users is steadily increasing.
+</p>
+<p>
+    If you are interested in a more detailed breakdown of the download numbers, there is a nice website called <a href="https://somsubhra.github.io/github-release-stats/?username=kaikramer&repository=keystore-explorer&page=1&per_page=20">GitHub Release Stats</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.4.4 Released - 4 Oct 2020</h2>
+<p>
+    KeyStore Explorer 5.4.4 brings some minor improvements and bug fixes. The macOS version now comes with a bundled Java runtime.
+</p>
+<p>
+    See the <a href="release54.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.4.3 Released - 8 Mar 2020</h2>
+<p>
+    KeyStore Explorer 5.4.3 brings some new features and improvements.
+</p>
+<p>
+    See the <a href="release54.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">Online User Manual - 31 Dec 2019</h2>
+<p>
+    KeyStore Explorer's user manual is now part of this website. Future releases of
+    KeyStore Explorer won't include a user manual anymore. Instead the menu item 'Help'
+    will link to the online user manual.
+</p>
+<p>
+    Please keep in mind that you can contribute to the KeyStore Explorer project by
+    improving the documentation. Like KeyStore Explorer itself this website is managed in a <a href="https://github.com/kaikramer/kaikramer.github.io">repository on GitHub</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.4.2 Released - 11 Aug 2019</h2>
+<p>
+    KeyStore Explorer 5.4.2 brings enhancements, bugfixes and a new version of appbundler (the macOS launcher).
+</p>
+<p>
+    See the <a href="release54.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">Half a Million Downloads on GitHub - 02 Dec 2018</h2>
+<p>
+    Almost exactly three years ago KeyStore Explorer moved from Sourceforge to GitHub. Since then it has been
+    downloaded more than 500,000 times, forked almost 100 times and starred more than 400 times.
+</p>
+
+<h2 class="h3 page-header">KSE 5.4.1 Released - 27 Oct 2018</h2>
+<p>
+    KeyStore Explorer 5.4.1 is a small bugfix release.
+</p>
+<p>
+    See the <a href="release54.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.4.0 Released - 20 Sep 2018</h2>
+<p>
+    <a href="downloads.html">KeyStore Explorer 5.4.0</a> is a huge feature release. See the <a href="release54.html">release
+        notes</a> for a list of all changes.
+</p>
+
+<h2 class="h3 page-header">KSE 5.3.2 Released - 19 Dec 2017</h2>
+<p>
+    KeyStore Explorer 5.3.2 is a small bugfix release.
+</p>
+<p>
+    See the <a href="release53.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.3.1 Released - 01 Nov 2017</h2>
+<p>
+    KeyStore Explorer 5.3.1 is a small bugfix release.
+</p>
+<p>
+    See the <a href="release53.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.3.0 Released - 01 Aug 2017</h2>
+<p>
+    KeyStore Explorer 5.3.0 includes many new features, enhancements and bugfixes.
+</p>
+<p>
+    See the <a href="release53.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.2.2 Released - 27 Nov 2016</h2>
+<p>
+    <a href="release52.html">KSE 5.2.2</a> is mainly a maintenance release, but also includes another translation.
+</p>
+
+<h2 class="h3 page-header">KSE 5.2.1 Released - 13 Aug 2016</h2>
+<p>
+    Three months have passed since the release of KSE 5.2 and a couple of bugs have been reported - time for a bugfix
+    release.
+</p>
+<p>
+    See the <a href="release52.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.2.0 Released - 15 May 2016</h2>
+<p>
+    KeyStore Explorer 5.2.0 includes many new features, improvements and bugfixes.
+</p>
+<p>
+    See the <a href="release52.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">Contribution Guide Added - 27 Apr 2016</h2>
+<p>
+    A new <a href="contribute.html">page</a> has been added to this website that contains suggestions and guidelines
+    on how to contribute to the KeyStore Explorer project.
+</p>
+<p>
+    It also contains a list of contributors.
+</p>
+
+<h2 class="h3 page-header">KSE Now Has Its Own Domain - 22 Nov 2015</h2>
+<p>
+    This website is now also available under <a href="http://www.keystore-explorer.org">www.keystore-explorer.org</a>
+</p>
+
+<h2 class="h3 page-header">KSE Has Moved to GitHub - 21 Nov 2015</h2>
+<p>
+    A code repository for KSE has been created on GitHub: <a href="https://github.com/kaikramer/keystore-explorer">KeyStore
+        Explorer on GitHub</a>
+</p>
+<p>
+    The repository on Sourceforge will soon be removed.
+</p>
+
+<h2 class="h3 page-header">KSE 5.1.1 Released - 28 Mar 2015</h2>
+<p>
+    <a href="downloads.html">KeyStore Explorer 5.1.1</a> is a bugfix release. See the <a href="release51.html">release
+        notes</a> for details.
+</p>
+
+<h2 class="h3 page-header">KSE 5.1.0 Released - 02 Aug 2014</h2>
+<p>
+    KeyStore Explorer 5.1.0 includes many new features, improvements and bugfixes.
+</p>
+<p>
+    See the <a href="release51.html">release notes</a> for details and download it <a href="downloads.html">here</a>.
+</p>
+
+<h2 class="h3 page-header">KSE 5.0.1 Released - 24 Nov 2013</h2>
+<p>
+    <a href="downloads.html">KeyStore Explorer 5.0.1</a> is a bug fix release. See the <a href="release50.html">release
+        notes</a> for details.
+</p>
+
+<h2 class="h3 page-header">KSE 5.0.0 Released - 19 Oct 2013</h2>
+<p>
+    KeyStore Explorer 5.0.0 has been released today. See the <a href="release50.html">release notes</a> for details.
+</p>
+<p>
+    The downloads are available <a href="downloads.html">here</a>.
+</p>
+</Layout>

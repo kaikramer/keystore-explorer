@@ -1,0 +1,221 @@
+---
+// Shared top navbar. `version` selects which User Manual version the
+// dropdown links point at (mirrors the old per-version doc _includes/header.html
+// files); `active` highlights the current top-level nav item.
+interface Props {
+  version?: '5.4' | '5.5' | '5.6';
+  active?: 'news' | 'features' | 'doc' | 'specifications' | 'screenshots' | 'releases' | 'downloads' | 'history' | 'license';
+}
+const { version = '5.6', active } = Astro.props;
+const isActive = (key: string) => (active === key ? 'active' : '');
+---
+<nav id="myNavbar" class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/index.html">KeyStore Explorer</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"> <a class={`nav-link ${isActive('news')}`} href="/news.html">News</a> </li>
+                <li class="nav-item"> <a class={`nav-link ${isActive('features')}`} href="/features.html">Features</a> </li>
+                <li class="nav-item dropdown"> <a class={`nav-link dropdown-toggle ${isActive('doc')}`} href="#" role="button" data-bs-toggle="dropdown">User Manual</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href={`/doc/${version}/overview.html`}>User Interface Overview</a>
+                        <a class="dropdown-item" href={`/doc/${version}/toolBar.html`}>Tool Bar</a>
+                        <a class="dropdown-item" href={`/doc/${version}/keyboardShortcuts.html`}>Keyboard Shortcuts</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href={`/doc/${version}/keyStoreManagement.html`}>KeyStore Management</a>
+                        <a class="dropdown-item" href={`/doc/${version}/keyPairs.html`}>Key Pairs</a>
+                        <a class="dropdown-item" href={`/doc/${version}/trustedCertificates.html`}>Trusted Certificates</a>
+                        <a class="dropdown-item" href={`/doc/${version}/keys.html`}>Secret Keys</a>
+                        <a class="dropdown-item" href={`/doc/${version}/digitalSigning.html`}>Digital Signing</a>
+                        <a class="dropdown-item" href={`/doc/${version}/certificateExtensions.html`}>Certificate Extensions</a>
+                        <a class="dropdown-item" href={`/doc/${version}/examineFiles.html`}>Examine Files and Connections</a>
+                        {version === '5.6' && (
+                            <a class="dropdown-item" href={`/doc/${version}/passwordManager.html`}>Password Manager</a>
+                        )}
+                        <a class="dropdown-item" href={`/doc/${version}/preferences.html`}>Preferences</a>
+                        {version !== '5.4' && (
+                            <Fragment>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href={`/doc/${version}/specifications.html`}>Specifications</a>
+                            </Fragment>
+                        )}
+                    </div>
+                </li>
+                {version === '5.4' && (
+                    <li class="nav-item"> <a class={`nav-link ${isActive('specifications')}`} href="/specifications.html">Specifications</a> </li>
+                )}
+                <li class="nav-item"> <a class={`nav-link ${isActive('screenshots')}`} href="/screenshots.html">Screenshots</a> </li>
+                <li class="nav-item"> <a class={`nav-link ${isActive('releases')}`} href="/releases.html">Release Notes</a> </li>
+                <li class="nav-item"> <a class={`nav-link ${isActive('downloads')}`} href="/downloads.html">Downloads</a> </li>
+                <li class="nav-item"> <a class={`nav-link ${isActive('history')}`} href="/history.html">History</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="https://github.com/kaikramer/keystore-explorer">GitHub</a> </li>
+            </ul>
+            <div class="nav-search">
+                <form class="d-flex" role="search" id="nav-search-form" autocomplete="off">
+                    <svg class="nav-search-icon" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                    </svg>
+                    <input type="search" id="nav-search-input" class="form-control form-control-sm" placeholder="Search" aria-label="Search" />
+                </form>
+                <div id="nav-search-results" class="nav-search-results" hidden></div>
+            </div>
+            <button id="theme-toggle" type="button" class="btn btn-sm theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+                <svg class="theme-icon-light" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a4 4 0 1 1 0-8 4 4 0 0 1 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2a.5.5 0 0 1 .5-.5zM16 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707L4.464 3.757a.5.5 0 0 1 0 .708z"/>
+                </svg>
+                <svg class="theme-icon-dark" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<script>
+  const button = document.getElementById('theme-toggle');
+  button?.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+  });
+</script>
+
+<!--
+  Pagefind's search runtime (/pagefind/pagefind.js and the index files it
+  fetches) is generated by `pagefind --site dist`, chained onto the `build`
+  script after `astro build`, so it only exists in the built output — not
+  during `astro dev`. `is:inline` keeps Astro/Vite from trying to resolve
+  the dynamic import of that build-output-only path at build time (same
+  reasoning as the pagefind-ui.js <script src> tag on /search.html).
+-->
+<script is:inline type="module">
+  const wrapper = document.querySelector('.nav-search');
+  const form = document.getElementById('nav-search-form');
+  const input = document.getElementById('nav-search-input');
+  const resultsEl = document.getElementById('nav-search-results');
+
+  let pagefind = null;
+  let pagefindFailed = false;
+
+  async function loadPagefind() {
+    if (pagefind || pagefindFailed) return pagefind;
+    try {
+      pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
+      await pagefind.options({ basePath: '/pagefind/' });
+    } catch (err) {
+      pagefindFailed = true;
+      console.warn(
+        'Pagefind search index unavailable (expected under `astro dev`; run `npm run build && npm run preview` to test search).',
+        err
+      );
+    }
+    return pagefind;
+  }
+
+  function closeResults() {
+    resultsEl.hidden = true;
+    resultsEl.innerHTML = '';
+  }
+
+  function viewAllUrl(query) {
+    return `/search.html?q=${encodeURIComponent(query)}`;
+  }
+
+  async function renderResults(query) {
+    if (!query) {
+      closeResults();
+      return;
+    }
+
+    const pf = await loadPagefind();
+    if (!pf) {
+      resultsEl.hidden = false;
+      resultsEl.innerHTML = '<div class="nav-search-message">Search is unavailable right now.</div>';
+      return;
+    }
+
+    const search = await pf.debouncedSearch(query, {}, 150);
+    if (search === null) return; // a newer keystroke superseded this search
+
+    if (search.results.length === 0) {
+      resultsEl.hidden = false;
+      resultsEl.innerHTML = '<div class="nav-search-message">No results found.</div>';
+      return;
+    }
+
+    const items = await Promise.all(search.results.slice(0, 6).map((r) => r.data()));
+
+    resultsEl.innerHTML = '';
+    for (const item of items) {
+      const a = document.createElement('a');
+      a.className = 'nav-search-result';
+      a.href = item.url;
+      a.innerHTML = `<div class="nav-search-result-title">${item.meta.title}</div>` +
+        `<div class="nav-search-result-excerpt">${item.excerpt}</div>`;
+      resultsEl.appendChild(a);
+    }
+
+    const viewAll = document.createElement('a');
+    viewAll.className = 'nav-search-view-all';
+    viewAll.href = viewAllUrl(query);
+    viewAll.textContent = `View all results for "${query}"`;
+    resultsEl.appendChild(viewAll);
+
+    resultsEl.hidden = false;
+  }
+
+  input?.addEventListener('focus', () => loadPagefind());
+  input?.addEventListener('input', () => renderResults(input.value.trim()));
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const query = input.value.trim();
+    if (query) window.location.href = viewAllUrl(query);
+  });
+
+  function focusableItems() {
+    return Array.from(resultsEl.querySelectorAll('.nav-search-result, .nav-search-view-all'));
+  }
+
+  function handleDropdownKeydown(e) {
+    if (e.key === 'Escape') {
+      // Always return focus to the input, not just blur it: closeResults()
+      // clears resultsEl's innerHTML, so if a result link currently has
+      // focus, removing it from the DOM would otherwise drop focus to
+      // <body> with nothing keyboard-reachable.
+      closeResults();
+      input.focus();
+      return;
+    }
+
+    if (resultsEl.hidden) return;
+    const items = focusableItems();
+    if (items.length === 0) return;
+    const currentIndex = items.indexOf(document.activeElement);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = items[currentIndex + 1] ?? items[0];
+      next.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentIndex <= 0) {
+        input.focus();
+      } else {
+        items[currentIndex - 1].focus();
+      }
+    }
+  }
+
+  input?.addEventListener('keydown', handleDropdownKeydown);
+  resultsEl?.addEventListener('keydown', handleDropdownKeydown);
+
+  document.addEventListener('click', (e) => {
+    if (wrapper && !wrapper.contains(e.target)) closeResults();
+  });
+</script>

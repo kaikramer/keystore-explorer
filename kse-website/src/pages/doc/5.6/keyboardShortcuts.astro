@@ -1,0 +1,328 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - Keyboard Shortcuts" version="5.6" editPath="src/pages/doc/5.6/keyboardShortcuts.astro">
+
+<h1 data-toc-skip>Keyboard Shortcuts</h1>
+<hr />
+
+There are keyboard shortcuts available to activate common operations:
+
+<br /><br />
+
+<table class="table">
+  <thead>
+    <tr>
+      <th rowspan="2">Button</th>
+      <th colspan="2">Keyboard Shortcut</th>
+      <th rowspan="2">Operation</th>
+      <th rowspan="2">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th></th>
+      <th>Windows / Linux</th>
+      <th>macOS</th>
+    </tr>
+    <tr>
+      <td><center><img src="images/new.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>N</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>N</kbd></td>
+      <td>New</td>
+      <td>Create a new KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/open.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>O</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>O</kbd></td>
+      <td>Open</td>
+      <td>Open an existing KeyStore from disk</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/opendefault.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd></td>
+      <td>Open</td>
+      <td>Open the Default KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/opencacerts.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td>
+      <td>Open</td>
+      <td>Open the CA Certificates KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/openpkcs11.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>1</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>1</kbd></td>
+      <td>Open PKCS#11</td>
+      <td>Open an PKCS#11 KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/openmscapi.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd></td>
+      <td>Open Windows-MY</td>
+      <td>Open Windows-MY KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/close.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>W</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>W</kbd></td>
+      <td>Close</td>
+      <td>Close the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/closeall.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd></td>
+      <td>Close All</td>
+      <td>Close all KeyStores</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/save.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>S</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>S</kbd></td>
+      <td>Save</td>
+      <td>Save the active KeyStore to disk</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/saveas.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd></td>
+      <td>Save As</td>
+      <td>Save the active KeyStore to disk with a new name</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/saveall.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td>
+      <td>Save All</td>
+      <td>Save all changed KeyStores</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/undo.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Z</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Z</kbd></td>
+      <td>Undo</td>
+      <td>Undo the last action</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/redo.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Y</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Y</kbd></td>
+      <td>Redo</td>
+      <td>Redo the previously undone action</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/cut.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>X</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>X</kbd></td>
+      <td>Cut</td>
+      <td>Cut the selected KeyStore entry to the buffer</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/copy.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>C</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>C</kbd></td>
+      <td>Copy</td>
+      <td>Copy the selected KeyStore entry to the buffer</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/paste.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>V</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>V</kbd></td>
+      <td>Paste</td>
+      <td>Paste the buffer's contents into the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/comparecerts.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd></td>
+      <td>Compare</td>
+      <td>Compare certificates</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/genkeypair.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>G</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>G</kbd></td>
+      <td>Generate Key Pair</td>
+      <td>
+        Generate a Key Pair with self-signed certificate in the active KeyStore
+      </td>
+    </tr>
+    <tr>
+      <td><center><img src="images/genseckey.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>G</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>G</kbd></td>
+      <td>Generate Secret Key</td>
+      <td>Generate a Secret Key in the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/gendh.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd></td>
+      <td>Generate DH Parameters</td>
+      <td>Generate Diffie–Hellman Parameters</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/importcert.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>T</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>T</kbd></td>
+      <td>Import Trusted Certificate</td>
+      <td>Import a Trusted Certificate into the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/importkeypair.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>K</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>K</kbd></td>
+      <td>Import Key Pair</td>
+      <td>Import a Key Pair into the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/passphrase.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd></td>
+      <td>Store Passphrase</td>
+      <td>Store a passphrase in the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/verifysignature.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd></td>
+      <td>Verify PKCS#7/CMS signature</td>
+      <td>Verify a PKCS#7/CMS signature</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/verifyjar.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>J</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>J</kbd></td>
+      <td>Verify JAR signature</td>
+      <td>Verify a JAR file signature</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/setkeystorepass.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>P</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>P</kbd></td>
+      <td>Set Password</td>
+      <td>Set the active KeyStore's password</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><kbd>Enter</kbd></td>
+      <td nowrap><kbd>Enter</kbd></td>
+      <td>View KeyStore Entry Details</td>
+      <td>Display the details of the currently selected KeyStore entry</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/properties.png" /></center></td>
+      <td nowrap><kbd>Alt</kbd>+<kbd>Enter</kbd></td>
+      <td nowrap><kbd>Alt</kbd>+<kbd>Enter</kbd></td>
+      <td>Properties</td>
+      <td>Display the properties of the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/exportcsv.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>X</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>X</kbd></td>
+      <td>Export as CSV</td>
+      <td>Export the KeyStore table as CSV</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/examinefile.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>E</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>E</kbd></td>
+      <td>Examine File</td>
+      <td>Examine the contents of a file</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/find.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>F</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>F</kbd></td>
+      <td>Find</td>
+      <td>Find an entry in the active KeyStore</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/examineclipboard.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>L</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>L</kbd></td>
+      <td>Examine Clipboard</td>
+      <td>Examine the contents of the system clipboard</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/examinessl.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd></td>
+      <td>Examine TLS/SSL</td>
+      <td>Examine a Transport Layer Security (TLS) connection's certificate(s)</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/examinefile.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>D</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>D</kbd></td>
+      <td>Detect File Type</td>
+      <td>Detect a cryptographic file's type</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/help.png" /></center></td>
+      <td nowrap><kbd>F1</kbd></td>
+      <td nowrap><kbd>F1</kbd></td>
+      <td>Help</td>
+      <td>Display KeyStore Explorer's help pages</td>
+    </tr>
+     <tr>
+      <td><center><img src="images/rename.png" /></center></td>
+      <td nowrap><kbd>F2</kbd></td>
+      <td nowrap>N/A</td>
+      <td>Rename</td>
+      <td>Rename the Key entry</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/preferences.png" /></center></td>
+      <td nowrap><kbd>Ctrl</kbd>+<kbd>,</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>,</kbd></td>
+      <td>Preferences</td>
+      <td>Display KeyStore Explorer's preferences dialog</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/privkeydetails.png" /></center></td>
+      <td nowrap><kbd>-</kbd></td>
+      <td nowrap><kbd>-</kbd></td>
+      <td>View Private Key Details</td>
+      <td>View Private Key Details</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/keypairpubkeydetails.png" /></center></td>
+      <td nowrap><kbd>+</kbd></td>
+      <td nowrap><kbd>+</kbd></td>
+      <td>View Public Key Details</td>
+      <td>View Public Key Details</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><kbd>Esc</kbd></td>
+      <td nowrap><kbd>Esc</kbd></td>
+      <td>Close Dialog</td>
+      <td>Close currently opened dialog</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/delete.png" /></center></td>
+      <td nowrap><kbd>Del</kbd></td>
+      <td nowrap><kbd>Backspace</kbd></td>
+      <td>Delete</td>
+      <td>Delete the KSE entry</td>
+    </tr>
+    <tr>
+      <td><center><img src="images/exit.png" /></center></td>
+      <td nowrap><kbd>Alt</kbd>+<kbd>F4</kbd></td>
+      <td nowrap><kbd>Cmd</kbd>+<kbd>Q</kbd></td>
+      <td>Exit or Quit</td>
+      <td>Exit or Quit KeyStore Explorer</td>
+    </tr>
+  </tbody>
+</table>
+
+<br />
+</Layout>

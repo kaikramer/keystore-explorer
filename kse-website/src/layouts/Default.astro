@@ -1,0 +1,25 @@
+---
+import Head from '../components/Head.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  active?: 'news' | 'features' | 'screenshots' | 'releases' | 'downloads';
+  editPath: string;
+}
+const { title, active, editPath } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <Head title={title} />
+
+  <body>
+    <Nav active={active} />
+    <div class="container" role="main">
+      <slot />
+      <hr />
+      <Footer editPath={editPath} />
+    </div>
+  </body>
+</html>

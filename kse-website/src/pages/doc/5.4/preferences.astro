@@ -1,0 +1,370 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - Preferences" version="5.4" editPath="src/pages/doc/5.4/preferences.astro">
+
+<h1>Preferences</h1>
+<hr />
+
+
+<h2 id="authority-certificates-configuration">Authority Certificates Configuration</h2>
+<hr />
+
+Additional certificates can be considered when forming trust paths and
+attempting to match root certificates. This is relevant when importing Trusted
+Certificates and CA replies.
+
+<p>
+  Such Authority Certificates can be sourced from a designated CA Certificates
+  KeyStore and, for Windows users, the Windows Trusted Root Certificates.
+</p>
+
+<p>
+  To configure the Authority Certificates:
+</p>
+
+<ol>
+  <li>
+    From the <b>Tools</b> menu, choose <b>Preferences</b>. <b>macOS users:</b> From the <b>KeyStore Explorer</b> menu, choose <b>Preferences</b>.
+  </li>
+
+
+  <li>
+    The <b>Preferences</b> dialog will be displayed. Select the <b>Authority Certificates</b> tab.
+  </li>
+
+
+  <li>
+    The default <b>CA Certificates KeyStore</b> is the <b>cacerts</b> file
+    bundled with Java. To change to another KeyStore:
+  </li>
+
+  <ol>
+    <li>Press the <b>Browse</b> button.</li>
+
+
+    <li>The <b>Choose CA Certificates KeyStore</b> dialog will appear.</li>
+
+
+    <li>Select the drive and folder where the KeyStore file is located.</li>
+
+
+    <li>Type the filename into the <b>File Name</b> text box.</li>
+
+
+    <li>Click on the <b>Choose</b> button.</li>
+  </ol>
+
+  <li>
+    Tick the <b>Use CA Certificates KeyStore</b> check box to enable its use.
+  </li>
+
+
+  <li>
+    Tick the <b>Use Windows Trusted Root Certificates</b> check box to enable
+    its use.
+  </li>
+
+
+  <li>
+    Press the <b>OK</b> button to save your settings and dismiss the <b>Preferences</b> dialog.
+  </li>
+</ol>
+
+<b>Notes:</b>
+
+<ul>
+  <li>
+    If the use of the CA Certificates KeyStore is enabled then the first time
+    that you attempt to import a Trusted Certificate or CA Reply in a KeyStore
+    Explorer session you will be prompted for the CA Certificates KeyStore
+    password.
+  </li>
+
+
+  <li>
+    The default password for the <b>cacerts</b> file bundled with Java is
+    "changeit".
+  </li>
+</ul>
+
+<h2 id="trust-checks-configuration">Trust Checks Configuration</h2>
+<hr />
+
+Chain of Trust Checks can be enabled or disabled. This is relevant when
+importing Trusted Certificates and CA replies. Disabling trust checks simplifies
+these import processes at the cost of security. In addition, enabling trust
+checks for CA Reply imports has the advantage of automatically completing key
+pair chains to any trusted root (if present).
+
+<p>
+  To configure the Trust Checks:
+</p>
+
+<ol>
+  <li>
+    From the <b>Tools</b> menu, choose <b>Preferences</b>. <b>macOS users:</b> From the <b>KeyStore Explorer</b> menu, choose <b>Preferences</b>.
+  </li>
+
+
+  <li>
+    The <b>Preferences</b> dialog will be displayed. Select the <b>Trust Checks</b> tab.
+  </li>
+
+
+  <li>
+    Tick or untick the <b>Import Trusted Certificate</b> and <b>Import CA Reply</b> check boxes to enable and disable the trust checks as
+    required.
+  </li>
+
+
+  <li>
+    Press the <b>OK</b> button to save your settings and dismiss the <b>Preferences</b> dialog.
+  </li>
+</ol>
+
+<h2 id="password-quality-configuration">Password Quality Configuration</h2>
+<hr />
+
+KeyStores, Key Pairs and exported key files are protected by passwords. The
+passwords used to protect these items should be difficult to guess. KeyStore
+Explorer provides an optional password quality meter which can be used to
+display the quality rating of all new passwords and, if necessary, enforce a
+minimum requirement on password quality.
+
+<p>
+  To configure Password Quality:
+</p>
+
+<ol>
+  <li>
+    From the <b>Tools</b> menu, choose <b>Preferences</b>. <b>macOS users:</b> From the <b>KeyStore Explorer</b> menu, choose <b>Preferences</b>.
+  </li>
+
+
+  <li>
+    The <b>Preferences</b> dialog will be displayed. Select the <b>Password Quality</b> tab.
+  </li>
+
+
+  <li>
+    Tick the <b>Enable Password Quality</b> check box to activate the password
+    quality meter.
+  </li>
+
+
+  <li>
+    Tick the <b>Enforce Minimum Password Quality</b> check box to disallow any
+    new passwords weaker than the minimum defined in the next step.
+  </li>
+
+
+  <li>
+    Adjust the <b>Minimum Password Quality</b> slider to select the desired
+    password quality minimum from the range 0-100. The higher the selected
+    minimum the more secure new passwords are required to be.
+  </li>
+
+
+  <li>
+    Press the <b>OK</b> button to save your settings and dismiss the <b>Preferences</b> dialog.
+  </li>
+</ol>
+
+<h2 id="look-and-feel-configuration">Look and Feel Configuration</h2>
+<hr />
+
+KeyStore Explorer can be configured to use a variety of user interface look and
+feels:
+
+<p>
+  To configure the look and feel:
+</p>
+
+<ol>
+  <li>
+    From the <b>Tools</b> menu, choose <b>Preferences</b>. <b>macOS users:</b> From the <b>KeyStore Explorer</b> menu, choose <b>Preferences</b>.
+  </li>
+
+
+  <li>
+    The <b>Preferences</b> dialog will be displayed. Select the <b>Look and Feel</b> tab.
+  </li>
+
+
+  <li>
+    Select the required user interface from the <b>Look and Feel</b> drop-down
+    and whether or not the application's windows should be <b>Look and Feel Decorated</b>.
+  </li>
+
+
+  <li>
+    Press the <b>OK</b> button to save your settings and dismiss the <b>Preferences</b> dialog.
+  </li>
+
+
+  <li>
+    The application will restart. Upon restart the look and feel changes will be
+    applied.
+  </li>
+</ol>
+
+<h2 id="internet-proxy-configuration">Internet Proxy Configuration</h2>
+<hr />
+
+Your network may require the use of a proxy to access the Internet. KeyStore
+Explorer utilizes the Internet to check for updates and examine SSL connections.
+Configuration is required to use such features with a proxy.
+
+<p>
+  To configure the Internet proxy:
+</p>
+
+<ol>
+  <li>
+    From the <b>Tools</b> menu, choose <b>Preferences</b>. <b>macOS users:</b> From the <b>KeyStore Explorer</b> menu, choose <b>Preferences</b>.
+  </li>
+
+
+  <li>
+    The <b>Preferences</b> dialog will be displayed. Select the <b>Internet Proxy</b> tab.
+  </li>
+
+
+  <li>
+    To disable the use of a proxy select the <b>No Proxy</b> radio button.
+  </li>
+
+
+  <li>
+    To use the proxy settings of the operating system select the <b>Use System Proxy Settings</b> radio button.
+  </li>
+
+
+  <li>
+    To make proxy settings manually select the <b>Manual Proxy Configuration</b> radio button. Enter the <b>Host</b> and <b>Port</b> of the <b>HTTP</b>, <b>HTTPS</b>, and <b>SOCKS</b> proxies as
+    required.
+  </li>
+
+
+  <li>
+    To use a proxy auto configuration (pac) file select the <b>Automatic Proxy Configuration</b> radio button. Enter the <b>PAC URL</b> of the proxy auto configuration file.
+  </li>
+
+
+  <li>
+    Press the <b>OK</b> button to save your settings and dismiss the <b>Preferences</b> dialog.
+  </li>
+</ol>
+
+<h2 id="tool-bar-configuration">Tool Bar Configuration</h2>
+<hr />
+
+To configure the display of the tool bar:
+
+<ol>
+  <li>Select the <b>View</b> menu.</li>
+
+
+  <li>
+    If the <b>Tool Bar</b> menu item is ticked then the tool bar will be shown.
+  </li>
+
+
+  <li>
+    If the <b>Tool Bar</b> menu item is cleared then the tool bar will be
+    hidden.
+  </li>
+</ol>
+
+<h2 id="status-bar-configuration">Status Bar Configuration</h2>
+<hr />
+
+To configure the display of the status bar:
+
+<ol>
+  <li>Select the <b>View</b> menu.</li>
+
+
+  <li>
+    If the <b>Status Bar</b> menu item is ticked then the status bar will be
+    shown.
+  </li>
+
+
+  <li>
+    If the <b>Status Bar</b> menu item is cleared then the status bar will be
+    hidden.
+  </li>
+</ol>
+
+<h2 id="keystore-tab-style-configuration">KeyStore Tab Style Configuration</h2>
+<hr />
+
+To configure the KeyStore tab style:
+
+<ol>
+  <li>From the <b>View</b> menu, choose the <b>Tab Style</b> sub-menu.</li>
+
+
+  <li>
+    If the <b>Wrap</b> menu item is selected then excess KeyStore tabs will be
+    wrapped.
+  </li>
+
+
+  <li>
+    If the <b>Scroll</b> menu item is selected then excess KeyStore tabs will be
+    scrolled.
+  </li>
+</ol>
+
+<b>Wrapped Tabs:</b>
+
+
+
+<img src="images/tabwrap.png" />
+
+
+
+<b>Scrolled Tabs:</b>
+
+
+
+<img src="images/tabscroll.png" />
+
+
+
+<h2 id="default-name-configuration">Default Name Configuration</h2>
+<hr />
+
+This allows to store default values for certificate distinguished names (DNs).
+When you create a new certificate, the input fields for Common Name,
+Organizational Unit, Organization etc. are pre-filled with the values from this
+configuration setting.
+
+<p>
+  To configure the Default Name:
+</p>
+
+<ol>
+  <li>
+    From the <b>Tools</b> menu, choose <b>Preferences</b>. <b>macOS users:</b> From the <b>KeyStore Explorer</b> menu, choose <b>Preferences</b>.
+  </li>
+
+
+  <li>
+    The <b>Preferences</b> dialog will be displayed. Select the <b>Default Name</b> tab.
+  </li>
+
+
+  <li>
+    Enter any part of the DN that you normally use in your certificate DNs.
+  </li>
+
+
+  <li>
+    Press the <b>OK</b> button to save your settings and dismiss the <b>Preferences</b> dialog.
+  </li>
+</ol>
+</Layout>

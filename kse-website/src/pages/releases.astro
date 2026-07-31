@@ -1,0 +1,962 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Release Notes" active="releases" editPath="src/pages/releases.astro">
+
+<div class="page-header">
+    <h1>Release 5.6.1 <small class="text-muted">3 Jan 2026</small></h1>
+</div>
+<p>
+    This release includes the following improvements, new algorithms, translations and bugfixes:
+</p>
+
+<h2 class="h3">Verification of JAR Files</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Signing JAR files has been part of KSE's functionality for a long time. 
+            Now it is also possible to verify the signatures of signed JAR files.
+        </p>
+        <p>
+            This can be done via the "Verify JAR File Signature" menu item in the Tools menu.
+        </p>
+        <p>
+            After selecting a signed JAR file, KSE will display the details of the signatures found in the JAR file
+            and indicate whether the signatures are valid or not.
+        </p>    
+        <p>
+        The verification details are very similar to the output of the "jarsigner -verify" command (see for example <a href="https://docs.oracle.com/en/java/javase/17/docs/specs/man/jarsigner.html#example-of-verifying-a-signed-jar-file">jarsigner - Example of Verifying a Signed JAR File</a>).
+        </p>
+        <p>
+            The details include:
+            <ul>
+                <li>the overall signature status</li>
+                <li>for each file in the JAR the name, size, date and verification flags</li>
+                <li>a button to show further details about the signatures (a JAR can have multiple signatures)</li>
+                <li>a button to show the certificates</li>
+            </ul> 
+            <p>
+            The meaning of the verification flags are probably already known from jarsigner but here is a short explanation
+            (the same explanation is displayed in the tooltip when you hover over the flags column header):
+            <ul>
+                <li>s = signature was verified</li>
+                <li>m = entry is listed in manifest</li>
+                <li>k = at least one certificate was found in keystore</li>
+            </ul>
+            </p>
+        </p>
+        <p>
+            This feature was contributed by jonwltn.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/verify_jar_menu.png" class="img" alt="screenshot of tools menu" />
+        </p>
+        <p>
+            <img src="images/releases/release561/verify_jar_details.png" class="img" alt="screenshot of jar verification details" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Post Quantum Cryptography (PQC) Algorithms: ML-DSA, ML-KEM and SLH-DSA</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE now supports the ML-DSA and SLH-DSA signature and key algorithms. These algorithms are part 
+            of the NIST standardization process for post-quantum cryptography (PQC).
+        </p>    
+        <p>
+            Supported are the following operations with these algorithms:
+            <ul> 
+                <li>key pair generation</li>
+                <li>signing certificates, CSRs, CRLs, JARs and arbitrary files</li>
+                <li>import and export of private and public keys</li>
+                <li>viewing key details</li>
+            </ul>
+        </p>
+        <p>
+            In addition to that KSE also supports generating ML-KEM keypairs, but only in certificates that are 
+            signed with another key pair (as ML-KEM is a key encapsulation mechanism and not a signature algorithm).
+            This is achieved by using the "Sign New Key Pair" feature in the context menu of a signature key and 
+            selecting ML-KEM as the key algorithm for the new key pair. The result is basically the same as using 
+            the keytool commands described in <a href="https://openjdk.org/jeps/496">JEP 496</a>.
+        </p>
+        <p>
+            This feature was contributed by AnassBousseaden (ML-DSA) and jonwltn (SLH-DSA and ML-KEM).
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/pqc_keygen.png" class="img" alt="screenshot of key generation dialog" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">SM2 and ECGOST</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE now supports the SM2 and ECGOST signature and key algorithms. These algorithms are widely used
+            in China (SM2) and Russia (ECGOST). They are elliptic curve algorithms and can therefore be used 
+            by selecting the EC key type with the respective curve set in the key generation dialog.
+        </p>    
+        <p>
+            SM2 is currently only supported for keystore files of type BKS, BCFKS and UBER.
+        </p>
+        <p>
+            Supported are the following operations with these algorithms:
+            <ul> 
+                <li>key pair generation</li>
+                <li>signing certificates, CSRs, CRLs, JARs and arbitrary files</li>
+                <li>import and export of private and public keys</li>
+                <li>viewing key details</li>
+            </ul>
+        </p>
+        <p>
+            Contributed by jonwltn.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/ecgost_keygen.png" class="img" alt="screenshot of key generation dialog" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Improved Key Pair Import</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            In previous releases the user had to select the format of the key in the key pair import dialog,
+            e.g. PKCS#8, PKCS#12, OpenSSL etc. Sometimes it was not clear which format to select. Or in some cases the
+            files had a wrong file extension that did not match the actual format. This lead to confusion and
+            import errors.
+        </p>
+        <p>
+            Now the key pair import dialog automatically detects the format of the key to import.
+        </p>
+        <p>
+            In addition to that it is now possible to import key pairs without a matching certificate. In Java
+            keystores key pairs are always associated with a certificate chain. But if the key pair has no
+            certificate yet, KSE now creates a self-signed certificate automatically during the import process.
+        </p>
+        <p>
+            If you leave the certificate fields empty and click the "Import" button, KSE will ask whether a self-signed
+            certificate should be created.
+        </p>
+        <p>
+            Offering the generation of a self-signed certificate if none was provided was a contribution by Jairo Graterón.<br />
+            The rework of the import dialog to use automatic format detection was contributed by jonwltn.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/import_key_pair.png" class="img" alt="screenshot of key pair import" />
+        </p>
+        <p>
+            <img src="images/releases/release561/import_self_signed_cert.png" class="img" alt="screenshot of key pair import" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Store a Password in a KeyStore</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            With keytool you can store arbitrary passwords/passphrases in a keystore using the "-importpass" command.
+            KSE now supports this feature as well.
+        </p>    
+        <p>
+            The passphase entries can be created via the "Store Passphrase" menu item in the "Tools" menu.
+            They are stored as secret key entries in the keystore using a "PBE*" algorithm.
+        </p>
+        <p>
+            The stored passphrase can be viewed and modified like normal secret key entries.
+        </p>
+        <p>
+            This feature was contributed by jonwltn.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/store_passphrase_menu.png" class="img" alt="screenshot of store passphrase" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Certificate Validity Information</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The certificate details view now includes two additional fields:
+            <ul>
+                <li>a graphical representation of the certificate validity period in the form of a progress bar</li>
+                <li>the total, elapsed and remaining days of the validity period</li>
+            </ul>
+        </p>   
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p> 
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/validity_progress.png" class="img" alt="screenshot of certificate validity progress" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Support for Additional Extensions in Certificate Viewer</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The values of the following certificate extensions are now displayed in the certificate details view:
+            <ul>
+                <li>SignedCertificateTimestampList/SCTs (OID 1.3.6.1.4.1.11129.2.4.2)</li>
+                <li>MS Application Policies (OID 1.3.6.1.4.1.311.21.10)</li>
+                <li>MS NTDS CA Security (OID 1.3.6.1.4.1.311.25.2)</li>
+                <li>MasaURL (OID 1.3.6.1.5.5.7.1.32) defined in RFC 8995</li>
+            </ul>
+        </p>   
+        <p>
+            Parsing of the SCTs extension was contributed by Jairo Graterón and the other three extensions by The-Lum.
+        </p> 
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/extensions_sct.png" class="img" alt="screenshot of certificate extensions" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Quick Selection of Columns in Main Table</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            In previous releases the columns displayed in the main table could be selected in the preferences dialog.
+            Now there is a second, quicker way to select the columns via a context menu in the table header
+        </p>    
+        <p>
+            Right-clicking on the table header opens the context menu. It shows a list of all available
+            columns to select or deselect them.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/column_context_menu.png" class="img" alt="screenshot of column context menu" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Export Main Table as CSV</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The visible content of the KSE main table can now be exported as a CSV (comma-separated values) file.
+        </p>   
+        <p>
+            This can be done via the "Export as CSV" menu item in the "Tools" menu. The exported CSV file
+            includes all visible columns - to add or remove columns, use the column selection feature.
+        </p>
+        <p>
+            The separator character (either comma or semicolon) is automatically selected based on the system locale.
+        </p>
+        <p>
+            This feature was contributed by jonwltn.
+        </p> 
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/csv_export.png" class="img" alt="screenshot of CSV export" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">UI/UX Enhancements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The context menu for multi-selections in the main table has received the following improvements:
+            <ul>
+                <li>The certificate details view can now be opened for multiple selected certificates at once (contributed by Jairo Graterón).</li>
+                <li>The Unlock option is now also available for multiple selected entries (contributed by jonwltn).</li>
+                <li>Separators have been added to improve menu organization (contributed by jonwltn).</li>
+            </ul>
+        </p> 
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/multi_selection_menu.png" class="img" alt="screenshot of multi selection menu" />
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Additional keyboard shortcuts have been added to the menus (both new and existing):
+        <ul>
+            <li>View public key details: <kbd>+</kbd></li>
+            <li>View private key details: <kbd>-</kbd></li>
+            <li>View certificate details: <kbd>Enter</kbd></li>
+            <li>Delete selected entries: <kbd>Del</kbd></li>
+            <li>Rename selected entry: <kbd>F2</kbd></li>
+        </ul>
+        </p>
+        <p>Contributed by The-Lum.</p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/keyboard_shortcuts_menu.png" class="img"
+                alt="screenshot of keyboard shortcuts menu" />
+        </p>
+        <p>
+            <img src="images/releases/release561/keyboard_shortcuts_menu2.png" class="img"
+                alt="screenshot of keyboard shortcuts menu" />
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Action Buttons ("Import", "Export", "PEM", "ASN.1") in Dialogs:
+        <ul>
+            <li>The order of the buttons has been standardized across all dialogs for better consistency.</li>
+            <li>Missing buttons have been added where appropriate, e.g. "Export" in Public Key Details dialog or 
+                "PEM" in CRL Details dialog (contributed by jonwltn).
+            </li>
+            <li>Separators have been added to create a grouping of the buttons, because some dialogs have up to six action
+                buttons and quickly finding the right one becomes challenging.
+            </li>
+            <li>
+                The certificate extensions viewer now has a "Copy" button for putting the extension value into the system clipboard
+                (contributed by Jairo Graterón).
+            </li>
+        </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/buttons.png" class="img" alt="screenshot of buttons in dialogs" />
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The following user choices are now remembered over restarts of KSE:
+        <ul>
+            <li>Certificate validity for generating a new key pair</li>
+            <li>Certificate validity for signing a CSR</li>
+            <li>CRL validity (only for new CRLs as the validity is otherwise determined from the last CRL)</li>
+            <li>Signature algorithm</li>
+        </ul>
+        </p>
+        <p>Contributed by jonwltn.</p>
+    </div>
+</div>
+
+<h2 class="h3">Other Enhancements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>Show certificate fingerprint in overview table (contributed by idvolkov)</li>
+                <li>SHA-3 with RSA PKCS#1 v1.5, RSA PSS and ECDSA signature algorithms (contributed by jonwltn)</li>
+                <li>Support Brainpool curves in P12/JKS/JCEKS keystores (contributed by beth-soptim)</li>
+                <li>Additional generation methods for Authority (AKI) and Subject Key Identifiers (SKI) (contributed by jonwltn)</li>
+                <li>Export Ed25519 private key as JWT (contributed by jonwltn)</li>
+                <li>JWS verification with Ed25519 public keys (contributed by jonwltn)</li>
+                <li>Only show secret key algorithms based on keystore support (contributed by jonwltn)</li>
+                <li>Implemented case-sensitive alias by key store type (contributed by jonwltn)</li>
+                <li>Improved display of ':' in Extension viewer (contributed by The-Lum)</li>
+                <li>Improved display of '=' and fixed 'IMPLICIT:' in ASN.1 viewer (contributed by The-Lum)</li>
+                <li>Added CertificatePolicies OIDs of CA/Browser Forum (contributed by The-Lum)</li>
+                <li>Added CertificatePolicy OIDs of Google (contributed by The-Lum)</li>
+                <li>Added CertificateTransparency OID (contributed by The-Lum)</li>
+                <li>Allow use of the verify actions without opening a key store (contributed by jonwltn)</li>
+                <li>Added ML-DSA OID for ASN.1 view, fix minor issue on UI labels for ML-DSA PublicKey (contributed by The-Lum)</li>
+                <li>Removed sorting of General Names (SAN, AKI, IAN, CDP) (contributed by idvolkov)</li>
+                <li>Improved OID list for ASN.1 view (`ValidityModel`, `PkixQCSyntax-v2`, ...) (contributed by The-Lum)</li>
+                <li>Keep leading zeros for secret keys in hex string (contributed by jonwltn)</li>
+                <li>Added password manager KDF iteration settings in preferences</li>
+                <li>Added progress dialogs for de-/encrypting keystore passwords</li>
+                <li>Allow leading spaces in PEM data for "Examine Clipboard" (contributed by tenpertur)</li>
+                <li>In CRL view the serial numbers of the revoked certificates are now displayed in a monospace font (contributed by Jairo Graterón)</li>
+                <li>Use of "strong" secure random implementations: in the java.security file the 
+                    parameter "securerandom.strongAlgorithms" can be set to define a list of known strong implementations,
+                    KSE uses this setting now and allows to select the previous behaviour in the "User Interface" section
+                    of the preferences dialog (contributed by beth-soptim).
+                </li>
+                <li>Added "Description" and "Role" attributes in DN chooser (contributed by Jairo Graterón)</li>
+                <li>Improved CRL revocation reason text format in CRL view (contributed by The-Lum)</li>
+            </ul>
+        </p> 
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release561/fingerprint.png" class="img" alt="screenshot of fingerprint in main table" />
+        </p>
+        <p>
+            <img src="images/releases/release561/sha3_ecdsa.png" class="img" alt="screenshot of SHA-3 with ECDSA signature algorithm" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Bugfixes</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>Fixed signing JWT with Ed25519 (contributed by jonwltn)</li>
+                <li>Fixed signature algorithm selection providing invalid options for EC keys (contributed by idvolkov)</li>
+                <li>Fixed "Assistive Technology not found" error by adding accessibility module</li>
+                <li>Fixed "internal inconsistencies" warning displayed by jarsigner (contributed by jonwltn)</li>
+                <li>Fixed AccessDenied error when signing JAR file using output file prefix or suffix (contributed by jonwltn)</li>
+                <li>Fixed certificate chain validation (contributed by Jairo Graterón)</li>
+                <li>Fixed CRL verification when using BC provider (contributed by jonwltn)</li>
+                <li>Fixed duplicate shortcut Ctrl+Alt+S (contributed by The-Lum)</li>
+                <li>Fixed KeyStore table translations (contributed by jonwltn)</li>
+                <li>Fixed lost focus on Secret Key entry after viewing details (contributed by jonwltn)</li>
+                <li>Fixed key stores not being updated after expiry warning days change (contributed by jonwltn)</li>
+                <li>Fixed private key fields button greyed out for Ed keys in JDK keystores</li>
+                <li>Fixed wrong language being used in PubKey details fingerprint algorithm</li>
+                <li>Keep leading zeros for secret keys in hex string (contributed by jonwltn)</li>
+                <li>Don't ask for entry password for PKCS#12 key stores (contributed by jonwltn)</li>
+            </ul>
+        </p> 
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Translations</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>A translation to Finnish has been started by Ricky Tigg and the current state is included in this release.</li>
+                <li>Several other translations were started on Weblate as well but are still in a very early stage. 
+                    That's why they are not included in this release yet.</li>
+                <li>Many additions and improvements of the French translation were contributed by The-Lum</li>
+                <li>Many additions and improvements of the Spanish translation were contributed by Jairo Graterón</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Packaging</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>macOS/Windows: Upgraded included Java runtime to version 25</li>
+                <li>Java 17 is the new minimum runtime version</li>
+                <li>macOS: The Vaqua theme is now included again.</li>
+                <li>Third-party libraries have been updated to their latest versions; BC is now at version 1.83 </li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+
+
+<div class="page-header">
+    <h1>Release 5.6.0 <small class="text-muted">17 May 2025</small></h1>
+</div>
+<p>
+    This release includes the following new features, enhancements, translations and bugfixes:
+</p>
+
+<h2 class="h3">KeyStore Password Manager</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The KeyStore password manager is a new feature that allows to store and manage passwords for keystore files.
+            In combination with the new password generator it is now very easy to create and open keystores without
+            having to type long passwords.
+        </p>
+        <p>
+            The password manager can be used by selecting the checkbox "Store this keystore's passwords in KSE's password
+            manager" when creating a new keystore or opening an existing one. This decision is on a per-keystore basis
+            and it includes all passwords of this keystore, but it can be changed later.
+        </p>
+        <p>
+            On the first use of the password manager, a global password for the password manager must be set.
+            This password is used to encrypt the passwords stored in the password manager.
+        </p>
+        <p>
+            In the preferences dialog a new section has been added for the configuration of both the password manager
+            and the password generator.
+        </p>
+        <p>
+            In the next releases, more configuration options for the password manager will be added.
+        </p>
+        <p>
+            Details about the password manager can be found in the <a href="doc/5.6/passwordManager.html">documentation</a>.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/set_keystore_password.png" class="img" alt="screenshot of set password dialog" />
+        </p>
+        <p>
+            <img src="images/releases/release560/init_password_manager.png" class="img" alt="screenshot of init password manager" />
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-12">
+        <p>
+            <img src="images/releases/release560/pm_preferences.png" class="img" alt="screenshot of password manager preferences"/>
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Key Export in JWK Format</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The JSON Web Key (JWK) format is a JSON representation of cryptographic keys. It is defined in
+            RFC 7517 and is used in many modern web applications.
+            </p>
+        <p>
+            KSE can now export public and private keys in JWK format. Supported are currently RSA and EC keys (no Ed25519).
+        </p>
+        <p>
+            This feature was contributed by tenpertur.
+        </p>
+        <p>
+            <img src="images/releases/release560/jwk_export_priv.png" class="img" alt="screenshot of jwk export for private key" />
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/jwk_export_pub.png" class="img" alt="screenshot of jwk export for pub key" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Verification of JWT Signatures</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            In one of the last releases, KSE introduced a viewer for JWT (JSON Web Token) files, which can be used via the
+            "Examine File" or "Examine Clipboard" menu items.
+        </p>
+        <p>
+            This JWT viewer can now
+            also verify the signatures of JWT files. This is done by pasting a public key in encoded as PEM or Base64 DER
+            into the public key field of the JWT viewer and then clicking the verify button.
+            Supported are RSA and EC keys and the corresponding signature algorithms ("RS...", "ES..." and "PS...").
+        </p>
+        <p>
+            This feature was contributed by Jairo Graterón.
+        </p>
+    </div>
+    <div class="col-md-12">
+        <p>
+            <img src="images/releases/release560/jws_verify.png" class="img" alt="screenshot of jws verification" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">File signing and verification using PKCS#7/CMS</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE now supports signing and verifying arbitrary files using PKCS#7/CMS. This is a widely used standard for
+            signing files.
+        </p>
+        <p>
+            This feature can be found in the context menu of key pair entries:
+        </p>
+        <p>
+            <img src="images/releases/release560/p7_sign_menu.png" class="img" alt="screenshot of pkcs7 sign menu" />
+        </p>
+        <p>
+            The PKCS#7 file can be either stored separately as a so-called "detached signature" or the signed file can be
+            embedded in the PKCS#7 file. The latter is called "enveloped signature". In both cases the output format
+            can be either PEM or binary DER.
+        </p>
+        <p>
+            A TSA (timestamp authority) can be used to timestamp the signature. KSE includes a list of well-known TSAs
+            that can be used for this purpose. If you want to use another TSA, then its URL can be entered manually instead.
+        </p>
+        <p>
+            And finally the signature can be added as a "counter signature" to an existing PKCS#7 file. A counter
+            signature does not sign data but another signature.
+        </p>
+        <p>
+            This feature was contributed by jonwltn.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/p7_sign_dialog.png" class="img" alt="screenshot of pkcs7 sign dialog" />
+        </p>
+        <p>
+            <img src="images/releases/release560/p7_verify_menu.png" class="img" alt="screenshot of pkcs7 verify menu item" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">Native File Chooser</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            This is not really a new feature, but so far there have been several restrictions that prevented the native
+            file chooser to be available in KSE for a majority of the users.
+            First of all the Java runtime had to include the JavaFX library, which is not the
+            case anymore for most modern Java distributions.
+            Also, on macOS the native file chooser had to be disabled because
+            of an incompatibility between tools like Karabiner or Cinch and the JavaFX library. This seems to be fixed now.
+        </p>
+        <p>
+            Starting with this release KSE includes the JavaFX library and the native file chooser can be enabled
+            in the preferences.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/native_file_manager.png" class="img" alt="screenshot of native file chooser setting" />
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">New PKCS#12 Features</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            PKCS#12 is a very flexible format. It can contain an arbitrary number of key pairs, certificates and even <a href="https://datatracker.ietf.org/doc/html/rfc7292#section-4.2.4">CRLs</a>. A wide range of
+            encryption algorithms can be used to protect the contents of a PKCS#12 file.
+        </p>
+        <p>
+            With this flexibility comes complexity. There have always been compatibility issues with PKCS#12 files
+            created by different tools. This situation has not exactly improved when Java 8 introduced support for
+            so-called "trusted certificates" (i.e. standalone certificates that are not associated with a key in the
+            same file) in PKCS#12 files by marking them with a custom bag attribute with OID "2.16.840.1.113894.746875.1.1".
+        </p>
+        <p>
+            As a result any certificate in a PKCS#12 file that is not part of the chain belonging to a key in the same
+            file is simply ignored by the Java runtime. This has caused a lot of confusion among users.
+        </p>
+        <p>
+            In the meantime OpenSSL v3.2 has added a new flag "<b>-jdktrust anyExtendedKeyUsage</b>" to its pkcs12
+            command that allows to create PKCS#12 files with standalone certificates that are compatible with Java:
+        <pre>
+$ openssl pkcs12 \
+        -export \
+        -out test.p12 \
+        -in test.cer \
+        -jdktrust anyExtendedKeyUsage
+
+$ keytool -list -keystore test.p12
+Enter keystore password:
+Keystore type: PKCS12
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+1, Jan 28, 2024, trustedCertEntry,
+Certificate fingerprint (SHA-256): 52:68:B6:49:C9:8B:16:...
+            </pre>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h3 class="h5">PKCS#12 Content Viewer</h3>
+        <p>
+            With OpenSSL, keytool and KSE being able to create and read PKCS#12 files with trusted certificates, there
+            a few use cases left where KSE is not able to read certificates in PKCS#12 files created by other tools.
+        </p>
+        <p>
+            The new PKCS#12 viewer can be used to inspect the contents and structure of PKCS#12 files and help identify
+            possible issues. The viewer can be opened via the "Examine File" or "Examine Clipboard" menu items.
+            Also drag and drop of PKCS#12 files or opening them by double-clicking them in the file manager will
+            open the PKCS#12 viewer first.
+        </p>
+        <p>
+            The p12 viewer shows the contents and structure of the PKCS#12 file in a tree view. The details of each
+            entry can be viewed by expanding it in the tree view. The details include the type of the entry,
+            the algorithm used to encrypt it and the parameters. Keys and certificates are not included, just some
+            information like subject/issuer and serial number to identify them.
+        </p>
+        <p>
+            For p12 files that cause issues in KSE, the viewer might help to identify the cause of the problem. There is
+            a "Copy" button that copies the visible structure as text to the clipboard. This then can be pasted into a
+            GitHub issue to provide the developers with the necessary information to analyse the issue.
+        </p>
+        <p>
+            After inspecting the contents of the PKCS#12 file, it can be opened in KSE by clicking the "Open" button.
+        </p>
+        <p>
+            This feature is only temporary and will either be completely removed, reworked or moved to a less prominent
+            place.
+            But right now PKCS#12 is a very important topic and the viewer should help a lot with it.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/p12_viewer.png" class="img" alt="screenshot of p12 viewer" />
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h3 class="h5">Reworked Encryption Settings for PKCS#12</h3>
+        <p>
+            The encryption settings for PKCS#12 files introduced in KSE v5.5.2 have been reworked. The previous
+            implementation in some cases required a restart of KSE to take effect. The new implementation
+            works reliably without a restart. Note that this setting is only used when creating a new PKCS#12 file.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/p12_encryption.png" class="img" alt="screenshot of p12 encryption setting"/>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h3 class="h5">Same Password for Whole PKCS#12 Content</h3>
+        <p>
+            Internally PKCS#12 files consist of "bags" that contain certificates or keys. Each key bag can be encrypted
+            with a different password.
+            This matches the KeyStore API which allows to use different passwords for each entry in a KeyStore.
+            However, the widely established convention is to use the same password for all bags in a PKCS#12 file.
+        </p>
+        <p>
+            KSE now uses the same password for all entries when a PKCS#12 keystore is created or modified. When a PKCS#12
+            keystore is opened, KSE will try to use the keystore password for all entries. Only if this fails, KSE will
+            ask for an entry password.
+        </p>
+    </div>
+</div>
+
+
+<h2 class="h3">New Configuration System</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            In previous releases KSE used the Java Preferences API to store its configuration. This API is not
+            very flexible and has some limitations. For example, it is difficult to store complex configuration objects.
+            Also, the
+            location of the configuration differs from platform to platform. On Windows it is stored in the registry,
+            on macOS in a plist file and on Linux in a hidden directory in the home folder.
+            This makes it difficult to share the configuration between different platforms or add a portable mode
+            to KSE where the configuration files are stored in the same directory as KSE.
+        </p>
+        <p>
+            KSE now uses a custom configuration system that stores the configuration always in a file and searches for
+            it in the following locations in this order:
+            <ol>
+                <li>If a environment variable "<b>KSE_CONFIG_DIR</b>" is set, then this path is used.</li>
+                <li>In the same directory as the KSE program files (kse.jar etc.)</li>
+                <li>In a OS-specific configuration folder:</li>
+                <ul>
+                    <li>Windows: <b>%APPDATA%/kse/</b></li>
+                    <li>Linux and macOS: <b>~/.config/kse/</b></li>
+                </ul>
+            </ol>
+        </p>
+        <p>
+            The configuration is stored in a JSON file called "<b>config.json</b>".
+            The configuration file is created automatically after KSE was used for the first time.
+        </p>
+        <p>
+            The encrypted passwords of the password manager are stored in a separate file called
+            "<b>keystore-passwords.json</b>". This file is stored in the same directory as the main configuration file.
+        </p>
+        <p>
+            The configuration file also includes now a section for system properties. This allows to set system properties
+            like "sun.java2d.d3d.onscreen", which fixes a rare redraw issue on Windows. There is currently no GUI for
+            this, because it is only needed for very special use cases.
+        </p>
+        <p>
+            There is no automatic migration of the old configuration to the new one.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/config.png" class="img" alt="screenshot of new config file" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Other Enhancements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>The options for verifying a certificate have been extended to manually provide OCSP request parameters like:
+                    <ul>
+                        <li>OCSP URL</li>
+                        <li>Hash algorithm</li>
+                        <li>Nonce request extension</li>
+                    </ul>
+                    <p>
+                    Using the value from AIA extension instead is still possible.
+                    </p>
+                    <p>
+                        This feature has been contributed by Erik Mattheis.
+                    </p>
+                </li>
+                <li>The fingerprint views for certificate and public key fingerprints shows the value now in three different
+                    formats:
+                    <ul>
+                        <li>Hexadecimal</li>
+                        <li>Hexadecimal with a ":" as separator between the bytes</li>
+                        <li>Base64</li>
+                    </ul>
+                    <p>
+                    This feature has been contributed by Jairo Graterón.
+                    </p>
+                </li>
+                <li>The CRL viewer has been enhanced to show the revocation reason code. This feature has been contributed by jonwltn.</li>
+                <li>Export of multiple certificates at once is now possible (contributed by Jairo Graterón)</li>
+                <li>Added DESCRIPTION (OID 2.5.4.13) for DNs (contributed by Jairo Graterón)</li>
+                <li>DH parameters are now displayed in a scrollable pane (contributed by Jairo Graterón)</li>
+                <li>Additional file name extensions supported for "Examine Clipboard" and "Extension Viewer" (contributed by Jairo Graterón)</li>
+                <li>Copy error message to clipboard (contributed by Jairo Graterón)</li>
+                <li>"View Private Key" dialog now displays the original key format when examining a file or the clipboard (contributed by AndresQ)</li>
+                <li>Improved usage of JavaFX file chooser in various ways (contributed by Colbix)</li>
+                <li>Added keyboard support for context menu, either dedicated key or Shift-F10 (contributed by jonwltn)</li>
+                <li>Support executing kse.sh with spaces in JAVA_OPTIONS (contributed by dadaewq)</li>
+                <li>If the PQC algorithms that have been standardized by the NIST are used in certificates (either as signature or public key), they are now shown by their name</li>
+                <li>Replaced Symantec's TSA with Microsoft's (due to termination of service)</li>
+                <li>The Look&Feel can now be changed without a restart</li>
+                <li>As a workaround for redraw issues with certain GPUs, the property "sun.java2d.d3d.onscreen" is now to "false".
+                    This can be changed - if necessary - by manually editing the config file (see above for its location and name).</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            <img src="images/releases/release560/ocsp_parameters.png" class="img" alt="screenshot of ocsp request parameters" />
+        </p>
+        <p>
+            <img src="images/releases/release560/fingerprint.png" class="img" alt="screenshot of improved fingerprint dialog" />
+        </p>
+        <p>
+            <img src="images/releases/release560/crl_reason.png" class="img" alt="screenshot of reason code in CRL viewer dialog" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Translations</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>New translation: <b>Spanish</b> contributed by Jairo Graterón</li>
+                <li>New translation: <b>Russian</b> contributed by Sergey Ponomarev</li>
+                <li>New translation: <b>Chinese</b> contributed by liyansong2018</li>
+                <li>Many additions and improvements of the French translation were contributed by The-Lum</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Packaging</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>macOS: Added native package for Apple Silicon (partially contributed by jonwltn)</li>
+                <li>macOS: The Vaqua theme is not included in this release because of changes in Apple's
+                notarization process: If jar files contain native libraries, these must be signed with an Apple developer
+                    certificate which is not the case for the Vaqua theme. If a solution is found for this problem,
+                    Vaqua will be included again in a future release of KSE.</li>
+                <li>Linux: Added more MIME types to the kse.desktop files (contributed by Sergey Ponomarev)</li>
+                <li>Linux: Fixed Debian package lint warnings (contributed by Sergey Ponomarev)</li>
+                <li>macOS/Windows: Upgraded included Java runtime to version 21</li>
+                <li>Java 11 is the new minimum runtime version</li>
+                <li>Third-party libraries have been updated to their latest versions; BC is now at version 1.80 </li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Bugfixes</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            <ul>
+                <li>Fixed issue with very long OID arcs</li>
+                <li>Fixed verify for SPKAC not working</li>
+                <li>Fixed issue with organizationIdentifier name component</li>
+                <li>Fixed missing curve name for non-BC EC private keys</li>
+                <li>Fixed problem with UserNotice on CertificatePolicies extension</li>
+                <li>Fixed restart issues</li>
+                <li>Fixed issue with file filter when using JavaFX file chooser</li>
+                <li>Fixed issue with switching between p12 legacy/strong encryption</li>
+            </ul>
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p>
+        </p>
+    </div>
+</div>
+
+
+<div class="page-header">
+    <h1>Older Release Notes</h1>
+</div>
+<p>
+    <a href="release55.html">KeyStore Explorer Release 5.5.0, 5.5.1, 5.5.2 and 5.5.3</a>
+</p>
+<p>
+    <a href="release54.html">KeyStore Explorer Release 5.4.0, 5.4.1, 5.4.2, 5.4.3 and 5.4.4</a>
+</p>
+<p>
+    <a href="release53.html">KeyStore Explorer Release 5.3.0, 5.3.1 and 5.3.2</a>
+</p>
+<p>
+    <a href="release52.html">KeyStore Explorer Release 5.2.0, 5.2.1 and 5.2.2</a>
+</p>
+<p>
+    <a href="release51.html">KeyStore Explorer Release 5.1.0 and 5.1.1</a>
+</p>
+<p>
+    <a href="release50.html">KeyStore Explorer Release 5.0.0 and 5.0.1</a>
+</p>
+</Layout>

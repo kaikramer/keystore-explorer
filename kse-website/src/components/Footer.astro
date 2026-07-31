@@ -1,0 +1,20 @@
+---
+interface Props {
+  editPath: string;
+}
+const { editPath } = Astro.props;
+const encodedEditPath = editPath.split('/').map(encodeURIComponent).join('/');
+---
+<div class="row">
+    <div class="col-sm-6">
+        <footer>
+            <p>Copyright 2004 - 2013 Wayne Grant, 2013 - 2026 Kai Kramer</p>
+        </footer>
+    </div>
+    <div class="col-sm-6 text-end">
+        <footer>
+            <a href={`https://github.com/kaikramer/keystore-explorer/edit/main/kse-website/${encodedEditPath}`}>Edit this page on GitHub</a>
+        </footer>
+    </div>
+</div>
+<div style="display:none">{Astro.url.pathname}</div>

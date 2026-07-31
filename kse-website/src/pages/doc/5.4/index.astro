@@ -1,0 +1,144 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KeyStore Explorer - Manual" version="5.4" editPath="src/pages/doc/5.4/index.astro">
+
+<h1 data-toc-skip>User Manual</h1>
+<hr />
+
+<h2 data-toc-skip>Contents</h2>
+
+<nav class="nav flex-column">
+    <a class="nav-link" href="/doc/5.4/overview.html">User Interface Overview</a>
+    <a class="nav-link" href="/doc/5.4/toolBar.html">Tool Bar</a>
+    <a class="nav-link" href="/doc/5.4/keyboardShortcuts.html">Keyboard Shortcuts</a>
+    <a class="nav-link" href="/doc/5.4/keyStoreManagement.html">KeyStore Management</a>
+    <a class="nav-link" href="/doc/5.4/keyPairs.html">Key Pairs</a>
+    <a class="nav-link" href="/doc/5.4/trustedCertificates.html">Trusted Certificates</a>
+    <a class="nav-link" href="/doc/5.4/keys.html">Secret Keys</a>
+    <a class="nav-link" href="/doc/5.4/digitalSigning.html">Digital Signing</a>
+    <a class="nav-link" href="/doc/5.4/certificateExtensions.html">Certificate Extensions</a>
+    <a class="nav-link" href="/doc/5.4/examineFiles.html">Examine Files and Connections</a>
+    <a class="nav-link" href="/doc/5.4/preferences.html">Preferences</a>
+</nav>
+
+
+<!-- <ul text="Interface" expand="false"> -->
+<!--     <li text="Overview" target="overview" /> -->
+<!--     <li text="Tool Bar" target="toolBar" /> -->
+<!--     <li text="Keyboard Shortcuts" target="keyboardShortcuts" /> -->
+<!-- </ul> -->
+
+<!-- <tocitem text="KeyStore Management" expand="false"> -->
+<!--     <tocitem text="About KeyStores" target="aboutKeyStores" /> -->
+<!--     <tocitem text="Create a New KeyStore" target="createNewKeyStore" /> -->
+<!--     <tocitem text="Open an Existing KeyStore" target="openExistingKeyStore" /> -->
+<!--     <tocitem text="Open the Default KeyStore" target="openDefaultKeyStore" /> -->
+<!--     <tocitem text="Open the CA Certificates KeyStore" target="openCaCertificatesKeyStore" /> -->
+<!--     <tocitem text="Open a PKCS#11 KeyStore" target="openPKCS11KeyStore" /> -->
+<!--     <tocitem text="Open the Windows User KeyStore" target="openMSCAPIKeyStore" /> -->
+<!--     <tocitem text="Close a KeyStore" target="closeKeyStore" /> -->
+<!--     <tocitem text="Close All KeyStores" target="closeAllKeyStores" /> -->
+<!--     <tocitem text="Save a KeyStore" target="saveKeyStore" /> -->
+<!--     <tocitem text="Save a KeyStore with a New Name" target="saveKeyStoreNewName" /> -->
+<!--     <tocitem text="Save All KeyStores" target="saveAllKeyStores" /> -->
+<!--     <tocitem text="Change a KeyStore's Type" target="changeKeyStoreType" /> -->
+<!--     <tocitem text="Set a KeyStore's Password" target="setKeyStorePassword" /> -->
+<!--     <tocitem text="View a KeyStore's Properties" target="viewKeyStoreProperties" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Key Pairs" expand="false"> -->
+<!--     <tocitem text="About Key Pairs" target="aboutKeyPairs" /> -->
+<!--     <tocitem text="Unlock a Key Pair" target="unlockKeyPair" /> -->
+<!--     <tocitem text="View a Key Pair's Certificate Chain" target="viewKeyPairCertificateChain" /> -->
+<!--     <tocitem text="View a Key Pair's Private Key" target="viewKeyPairPrivateKey" /> -->
+<!--     <tocitem text="View a Key Pair's Public Key" target="viewKeyPairPublicKey" /> -->
+<!--     <tocitem text="Generate a Key Pair" target="generateKeyPair" /> -->
+<!--     <tocitem text="Generate a CSR" target="generateCsr" /> -->
+<!--     <tocitem text="Import a CA Reply" target="importCaReply" /> -->
+<!--     <tocitem text="Get a Key Pair Signed by a CA" target="getKeyPairSignedByCa" /> -->
+<!--     <tocitem text="Append to Certificate Chain" target="appendToCertificateChain" /> -->
+<!--     <tocitem text="Remove from Certificate Chain" target="removeFromCertificateChain" /> -->
+
+<!--     <tocitem text="Import a Key Pair" expand="false"> -->
+<!--         <tocitem text="From PKCS #12" target="importKeyPairPkcs12" /> -->
+<!--         <tocitem text="From PKCS #8 and Certificates" target="importKeyPairPkcs8Certificates" /> -->
+<!--         <tocitem text="From PVK and Certificates" target="importKeyPairPvkCertificates" /> -->
+<!--         <tocitem text="From OpenSSL and Certificates" target="importKeyPairOpenSslCertificates" /> -->
+<!--     </tocitem> -->
+
+<!--     <tocitem text="Export a Key Pair" expand="false"> -->
+<!--         <tocitem text="Export a Key Pair as PKCS #12" target="exportKeyPairPkcs12" /> -->
+<!--         <tocitem text="Export a Key Pair's Certificate Chain" target="exportKeyPairCertificateChain" /> -->
+<!--         <tocitem text="Export a Key Pair's Private Key" expand="false"> -->
+<!--             <tocitem text="Export as PKCS #8" target="exportKeyPairPrivateKeyPkcs8" /> -->
+<!--             <tocitem text="Export as PVK" target="exportKeyPairPrivateKeyPvk" /> -->
+<!--             <tocitem text="Export as OpenSSL" target="exportKeyPairPrivateKeyOpenSsl" /> -->
+<!--         </tocitem> -->
+<!--         <tocitem text="Export a Key Pair's Public Key as OpenSSL" target="exportKeyPairPublicKeyOpenSsl" /> -->
+<!--         <tocitem text="Drag Export a Key Pair" target="dragExportKeyPair" /> -->
+<!--     </tocitem> -->
+
+<!--     <tocitem text="Set a Key Pair's Password" target="setKeyPairPassword" /> -->
+<!--     <tocitem text="Cut and Paste a Key Pair" target="cutPasteKeyPair" /> -->
+<!--     <tocitem text="Copy and Paste a Key Pair" target="copyPasteKeyPair" /> -->
+<!--     <tocitem text="Delete a Key Pair" target="deleteKeyPair" /> -->
+<!--     <tocitem text="Rename a Key Pair" target="renameKeyPair" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Trusted Certificates" expand="false"> -->
+<!--     <tocitem text="About Trusted Certificates" target="aboutTrustedCertificates" /> -->
+<!--     <tocitem text="Import a Trusted Certificate" target="importTrustedCertificate" /> -->
+<!--     <tocitem text="View a Trusted Certificate" target="viewTrustedCertificate" /> -->
+<!--     <tocitem text="View a Trusted Certificate's Public Key" target="viewTrustedCertificatePublicKey" /> -->
+<!--     <tocitem text="Export a Trusted Certificate" target="exportTrustedCertificate" /> -->
+<!--     <tocitem text="Drag Export a Trusted Certificate" target="dragExportTrustedCertificate" /> -->
+<!--     <tocitem text="Export a Trusted Certificate's Public Key as OpenSSL" target="exportTrustedCertificatePublicKeyOpenSsl" /> -->
+<!--     <tocitem text="Cut and Paste a Trusted Certificate" target="cutPasteTrustedCertificate" /> -->
+<!--     <tocitem text="Copy and Paste a Trusted Certificate" target="copyPasteTrustedCertificate" /> -->
+<!--     <tocitem text="Delete a Trusted Certificate" target="deleteTrustedCertificate" /> -->
+<!--     <tocitem text="Rename a Trusted Certificate" target="renameTrustedCertificate" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Keys" expand="false"> -->
+<!--     <tocitem text="About Keys" target="aboutKeys" /> -->
+<!--     <tocitem text="View a Key" target="viewKey" /> -->
+<!--     <tocitem text="Unlock a Key" target="unlockKey" /> -->
+<!--     <tocitem text="Set a Key's Password" target="setKeyPassword" /> -->
+<!--     <tocitem text="Delete a Key" target="deleteKey" /> -->
+<!--     <tocitem text="Rename a Key" target="renameKey" /> -->
+<!--     <tocitem text="Cut and Paste  a Key" target="cutPasteKey" /> -->
+<!--     <tocitem text="Copy and Paste  a Key" target="copyPasteKey" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Digital Signing" expand="false"> -->
+<!--     <tocitem text="Sign a New Key Pair" target="signNewKeyPair" /> -->
+<!--     <tocitem text="Sign a CSR" target="signCsr" /> -->
+<!--     <tocitem text="Sign a JAR" target="signJar" /> -->
+<!--     <tocitem text="Sign a MIDlet" target="signMidlet" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Certificate Extensions" expand="false"> -->
+<!--     <tocitem text="About Certificate Extensions" target="aboutCertificateExtensions" /> -->
+<!--     <tocitem text="Add Certificate Extensions" target="addCertificateExtensions" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Examine Files and Connections" expand="false"> -->
+<!--     <tocitem text="Examine a File" target="examineFile" /> -->
+<!--     <tocitem text="Examine Clipboard Content" target="examineClipboard" /> -->
+<!--     <tocitem text="Examine an SSL Connection" target="examineSslConnection" /> -->
+<!--     <tocitem text="Detect a Cryptographic File's Type" target="detectFileType" /> -->
+<!-- </tocitem> -->
+
+<!-- <tocitem text="Preferences" expand="false"> -->
+<!--     <tocitem text="Authority Certificates" target="authorityCertificatesConfig" /> -->
+<!--     <tocitem text="Trust Checks" target="trustChecksConfig" /> -->
+<!--     <tocitem text="Password Quality" target="passwordQualityConfig" /> -->
+<!--     <tocitem text="Look and Feel" target="lookAndFeelConfig" /> -->
+<!--     <tocitem text="Internet Proxy" target="internetProxyConfig" /> -->
+<!--     <tocitem text="Tool Bar" target="toolBarConfig" /> -->
+<!--     <tocitem text="Status Bar" target="statusBarConfig" /> -->
+<!--     <tocitem text="KeyStore Tab Style" target="keyStoreTabStyleConfig" /> -->
+<!--     <tocitem text="Default Name" target="defaultNameConfig" /> -->
+<!-- </tocitem> -->
+</Layout>

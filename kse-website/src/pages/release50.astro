@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Default.astro';
+---
+<Layout title="KeyStore Explorer - Release Notes" editPath="src/pages/release50.astro">
+
+<div class="page-header">
+    <h1>Release 5.0.1 <small class="text-muted">24 Nov 2013</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE 5.0.1 is a minor bug fix release for 5.0.
+        </p>
+        <p>
+            The changes are:
+        </p>
+        <ul>
+            <li>Fixed issue with format of SSL port number in certificate details</li>
+            <li>Fixed "Import trusted certificate": It used the certificate that was selected in first execution for all subsequent calls</li>
+            <li>Distinguished names that contain quotation marks are now handled properly</li>
+            <li>Fixed export in certificate details view</li>
+            <li>Improved ASN.1 dump for short bit and octet strings</li>
+        </ul>
+    </div>
+</div>
+
+<div class="page-header">
+    <h1>Release 5.0 <small class="text-muted">19 Oct 2013</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KeyStore Explorer version 5.0 is the first open source release of KSE since 2004.
+        </p>
+        <p>
+            It comprises all the new features that were projected for KSE 4.2 plus a few smaller enhancements.
+        </p>
+        <p>
+            In order to replace a commercial library that was extensively used by earlier versions of KSE and that impeded the switch to an open source license,
+            more than 2000 code changes were made. In addition the commercial icon set of KSE 4.1.1 and before was replaced with a CC-licensed one.
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">New Feature: Full Support for Secret/Symmetric Keys</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KeyStore entries support storage of key pairs, trusted certificates and secret keys (also called symmetric keys).
+            In previous versions of KSE it was only possible to delete secret keys. From version 5.0 on KSE allows to ...
+        </p>
+        <ul>
+            <li>generate 25 different types of secret keys</li>
+            <li>view details of secret keys</li>
+            <li>unlock secret keys</li>
+            <li>rename secret keys</li>
+            <li>set a secret key's password</li>
+            <li>cut, copy and paste secret keys</li>
+            <li>preserve secret keys when changing store type</li>
+        </ul>
+    </div>
+</div>
+
+<h2 class="h3">New Feature: Examine CSR</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The new feature "Examine CSR" displays the details of a CSR file. It works like Examine Certificate or Examine CRL known from previous versions.
+        </p>
+        <p>
+            Screenshot:
+            <br />
+            <img src="images/releases/release50/rel50_ExamineCSR.png" class="img-responsive align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Improved ASN.1 Dump</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            The ASN.1 dump functionality was improved in two aspects:
+        </p>
+        <ul>
+            <li>More OIDs are resolved to their names.</li>
+            <li>Encapsulated ASN.1 structures in BITSTRING and OCTETSTRING are now detected and displayed (see screenshots below).</li>
+        </ul>
+        <p>
+            KSE 4.1.1:
+            <br />
+            <img src="images/releases/release50/rel50_bitstring_old.png" class="align-top" />
+        </p>
+        <p>
+            KSE 5.0:
+            <br />
+            <img src="images/releases/release50/rel50_bitstring_new.png" class="align-top" />
+        </p>
+    </div>
+</div>
+
+<h2 class="h3">Usability Improvements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            Several usability improvements were made for this release:
+        </p>
+        <ul>
+            <li>Last file directory is remembered between sessions</li>
+            <li>Additional file extensions ("jceks", "bks" and "uber") in file dialogs</li>
+            <li>Direct certificate import and export from Certificate Details dialog</li>
+            <li>Right click on an empty space in a KeyStore opens its context menu</li>
+            <li>Enter key opens details of currently selected KeyStore entry</li>
+            <li>Escape key closes dialogs</li>
+            <li>Port field in Examine SSL dialog is now pre-populated with default HTTPS port</li>
+            <li>Signature algorithm "SHA256 with RSA" is now pre-selected when creating a new certificate, generating a CSR or signing a CSR</li>
+            <li>KSE can now be pinned to the taskbar under Windows 7 and 8</li>
+        </ul>
+    </div>
+</div>
+</Layout>

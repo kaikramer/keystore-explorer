@@ -1,0 +1,1174 @@
+---
+import Layout from '../../../layouts/Doc.astro';
+---
+<Layout title="KSE Manual - Key Pairs" version="5.5" editPath="src/pages/doc/5.5/keyPairs.astro">
+
+<h1>Key Pairs</h1>
+<hr />
+
+<p>
+A Key Pair contains a private key and its associated certificate chain. Key
+Pairs can be used to digitally sign objects such as Java applications. Key Pair
+entries are represented in KeyStore Explorer by the following icon:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/keypair_entry.png" />
+</p>
+<p>
+As the private key part of the Key Pair should remain secret, Key Pair entries
+are normally protected by a password. In KeyStore Explorer such entries are
+described as being <b>locked</b> and have a closed padlock displayed against
+them:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/locked_entry.png" />
+</p>
+<p>
+To access the private key the entry must be <b>unlocked</b> (see next chapter)
+by supplying the correct password. If an entry is successfully unlocked then
+an open padlock is displayed against it:
+    &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/unlocked_entry.png" />
+</p>
+<p>
+    If a Key Pair entry is unlocked once during a KeyStore Explorer session it
+    does not need to be unlocked again. A Key Pair entry may be unlocked
+    explicitly or as part of an operation that requires the private key.
+</p>
+<p>
+    A Key Pair must be unlocked to utilize it for operations such as digital
+    signing or to view or export the private key.
+</p>
+
+
+<h2 id="unlock-a-key-pair">Unlock a Key Pair</h2>
+<hr />
+
+To unlock a Key Pair:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select <b>Unlock</b> from the pop-up menu.
+    </li>
+
+
+    <li>
+        The <b>Unlock Entry</b> dialog will be displayed. Enter the Key Pair entry's
+        password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        The Key Pair entry's lock status will be changed to unlocked in the KeyStore
+        Entries table.
+    </li>
+</ol>
+
+<h2 id="view-a-key-pair-s-certificate-chain">View a Key Pair's Certificate Chain</h2>
+<hr />
+
+To view a Key Pair's certificate chain:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>View Details</b> sub-menu from the pop-up menu and from there choose <b>Certificate Chain Details</b>. Alternatively, double-click the Key Pair
+        entry.
+    </li>
+
+
+    <li>
+        The <b>Certificate Details</b> dialog will appear. After viewing the details
+        close the dialog by pressing the <b>OK</b> button.
+    </li>
+</ol>
+
+<h2 id="view-a-key-pair-s-private-key">View a Key Pair's Private Key</h2>
+<hr />
+
+To view a Key Pair's private key:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>View Details</b> sub-menu from the pop-up menu and from there choose <b>Private Key Details</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        The <b>Private Key Details</b> dialog will appear. After viewing the details
+        close the dialog by pressing the <b>OK</b> button.
+    </li>
+</ol>
+
+<h2 id="view-a-key-pair-s-public-key">View a Key Pair's Public Key</h2>
+<hr />
+
+To view a Key Pair's public key:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>View Details</b> sub-menu from the pop-up menu and from there choose <b>Public Key Details</b>.
+    </li>
+
+
+    <li>
+        The <b>Public Key Details</b> dialog will appear. After viewing the details
+        close the dialog by pressing the <b>OK</b> button.
+    </li>
+</ol>
+
+<h2 id="generate-a-key-pair">Generate a Key Pair</h2>
+<hr />
+
+To generate a Key Pair:
+
+<ol>
+    <li>
+        From the <b>Tools</b> menu, choose <b>Generate Key Pair</b>. Alternatively
+        click on the <b>Generate Key Pair</b> tool bar button:
+        &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/genkeypair.png" />
+    </li>
+
+
+    <li>
+        The <b>Generate Key Pair</b> dialog will be displayed. Select an <b>Algorithm</b> and a <b>Key Size</b> and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        The <b>Generating Key Pair</b> dialog will be displayed and will remain
+        visible until Key Pair generation has completed. For larger key sizes this
+        may be quite some time.
+    </li>
+
+
+    <li>The <b>Generate Key Pair Certificate</b> dialog will be displayed.</li>
+
+
+    <li>
+        Select a <b>Version</b> and <b>Signature Algorithm</b> and enter a <b>Validity Period</b>, <b>Serial Number</b> and <b>Name</b>.
+    </li>
+
+
+    <li>
+        Optionally, for a version 3 certificate, <a href="certificateExtensions.html">add certificate extensions</a> by clicking on the <b>Add Extensions</b> button.
+    </li>
+
+
+    <li>Press the <b>OK</b> button.</li>
+
+
+    <li>The <b>New Key Pair Entry Alias</b> dialog will be displayed.</li>
+
+
+    <li>
+        Enter the alias for the new Key Pair entry and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        If required the <b>New Key Pair Entry Password</b> dialog will be displayed.
+        Enter the password with which to protect the new Key Pair entry, confirm it
+        and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The new Key Pair entry will appear in the KeyStore Entries table.</li>
+</ol>
+
+<h2 id="generate-a-csr">Generate a CSR</h2>
+<hr />
+
+To generate a CSR for a Key Pair:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select <b>Generate CSR</b> from the pop-up menu.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        The <b>Generate CSR</b> dialog is displayed. Select a <b>Format</b> and <b>Signature Algorithm</b> and enter a <b>Challenge</b>.
+    </li>
+
+
+    <li>
+        For PKCS#10 format you can optionally enter a <b>company name</b> (which
+        becomes an "unstructuredName" attribute in the request) and/or add the <b>extensions</b> from the certificate to the request. The latter is useful
+        for SSL certificates with SubjectAlternativeName extensions.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select a <b>CSR File</b>.</li>
+
+
+    <li>
+        Press the <b>OK</b> button to commence generation and produce the CSR.
+    </li>
+</ol>
+
+<h2 id="import-a-ca-reply">Import a CA Reply</h2>
+<hr />
+
+To import a CA Reply into a Key Pair:
+
+<ol>
+    <li>Select the drive and folder where the CA Reply file is stored.</li>
+
+
+    <li>
+        Click on the required CA Reply file or type the filename into the <b>File Name</b> text box.
+    </li>
+
+
+    <li>Click on the <b>Import</b> button.</li>
+
+
+    <li>
+        If the <a href="preferences.html#trust-checks-configuration">Import CA Reply Trust Check</a> is enabled
+        and the CA Reply file contains a single certificate:
+    </li>
+
+    <ul>
+        <li>
+            If KeyStore Explorer can establish a trust path between the certificate
+            and an existing self-signed Trusted Certificate in your KeyStore or the <a href="preferences.html#authority-certificates-configuration">Authority Certificates</a> then the import will continue. Otherwise it will fail at this point.
+        </li>
+    </ul>
+
+    <li>
+        Alternatively if the <a href="preferences.html#trust-checks-configuration">Import CA Reply Trust Check</a> is enabled
+        and the CA Reply file contains a chain of certificates:
+    </li>
+
+    <ol>
+        <li>
+            KeyStore Explorer will attempt to match the reply's root CA to an existing
+            Trusted Certificate in your KeyStore or the <a href="preferences.html#authority-certificates-configuration">Authority Certificates</a>.
+        </li>
+
+
+        <li>
+            If it cannot then the <b>Certificate Details</b> dialog will appear
+            displaying the details of the reply's root CA certificate for you to
+            verify.
+        </li>
+
+
+        <li>
+            After viewing the details close the dialog by pressing the <b>OK</b> button.
+        </li>
+
+
+        <li>
+            A further dialog will appear asking if you wish accept the certificate.
+        </li>
+
+
+        <li>
+            Press the <b>Yes</b> button if you wish to trust the certificate and
+            import the CA Reply and <b>No</b> if you do not. If you reply <b>No</b> the import will fail at this point.
+        </li>
+    </ol>
+
+    <li>
+        The Key Pair entry will be updated to reflect the content of the CA Reply.
+    </li>
+</ol>
+
+<h2 id="get-a-key-pair-signed-by-a-ca-certificate-authority">Get a Key Pair Signed by a CA (Certificate Authority)</h2>
+<hr />
+
+To get a Key Pair signed by a CA:
+
+<ol>
+    <li>First <a href="keyStoreManagement.html#create-a-new-keystore">create a new KeyStore</a>.</li>
+
+
+    <li>
+        Either <a href="#import-a-key-pair">import an existing Key Pair</a> into the
+        KeyStore or <a href="#generate-a-key-pair">generate a new Key Pair</a> in
+        the KeyStore.
+    </li>
+
+
+    <li>
+        Next <a href="#generate-a-csr">generate a CSR</a> (Certificate Signing
+        Request) file from the Key Pair.
+    </li>
+
+
+    <li>
+        Send the CSR file to a CA for signing. Each CA has different procedures for
+        signing certificates and will charge a fee. Check the CA's web site for
+        details.
+    </li>
+
+
+    <li>
+        The CA will send back a CA Reply. This will most likely take the form of a
+        file with the extension p7r or cer.
+    </li>
+
+
+    <li>
+        <a href="#import-a-ca-reply">Import the CA Reply</a> into the original Key
+        Pair.
+    </li>
+
+
+    <li>
+        The Key Pair has now been signed by the CA. <a
+            href="#view-a-key-pairs-certificate-chain">View the Key Pair's
+            certificate chain</a>. Your certificate, at the end of the chain,
+        will contain the CA's details in the issuer field.
+    </li>
+
+
+    <li>Finally <a href="keyStoreManagement.html#save-a-keystore">save the KeyStore</a>.</li>
+</ol>
+
+<h2 id="append-to-certificate-chain">Append to Certificate Chain</h2>
+<hr />
+
+To append a certificate to the end of a Key Pair's Certificate Chain:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Edit Certificate Chain</b> sub-menu from the pop-up menu and from there
+        choose <b>Append Certificate</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Append Certificate</b> dialog will appear.</li>
+
+
+    <li>
+        Select the drive and folder where the certificate file to be appended is
+        stored.
+    </li>
+
+
+    <li>
+        Click on the required certificate file or type the filename into the <b>File Name</b> text box.
+    </li>
+
+
+    <li>Click on the <b>Append</b> button.</li>
+
+
+    <li>
+        For the append to succeed, the chosen certificate's private key must have
+        been used to sign the end certificate of the chain. An indication that this
+        is the case is if the chosen certificate's subject is identical to the end
+        certificate's issuer.
+    </li>
+
+
+    <li>
+        If the append is successful the Key Pair entry's certificate chain will be
+        updated to include the appended certificate.
+    </li>
+</ol>
+
+<h2 id="remove-from-certificate-chain">Remove from Certificate Chain</h2>
+<hr />
+
+To remove a certificate from the end of a Key Pair's Certificate Chain:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Edit Certificate Chain</b> sub-menu from the pop-up menu and from there
+        choose <b>Remove Certificate</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        For the removal to succeed, certificate chain must contain more than one
+        certificate.
+    </li>
+
+
+    <li>
+        If the removal is successful the Key Pair entry's certificate chain will be
+        updated to remove the end certificate.
+    </li>
+</ol>
+
+<h2 id="import-a-key-pair">Import a Key Pair</h2>
+<hr />
+
+A Key Pair can be imported from a variety of source formats.
+
+<h3 id="import-a-key-pair-from-pkcs-12">Import a Key Pair from PKCS #12</h3>
+<hr />
+
+To import a Key Pair from PKCS #12:
+
+<ol>
+    <li>
+        From the <b>Tools</b> menu, choose <b>Import Key Pair</b>. Alternatively
+        click on the <b>Import Key Pair</b> tool bar button:
+        &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/importkeypair.png" />
+    </li>
+
+
+    <li>The <b>Import Key Pair Type</b> dialog will appear.</li>
+
+
+    <li>
+        Select the <b>PKCS #12</b> radio button and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Import PKCS #12 Key Pair</b> dialog will appear.</li>
+
+
+    <li>
+        Enter the decryption password for the PKCS #12 file into the <b>Decryption Password</b> field.
+    </li>
+
+
+    <li>
+        Use the <b>Browse</b> button to select the PKCS #12 key pair file and the <b>Details</b> button to examine your choice.
+    </li>
+
+
+    <li>
+        If after examination you decide to import the Key Pair press the <b>Import</b> button. Otherwise use the <b>Cancel</b> button to halt the
+        import.
+    </li>
+
+
+    <li>The <b>New Key Pair Entry Alias</b> dialog will be displayed.</li>
+
+
+    <li>
+        Enter the alias for the new Key Pair entry and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        If required the <b>New Key Pair Entry Password</b> dialog will be displayed.
+        Enter the password with which to protect the new Key Pair entry, confirm it
+        and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The new Key Pair entry will appear in the KeyStore Entries table.</li>
+</ol>
+
+<h3 id="import-a-key-pair-from-pkcs-8-and-certificates">Import a Key Pair from PKCS #8 and Certificates</h3>
+<hr />
+
+To import a Key Pair from PKCS #8 and Certificates:
+
+<ol>
+    <li>
+        From the <b>Tools</b> menu, choose <b>Import Key Pair</b>. Alternatively
+        click on the <b>Import Key Pair</b> tool bar button:
+        &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/importkeypair.png" />
+    </li>
+
+
+    <li>The <b>Import Key Pair Type</b> dialog will appear.</li>
+
+
+    <li>
+        Select the <b>PKCS #8</b> radio button and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Import PKCS #8 Key Pair</b> dialog will appear.</li>
+
+
+    <li>
+        If the PKCS #8 private key file is unencrypted then uncheck the <b>Encrypted Private Key</b> check box.
+    </li>
+
+
+    <li>
+        Alternatively if the PKCS #8 private key file is encrypted enter the
+        decryption password into the <b>Decryption Password</b> field. The supported
+        PBE encryption algorithms for import are:
+    </li>
+
+    <ul>
+        <li>PBE with SHA-1 and 2 key DESede</li>
+        <li>PBE with SHA-1 and 3 key DESede</li>
+        <li>PBE with SHA-1 and 40 bit RC2</li>
+        <li>PBE with SHA-1 and 128 bit RC2</li>
+        <li>PBE with SHA-1 and 40 bit RC4</li>
+        <li>PBE with SHA-1 and 128 bit RC4</li>
+    </ul>
+
+    <li>
+        Use the <b>Browse</b> buttons to select private key and certificates files
+        and the <b>Details</b> buttons to examine your choices.
+    </li>
+
+
+    <li>
+        If after examination you decide to import the Key Pair press the <b>Import</b> button. Otherwise use the <b>Cancel</b> button to halt the
+        import.
+    </li>
+
+
+    <li>The <b>New Key Pair Entry Alias</b> dialog will be displayed.</li>
+
+
+    <li>
+        Enter the alias for the new Key Pair entry and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        If required the <b>New Key Pair Entry Password</b> dialog will be displayed.
+        Enter the password with which to protect the new Key Pair entry, confirm it
+        and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The new Key Pair entry will appear in the KeyStore Entries table.</li>
+</ol>
+
+<h3 id="import-a-key-pair-from-pvk-and-certificates">Import a Key Pair from PVK and Certificates</h3>
+<hr />
+
+To import a Key Pair from PVK and Certificates:
+
+<ol>
+    <li>
+        From the <b>Tools</b> menu, choose <b>Import Key Pair</b>. Alternatively
+        click on the <b>Import Key Pair</b> tool bar button:
+        &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/importkeypair.png" />
+    </li>
+
+
+    <li>The <b>Import Key Pair Type</b> dialog will appear.</li>
+
+
+    <li>Select the <b>PVK</b> radio button and press the <b>OK</b> button.</li>
+
+
+    <li>The <b>Import PVK Key Pair</b> dialog will appear.</li>
+
+
+    <li>
+        If the PVK private key file is unencrypted then uncheck the <b>Encrypted Private Key</b> check box.
+    </li>
+
+
+    <li>
+        Alternatively if the PVK private key file is encrypted enter the decryption
+        password into the <b>Decryption Password</b> field.
+    </li>
+
+
+    <li>
+        Use the <b>Browse</b> buttons to select private key and certificates files
+        and the <b>Details</b> buttons to examine your choices.
+    </li>
+
+
+    <li>
+        If after examination you decide to import the Key Pair press the <b>Import</b> button. Otherwise use the <b>Cancel</b> button to halt the
+        import.
+    </li>
+
+
+    <li>The <b>New Key Pair Entry Alias</b> dialog will be displayed.</li>
+
+
+    <li>
+        Enter the alias for the new Key Pair entry and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        If required the <b>New Key Pair Entry Password</b> dialog will be displayed.
+        Enter the password with which to protect the new Key Pair entry, confirm it
+        and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The new Key Pair entry will appear in the KeyStore Entries table.</li>
+</ol>
+
+<h3 id="import-a-key-pair-from-openssl-and-certificates">Import a Key Pair from OpenSSL and Certificates</h3>
+<hr />
+
+To import a Key Pair from OpenSSL and Certificates:
+
+<ol>
+    <li>
+        From the <b>Tools</b> menu, choose <b>Import Key Pair</b>. Alternatively
+        click on the <b>Import Key Pair</b> tool bar button:
+        &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/importkeypair.png" />
+    </li>
+
+
+    <li>The <b>Import Key Pair Type</b> dialog will appear.</li>
+
+
+    <li>
+        Select the <b>OpenSSL</b> radio button and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Import OpenSSL Key Pair</b> dialog will appear.</li>
+
+
+    <li>
+        If the OpenSSL private key file is unencrypted then uncheck the <b>Encrypted Private Key</b> check box.
+    </li>
+
+
+    <li>
+        Alternatively if the OpenSSL private key file is encrypted enter the
+        decryption password into the <b>Decryption Password</b> field. The supported
+        PBE encryption algorithms for import are:
+    </li>
+
+    <ul>
+        <li>PBE with DES CBC</li>
+        <li>PBE with DESede CBC</li>
+        <li>PBE with 128 bit AES CBC</li>
+        <li>PBE with 192 bit AES CBC</li>
+        <li>PBE with 256 bit AES CBC</li>
+    </ul>
+
+    <li>
+        Use the <b>Browse</b> buttons to select private key and certificates files
+        and the <b>Details</b> buttons to examine your choices.
+    </li>
+
+
+    <li>
+        If after examination you decide to import the Key Pair press the <b>Import</b> button. Otherwise use the <b>Cancel</b> button to halt the
+        import.
+    </li>
+
+
+    <li>The <b>New Key Pair Entry Alias</b> dialog will be displayed.</li>
+
+
+    <li>
+        Enter the alias for the new Key Pair entry and press the <b>OK</b> button.
+    </li>
+
+
+    <li>
+        If required the <b>New Key Pair Entry Password</b> dialog will be displayed.
+        Enter the password with which to protect the new Key Pair entry, confirm it
+        and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The new Key Pair entry will appear in the KeyStore Entries table.</li>
+</ol>
+
+
+<h2 id="export-a-key-pair">Export a Key Pair</h2>
+<hr />
+
+
+<h3 id="export-a-key-pair-as-pkcs-12">Export a Key Pair as PKCS #12</h3>
+<hr />
+
+To export a Key Pair as PKCS #12:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Key Pair</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Export Key Pair</b> dialog is displayed.</li>
+
+
+    <li>
+        Enter an <b>PKCS #12 Password</b> to protect the exported PKCS #12 file with
+        and confirm it.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an <b>Export File</b>.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h3 id="export-a-key-pair-s-certificate-chain">Export a Key Pair's Certificate Chain</h3>
+<hr />
+
+To export a Key Pair's certificate chain:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Certificate Chain</b>.
+    </li>
+
+
+    <li>The <b>Export Certificate Chain</b> dialog is displayed.</li>
+
+
+    <li>
+        Use the <b>Export Length</b> radio buttons to choose whether the <b>Entire Chain</b> of certificates should be exported or the <b>Head Only</b>. The <b>X.509</b> export format is not available when the
+        entire chain is to be exported.
+    </li>
+
+
+    <li>Select an <b>Export Format</b>. The options available are:</li>
+
+    <ul>
+        <li><b>X.509</b> ITU-T standard for public key infrastructure.</li>
+        <li><b>PKCS #7</b> RSA public key cryptography standard.</li>
+        <li><b>PKI Path</b> Certification path.</li>
+        <li>
+            <b>SPC</b> Software Publisher Certificate, Microsoft's certificate format.
+        </li>
+    </ul>
+
+    <li>
+        Check the <b>PEM</b> checkbox if the exported certificate is to be PEM
+        encoded. PEM encoding is not available for <b>PKI Path</b> and <b>SPC</b> format exports.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h3 id="export-a-key-pair-s-private-key">Export a Key Pair's Private Key</h3>
+<hr />
+
+<h4>Export a Key Pair's Private Key as PKCS #8</h4>
+<hr />
+
+To export a Key Pair's private key as PKCS #8:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Private Key</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Export Private Key Type</b> dialog will appear.</li>
+
+
+    <li>
+        Select the <b>PKCS #8</b> radio button and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Export Private Key as PKCS #8</b> dialog is displayed.</li>
+
+
+    <li>
+        If the exported PKCS #8 private key file is to be unencrypted then uncheck
+        the <b>Encrypt</b> check box.
+    </li>
+
+
+    <li>
+        Alternatively if the PKCS #8 private key file is to be encrypted select an <b>Encryption Algorithm</b> and enter and confirm an <b>Encryption Password</b>. The supported PBE encryption algorithms for
+        export are:
+    </li>
+
+    <ul>
+        <li>PBE with SHA-1 and 2 key DESede</li>
+        <li>PBE with SHA-1 and 3 key DESede</li>
+        <li>PBE with SHA-1 and 40 bit RC2</li>
+        <li>PBE with SHA-1 and 128 bit RC2</li>
+        <li>PBE with SHA-1 and 40 bit RC4</li>
+        <li>PBE with SHA-1 and 128 bit RC4</li>
+    </ul>
+
+    <li>
+        Check the <b>PEM</b> checkbox if the exported private key is to be PEM
+        encoded.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h4>Export a Key Pair's Private Key as PVK</h4>
+<hr />
+
+To export a Key Pair's private key as PVK:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Private Key</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Export Private Key Type</b> dialog will appear.</li>
+
+
+    <li>Select the <b>PVK</b> radio button and press the <b>OK</b> button.</li>
+
+
+    <li>The <b>Export Private Key as PVK</b> dialog is displayed.</li>
+
+
+    <li>Select a <b>Key Type</b> of <b>Exchange</b> or <b>Signature</b>.</li>
+
+
+    <li>
+        If the exported PVK private key file is to be unencrypted then uncheck the <b>Encrypt</b> check box.
+    </li>
+
+
+    <li>
+        Alternatively if the PVK private key file is to be encrypted select an <b>Encryption Strength</b> (<b>Strong</b> or <b>Weak</b>) and enter and
+        confirm an <b>Encryption Password</b>.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<p>
+<b>Note:</b> DSA private keys are not suitable for the purposes of <b>Exchange</b>. For the PVK export of DSA Key Pairs the <b>Key Type</b> options
+are disabled and <b>Signature</b> is pre-selected.
+</p>
+
+
+<h4>Export a Key Pair's Private Key as OpenSSL</h4>
+<hr />
+
+To export a Key Pair's private key as OpenSSL:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Private Key</b>.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Export Private Key Type</b> dialog will appear.</li>
+
+
+    <li>
+        Select the <b>OpenSSL</b> radio button and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>Export Private Key as OpenSSL</b> dialog is displayed.</li>
+
+
+    <li>
+        If the exported OpenSSL private key file is to be unencrypted then uncheck
+        the <b>Encrypt</b> check box.
+    </li>
+
+
+    <li>
+        Alternatively if the OpenSSL private key file is to be encrypted select an <b>Encryption Algorithm</b> and enter and confirm an <b>Encryption Password</b>. The supported PBE encryption algorithms for
+        export are:
+    </li>
+
+    <ul>
+        <li>PBE with DES CBC</li>
+        <li>PBE with DESede CBC</li>
+        <li>PBE with 128 bit AES CBC</li>
+        <li>PBE with 192 bit AES CBC</li>
+        <li>PBE with 256 bit AES CBC</li>
+    </ul>
+
+    <li>
+        Check the <b>PEM</b> checkbox if the exported private key is to be PEM
+        encoded. When a private key is to be encrypted it must also be PEM encoded.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h3 id="export-a-key-pair-s-public-key-as-openssl">Export a Key Pair's Public Key as OpenSSL</h3>
+<hr />
+
+To export a Key Pair's public key as OpenSSL:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select the <b>Export</b> sub-menu from the pop-up menu and from there choose <b>Export Public Key</b>.
+    </li>
+
+
+    <li>The <b>Export Public Key as OpenSSL</b> dialog is displayed.</li>
+
+
+    <li>
+        Check the <b>PEM</b> checkbox if the exported public key is to be PEM
+        encoded.
+    </li>
+
+
+    <li>Use the <b>Browse</b> button to select an export file.</li>
+
+
+    <li>Press the <b>Export</b> button to commence the export.</li>
+</ol>
+
+<h3 id="drag-export-a-key-pair">Drag Export a Key Pair</h3>
+<hr />
+
+To drag export a Key Pair:
+
+<ol>
+    <li>
+        Ensure the Key Pair entry is <a href="#unlock-a-key-pair">unlocked</a>.
+    </li>
+
+
+    <li>
+        Select the Key Pair entry for dragging by pressing and holding the left
+        mouse button over it in the KeyStore entries table.
+    </li>
+
+
+    <li>
+        Use the mouse to drag the entry to the desired export location. For example:
+        the desktop, a folder or a text editor.
+    </li>
+
+
+    <li>Release the left mouse button over the export location.</li>
+
+
+    <li>
+        The entry will be exported. The export format used depends on the export
+        location:
+    </li>
+
+    <ul>
+        <li>
+            When exporting as a file the export format is <b>PKCS #12</b>. This is
+            applicable when the entry is dragged to the desktop or to a folder.
+        </li>
+
+
+        <li>
+            When exporting as text the export is in two parts. The private key is
+            exported as Encrypted <b>PKCS #8 PEM</b> and the certificate chain is
+            exported as <b>PKCS #7 PEM</b>. This is applicable when the entry is
+            dragged to an application that deals with text.
+        </li>
+    </ul>
+
+    <li>
+        Exports that are password protected inherit the password of the originating
+        Key Pair entry.
+    </li>
+</ol>
+
+<h2 id="set-a-key-pair-s-password">Set a Key Pair's Password</h2>
+<hr />
+
+To set a Key Pair entry's password:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select <b>Set Password</b> from the pop-up menu.
+    </li>
+
+
+    <li>The <b>Set Key Pair Entry Password</b> dialog will appear.</li>
+
+
+    <li>
+        Complete the dialog's fields with the old password, new password and new
+        password confirmation. If the Key Pair Entry is unlocked then the old
+        password field will already be completed.
+    </li>
+
+
+    <li>Press the <b>OK</b> button to confirm the dialog.</li>
+</ol>
+
+<h2 id="cut-and-paste-a-key-pair">Cut and Paste a Key Pair</h2>
+<hr />
+
+To cut and paste a Key Pair:
+
+<ol>
+    <li>Click on the Key Pair entry to select it.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Cut</b>. Alternatively click on the <b>Cut</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/cut.png" />
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>Select the target KeyStore by clicking on its tab.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Paste</b>. Alternatively click on the <b>Paste</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/paste.png" />
+    </li>
+
+
+    <li>
+        The Key Pair entry will appear in the target KeyStore Entries table. The Key
+        Pair entry's password will remain unchanged.
+    </li>
+</ol>
+
+<b>Notes:</b>
+
+<ul>
+    <li>
+        KeyStore Explorer has an internal clipboard for cut, copy and paste
+        operations called the <b>buffer</b>. Therefore KeyStore entries cannot be
+        cut or copied from KeyStore Explorer to other applications and vice versa.
+    </li>
+</ul>
+
+<h2 id="copy-and-paste-a-key-pair">Copy and Paste a Key Pair</h2>
+<hr />
+
+To copy and paste a Key Pair:
+
+<ol>
+    <li>Click on the Key Pair entry to select it.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Copy</b>. Alternatively click on the <b>Copy</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/copy.png" />
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>If copying to a different KeyStore select it by clicking on its tab.</li>
+
+
+    <li>
+        From the <b>Edit</b> menu, choose <b>Paste</b>. Alternatively click on the <b>Paste</b> tool bar button: &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/paste.png" />
+    </li>
+
+
+    <li>
+        A copy of the Key Pair entry will appear in the target KeyStore Entries
+        table. The Key Pair entry's password will be the same as the original's.
+    </li>
+</ol>
+
+<b>Notes:</b>
+
+<ul>
+    <li>
+        KeyStore Explorer has an internal clipboard for cut, copy and paste
+        operations called the <b>buffer</b>. Therefore KeyStore entries cannot be
+        cut or copied from KeyStore Explorer to other applications and vice versa.
+    </li>
+</ul>
+
+<h2 id="delete-a-key-pair">Delete a Key Pair</h2>
+<hr />
+
+To delete a Key Pair:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select <b>Delete</b> from the pop-up menu.
+    </li>
+
+
+    <li>The Key Pair entry will be removed from the KeyStore Entries table.</li>
+</ol>
+
+<h2 id="rename-a-key-pair">Rename a Key Pair</h2>
+<hr />
+
+To rename a Key Pair:
+
+<ol>
+    <li>
+        Right-click on the Key Pair entry in the KeyStore Entries table. Select <b>Rename</b> from the pop-up menu.
+    </li>
+
+
+    <li>
+        If required the <b>Unlock Entry</b> dialog will be displayed. Enter the Key
+        Pair entry's password and press the <b>OK</b> button.
+    </li>
+
+
+    <li>The <b>New Entry Alias</b> dialog will appear.</li>
+
+
+    <li>
+        Enter the new alias into the dialog and acknowledge it by pressing the <b>OK</b> button.
+    </li>
+
+
+    <li>The Key Pair entry will be renamed in the KeyStore Entries table.</li>
+</ol>
+</Layout>
