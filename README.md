@@ -2,7 +2,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/kaikramer/keystore-explorer/build_test.yml)](https://github.com/kaikramer/keystore-explorer/actions/workflows/build_test.yml)
 [![Release](https://img.shields.io/github/v/release/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/releases)
 [![Downloads](https://img.shields.io/github/downloads/kaikramer/keystore-explorer/total)](https://tooomm.github.io/github-release-stats/?username=kaikramer&repository=keystore-explorer)
-[![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/blob/main/LICENSE)
 [![Packaging status](https://repology.org/badge/tiny-repos/keystore-explorer.svg)](https://repology.org/project/keystore-explorer/versions)
 [![Translation status](https://hosted.weblate.org/widgets/keystore-explorer/-/svg-badge.svg)](https://hosted.weblate.org/projects/keystore-explorer/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kaikramer/keystore-explorer)
@@ -94,7 +94,7 @@ Or run `org/kse/KSE.java` directly from an IDE.
 
 ## Contributing
 
-We encourage you to contribute to KSE! Please check out the [Contributing to KSE guide](https://github.com/kaikramer/keystore-explorer/blob/master/CONTRIBUTING.md) for guidelines about how to proceed.
+We encourage you to contribute to KSE! Please check out the [Contributing to KSE guide](https://github.com/kaikramer/keystore-explorer/blob/main/CONTRIBUTING.md) for guidelines about how to proceed.
 
 ## Translating
 
@@ -110,7 +110,7 @@ Use the "Resource Bundle Editor" plugin for JetBrains IDEs to simplify the proce
 
 ## License
 
-[GNU General Public License v3.0](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
+[GNU General Public License v3.0](https://github.com/kaikramer/keystore-explorer/blob/main/LICENSE)
 
 ## Sponsors
 
