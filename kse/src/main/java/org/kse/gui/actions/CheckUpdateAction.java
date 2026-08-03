@@ -26,7 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -96,7 +96,7 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
         LocalDate lastCheck = preferences.getAutoUpdateCheckSettings().getLastCheck();
         LocalDate now = LocalDate.now();
         int checkInterval = preferences.getAutoUpdateCheckSettings().getCheckInterval();
-        if (Period.between(lastCheck, now).getDays() < checkInterval) {
+        if (!isCheckDue(lastCheck, now, checkInterval)) {
             return;
         }
 
@@ -108,6 +108,10 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
         SwingUtilities.invokeLater(() -> {
             compareVersions(latestVersion, true);
         });
+    }
+
+    static boolean isCheckDue(LocalDate lastCheck, LocalDate now, int checkInterval) {
+        return ChronoUnit.DAYS.between(lastCheck, now) >= checkInterval;
     }
 
     private void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
