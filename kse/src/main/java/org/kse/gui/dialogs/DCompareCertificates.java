@@ -56,9 +56,9 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.components.JEscFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JResizableFrame;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
@@ -68,13 +68,12 @@ import org.kse.utilities.io.IndentSequence;
 
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
-
 import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the differences of two certificates
  */
-public class DCompareCertificates extends JEscFrame {
+public class DCompareCertificates extends JResizableFrame {
 
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -195,6 +194,10 @@ public class DCompareCertificates extends JEscFrame {
 
         getRootPane().setDefaultButton(jbOK);
 
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
+
         pack();
 
         // as the compare window can become quite large, we adjust its size depending on
@@ -297,12 +300,7 @@ public class DCompareCertificates extends JEscFrame {
     }
 
     private void okPressed() {
-        closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
+        closeFrame();
     }
 
     // for quick testing

@@ -105,7 +105,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.IndentSequence;
@@ -116,7 +116,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Displays the properties of a supplied KeyStore.
  */
-public class DPkcs12Info extends JEscDialog {
+public class DPkcs12Info extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -216,6 +216,10 @@ public class DPkcs12Info extends JEscDialog {
         getRootPane().setDefaultButton(jbOpen);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOpen.requestFocus());
     }
@@ -610,11 +614,6 @@ public class DPkcs12Info extends JEscDialog {
     private void cancelPressed() {
         cancelled = true;
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     // for quick testing

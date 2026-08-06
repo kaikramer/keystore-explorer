@@ -76,7 +76,7 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -88,7 +88,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Displays the properties of a supplied KeyStore.
  */
-public class DProperties extends JEscDialog {
+public class DProperties extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -168,6 +168,10 @@ public class DProperties extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -759,10 +763,5 @@ public class DProperties extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 }

@@ -62,7 +62,7 @@ import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.HexUtil;
@@ -72,7 +72,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Dialog to view a certificate fingerprint.
  */
-public class DViewCertificateFingerprint extends JEscDialog {
+public class DViewCertificateFingerprint extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
@@ -183,6 +183,10 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
         pack();
 
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
+
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 
         populateFingerprint();
@@ -238,11 +242,6 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     // for quick testing

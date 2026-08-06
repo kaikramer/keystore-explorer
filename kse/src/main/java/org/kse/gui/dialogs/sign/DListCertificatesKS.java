@@ -46,10 +46,10 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.OpenAction;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.history.KeyStoreHistory;
 
@@ -58,7 +58,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Dialog that display a list of certificate from keystore
  */
-public class DListCertificatesKS extends JEscDialog {
+public class DListCertificatesKS extends JResizableDialog {
 
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
@@ -162,6 +162,10 @@ public class DListCertificatesKS extends JEscDialog {
         setMinimumSize(new Dimension(400, 200));
         setResizable(true);
 
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
+
         getRootPane().setDefaultButton(jbOK);
 
         pack();
@@ -192,11 +196,6 @@ public class DListCertificatesKS extends JEscDialog {
 
     private void cancelPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     private void okPressed() {

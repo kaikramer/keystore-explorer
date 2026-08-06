@@ -51,14 +51,14 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays information on the currently loaded security providers.
  */
-public class DProviderInfo extends JEscDialog {
+public class DProviderInfo extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
@@ -136,6 +136,10 @@ public class DProviderInfo extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -390,10 +394,5 @@ public class DProviderInfo extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 }

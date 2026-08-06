@@ -21,33 +21,41 @@
 package org.kse.gui.preferences.json;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.time.LocalDate;
+import java.io.IOException;
+import java.util.Map;
 
-import com.fasterxml.jackson.jr.ob.api.ReaderWriterProvider;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.jr.ob.api.ValueReader;
 import com.fasterxml.jackson.jr.ob.api.ValueWriter;
 import com.fasterxml.jackson.jr.ob.impl.JSONReader;
 import com.fasterxml.jackson.jr.ob.impl.JSONWriter;
 
 /**
- * Provide custom JSON converters for jackson-jr
+ * Custom JSON reader/writer because java.awt.Dimension causes issues with jackson
  */
-public class KseReaderWriterProvider extends ReaderWriterProvider {
+public class DimensionConverter extends ValueReader implements ValueWriter {
 
-    @Override
-    public ValueReader findValueReader(JSONReader readContext, Class<?> type) {
-        if (type == Dimension.class) return new DimensionConverter();
-        if (type == Rectangle.class) return new RectangleConverter();
-        if (type == LocalDate.class) return new LocalDateConverter();
-        return null;
+    protected DimensionConverter() {
+        super(Dimension.class);
     }
 
     @Override
-    public ValueWriter findValueWriter(JSONWriter writeContext, Class<?> type) {
-        if (type == Dimension.class) return new DimensionConverter();
-        if (type == Rectangle.class) return new RectangleConverter();
-        if (type == LocalDate.class) return new LocalDateConverter();
-        return null;
+    public void writeValue(JSONWriter context, JsonGenerator g, Object value) throws IOException {
+        Dimension dimension = (Dimension) value;
+        g.writeStartObject();
+        g.writeNumberField("width", dimension.width);
+        g.writeNumberField("height", dimension.height);
+        g.writeEndObject();
     }
+
+    @Override
+    public Object read(JSONReader reader, JsonParser p) throws IOException {
+        Map<String, Object> map = reader.readMap();
+        return new Dimension((Integer) map.get("width"),
+                             (Integer) map.get("height"));
+    }
+
+    @Override
+    public Class<Dimension> valueType() { return Dimension.class; }
 }

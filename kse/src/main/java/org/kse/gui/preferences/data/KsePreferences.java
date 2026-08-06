@@ -20,11 +20,13 @@
 
 package org.kse.gui.preferences.data;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JTabbedPane;
 
@@ -87,6 +89,8 @@ public class KsePreferences {
     private boolean silentlyReload = false;
     // Default to off for macOS since this features is not used.
     private boolean openWithExistingInstance = !OperatingSystem.isMacOs();
+    // TreeMap for storing the sizes in alphabetical order
+    private Map<String, Dimension> dialogSizes = new TreeMap<>();
 
     // auto-generated getters/setters
 
@@ -412,5 +416,13 @@ public class KsePreferences {
 
     public void setOpenWithExistingInstance(boolean openWithExistingInstance) {
         this.openWithExistingInstance = openWithExistingInstance;
+    }
+
+    public Map<String, Dimension> getDialogSizes() {
+        return dialogSizes;
+    }
+
+    public void setDialogSizes(Map<String, Dimension> dialogSizes) {
+        this.dialogSizes = dialogSizes;
     }
 }
