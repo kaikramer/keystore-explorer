@@ -205,13 +205,13 @@ class PanelUserInterface {
         jpUI.add(jcbRngType, "gapx indent, spanx, wrap unrel");
         MiGUtil.addSeparator(jpUI, jlSnRandomBytes.getText());
         jpUI.add(jspSnRandomBytes, "gapx indent, split 2");
-        jpUI.add(jlSnRandomBytesPostfix, "wrap");
+        jpUI.add(jlSnRandomBytesPostfix, "wrap unrel");
         MiGUtil.addSeparator(jpUI, jlKeyStores.getText());
         // macOS does not use this setting since it uses the MacOsIntegration open file support.
         if (!OperatingSystem.isMacOs()) {
-            jpUI.add(jcbEnableOpenWithExistingInstance, "gapx indent, wrap");
+            jpUI.add(jcbEnableOpenWithExistingInstance, "gapx indent, wrap rel");
         }
-        jpUI.add(jcbEnableAutomaticReload, "gapx indent, wrap");
+        jpUI.add(jcbEnableAutomaticReload, "gapx indent, wrap rel");
         jpUI.add(jcbEnableSilentReload, "gapx indent, wrap");
 
         jcbEnableAutoUpdateChecks
