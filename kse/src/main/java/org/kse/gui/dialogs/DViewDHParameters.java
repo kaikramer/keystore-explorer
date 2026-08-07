@@ -44,6 +44,7 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
@@ -201,12 +202,10 @@ public class DViewDHParameters extends JEscDialog {
 
         String title = res.getString("DViewDHParameters.ExportPem.Title");
 
-        SystemFileChooser chooser = new SystemFileChooser();
+        SystemFileChooser chooser = FileChooserFactory.getPemFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(title);
         chooser.setMultiSelectionEnabled(false);
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Pem files (*.pem)", "pem"));
-        chooser.setAcceptAllFileFilterUsed(false);
 
         int rtnValue = chooser.showDialog(this, res.getString("DViewDHParameters.ChooseExportFile.button"));
 

@@ -28,6 +28,7 @@ import org.kse.utilities.os.OperatingSystem;
 
 import com.formdev.flatlaf.FlatSystemProperties;
 import com.formdev.flatlaf.util.SystemFileChooser;
+import com.formdev.flatlaf.util.SystemFileChooser.FileNameExtensionFilter;
 
 /**
  * Simple factory that returns SystemFileChooser objects for the requested security
@@ -183,7 +184,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPemFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -194,8 +195,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getKeyStoreFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(
-                new SystemFileChooser.FileNameExtensionFilter(KEYSTORE_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
+        addChoosableDefaultFilter(chooser,
+                new FileNameExtensionFilter(KEYSTORE_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
                                             KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT,
                                             BCFKS_EXT, KDB_EXT, PEM_EXT));
         return chooser;
@@ -208,7 +209,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getSthFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(STH_FILE_DESC, STH_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(STH_FILE_DESC, STH_EXT));
         return chooser;
     }
 
@@ -219,8 +220,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getX509FileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(X509_FILE_DESC, X509_EXT_1, X509_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(X509_FILE_DESC, X509_EXT_1, X509_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -231,8 +232,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPkcs7FileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKCS7_FILE_DESC, PKCS7_EXT_1, PKCS7_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PKCS7_FILE_DESC, PKCS7_EXT_1, PKCS7_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -243,7 +244,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPkiPathFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKI_PATH_FILE_DESC, PKI_PATH_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PKI_PATH_FILE_DESC, PKI_PATH_EXT));
         return chooser;
     }
 
@@ -254,7 +255,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getSpcFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(SPC_FILE_DESC, SPC_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(SPC_FILE_DESC, SPC_EXT));
         return chooser;
     }
 
@@ -265,7 +266,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getCetFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(CET_FILE_DESC, CET_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(CET_FILE_DESC, CET_EXT));
         return chooser;
     }
 
@@ -276,11 +277,11 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getCertFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(X509_FILE_DESC, X509_EXT_1, X509_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKCS7_FILE_DESC, PKCS7_EXT_1, PKCS7_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKI_PATH_FILE_DESC, PKI_PATH_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(SPC_FILE_DESC, SPC_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(X509_FILE_DESC, X509_EXT_1, X509_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKCS7_FILE_DESC, PKCS7_EXT_1, PKCS7_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKI_PATH_FILE_DESC, PKI_PATH_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPC_FILE_DESC, SPC_EXT));
         return chooser;
     }
 
@@ -291,7 +292,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getKeyFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(KEY_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(KEY_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
                 P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT, PEM_EXT, PVK_EXT, OPENSSL_PVK_EXT, JWK_EXT));
         return chooser;
     }
@@ -303,8 +304,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPkcs12FileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(
-                new SystemFileChooser.FileNameExtensionFilter(PKCS12_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2));
+        addChoosableDefaultFilter(chooser,
+                new FileNameExtensionFilter(PKCS12_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2));
         return chooser;
     }
 
@@ -315,8 +316,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPkcs8FileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKCS8_FILE_DESC, P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PKCS8_FILE_DESC, P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -327,7 +328,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPvkFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PVK_FILE_DESC, PVK_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PVK_FILE_DESC, PVK_EXT));
         return chooser;
     }
 
@@ -338,8 +339,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getOpenSslPvkFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(OPENSSL_PVK_FILE_DESC, OPENSSL_PVK_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(OPENSSL_PVK_FILE_DESC, OPENSSL_PVK_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -350,8 +351,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPublicKeyFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PUBLIC_KEY_FILE_DESC, PUBLIC_KEY_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PUBLIC_KEY_FILE_DESC, PUBLIC_KEY_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -362,9 +363,9 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getCsrFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKCS10_CSR_FILE_DESC, PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PKCS10_CSR_FILE_DESC, PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
         return chooser;
     }
 
@@ -375,8 +376,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getPkcs10FileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(PKCS10_CSR_FILE_DESC, PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(PKCS10_CSR_FILE_DESC, PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -387,7 +388,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getSpkacFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
         return chooser;
     }
 
@@ -398,8 +399,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getCaReplyFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(CA_REPLY_FILE_DESC, CA_REPLY_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(CA_REPLY_FILE_DESC, CA_REPLY_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -410,8 +411,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getCrlFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(CRL_FILE_DESC, CRL_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(CRL_FILE_DESC, CRL_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -422,19 +423,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getArchiveFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(JAR_FILE_DESC, JAR_EXT));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(ZIP_FILE_DESC, ZIP_EXT));
-        return chooser;
-    }
-
-    /**
-     * Get a SystemFileChooser filtered for ZIP files.
-     *
-     * @return SystemFileChooser object
-     */
-    public static SystemFileChooser getZipFileChooser() {
-        SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(ZIP_FILE_DESC, ZIP_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(JAR_FILE_DESC, JAR_EXT));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(ZIP_FILE_DESC, ZIP_EXT));
         return chooser;
     }
 
@@ -445,7 +435,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getJadFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(JAD_FILE_DESC, JAD_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(JAD_FILE_DESC, JAD_EXT));
         return chooser;
     }
 
@@ -458,11 +448,11 @@ public class FileChooserFactory {
         SystemFileChooser chooser = getFileChooser();
 
         if (OperatingSystem.isWindows()) {
-            chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(LIB_DLL_FILE_DESC, LIB_DLL_EXT));
+            addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(LIB_DLL_FILE_DESC, LIB_DLL_EXT));
         } else if (OperatingSystem.isMacOs()) {
-            chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(LIB_DYLIB_FILE_DESC, LIB_DYLIB_EXT));
+            addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(LIB_DYLIB_FILE_DESC, LIB_DYLIB_EXT));
         } else if (OperatingSystem.isLinux() || OperatingSystem.isUnix()) {
-            chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(LIB_SO_FILE_DESC, LIB_SO_EXT));
+            addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(LIB_SO_FILE_DESC, LIB_SO_EXT));
         }
 
         return chooser;
@@ -475,8 +465,8 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getSignatureFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(CMS_FILE_DESC, CMS_EXT_1, CMS_EXT_2));
-        chooser.addChoosableFileFilter(new SystemFileChooser.FileNameExtensionFilter(SIG_FILE_DESC, SIG_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(CMS_FILE_DESC, CMS_EXT_1, CMS_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SIG_FILE_DESC, SIG_EXT));
         return chooser;
     }
 
@@ -487,7 +477,7 @@ public class FileChooserFactory {
      */
     public static SystemFileChooser getCsvFileChooser() {
         SystemFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(CSV_FILE_DESC, CSV_EXT));
+        addChoosableDefaultFilter(chooser, new FileNameExtensionFilter(CSV_FILE_DESC, CSV_EXT));
         return chooser;
     }
 
@@ -500,10 +490,17 @@ public class FileChooserFactory {
 
        SystemFileChooser fileChooser = new SystemFileChooser();
 
+       // explicitly add "all files filter" at the first position to remain compatible with previous versions
+       fileChooser.addChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
+
         // show/hide hidden files
         fileChooser.setFileHidingEnabled(!PreferencesManager.getPreferences().isShowHiddenFilesEnabled());
 
         return fileChooser;
     }
 
+    private static void addChoosableDefaultFilter(SystemFileChooser chooser, FileNameExtensionFilter defaultFilter) {
+        chooser.addChoosableFileFilter(defaultFilter);
+        chooser.setFileFilter(defaultFilter);
+    }
 }
