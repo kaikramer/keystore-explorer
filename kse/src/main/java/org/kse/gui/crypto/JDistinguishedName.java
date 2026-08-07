@@ -108,8 +108,10 @@ public class JDistinguishedName extends JPanel {
             }
         });
 
-        setLayout(new MigLayout("insets 0, fill", "[]5px[]", ""));
-        add(jtfDistinguishedName, "");
+        // use related spacing (MiG layout default) to match DViewCertificate
+        // and other view dialogs "split" (example: jtfPublicKey)
+        setLayout(new MigLayout("insets 0, fill", "[]", ""));
+        add(jtfDistinguishedName, "grow, push");
         add(jbViewEditDistinguishedName, "");
 
         if (editable) {

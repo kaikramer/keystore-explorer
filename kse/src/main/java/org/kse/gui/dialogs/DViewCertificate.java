@@ -79,11 +79,12 @@ import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.ExportTrustedCertificateAction;
 import org.kse.gui.actions.ImportTrustedCertificateAction;
 import org.kse.gui.actions.VerifyCertificateAction;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.crypto.JCertificateFingerprint;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
@@ -101,7 +102,7 @@ import net.miginfocom.swing.MigLayout;
  * certificate are displayed at a time with selector buttons allowing the
  * movement to another of the certificates.
  */
-public class DViewCertificate extends JEscDialog {
+public class DViewCertificate extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -299,31 +300,40 @@ public class DViewCertificate extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-        pane.add(jlHierarchy, "");
-        pane.add(jspHierarchy, "sgx, wrap");
+        pane.add(jlHierarchy, "top");
+        pane.add(jspHierarchy, "grow, push, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlVersion, "");
-        pane.add(jtfVersion, "sgx, wrap");
+        pane.add(jtfVersion, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlSubject, "");
-        pane.add(jdnSubject, "wrap");
+        pane.add(jdnSubject, "growx, wrap");
         pane.add(jlIssuer, "");
-        pane.add(jdnIssuer, "wrap");
+        pane.add(jdnIssuer, "growx, wrap");
         pane.add(jlSerialNumberHex, "");
-        pane.add(jtfSerialNumberHex, "wrap");
+        pane.add(jtfSerialNumberHex, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlSerialNumberDec, "");
-        pane.add(jtfSerialNumberDec, "wrap");
+        pane.add(jtfSerialNumberDec, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlValidFrom, "");
-        pane.add(jtfValidFrom, "wrap");
+        pane.add(jtfValidFrom, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlValidUntil, "");
-        pane.add(jtfValidUntil, "wrap");
+        pane.add(jtfValidUntil, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlValidityProgress, "");
-        pane.add(jpbValidityProgress, "sgx, wrap");
+        pane.add(jpbValidityProgress, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlValidityDays);
-        pane.add(jtfValidityDays, "wrap");
+        pane.add(jtfValidityDays, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlPublicKey, "");
-        pane.add(jtfPublicKey, "spanx, split");
+        pane.add(jtfPublicKey, "growx, pushx, split");
         pane.add(jbViewPublicKeyDetails, "wrap");
         pane.add(jlSignatureAlgorithm, "");
-        pane.add(jtfSignatureAlgorithm, "wrap");
+        pane.add(jtfSignatureAlgorithm, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlFingerprint, "");
         pane.add(jcfFingerprint, "spanx, growx, wrap para");
         pane.add(jbImport, "hidemode 1, spanx, split");
@@ -334,7 +344,7 @@ public class DViewCertificate extends JEscDialog {
         pane.add(jbExtensions, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15"); // don't push so that the tree view can grow
         pane.add(jbOK, "spanx, tag ok");
 
         jtrHierarchy.addTreeSelectionListener(evt -> {
@@ -418,7 +428,7 @@ public class DViewCertificate extends JEscDialog {
             }
         });
 
-        setResizable(false);
+        setResizable(true);
 
         // select (first) leaf in certificate tree
         DefaultMutableTreeNode firstLeaf = ((DefaultMutableTreeNode) topNode).getFirstLeaf();
@@ -427,6 +437,10 @@ public class DViewCertificate extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -749,11 +763,6 @@ public class DViewCertificate extends JEscDialog {
     private void okPressed() {
         preferences.setCertificateFingerprintAlgorithm(jcfFingerprint.getSelectedFingerprintAlg());
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     private class X509CertificateComparator implements Comparator<X509Certificate> {

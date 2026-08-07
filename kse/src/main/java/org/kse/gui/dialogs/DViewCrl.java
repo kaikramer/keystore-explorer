@@ -58,8 +58,9 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
@@ -73,7 +74,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Displays the details of a Certificate Revocation List (CRL).
  */
-public class DViewCrl extends JEscDialog {
+public class DViewCrl extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static final int TEXT_FIELD_WIDTH = 40;
@@ -256,28 +257,32 @@ public class DViewCrl extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", ""));
 
         pane.add(jlVersion, "");
-        pane.add(jtfVersion, "wrap");
+        pane.add(jtfVersion, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlIssuer, "");
-        pane.add(jdnIssuer, "wrap");
+        pane.add(jdnIssuer, "growx, wrap");
         pane.add(jlEffectiveDate, "");
-        pane.add(jtfEffectiveDate, "wrap");
+        pane.add(jtfEffectiveDate, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlNextUpdate, "");
-        pane.add(jtfNextUpdate, "wrap");
+        pane.add(jtfNextUpdate, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlSignatureAlgorithm, "");
-        pane.add(jtfSignatureAlgorithm, "wrap para");
+        pane.add(jtfSignatureAlgorithm, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap para");
         pane.add(jbCrlExtensions, "spanx, split");
         pane.add(jbCrlPem, "");
         pane.add(jbCrlAsn1, "wrap unrel");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jlRevokedCerts, "split, wrap");
-        pane.add(jspRevokedCertsTable, "spanx, growx, wrap para");
+        pane.add(jspRevokedCertsTable, "spanx, grow, push, wrap para");
         pane.add(jbCrlEntryExtensions, "spanx, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15"); // don't push so that the table can grow
         pane.add(jbOK, "spanx, tag ok");
 
         populateDialog();
 
-        setResizable(false);
+        setResizable(true);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -289,6 +294,10 @@ public class DViewCrl extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -475,11 +484,6 @@ public class DViewCrl extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     // for quick testing

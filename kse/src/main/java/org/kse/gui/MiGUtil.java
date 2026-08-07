@@ -21,11 +21,18 @@ package org.kse.gui;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+/**
+ * Utilities for MiG Layout.
+ */
 public class MiGUtil {
 
     private MiGUtil() {
@@ -57,13 +64,30 @@ public class MiGUtil {
     /**
      * Creates a vertical separator for use between buttons.
      *
+     * @param visible True if the button separator is visible.
      * @return Button separator
      */
     public static JSeparator createButtonSeparator(boolean visible) {
-        JSeparator jSeparator = new JSeparator(JSeparator.VERTICAL);
+        JSeparator jSeparator = new JSeparator(SwingConstants.VERTICAL);
         jSeparator.setPreferredSize(new Dimension(3, 20));
         jSeparator.setVisible(visible);
 
         return jSeparator;
     }
+
+    /**
+     * Creates a spacer that is the same size as an 16x16 icon button. Each L&F creates
+     * buttons of differing sizes so this method uses a hidden 16x16 icon based button
+     * spacer that works for all L&F.
+     *
+     * @return A spacer.
+     */
+    public static JButton createIconButtonSpacer() {
+        Image image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        JButton button = new JButton(new ImageIcon(image));
+        button.setEnabled(false);
+        button.setVisible(false);
+        return button;
+    }
+
 }

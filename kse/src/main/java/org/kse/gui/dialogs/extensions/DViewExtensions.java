@@ -62,7 +62,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.ExamineClipboardAction;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.dialogs.DViewAsn1Dump;
 import org.kse.gui.error.DError;
 import org.kse.gui.table.ToolTipTable;
@@ -75,7 +75,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Displays the details of X.509 Extensions.
  */
-public class DViewExtensions extends JEscDialog implements HyperlinkListener {
+public class DViewExtensions extends JResizableDialog implements HyperlinkListener {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
@@ -248,17 +248,17 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        pane.add(jspExtensionsTable, "growx, wrap");
+        pane.add(jspExtensionsTable, "grow, push, wrap");
         pane.add(jlExtensionValue, "wrap");
-        pane.add(jspExtensionValue, "wrap para");
+        pane.add(jspExtensionValue, "grow, push, wrap para");
         pane.add(jbCopy, "right, spanx, split 4");
         addButtonSeparator(pane, true);
         pane.add(jbSaveTemplate);
         pane.add(jbAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15");  // don't push so that the table and text area can grow
         pane.add(jbOK, "spanx, tag ok");
 
-        setResizable(false);
+        setResizable(true);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -270,6 +270,10 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -348,11 +352,6 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     @Override

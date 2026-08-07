@@ -330,7 +330,7 @@ public class DSignCsr extends JEscDialog {
         pane.add(jdnCsrSubject, "wrap");
         pane.add(jlCsrPublicKey, "");
         pane.add(jtfCsrPublicKey, "split 2");
-        pane.add(jbViewCsrPublicKeyDetails, "gapx 5px, wrap");
+        pane.add(jbViewCsrPublicKeyDetails, "gapx rel, wrap");
         pane.add(jlCsrSignatureAlgorithm, "");
         pane.add(jtfCsrSignatureAlgorithm, "wrap");
         pane.add(jlCsrChallenge, "");
