@@ -80,8 +80,9 @@ import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
@@ -95,7 +96,7 @@ import net.miginfocom.swing.MigLayout;
  * signer are displayed at a time with selector buttons allowing the
  * movement to another of the signers.
  */
-public class DViewSignature extends JEscDialog {
+public class DViewSignature extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -233,27 +234,32 @@ public class DViewSignature extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-        pane.add(jlSigners, "");
-        pane.add(jspSigners, "sgx, wrap");
+        pane.add(jlSigners, "top");
+        pane.add(jspSigners, "grow, push, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlStatus, "");
-        pane.add(jtfStatus, "sgx, wrap");
+        pane.add(jtfStatus, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlVersion, "");
-        pane.add(jtfVersion, "wrap");
+        pane.add(jtfVersion, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlSubject, "");
-        pane.add(jdnSubject, "wrap");
+        pane.add(jdnSubject, "growx, wrap");
         pane.add(jlIssuer, "");
-        pane.add(jdnIssuer, "wrap");
+        pane.add(jdnIssuer, "growx, wrap");
         pane.add(jlSigningTime, "");
-        pane.add(jtfSigningTime, "wrap");
+        pane.add(jtfSigningTime, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap");
         pane.add(jlSignatureAlgorithm, "");
-        pane.add(jtfSignatureAlgorithm, "wrap para");
+        pane.add(jtfSignatureAlgorithm, "growx, pushx, split");
+        pane.add(MiGUtil.createIconButtonSpacer(), "wrap para");
         pane.add(jbTimeStamp, "spanx, split");
         pane.add(jbSignerAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15");
         pane.add(jbCertificates, "spanx, split");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15"); // don't push so that the list can grow
         pane.add(jbOK, "spanx, tag ok");
 
         jtrSigners.addTreeSelectionListener(evt -> {
@@ -319,7 +325,7 @@ public class DViewSignature extends JEscDialog {
             }
         });
 
-        setResizable(false);
+        setResizable(true);
 
         // select (first) child in signers tree
         TreeNode firstChild = ((DefaultMutableTreeNode) topNode).getFirstChild();
@@ -328,6 +334,10 @@ public class DViewSignature extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -568,11 +578,6 @@ public class DViewSignature extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 
     /**

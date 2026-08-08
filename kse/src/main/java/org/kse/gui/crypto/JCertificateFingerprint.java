@@ -88,7 +88,7 @@ public class JCertificateFingerprint extends JPanel {
 
         this.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
         this.add(jcbFingerprintAlg, "");
-        this.add(jtfCertificateFingerprint, "");
+        this.add(jtfCertificateFingerprint, "grow, push");
         this.add(jbViewCertificateFingerprint, "");
 
         populateFingerprintAlgs();

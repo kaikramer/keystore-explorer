@@ -61,7 +61,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.error.DError;
 import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.StringUtils;
@@ -71,7 +71,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Displays the details of a signed JAR file.
  */
-public class DViewSignedJar extends JEscDialog {
+public class DViewSignedJar extends JResizableDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -201,16 +201,16 @@ public class DViewSignedJar extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", ""));
 
         pane.add(jlVerifyStatus, "");
-        pane.add(jtfVerifyStatus, "growx, wrap");
-        pane.add(jspJarEntryTable, "spanx, growx, wrap para");
+        pane.add(jtfVerifyStatus, "growx, pushx, wrap");
+        pane.add(jspJarEntryTable, "spanx, grow, push, wrap para");
         pane.add(jbSignatures, "spanx, split");
         pane.add(jbJarEntryCertificates, "wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15");  // don't push so that the table can grow
         pane.add(jbOK, "spanx, tag ok");
 
         populateDialog();
 
-        setResizable(false);
+        setResizable(true);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -222,6 +222,10 @@ public class DViewSignedJar extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+
+        // set the minimum size to preferred size so that the dialog always looks good
+        setMinimumSize(getPreferredSize());
+        restoreSize();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
@@ -317,10 +321,5 @@ public class DViewSignedJar extends JEscDialog {
 
     private void okPressed() {
         closeDialog();
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
     }
 }
