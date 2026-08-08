@@ -80,7 +80,7 @@ public class ReloadAction extends KeyStoreExplorerAction implements HistoryActio
         putValue(NAME, res.getString("ReloadAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ReloadAction.tooltip"));
         putValue(SMALL_ICON,
-                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/open.png"))));
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/reload.png"))));
     }
 
     /**
