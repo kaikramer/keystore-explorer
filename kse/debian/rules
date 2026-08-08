@@ -45,6 +45,9 @@ override_dh_auto_install:
 	install -m 644 icons/kse_512.png debian/kse/usr/share/icons/hicolor/512x512/apps/kse.png
 
 	install -m 644 build/deb-stage/lib/*.jar debian/kse/opt/kse/lib/
+	if ls build/deb-stage/lib/*.so >/dev/null 2>&1; then \
+		install -m 644 build/deb-stage/lib/*.so debian/kse/opt/kse/lib/; \
+	fi
 	install -m 644 licenses/*.txt debian/kse/opt/kse/licenses/
 
 	ln -s /opt/kse/kse.sh debian/kse/usr/bin/kse

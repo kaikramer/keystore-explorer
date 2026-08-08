@@ -92,6 +92,12 @@ for jar in %KSE_BUILD_ROOT%/lib/*.jar; do
     install "$jar" $RPM_BUILD_ROOT/opt/%{name}/lib/
 done
 
+# Install native libraries (e.g. FlatLaf natives)
+for so in %KSE_BUILD_ROOT%/lib/*.so; do
+    [ -e "$so" ] || continue
+    install "$so" $RPM_BUILD_ROOT/opt/%{name}/lib/
+done
+
 # Install license files
 for license in %KSE_BUILD_ROOT%/licenses/*.txt; do
     install "$license" $RPM_BUILD_ROOT/opt/%{name}/licenses/
