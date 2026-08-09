@@ -202,7 +202,7 @@ public class DViewSignedJar extends JResizableDialog {
 
         pane.add(jlVerifyStatus, "");
         pane.add(jtfVerifyStatus, "growx, pushx, wrap");
-        pane.add(jspJarEntryTable, "spanx, grow, push, wrap para");
+        pane.add(jspJarEntryTable, "spanx, grow, pushy, wrap para");
         pane.add(jbSignatures, "spanx, split");
         pane.add(jbJarEntryCertificates, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15");  // don't push so that the table can grow
