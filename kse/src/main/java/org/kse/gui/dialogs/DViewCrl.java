@@ -274,7 +274,7 @@ public class DViewCrl extends JResizableDialog {
         pane.add(jbCrlPem, "");
         pane.add(jbCrlAsn1, "wrap unrel");
         pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jlRevokedCerts, "split, wrap");
+        pane.add(jlRevokedCerts, "spanx, left, wrap");
         pane.add(jspRevokedCertsTable, "spanx, grow, pushy, wrap para");
         pane.add(jbCrlEntryExtensions, "spanx, wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15"); // don't push so that the table can grow
