@@ -174,6 +174,15 @@ public class DSignJwt extends JEscDialog {
                 jcbSignatureAlgorithm.addItem(JWSAlgorithm.Ed448);
                 jcbSignatureAlgorithm.addItem(JWSAlgorithm.EdDSA);
             }
+        } else if (KeyPairType.ED25519 == signKeyPairType) {
+            // EdDSA is default for compatibility though deprecated in RFC 9864.
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.EdDSA);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.Ed25519);
+        } else if (KeyPairType.ED448 == signKeyPairType) {
+            // EdDSA is last since it is deprecated in RFC 9864 and some implementations
+            // assume that EdDSA is only Ed25519.
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.Ed448);
+            jcbSignatureAlgorithm.addItem(JWSAlgorithm.EdDSA);
         }
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
 

@@ -47,7 +47,6 @@ import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.EdECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
@@ -58,7 +57,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.NamedParameterSpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -476,11 +474,9 @@ public final class KeyPairUtil {
                 PublicKey publicKey = kf.generatePublic(publicSpec);
                 keyPair = new KeyPair(publicKey, privateKey);
             }
-            if (privateKey instanceof EdECPrivateKey) {
-                EdDSAPrivateKey edPrivate = EccUtil.getEdPrivateKey(privateKey);
-                byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
-                KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
-                PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
+            if (privateKey instanceof EdDSAPrivateKey) {
+                EdDSAPrivateKey edPrivate = (EdDSAPrivateKey) privateKey;
+                PublicKey publicKey = edPrivate.getPublicKey();
                 keyPair = new KeyPair(publicKey, privateKey);
             }
             if (privateKey instanceof MLDSAPrivateKey) {

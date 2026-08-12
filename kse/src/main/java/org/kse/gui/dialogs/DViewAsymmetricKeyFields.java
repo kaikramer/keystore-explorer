@@ -30,7 +30,6 @@ import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
@@ -79,7 +78,6 @@ import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.util.BigIntegers;
 import org.kse.KSE;
-import org.kse.crypto.ecc.EccUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
@@ -136,7 +134,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "EC");
         } else if (key instanceof EdDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), getEdAlg(key));
-        } else if (key instanceof EdECPrivateKey) {
+        } else if (key instanceof EdDSAPrivateKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), getEdAlg(key));
         } else if (key instanceof MLDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
@@ -160,12 +158,11 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         if (key instanceof EdDSAPublicKey) {
             EdDSAPublicKey bcEdDSAPublicKey = (EdDSAPublicKey) key;
             edAlg = bcEdDSAPublicKey.getAlgorithm(); // Ed25519 or Ed448
-        } else {
-            EdDSAPrivateKey edPrivateKey = EccUtil.getEdPrivateKey((PrivateKey) key);
-            if (edPrivateKey == null) {
-                throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
-            }
+        } else if (key instanceof EdDSAPrivateKey) {
+            EdDSAPrivateKey edPrivateKey = (EdDSAPrivateKey) key;
             edAlg = edPrivateKey.getAlgorithm();
+        } else {
+            throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
         }
         return edAlg;
     }

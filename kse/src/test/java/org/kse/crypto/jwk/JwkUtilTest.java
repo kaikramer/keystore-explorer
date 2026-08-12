@@ -35,6 +35,7 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.EdECPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.ECPoint;
@@ -54,7 +55,6 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
-import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeEach;
@@ -305,7 +305,7 @@ class JwkUtilTest {
         @Test
         void handlesAttemptToExportUnsupportedEdDSAKeyWithGrace()  {
             assertThrows(IllegalArgumentException.class, () -> {
-                EdDSAPublicKey publicKeyMock = mock(EdDSAPublicKey.class);
+                PublicKey publicKeyMock = mock(EdECPublicKey.class);
                 when(publicKeyMock.getAlgorithm()).thenReturn("UnsupportedCurve");
                 JwkUtil.get(publicKeyMock, null);
             });

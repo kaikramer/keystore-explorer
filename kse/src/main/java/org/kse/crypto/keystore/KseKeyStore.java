@@ -30,6 +30,7 @@ import java.security.KeyStore.LoadStoreParameter;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
@@ -37,6 +38,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Enumeration;
+
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.privatekey.Pkcs8Util;
 
 /**
  * A KeyStore adapter for abstracting the differences in KeyStore provider
@@ -86,7 +90,15 @@ public class KseKeyStore {
 
     public Key getKey(String alias, char[] password)
             throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
-        return keyStore.getKey(alias, password);
+        Key key = keyStore.getKey(alias, password);
+        if (key instanceof PrivateKey) {
+            try {
+                key = Pkcs8Util.convert((PrivateKey) key);
+            } catch (CryptoException e) {
+                throw new KeyStoreException(e);
+            }
+        }
+        return key;
     }
 
     public Certificate[] getCertificateChain(String alias) throws KeyStoreException {

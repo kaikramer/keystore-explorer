@@ -30,8 +30,10 @@ import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.interfaces.EdECPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -182,7 +184,7 @@ public class Pkcs8Util {
 
             // Convert bytes to private key
             PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(pvkBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm);
+            KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm, KSE.BC);
 
             return keyFactory.generatePrivate(privateKeySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
@@ -243,7 +245,7 @@ public class Pkcs8Util {
                                                                                           .build(password.toCharArray());
             PrivateKeyInfo privateKeyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decProv);
 
-            return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+            return new JcaPEMKeyConverter().setProvider(KSE.BC).getPrivateKey(privateKeyInfo);
         } catch (Exception ex) {
             throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
         }
@@ -458,5 +460,48 @@ public class Pkcs8Util {
                 return oid; // Unknown algorithm
             }
         }
+    }
+
+    /**
+     * Converts SUN NamedPKCS8Key and JDK EdECPrivateKey to the equivalent BC interface so
+     * that the KSE business logic does not have handle both the SUN and BC private key
+     * implementations.
+     *
+     * The JDK key implementations, do not provide algorithm specifics necessary for KSE to
+     * determine the KeyPairType. For NamedPKCS8Key, the algorithm for ML-DSA keys is "ML-DSA",
+     * but KSE needs to know if it is ML-DSA-44, ML-DSA-65, or ML-DSA-87 populating the KeyInfo.
+     * Java 22 and higher supply a new interface, AsymmetricKey, which provides access to the
+     * parameters necessary for determining the key pair type, but KSE needs to continue to work
+     * with Java 17.
+     *
+     * Likewise, the JDK EdECPrivateKey only says "EdDSA" for the algorithm, but KSE wants to
+     * have "Ed25519" or "Ed448" to find the correct KeyPairType.
+     *
+     * @param privateKey A private key
+     * @return A BouncyCastle private key
+     * @throws CryptoException If an error occurred when converting the private key.
+     */
+    public static PrivateKey convert(PrivateKey privateKey) throws CryptoException {
+        // NamedPKCS8Key is not available at compile time so compare the name. It is better
+        // it to use instanceof to correctly detect subclasses, but this works for known
+        // versions of the JDK. Alternatively, reflection could be used to get a reference
+        // to the NamedPKCS8Key class for testing instanceof, but this hack is more
+        // efficient at the cost of correctness.
+        if ("sun.security.pkcs.NamedPKCS8Key".equals(privateKey.getClass().getName())
+                || privateKey instanceof EdECPrivateKey) {
+
+            try {
+                // Shortest way to convert to a BC EdDSA key. Doesn't require importing any
+                // SUN provider specific classes.
+                KeyFactory kf = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
+                return kf.generatePrivate(new PKCS8EncodedKeySpec(privateKey.getEncoded()));
+            } catch (Exception e) {
+                throw new CryptoException(MessageFormat.format(res.getString("NoConvertJdkToBc.exception.message"),
+                        privateKey.getClass().getName()), e);
+            }
+
+        }
+
+        return privateKey;
     }
 }
