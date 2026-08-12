@@ -332,7 +332,7 @@ public class JwkUtil {
                 OctetKeyPair okp = jwkKey.toOctetKeyPair();
                 if (okp.getD() != null) {
                     Curve curve = okp.getCurve();
-                    privateKey = KeyFactory.getInstance(KeyPairType.EDDSA.jce()).generatePrivate(
+                    privateKey = KeyFactory.getInstance("EdDSA").generatePrivate(
                             new EdECPrivateKeySpec(new NamedParameterSpec(curve.getStdName()), okp.getDecodedD()));
                     // KSE uses the BC interfaces for EdDSA keys so convert BC
                     privateKey = Pkcs8Util.convert(privateKey);
@@ -413,7 +413,6 @@ public class JwkUtil {
             switch (KeyPairUtil.getKeyPairType(publicKey)) {
             case ED448:
             case ED25519:
-            case EDDSA:
             case RSA:
                 return true;
             case EC:

@@ -22,7 +22,6 @@ package org.kse.crypto.ecc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigInteger;
@@ -36,7 +35,6 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kse.KSE;
@@ -149,23 +147,6 @@ public class EccUtilTest extends CryptoTestsBase {
         KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, KSE.BC);
         assertThrows(InvalidParameterException.class, () -> EccUtil.getNamedCurve(rsaKeyPair.getPublic()));
         assertThrows(InvalidParameterException.class, () -> EccUtil.getNamedCurve(rsaKeyPair.getPrivate()));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"Ed25519", "Ed448"})
-    void detectEDDSACurve(String curveName) throws Exception {
-        KeyPair edKeyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
-
-        assertNotNull(EccUtil.detectEdDSACurve(edKeyPair.getPrivate()));
-        assertNotNull(EccUtil.detectEdDSACurve(edKeyPair.getPublic()));
-    }
-
-    @Test
-    void detectEDDSACurveNotEd() throws Exception {
-        KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("secp384r1", KSE.BC);
-
-        assertThrows(InvalidParameterException.class, () -> EccUtil.detectEdDSACurve(ecKeyPair.getPrivate()));
-        assertThrows(InvalidParameterException.class, () -> EccUtil.detectEdDSACurve(ecKeyPair.getPublic()));
     }
 
 }

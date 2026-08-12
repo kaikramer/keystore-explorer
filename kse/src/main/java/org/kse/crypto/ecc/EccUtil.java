@@ -266,36 +266,6 @@ public final class EccUtil {
     }
 
     /**
-     * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given privateKey is.
-     *
-     * @param privateKey An EdDSA private key
-     * @return Ed25519 or Ed448
-     * @throws InvalidParameterException if privateKey is not a EdDSA key
-     */
-    public static EdDSACurves detectEdDSACurve(PrivateKey privateKey) {
-        PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
-        AlgorithmIdentifier algorithm = privateKeyInfo.getPrivateKeyAlgorithm();
-        ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
-
-        return EdDSACurves.resolve(algOid);
-    }
-
-    /**
-     * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given publicKey is.
-     *
-     * @param publicKey An EdDSA public key
-     * @return Ed25519 or Ed448
-     * @throws InvalidParameterException if publicKey is not a EdDSA key
-     */
-    public static EdDSACurves detectEdDSACurve(PublicKey publicKey) {
-        SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-        AlgorithmIdentifier algorithm = publicKeyInfo.getAlgorithm();
-        ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
-
-        return EdDSACurves.resolve(algOid);
-    }
-
-    /**
      * Gets the bit size of a named curve.
      *
      * @param curveName Name of the curve

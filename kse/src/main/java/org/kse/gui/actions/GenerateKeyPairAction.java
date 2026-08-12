@@ -266,7 +266,6 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             break;
         case EC:
         case ECDSA:
-        case EDDSA:
         case ED25519:
         case ED448:
         case ECGOST3410:

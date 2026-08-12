@@ -27,7 +27,6 @@ import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.ECGOST3410;
 import static org.kse.crypto.keypair.KeyPairType.ECGOST3410_2012;
-import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlDSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlKEM;
@@ -262,9 +261,6 @@ public final class KeyPairUtil {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
-            } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
-                EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
-                return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
             } else if (ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
                 // ECGOST parameters are ASN1Sequence so use ECNamedCurveSpec to get the curve name
                 ECPublicKey pubk = (ECPublicKey) publicKey;
@@ -324,9 +320,6 @@ public final class KeyPairUtil {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
-            } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
-                EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
-                return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
             } else if (isMlDSA(getKeyPairType(privateKey)) || isMlKEM(getKeyPairType(privateKey))
                     || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
@@ -394,10 +387,6 @@ public final class KeyPairUtil {
             } else if (privateAlgorithm.equals(ED448.jce())) {
                 byte[] signature = sign(toSign, privateKey, ED448.jce());
                 return verify(toSign, signature, publicKey, ED448.jce());
-            } else if (privateAlgorithm.equals(EDDSA.jce())) {
-                EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
-                byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
-                return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
             } else if (isMlDSA(getKeyPairType(privateKey)) || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
                 byte[] signature = sign(toSign, privateKey, keyPairType.jce());
