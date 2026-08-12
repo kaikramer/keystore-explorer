@@ -316,7 +316,8 @@ public class Pkcs8Util {
 
                     ASN1Integer version = (ASN1Integer) obj1;
 
-                    if (!version.getValue().equals(BigInteger.ZERO)) {
+                    // EdDSA keys are stored using v2 (1).
+                    if (!version.getValue().equals(BigInteger.ZERO) && !version.getValue().equals(BigInteger.ONE)) {
                         return null;
                     }
 

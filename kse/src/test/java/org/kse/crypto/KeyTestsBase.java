@@ -31,7 +31,14 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPublicKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.junit.jupiter.api.BeforeAll;
 import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
@@ -49,25 +56,32 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
     protected static DSAPublicKey dsaPublicKey;
     protected static ECPrivateKey ecPrivateKey;
     protected static ECPublicKey ecPublicKey;
-    protected static PublicKey mldsaPublicKey;
+    protected static ECPrivateKey gostPrivateKey;
+    protected static ECPublicKey gostPublicKey;
+    protected static EdDSAPrivateKey eddsaPrivateKey;
+    protected static EdDSAPublicKey eddsaPublicKey;
+    protected static MLDSAPublicKey mldsaPublicKey;
     /**
      * MLDSA private keys come with different types of encoding, but for now only the combined form is
      * supported by KSE.
      * <p>
      * {@link org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey#getPrivateKey}
      */
-    protected static PrivateKey mldsaPrivateKeySeedAndExpanded;
-    protected static PublicKey slhDsaPublicKey;
-    protected static PrivateKey slhDsaPrivateKey;
+    protected static MLDSAPrivateKey mldsaPrivateKeySeedAndExpanded;
+    protected static MLKEMPrivateKey mlkemPrivateKey;
+    protected static MLKEMPublicKey mlkemPublicKey;
+    protected static SLHDSAPrivateKey slhDsaPrivateKey;
+    protected static SLHDSAPublicKey slhDsaPublicKey;
 
 
     protected static List<PrivateKey> privateKeys() {
-        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey, mldsaPrivateKeySeedAndExpanded,
-                             slhDsaPrivateKey);
+        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey, gostPrivateKey, eddsaPrivateKey,
+                mldsaPrivateKeySeedAndExpanded, mlkemPrivateKey, slhDsaPrivateKey);
     }
 
     protected static List<PublicKey> publicKeys() {
-        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey, slhDsaPublicKey);
+        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey, gostPublicKey, eddsaPublicKey, mldsaPublicKey,
+                mlkemPublicKey, slhDsaPublicKey);
     }
 
     @BeforeAll
@@ -91,17 +105,34 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
             ecPublicKey = (ECPublicKey) ecKeyPair.getPublic();
         }
 
+        if (gostPrivateKey == null) {
+            KeyPair gostKeyPair = KeyPairUtil.generateECKeyPair("Tc26-Gost-3410-12-256-paramSetA", KSE.BC);
+            gostPrivateKey = (ECPrivateKey) gostKeyPair.getPrivate();
+            gostPublicKey = (ECPublicKey) gostKeyPair.getPublic();
+        }
+
+        if (eddsaPrivateKey == null) {
+            KeyPair eddsaKeyPair = KeyPairUtil.generateECKeyPair("Ed25519", KSE.BC);
+            eddsaPrivateKey = (EdDSAPrivateKey) eddsaKeyPair.getPrivate();
+            eddsaPublicKey = (EdDSAPublicKey) eddsaKeyPair.getPublic();
+        }
+
         if (mldsaPublicKey == null) {
             KeyPair mldsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.MLDSA44, KSE.BC);
-            mldsaPublicKey = mldsaKeyPair.getPublic();
-            MLDSAPrivateKey privateKey = (MLDSAPrivateKey) mldsaKeyPair.getPrivate();
-            mldsaPrivateKeySeedAndExpanded = privateKey;
+            mldsaPrivateKeySeedAndExpanded = (MLDSAPrivateKey) mldsaKeyPair.getPrivate();
+            mldsaPublicKey = (MLDSAPublicKey) mldsaKeyPair.getPublic();
+        }
+
+        if (mlkemPublicKey == null) {
+            KeyPair mlKemKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.MLKEM512, KSE.BC);
+            mlkemPrivateKey = (MLKEMPrivateKey) mlKemKeyPair.getPrivate();
+            mlkemPublicKey = (MLKEMPublicKey) mlKemKeyPair.getPublic();
         }
 
         if (slhDsaPublicKey == null) {
             KeyPair slhDsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.SLHDSA_SHA2_128F, KSE.BC);
-            slhDsaPublicKey = slhDsaKeyPair.getPublic();
-            slhDsaPrivateKey = slhDsaKeyPair.getPrivate();
+            slhDsaPrivateKey = (SLHDSAPrivateKey) slhDsaKeyPair.getPrivate();
+            slhDsaPublicKey = (SLHDSAPublicKey) slhDsaKeyPair.getPublic();
         }
     }
 
