@@ -22,7 +22,6 @@ package org.kse.crypto.ecc;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.security.Key;
-import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -30,9 +29,7 @@ import java.security.Security;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.EdECPrivateKey;
 import java.security.spec.ECParameterSpec;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -50,10 +47,8 @@ import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
-import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
-import org.kse.KSE;
 import org.kse.crypto.keystore.KeyStoreType;
 
 /**
@@ -268,67 +263,6 @@ public final class EccUtil {
         ASN1Encodable privateKey = privateKeyInfo.parsePrivateKey();
 
         return org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(privateKey);
-    }
-
-    /**
-     * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given privateKey is.
-     *
-     * @param privateKey An EdDSA private key
-     * @return Ed25519 or Ed448
-     * @throws InvalidParameterException if privateKey is not a EdDSA key
-     */
-    public static EdDSACurves detectEdDSACurve(PrivateKey privateKey) {
-        PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
-        AlgorithmIdentifier algorithm = privateKeyInfo.getPrivateKeyAlgorithm();
-        ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
-
-        return EdDSACurves.resolve(algOid);
-    }
-
-    /**
-     * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given publicKey is.
-     *
-     * @param publicKey An EdDSA public key
-     * @return Ed25519 or Ed448
-     * @throws InvalidParameterException if publicKey is not a EdDSA key
-     */
-    public static EdDSACurves detectEdDSACurve(PublicKey publicKey) {
-        SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-        AlgorithmIdentifier algorithm = publicKeyInfo.getAlgorithm();
-        ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
-
-        return EdDSACurves.resolve(algOid);
-    }
-
-    /**
-     * Converts an Ed25519 or Ed448 PrivateKey object to a BC EdDSAPrivateKey. This method is
-     * usually used to determine the Edwards curve since the BC EdDSAPrivatey provides
-     * "Ed25519" or "Ed448" in the algorithm, whereas the JDK EdECPrivateKey only says "EdDSA".
-     * <br>
-     * If the given privateKey is a JDK EdDSA key, convert it to a BouncyCastle EdDSA key.
-     * If the given privateKey is already a BouncyCastle EdDSA key, return it as-is.
-     * Otherwise (no known implementation class) return null.
-     *
-     * @param privateKey A private key
-     * @return A BouncyCastle EdDSA private key, or null
-     */
-    public static EdDSAPrivateKey getEdPrivateKey(PrivateKey privateKey) {
-        if (privateKey instanceof EdDSAPrivateKey) {
-            return (EdDSAPrivateKey) privateKey;
-        }
-
-        try {
-            if (privateKey instanceof EdECPrivateKey) {
-                // Shortest way to convert to a BC EdDSA key. Doesn't require importing any
-                // Ed25519 or Ed448 specific classes.
-                KeyFactory kf = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
-                PrivateKey bcPrivateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKey.getEncoded()));
-                return (EdDSAPrivateKey) bcPrivateKey;
-            }
-        } catch (Exception e) {
-            // ignore -- not a JDK EdDSA key
-        }
-        return null;
     }
 
     /**

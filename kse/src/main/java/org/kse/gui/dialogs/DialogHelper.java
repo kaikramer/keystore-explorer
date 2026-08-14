@@ -37,7 +37,6 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
-import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
@@ -82,14 +81,6 @@ public class DialogHelper {
                 prefsKey += SM2_SUFFIX;
             } else {
                 sigAlgs = SignatureType.ecdsaSignatureTypes();
-            }
-            break;
-        case EDDSA:
-            EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
-            if (edDSACurve == EdDSACurves.ED25519) {
-                sigAlgs = Collections.singletonList(SignatureType.ED25519);
-            } else {
-                sigAlgs = Collections.singletonList(SignatureType.ED448);
             }
             break;
         case ED25519:

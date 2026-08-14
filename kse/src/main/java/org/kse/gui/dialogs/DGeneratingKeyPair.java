@@ -141,7 +141,6 @@ public class DGeneratingKeyPair extends JWaitDialog {
                     break;
                 case EC:
                 case ECDSA:
-                case EDDSA:
                 case ED25519:
                 case ED448:
                 default:

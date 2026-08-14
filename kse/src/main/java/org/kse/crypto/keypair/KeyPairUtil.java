@@ -27,7 +27,6 @@ import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.ECGOST3410;
 import static org.kse.crypto.keypair.KeyPairType.ECGOST3410_2012;
-import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlDSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlKEM;
@@ -47,7 +46,6 @@ import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.EdECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
@@ -58,7 +56,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.NamedParameterSpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -264,9 +261,6 @@ public final class KeyPairUtil {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
-            } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
-                EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
-                return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
             } else if (ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
                 // ECGOST parameters are ASN1Sequence so use ECNamedCurveSpec to get the curve name
                 ECPublicKey pubk = (ECPublicKey) publicKey;
@@ -326,9 +320,6 @@ public final class KeyPairUtil {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
-            } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
-                EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
-                return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
             } else if (isMlDSA(getKeyPairType(privateKey)) || isMlKEM(getKeyPairType(privateKey))
                     || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
@@ -396,10 +387,6 @@ public final class KeyPairUtil {
             } else if (privateAlgorithm.equals(ED448.jce())) {
                 byte[] signature = sign(toSign, privateKey, ED448.jce());
                 return verify(toSign, signature, publicKey, ED448.jce());
-            } else if (privateAlgorithm.equals(EDDSA.jce())) {
-                EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
-                byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
-                return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
             } else if (isMlDSA(getKeyPairType(privateKey)) || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
                 byte[] signature = sign(toSign, privateKey, keyPairType.jce());
@@ -476,11 +463,9 @@ public final class KeyPairUtil {
                 PublicKey publicKey = kf.generatePublic(publicSpec);
                 keyPair = new KeyPair(publicKey, privateKey);
             }
-            if (privateKey instanceof EdECPrivateKey) {
-                EdDSAPrivateKey edPrivate = EccUtil.getEdPrivateKey(privateKey);
-                byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
-                KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
-                PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
+            if (privateKey instanceof EdDSAPrivateKey) {
+                EdDSAPrivateKey edPrivate = (EdDSAPrivateKey) privateKey;
+                PublicKey publicKey = edPrivate.getPublicKey();
                 keyPair = new KeyPair(publicKey, privateKey);
             }
             if (privateKey instanceof MLDSAPrivateKey) {

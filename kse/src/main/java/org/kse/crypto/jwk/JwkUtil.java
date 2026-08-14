@@ -67,9 +67,9 @@ import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.EncryptionType;
+import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.privatekey.PrivateKeyEncryptedException;
 import org.kse.crypto.privatekey.PrivateKeyUnencryptedException;
-import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.passwordmanager.Password;
 
 import com.nimbusds.jose.EncryptionMethod;
@@ -120,15 +120,13 @@ public class JwkUtil {
             jwkExporter = new RSAKeyExporter(publicKey);
         } else if (publicKey instanceof ECPublicKey) {
             jwkExporter = new ECKeyExporter(publicKey);
+        } else if (publicKey instanceof EdDSAPublicKey) {
+            jwkExporter = new EdDSAKeyExporter(publicKey);
         } else {
-            jwkExporter = checkForJdkEdDSA(publicKey);
-
-            if (jwkExporter == null) {
-                // Don't bother to translate this exception. This condition will never be encountered
-                // since DExportPrivateKeyType.isJwkSupported and JwkPublicKeyExporter.isPublicKeyTypeExportable
-                // guard the UI to prevent calling this method for unsupported key types.
-                throw new IllegalArgumentException("Not supported key type: " + publicKey.getClass().getName());
-            }
+            // Don't bother to translate this exception. This condition will never be encountered
+            // since DExportPrivateKeyType.isJwkSupported and JwkPublicKeyExporter.isPublicKeyTypeExportable
+            // guard the UI to prevent calling this method for unsupported key types.
+            throw new IllegalArgumentException("Not supported key type: " + publicKey.getClass().getName());
         }
 
         return jwkExporter.export(alias, null);
@@ -162,15 +160,13 @@ public class JwkUtil {
             jwkExporter = new RSAKeyExporter(privateKey);
         } else if (privateKey instanceof ECPrivateKey) {
             jwkExporter = new ECKeyExporter(privateKey);
+        } else if (privateKey instanceof EdDSAPrivateKey) {
+            jwkExporter = new EdDSAKeyExporter(privateKey);
         } else {
-            jwkExporter = checkForJdkEdDSA(privateKey);
-
-            if (jwkExporter == null) {
-                // Don't bother to translate this exception. This condition will never be encountered
-                // since DExportPrivateKeyType.isJwkSupported and JwkPublicKeyExporter.isPublicKeyTypeExportable
-                // guard the UI to prevent calling this method for unsupported key types.
-                throw new IllegalArgumentException("Not supported key type: " + privateKey.getClass().getName());
-            }
+            // Don't bother to translate this exception. This condition will never be encountered
+            // since DExportPrivateKeyType.isJwkSupported and JwkPublicKeyExporter.isPublicKeyTypeExportable
+            // guard the UI to prevent calling this method for unsupported key types.
+            throw new IllegalArgumentException("Not supported key type: " + privateKey.getClass().getName());
         }
 
         return jwkExporter.export(alias, chain);
@@ -336,10 +332,10 @@ public class JwkUtil {
                 OctetKeyPair okp = jwkKey.toOctetKeyPair();
                 if (okp.getD() != null) {
                     Curve curve = okp.getCurve();
-                    privateKey = KeyFactory.getInstance(KeyPairType.EDDSA.jce()).generatePrivate(
+                    privateKey = KeyFactory.getInstance("EdDSA").generatePrivate(
                             new EdECPrivateKeySpec(new NamedParameterSpec(curve.getStdName()), okp.getDecodedD()));
                     // KSE uses the BC interfaces for EdDSA keys so convert BC
-                    privateKey = EccUtil.getEdPrivateKey(privateKey);
+                    privateKey = Pkcs8Util.convert(privateKey);
                 } else {
                     privateKey = null;
                 }
@@ -417,7 +413,6 @@ public class JwkUtil {
             switch (KeyPairUtil.getKeyPairType(publicKey)) {
             case ED448:
             case ED25519:
-            case EDDSA:
             case RSA:
                 return true;
             case EC:
@@ -463,28 +458,6 @@ public class JwkUtil {
             // Data is not JWK JSON
         }
 
-        return null;
-    }
-
-    private static JwkExporter checkForJdkEdDSA(PrivateKey privateKey) {
-        EdDSAPrivateKey edDSAPrivateKey = EccUtil.getEdPrivateKey(privateKey);
-        if (edDSAPrivateKey != null) {
-            return new EdDSAKeyExporter(edDSAPrivateKey);
-        }
-        return null;
-    }
-
-    private static JwkExporter checkForJdkEdDSA(PublicKey publicKey) {
-        try {
-            // Convert to BC EdDSAPublicKey instance by exporting/importing
-            PublicKey pubKey = OpenSslPubUtil.load(OpenSslPubUtil.get(publicKey));
-            if (pubKey instanceof EdDSAPublicKey) {
-                return new EdDSAKeyExporter(pubKey);
-            }
-        } catch (CryptoException e) {
-            // Ignore. It's not a valid EdDSA key so rely on the IllegalArgumentException
-            // in the calling method.
-        }
         return null;
     }
 

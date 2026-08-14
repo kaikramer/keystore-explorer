@@ -32,7 +32,6 @@ public enum KeyPairType {
     DSA("DSA", "1.2.840.10040.4.1", 512, 3072, 64),
     EC("EC", "1.2.840.10045.2.1", 160, 571, 32),
     ECDSA("ECDSA", "1.2.840.10045.2.1", 160, 571, 32),
-    EDDSA("EdDSA", "", 256, 456, 200), // for Java >= 15 (there is no specific OID for EdDSA)
     ED25519("Ed25519", "1.3.101.112", 256, 256, 0), // BC has separate key pair types for the two EdDSA types
     ED448("Ed448", "1.3.101.113", 456, 456, 0),
     ECGOST3410("ECGOST3410", "1.2.643.2.2.19", 256, 256, 0),
@@ -60,9 +59,9 @@ public enum KeyPairType {
     SLHDSA_SHAKE_256F("SLH-DSA-SHAKE-256F", "2.16.840.1.101.3.4.3.31", 512, 512, 0);
 
     /**
-     * Set of all EC key pair types (EC, ECDSA, EDDSA, ED25519, ED448)
+     * Set of all EC key pair types (EC, ECDSA, ED25519, ED448)
      */
-    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448, ECGOST3410, ECGOST3410_2012);
+    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, ED25519, ED448, ECGOST3410, ECGOST3410_2012);
 
     /**
      * Set of all ML-DSA key pair types
