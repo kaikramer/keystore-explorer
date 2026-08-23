@@ -31,7 +31,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -43,7 +43,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -61,11 +60,13 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
+
+import com.formdev.flatlaf.util.SystemFileChooser;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -101,7 +102,7 @@ public class DGenerateCsr extends JEscDialog {
     private boolean generateSelected = false;
     private String alias;
     private X500Principal subjectDN;
-    private PrivateKey privateKey;
+    private PublicKey publicKey;
     private KeyPairType keyPairType;
     private CsrType format;
     private SignatureType signatureAlgorithm;
@@ -118,17 +119,17 @@ public class DGenerateCsr extends JEscDialog {
      * @param parent      The parent frame
      * @param alias       The entry alias for pre-populating the CSR file name
      * @param subjectDN   Subject DN of certificate
-     * @param privateKey  Private key
+     * @param publicKey  Public key
      * @param keyPairType Key pair algorithm
      * @param path        Path to keystore file
      * @throws CryptoException A problem was encountered with the supplied private key
      */
-    public DGenerateCsr(JFrame parent, String alias, X500Principal subjectDN, PrivateKey privateKey,
+    public DGenerateCsr(JFrame parent, String alias, X500Principal subjectDN, PublicKey publicKey,
                         KeyPairType keyPairType, String path) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.alias = alias;
         this.subjectDN = subjectDN;
-        this.privateKey = privateKey;
+        this.publicKey = publicKey;
         this.keyPairType = keyPairType;
         this.path = path;
         setTitle(res.getString("DGenerateCsr.Title"));
@@ -158,7 +159,7 @@ public class DGenerateCsr extends JEscDialog {
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
-        DialogHelper.populateSigAlgs(keyPairType, privateKey, jcbSignatureAlgorithm);
+        DialogHelper.populateSigAlgs(keyPairType, publicKey, jcbSignatureAlgorithm);
 
         jlName = new JLabel(res.getString("DGenerateCsr.jlName.text"));
 
@@ -388,7 +389,7 @@ public class DGenerateCsr extends JEscDialog {
 
         signatureAlgorithm = jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
 
-        DialogHelper.rememberSigAlg(keyPairType, privateKey, signatureAlgorithm);
+        DialogHelper.rememberSigAlg(keyPairType, publicKey, signatureAlgorithm);
 
         if (jdnName.getDistinguishedName().toString().isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"), getTitle(),
@@ -461,7 +462,7 @@ public class DGenerateCsr extends JEscDialog {
     public static void main(String[] args) throws Exception {
         Security.addProvider(KSE.BC);
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
-        PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
+        PublicKey privateKey = keyGen.genKeyPair().getPublic();
         X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
 
         DialogViewer.run(new DGenerateCsr(new JFrame(), "alias (test)", dn, privateKey, KeyPairType.RSA, ""));

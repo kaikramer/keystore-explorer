@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -72,9 +71,11 @@ import org.kse.gui.error.Problem;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 import org.kse.utilities.net.URLs;
+import org.kse.utilities.rng.RNG;
+
+import com.formdev.flatlaf.util.SystemFileChooser;
 
 import net.miginfocom.swing.MigLayout;
-import org.kse.utilities.rng.RNG;
 
 /**
  * Dialog that displays the presents JAR signing options.
@@ -113,7 +114,7 @@ public class DSignJar extends JEscDialog {
     private JButton jbCancel;
     private JLabel jlFileCount;
 
-    private PrivateKey signPrivateKey;
+    private PublicKey signPublicKey;
     private KeyPairType signKeyPairType;
     private File[] inputJarFiles;
     private List<File> outputJarFiles;
@@ -127,13 +128,13 @@ public class DSignJar extends JEscDialog {
      * Creates a new DSignJar dialog.
      *
      * @param parent          The parent frame
-     * @param signPrivateKey  Signing key pair's private key
+     * @param signPublicKey   Signing key pair's public key
      * @param signKeyPairType Signing key pair's type
      * @param signatureName   Default signature name
      */
-    public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName) {
+    public DSignJar(JFrame parent, PublicKey signPublicKey, KeyPairType signKeyPairType, String signatureName) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPublicKey;
         this.signKeyPairType = signKeyPairType;
         setTitle(res.getString("DSignJar.Title"));
         initComponents(signatureName);
@@ -188,7 +189,7 @@ public class DSignJar extends JEscDialog {
 
         jlSignatureAlgorithm = new JLabel(res.getString("DSignJar.jlSignatureAlgorithm.text"));
         jcbSignatureAlgorithm = new JComboBox<>();
-        DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
+        DialogHelper.populateSigAlgs(signKeyPairType, this.signPublicKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
 
         jlDigestAlgorithm = new JLabel(res.getString("DSignJar.jlDigestAlgorithm.text"));
@@ -464,7 +465,7 @@ public class DSignJar extends JEscDialog {
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
         digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
 
-        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+        DialogHelper.rememberSigAlg(signKeyPairType, signPublicKey, signatureType);
 
         // check add time stamp is selected and assign value
         if (jcbAddTimestamp.isSelected()) {
@@ -661,7 +662,7 @@ public class DSignJar extends JEscDialog {
         kpg.initialize(1024, RNG.newInstanceDefault());
         KeyPair kp = kpg.generateKeyPair();
 
-        DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name");
+        DSignJar dialog = new DSignJar(new JFrame(), kp.getPublic(), KeyPairType.RSA, "signature name");
         DialogViewer.run(dialog);
     }
 }

@@ -104,7 +104,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
             String signer = KSE.getFullApplicationName();
 
             // get the jars, signatures, and time stamp
-            DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias);
+            DSignJar dSignJar = new DSignJar(frame, certs[0].getPublicKey(), keyPairType, alias);
             dSignJar.setLocationRelativeTo(frame);
             dSignJar.setVisible(true);
 

@@ -152,6 +152,13 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
                 return "";
             }
 
+            // Don't use the SunMSCAPI provider for self-signed certificates. Since the SunMSCAPI provider
+            // is not used for key generation, the SunMSCAPI provider cannot be used with the BC private key
+            // object for self-signing.
+            if (issuerPrivateKey == null && provider != null && MS_CAPI.jce().equals(provider.getName())) {
+                provider = null;
+            }
+
             DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame, kseFrame, res.getString(
                     "GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType, issuerCert,
                                                                                  issuerPrivateKey, provider);
@@ -245,7 +252,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         // Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
         // applications must not specify the SunMSCAPI provider."
 
-        if (MS_CAPI.jce().equals(provider.getName())) {
+        if (provider != null && MS_CAPI.jce().equals(provider.getName())) {
             provider = null;
         }
 

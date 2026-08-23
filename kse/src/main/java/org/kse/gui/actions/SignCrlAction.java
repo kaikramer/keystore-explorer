@@ -112,7 +112,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
             X509CRL x509CRL = loadPreviousCrl(filePrevious, certs[0]);
 
-            DSignCrl dSignCrl = new DSignCrl(frame, kseFrame, keyPairType, privateKey, certs[0], x509CRL);
+            DSignCrl dSignCrl = new DSignCrl(frame, kseFrame, keyPairType, certs[0].getPublicKey(), certs[0], x509CRL);
             dSignCrl.setLocationRelativeTo(frame);
             dSignCrl.setVisible(true);
             Date effectiveDate = dSignCrl.getEffectiveDate();

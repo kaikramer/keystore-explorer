@@ -120,26 +120,6 @@ public class X509CertificateGenerator {
      * Generate a self-signed certificate.
      *
      * @param name          Certificate subject and issuer
-     * @param validity      Validity period of certificate in msecs
-     * @param publicKey     Public part of key pair
-     * @param privateKey    Private part of key pair
-     * @param signatureType Signature Type
-     * @param serialNumber  Serial number
-     * @return The generated certificate
-     * @throws CryptoException If there was a problem generating the certificate
-     */
-    public X509Certificate generateSelfSigned(X500Name name, long validity, PublicKey publicKey, PrivateKey privateKey,
-                                              SignatureType signatureType, BigInteger serialNumber)
-            throws CryptoException {
-        Date validityStart = new Date();
-        Date validityEnd = new Date(validityStart.getTime() + validity);
-        return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber);
-    }
-
-    /**
-     * Generate a self-signed certificate.
-     *
-     * @param name          Certificate subject and issuer
      * @param validityStart Validity start date of certificate in msecs
      * @param validityEnd   Validity end date of certificate in msecs
      * @param publicKey     Public part of key pair

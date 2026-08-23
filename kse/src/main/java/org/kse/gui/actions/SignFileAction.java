@@ -104,7 +104,7 @@ public class SignFileAction extends KeyStoreExplorerAction {
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
             // get the file, signatures, and time stamp
-            DSignFile dSignFile = new DSignFile(frame, privateKey, keyPairType);
+            DSignFile dSignFile = new DSignFile(frame, certs[0].getPublicKey(), keyPairType);
             dSignFile.setLocationRelativeTo(frame);
             dSignFile.setVisible(true);
 

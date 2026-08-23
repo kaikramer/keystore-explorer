@@ -27,9 +27,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.EdECPrivateKey;
+import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +48,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.kse.KSE;
-import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.PlatformUtil;
@@ -59,6 +57,7 @@ import org.kse.utilities.DialogViewer;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
+
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -92,7 +91,7 @@ public class DSignJwt extends JEscDialog {
     private JButton jbCancel;
 
     private KeyPairType signKeyPairType;
-    private PrivateKey signPrivateKey;
+    private PublicKey signPublicKey;
 
     private JFrame parent;
 
@@ -102,14 +101,14 @@ public class DSignJwt extends JEscDialog {
      * Creates a new DSignJwt
      *
      * @param parent          The parent frame
-     * @param signKeyPairType Key pair type
-     * @param signPrivateKey  Private key certificate
+     * @param signKeyPairType Signing key pair type
+     * @param signPublicKey   Signing public key
      */
-    public DSignJwt(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey) {
+    public DSignJwt(JFrame parent, KeyPairType signKeyPairType, PublicKey signPublicKey) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.parent = parent;
         this.signKeyPairType = signKeyPairType;
-        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPublicKey;
         setTitle(res.getString("DSignJwt.Title"));
         initComponents();
     }
@@ -221,7 +220,6 @@ public class DSignJwt extends JEscDialog {
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jpButtons, "spanx, growx");
 
-        populateFields();
         jbGenId.addActionListener(evt -> genIdPressed());
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());
@@ -247,10 +245,6 @@ public class DSignJwt extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
-    }
-
-    private void populateFields() {
-
     }
 
     private void genIdPressed() {
@@ -347,8 +341,8 @@ public class DSignJwt extends JEscDialog {
 
     public Curve getCurve() {
         if (KeyPairType.EC == signKeyPairType) {
-            if (signPrivateKey instanceof ECPrivateKey) {
-                return Curve.forECParameterSpec(((ECPrivateKey) signPrivateKey).getParams());
+            if (signPublicKey instanceof ECPublicKey) {
+                return Curve.forECParameterSpec(((ECPublicKey) signPublicKey).getParams());
             }
         }
         return null;
@@ -363,6 +357,6 @@ public class DSignJwt extends JEscDialog {
 
     public static void main(String[] args) throws Exception {
         KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
-        DialogViewer.run(new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, keyPair.getPrivate()));
+        DialogViewer.run(new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, keyPair.getPublic()));
     }
 }

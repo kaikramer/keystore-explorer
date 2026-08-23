@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -40,7 +40,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -65,9 +64,11 @@ import org.kse.utilities.DialogViewer;
 import org.kse.utilities.net.URLs;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
+import org.kse.utilities.rng.RNG;
+
+import com.formdev.flatlaf.util.SystemFileChooser;
 
 import net.miginfocom.swing.MigLayout;
-import org.kse.utilities.rng.RNG;
 
 /**
  * Dialog that displays the presents JAR signing options.
@@ -101,7 +102,7 @@ public class DSignFile extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    private PrivateKey signPrivateKey;
+    private PublicKey signPublicKey;
     private KeyPairType signKeyPairType;
     private File inputFile;
     private File outputFile;
@@ -118,12 +119,12 @@ public class DSignFile extends JEscDialog {
      * Creates a new DSignFile dialog.
      *
      * @param parent          The parent frame
-     * @param signPrivateKey  Signing key pair's private key
+     * @param signPublicKey  Signing key pair's private key
      * @param signKeyPairType Signing key pair's type
      */
-    public DSignFile(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType) {
+    public DSignFile(JFrame parent, PublicKey signPublicKey, KeyPairType signKeyPairType) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPublicKey;
         this.signKeyPairType = signKeyPairType;
         setTitle(res.getString("DSignFile.Sign.Title"));
         initComponents();
@@ -172,7 +173,7 @@ public class DSignFile extends JEscDialog {
 
         jlSignatureAlgorithm = new JLabel(res.getString("DSignFile.jlSignatureAlgorithm.text"));
         jcbSignatureAlgorithm = new JComboBox<>();
-        DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
+        DialogHelper.populateSigAlgs(signKeyPairType, signPublicKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignFile.jcbSignatureAlgorithm.tooltip"));
 
         jlAddTimestamp = new JLabel(res.getString("DSignFile.jlAddTimestamp.text"));
@@ -411,7 +412,7 @@ public class DSignFile extends JEscDialog {
             tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
         }
 
-        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+        DialogHelper.rememberSigAlg(signKeyPairType, signPublicKey, signatureType);
 
         closeDialog();
     }
@@ -536,7 +537,7 @@ public class DSignFile extends JEscDialog {
         kpg.initialize(1024, RNG.newInstanceDefault());
         KeyPair kp = kpg.generateKeyPair();
 
-        DSignFile dialog = new DSignFile(new JFrame(), kp.getPrivate(), KeyPairType.RSA);
+        DSignFile dialog = new DSignFile(new JFrame(), kp.getPublic(), KeyPairType.RSA);
         DialogViewer.run(dialog);
     }
 }

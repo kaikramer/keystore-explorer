@@ -685,12 +685,13 @@ public class JarSigner {
                     // No need to use the external provider for digests and some providers (SunMSCAPI)
                     // don't support any message digest algorithms.
                     .setProvider(KSE.BC);
-            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
-                    .setSecureRandom(RNG.newInstanceForLongLivedSecrets());
+
             if (provider == null) {
                 provider = KSE.BC;
             }
-            csb.setProvider(provider);
+            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
+                    .setProvider(provider)
+                    .setSecureRandom(RNG.newInstanceForLongLivedSecrets());
 
             JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv.build());
 

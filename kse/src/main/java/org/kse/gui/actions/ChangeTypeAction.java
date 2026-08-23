@@ -184,7 +184,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         // EC key pair? => might not be supported in target key store type
         if (KeyStoreUtil.isECKeyPair(alias, currentKeyStore)) {
 
-            String namedCurve = EccUtil.getNamedCurve(currentKeyStore.getKey(alias, password.toCharArray()));
+            String namedCurve = EccUtil.getNamedCurve(certificateChain[0].getPublicKey());
 
             // EC curve not supported?
             if (!newKeyStoreType.supportsNamedCurve(namedCurve)) {

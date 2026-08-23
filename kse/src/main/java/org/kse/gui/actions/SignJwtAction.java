@@ -34,6 +34,7 @@ import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KseKeyStore;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.signing.JwsSigner;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewJwt;
 import org.kse.gui.dialogs.sign.CustomClaim;
@@ -88,10 +89,10 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 
             Provider provider = history.getExplicitProvider();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-            Certificate cert = keyStore.getCertificate(alias);
-            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+            Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(cert.getPublicKey());
 
-            DSignJwt dSignJwt = new DSignJwt(frame, keyPairType, privateKey);
+            DSignJwt dSignJwt = new DSignJwt(frame, keyPairType, cert.getPublicKey());
             dSignJwt.setLocationRelativeTo(frame);
             dSignJwt.setVisible(true);
             if (dSignJwt.isOk()) {

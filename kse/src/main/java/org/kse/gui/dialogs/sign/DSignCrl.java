@@ -30,7 +30,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
-import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -61,9 +61,9 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
@@ -109,7 +109,7 @@ public class DSignCrl extends JEscDialog {
     private boolean isApplyPressed;
 
     private KeyPairType signKeyPairType;
-    private PrivateKey signPrivateKey;
+    private PublicKey signPublicKey;
     private X509Certificate caCert;
     private X509CRL crlOld;
     private Date effectiveDate;
@@ -125,21 +125,21 @@ public class DSignCrl extends JEscDialog {
      *
      * @param parent          The parent frame
      * @param kseFrame        KeyStore Explorer application frame
-     * @param signKeyPairType Key pair type
-     * @param signPrivateKey  Private key certificate
+     * @param signKeyPairType Signing Key pair type
+     * @param signPublicKey   Signing public key
      * @param caCert          Public key certificate
      * @param crlOld          An old crl to copy the information of the revoked
      *                        certificates.
      * @throws CryptoException A problem was encountered with the supplied private
      *                         key
      */
-    public DSignCrl(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PrivateKey signPrivateKey,
+    public DSignCrl(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PublicKey signPublicKey,
                     X509Certificate caCert, X509CRL crlOld) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.parent = parent;
         this.kseFrame = kseFrame;
         this.signKeyPairType = signKeyPairType;
-        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPublicKey;
         this.caCert = caCert;
         this.crlOld = crlOld;
         setTitle(res.getString("DSignCrl.Title"));
@@ -178,7 +178,7 @@ public class DSignCrl extends JEscDialog {
 
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
-        DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
+        DialogHelper.populateSigAlgs(signKeyPairType, signPublicKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCrl.jcbSignatureAlgorithm.tooltip"));
 
         jlCrlNumber = new JLabel(res.getString("DSignCrl.jlCrlNumber.text"));
@@ -331,7 +331,7 @@ public class DSignCrl extends JEscDialog {
             validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
             validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
 
-            DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+            DialogHelper.rememberSigAlg(signKeyPairType, signPublicKey, signatureType);
         }
 
         closeDialog();
@@ -374,6 +374,6 @@ public class DSignCrl extends JEscDialog {
 
     public static void main(String[] args) throws HeadlessException, UnsupportedLookAndFeelException, CryptoException {
         KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
-        DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, keyPair.getPrivate(), null, null));
+        DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, keyPair.getPublic(), null, null));
     }
 }

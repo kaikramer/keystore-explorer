@@ -179,10 +179,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
         if (issuerPrivateKey != null) {
             String issuerKeyAlgorithm = issuerPrivateKey.getAlgorithm();
             KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerKeyAlgorithm);
-            DialogHelper.populateSigAlgs(issuerKeyPairType, issuerPrivateKey, jcbSignatureAlgorithm);
+            DialogHelper.populateSigAlgs(issuerKeyPairType, issuerCert.getPublicKey(), jcbSignatureAlgorithm);
         } else {
             // self-signed
-            DialogHelper.populateSigAlgs(keyPairType, keyPair.getPrivate(), jcbSignatureAlgorithm);
+            DialogHelper.populateSigAlgs(keyPairType, keyPair.getPublic(), jcbSignatureAlgorithm);
         }
 
         Date now = new Date();
@@ -473,10 +473,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
             if (issuerPrivateKey != null) {
                 String issuerKeyAlgorithm = issuerPrivateKey.getAlgorithm();
                 KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerKeyAlgorithm);
-                DialogHelper.rememberSigAlg(issuerKeyPairType, issuerPrivateKey, signatureType);
+                DialogHelper.rememberSigAlg(issuerKeyPairType, issuerCert.getPublicKey(), signatureType);
             } else {
                 // self-signed
-                DialogHelper.rememberSigAlg(keyPairType, keyPair.getPrivate(), signatureType);
+                DialogHelper.rememberSigAlg(keyPairType, keyPair.getPublic(), signatureType);
             }
 
             closeDialog();

@@ -100,6 +100,8 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
             KseKeyStore keyStore = currentState.getKeyStore();
 
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            X509Certificate[] certs = X509CertUtil
+                    .orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
             String keyPairAlg = privateKey.getAlgorithm();
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
@@ -121,7 +123,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
                     X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)))[0];
             X500Principal subjectDN = firstCertInChain.getSubjectX500Principal();
 
-            DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, subjectDN, privateKey, keyPairType, path);
+            DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, subjectDN, certs[0].getPublicKey(), keyPairType, path);
             dGenerateCsr.setLocationRelativeTo(frame);
             dGenerateCsr.setVisible(true);
 

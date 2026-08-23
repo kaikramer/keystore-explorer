@@ -96,6 +96,7 @@ public class CmsSigner {
                     // No need to use the external provider for digests and some providers (SunMSCAPI)
                     // don't support any message digest algorithms.
                     .setProvider(KSE.BC);
+
             if (provider == null) {
                 provider = KSE.BC;
             }

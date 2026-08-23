@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -149,7 +148,7 @@ public class DSignCsr extends JEscDialog {
 
     KsePreferences preferences = PreferencesManager.getPreferences();
 
-    private PrivateKey signPrivateKey;
+    private PublicKey signPublicKey;
     private KeyPairType signKeyPairType;
     private X509Certificate issuerCertificate;
     private PKCS10CertificationRequest pkcs10Csr;
@@ -169,16 +168,16 @@ public class DSignCsr extends JEscDialog {
      *
      * @param parent            The parent frame
      * @param pkcs10Csr         The PKCS #10 formatted CSR
-     * @param signPrivateKey    Signing private key
+     * @param signPublicKey     Signing public key
      * @param signKeyPairType   Signing key pair's type
      * @param issuerCertificate Issuer certificate
      * @throws CryptoException A crypto problem was encountered constructing the dialog
      */
-    public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, PrivateKey signPrivateKey,
+    public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, PublicKey signPublicKey,
                     KeyPairType signKeyPairType, X509Certificate issuerCertificate) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.pkcs10Csr = pkcs10Csr;
-        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPublicKey;
         this.signKeyPairType = signKeyPairType;
         this.issuerCertificate = issuerCertificate;
         setTitle(res.getString("DSignCsr.Title"));
@@ -190,16 +189,16 @@ public class DSignCsr extends JEscDialog {
      *
      * @param parent            The parent frame
      * @param spkacCsr          The SPKAC formatted CSR
-     * @param signPrivateKey    Signing private key
+     * @param signPublicKey     Signing public key
      * @param signKeyPairType   Signing key pair's type
      * @param issuerCertificate Issuer certificate
      * @throws CryptoException A crypto problem was encountered constructing the dialog
      */
-    public DSignCsr(JFrame parent, Spkac spkacCsr, PrivateKey signPrivateKey, KeyPairType signKeyPairType,
+    public DSignCsr(JFrame parent, Spkac spkacCsr, PublicKey signPublicKey, KeyPairType signKeyPairType,
                     X509Certificate issuerCertificate) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.spkacCsr = spkacCsr;
-        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPublicKey;
         this.signKeyPairType = signKeyPairType;
         this.issuerCertificate = issuerCertificate;
         setTitle(res.getString("DSignCsr.Title"));
@@ -271,7 +270,7 @@ public class DSignCsr extends JEscDialog {
 
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
-        DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
+        DialogHelper.populateSigAlgs(signKeyPairType, this.signPublicKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jcbSignatureAlgorithm.tooltip"));
 
         jlSubjectDN = new JLabel(res.getString("DSignCsr.jlCsrSubject.text"));
@@ -739,7 +738,7 @@ public class DSignCsr extends JEscDialog {
         validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
         validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
 
-        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+        DialogHelper.rememberSigAlg(signKeyPairType, signPublicKey, signatureType);
 
         closeDialog();
     }
@@ -769,7 +768,7 @@ public class DSignCsr extends JEscDialog {
         PKCS10CertificationRequest csr = csrBuilder.build(
                 new JcaContentSignerBuilder("SHA256withRSA").setProvider(KSE.BC).build(keyPair.getPrivate()));
 
-        DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, keyPair.getPrivate(), KeyPairType.RSA, null);
+        DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, keyPair.getPublic(), KeyPairType.RSA, null);
         DialogViewer.run(dialog);
     }
 }

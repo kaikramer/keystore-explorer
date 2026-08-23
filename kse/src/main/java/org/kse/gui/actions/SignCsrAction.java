@@ -122,7 +122,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            dSignCsr = createSignDialogFromCsrFile(csrFile, privateKey, keyPairType, signingCert);
+            dSignCsr = createSignDialogFromCsrFile(csrFile, keyPairType, signingCert);
             if (dSignCsr == null) {
                 return;
             }
@@ -140,8 +140,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
         }
     }
 
-    private DSignCsr createSignDialogFromCsrFile(File csrFile, PrivateKey privateKey, KeyPairType keyPairType,
-                                                 X509Certificate signingCert) {
+    private DSignCsr createSignDialogFromCsrFile(File csrFile, KeyPairType keyPairType, X509Certificate signingCert) {
 
         try {
             CryptoFileType fileType = CryptoFileUtil.detectFileType(csrFile);
@@ -155,7 +154,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
                     return null;
                 }
 
-                return new DSignCsr(frame, pkcs10Csr, privateKey, keyPairType, signingCert);
+                return new DSignCsr(frame, pkcs10Csr, signingCert.getPublicKey(), keyPairType, signingCert);
             } else if (fileType == CryptoFileType.SPKAC_CSR) {
                 Spkac spkacCsr = new Spkac(Files.readAllBytes(csrFile.toPath()));
 
@@ -166,7 +165,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
                     return null;
                 }
 
-                return new DSignCsr(frame, spkacCsr, privateKey, keyPairType, signingCert);
+                return new DSignCsr(frame, spkacCsr, signingCert.getPublicKey(), keyPairType, signingCert);
             } else {
                 JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                       res.getString("SignCsrAction.FileNotRecognisedType.message"),
