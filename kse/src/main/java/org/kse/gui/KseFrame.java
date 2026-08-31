@@ -2699,7 +2699,8 @@ public final class KseFrame implements StatusBar {
                         // Not possible to sign if there is a keystore exception.
                     }
 
-                    boolean isSignAvailable = publicKey != null && !KeyPairType.isMlKEM(KeyPairUtil.getKeyPairType(publicKey));
+                    boolean isSignAvailable = publicKey != null && !KeyPairType.isMlKEM(KeyPairUtil.getKeyPairType(publicKey))
+                            && !KeyPairType.isXDH(KeyPairUtil.getKeyPairType(publicKey));
                     if (isSignAvailable) {
                         jmiKeyPairGenerateCsr.setEnabled(true);
                         jmiKeyPairGenerateCsr.setToolTipText(null);
@@ -2713,7 +2714,7 @@ public final class KseFrame implements StatusBar {
                         signJwtAction.setEnabled(signJwtAction.isKeySupported(publicKey));
                         jmiKeyPairSignJwt.setToolTipText(signJwtAction.getToolTip());
                     } else {
-                        // Cannot request PKCS#10 CSR for ML-KEM since a signature is required for proof of possession
+                        // Cannot request PKCS#10 CSR for ML-KEM or XDH since a signature is required for proof of possession
                         // Generating a CSR can be re-enabled once CRMF is supported
                         jmiKeyPairGenerateCsr.setEnabled(false);
                         jmiKeyPairGenerateCsr.setToolTipText(res.getString("KseFrame.jmiKeyPairGenerateCsr.tooltip"));

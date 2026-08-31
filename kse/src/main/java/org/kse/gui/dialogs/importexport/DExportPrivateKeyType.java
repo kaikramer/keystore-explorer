@@ -94,6 +94,8 @@ public class DExportPrivateKeyType extends JEscDialog {
         switch (keyPairType) {
             case ED448:
             case ED25519:
+            case X25519:
+            case X448:
             case RSA:
                 return true;
             case EC:

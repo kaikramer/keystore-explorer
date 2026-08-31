@@ -37,6 +37,9 @@ public enum KeyPairType {
     ECGOST3410("ECGOST3410", "1.2.643.2.2.19", 256, 256, 0),
     ECGOST3410_2012("ECGOST3410-2012", "", 256, 512, 256), // There are two OIDs: One for 256-bit, one for 512-bit.
 
+    X25519("X25519", "1.3.101.110", 256, 256, 0),
+    X448("X448", "1.3.101.111", 456, 456, 0),
+
     MLDSA44("ML-DSA-44", "2.16.840.1.101.3.4.3.17", 10_496, 10_496, 0),
     MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", 15_616, 15_616, 0),
     MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", 20_736, 20_736, 0),
@@ -61,7 +64,8 @@ public enum KeyPairType {
     /**
      * Set of all EC key pair types (EC, ECDSA, ED25519, ED448)
      */
-    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, ED25519, ED448, ECGOST3410, ECGOST3410_2012);
+    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, ED25519, ED448, X25519, X448, ECGOST3410,
+            ECGOST3410_2012);
 
     /**
      * Set of all ML-DSA key pair types
@@ -181,6 +185,15 @@ public enum KeyPairType {
      */
     public static boolean isSlhDsa(KeyPairType keyPairType) {
         return SLHDSA_TYPES_SET.contains(keyPairType);
+    }
+
+    /**
+     *
+     * @param keyPairType The KeyPairType to check.
+     * @return True if keyPairType is a XDH key type.
+     */
+    public static boolean isXDH(KeyPairType keyPairType) {
+        return X25519 == keyPairType || X448 == keyPairType;
     }
 
     /**

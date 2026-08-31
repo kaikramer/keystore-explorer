@@ -31,6 +31,7 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.interfaces.EdECPrivateKey;
+import java.security.interfaces.XECPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.MessageFormat;
@@ -489,7 +490,7 @@ public class Pkcs8Util {
         // to the NamedPKCS8Key class for testing instanceof, but this hack is more
         // efficient at the cost of correctness.
         if ("sun.security.pkcs.NamedPKCS8Key".equals(privateKey.getClass().getName())
-                || privateKey instanceof EdECPrivateKey) {
+                || privateKey instanceof EdECPrivateKey || privateKey instanceof XECPrivateKey) {
 
             try {
                 // Shortest way to convert to a BC EdDSA key. Doesn't require importing any

@@ -22,6 +22,8 @@ package org.kse.crypto.keypair;
 import static org.kse.crypto.KeyType.ASYMMETRIC;
 import static org.kse.crypto.ecc.EdDSACurves.ED25519;
 import static org.kse.crypto.ecc.EdDSACurves.ED448;
+import static org.kse.crypto.ecc.XDHCurves.X25519;
+import static org.kse.crypto.ecc.XDHCurves.X448;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
@@ -73,6 +75,7 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
+import org.kse.crypto.ecc.XDHCurves;
 import org.kse.utilities.rng.RNG;
 
 /**
@@ -139,7 +142,8 @@ public final class KeyPairUtil {
                 provider = KSE.BC;
             }
 
-            if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
+            if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)
+                    || XDHCurves.X25519.jce().equals(curveName) || XDHCurves.X448.jce().equals(curveName)) {
                 keyPairGen = KeyPairGenerator.getInstance(curveName, provider);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
             } else if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
@@ -257,9 +261,9 @@ public final class KeyPairUtil {
                 ECPublicKey pubk = (ECPublicKey) publicKey;
                 int size = pubk.getParams().getOrder().bitLength();
                 return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(publicKey));
-            } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
+            } else if (ED25519.jce().equalsIgnoreCase(algorithm) || X25519.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
-            } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
+            } else if (ED448.jce().equalsIgnoreCase(algorithm) || X448.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
             } else if (ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
                 // ECGOST parameters are ASN1Sequence so use ECNamedCurveSpec to get the curve name
@@ -316,9 +320,9 @@ public final class KeyPairUtil {
                 ECParameterSpec spec = privk.getParams();
                 int size = spec.getOrder().bitLength();
                 return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(privateKey));
-            } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
+            } else if (ED25519.jce().equalsIgnoreCase(algorithm) || X25519.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
-            } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
+            } else if (ED448.jce().equalsIgnoreCase(algorithm) || X448.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
             } else if (isMlDSA(getKeyPairType(privateKey)) || isMlKEM(getKeyPairType(privateKey))
                     || isSlhDsa(getKeyPairType(privateKey))) {

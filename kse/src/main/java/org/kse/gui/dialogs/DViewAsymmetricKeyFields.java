@@ -68,6 +68,8 @@ import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLKEMPublicKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.XDHPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XDHPublicKey;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.mlkem.MLKEMPrivateKeyParameters;
@@ -133,9 +135,13 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         } else if (key instanceof ECPrivateKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "EC");
         } else if (key instanceof EdDSAPublicKey) {
-            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), getEdAlg(key));
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), key.getAlgorithm());
         } else if (key instanceof EdDSAPrivateKey) {
-            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), getEdAlg(key));
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), key.getAlgorithm());
+        } else if (key instanceof XDHPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), key.getAlgorithm());
+        } else if (key instanceof XDHPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), key.getAlgorithm());
         } else if (key instanceof MLDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
         } else if (key instanceof MLDSAPrivateKey) {
@@ -150,21 +156,6 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "SLH-DSA");
         }
         throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
-    }
-
-    private static String getEdAlg(Key key) {
-        // Ed25519 or Ed448?
-        String edAlg;
-        if (key instanceof EdDSAPublicKey) {
-            EdDSAPublicKey bcEdDSAPublicKey = (EdDSAPublicKey) key;
-            edAlg = bcEdDSAPublicKey.getAlgorithm(); // Ed25519 or Ed448
-        } else if (key instanceof EdDSAPrivateKey) {
-            EdDSAPrivateKey edPrivateKey = (EdDSAPrivateKey) key;
-            edAlg = edPrivateKey.getAlgorithm();
-        } else {
-            throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
-        }
-        return edAlg;
     }
 
     private void initFields() throws IOException {
@@ -241,9 +232,9 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             fields = getEcPubFields();
         } else if (key instanceof ECPrivateKey) {
             fields = getEcPrivateFields();
-        } else if (key instanceof EdDSAPublicKey) {
+        } else if (key instanceof EdDSAPublicKey || key instanceof XDHPublicKey) {
             fields = getEdPubFields();
-        } else if (key instanceof EdECPrivateKey) {
+        } else if (key instanceof EdECPrivateKey || key instanceof XDHPrivateKey) {
             fields = getEdPrivateFields();
         } else if (key instanceof MLDSAPublicKey) {
             fields = getMLDSAPublicFields();

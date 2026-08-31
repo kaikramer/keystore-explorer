@@ -53,6 +53,7 @@ import javax.swing.SwingUtilities;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XDHPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -316,7 +317,7 @@ public class DViewPrivateKey extends JEscDialog {
         jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)
                 || (privateKey instanceof ECPrivateKey) || (privateKey instanceof EdECPrivateKey)
                 || (privateKey instanceof MLDSAPrivateKey) || (privateKey instanceof MLKEMPrivateKey)
-                || (privateKey instanceof SLHDSAPrivateKey));
+                || (privateKey instanceof SLHDSAPrivateKey || privateKey instanceof XDHPrivateKey));
     }
 
     private void pemEncodingPressed() {

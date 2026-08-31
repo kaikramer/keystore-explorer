@@ -48,6 +48,7 @@ import javax.swing.SpinnerNumberModel;
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
+import org.kse.crypto.ecc.XDHCurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.MiGUtil;
@@ -82,6 +83,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
     private JRadioButton jrbEC;
     private JRadioButton jrbEdDSA;
+    private JRadioButton jrbXDH;
     private JLabel jlECCurveSet;
     private JComboBox<String> jcbECCurveSet;
     private JLabel jlECCurve;
@@ -89,6 +91,9 @@ public class DGenerateKeyPair extends JEscDialog {
 
     private JLabel jlEdDSACurve;
     private JComboBox<String> jcbEdDSACurve;
+
+    private JLabel jlXDHCurve;
+    private JComboBox<String> jcbXDHCurve;
 
     private MLDSAKeySelector mldsaKeySelector;
     private MLKEMKeySelector mlkemKeySelector;
@@ -169,11 +174,20 @@ public class DGenerateKeyPair extends JEscDialog {
         PlatformUtil.setMnemonic(jrbEdDSA, res.getString("DGenerateKeyPair.jrbEdDSA.mnemonic").charAt(0));
         jrbEdDSA.setToolTipText(res.getString("DGenerateKeyPair.jrbEdDSA.tooltip"));
 
+        jrbXDH = new JRadioButton(res.getString("DGenerateKeyPair.jrbXDH.text"), false);
+        PlatformUtil.setMnemonic(jrbEdDSA, res.getString("DGenerateKeyPair.jrbXDH.mnemonic").charAt(0));
+        jrbXDH.setToolTipText(res.getString("DGenerateKeyPair.jrbXDH.tooltip"));
+        if (isSelfSigned) {
+            jrbXDH.setEnabled(false);
+            jrbXDH.setToolTipText(res.getString("DGenerateKeyPair.jrbXDH.na.tooltip"));
+        }
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(jrbRSA);
         buttonGroup.add(jrbDSA);
         buttonGroup.add(jrbEC);
         buttonGroup.add(jrbEdDSA);
+        buttonGroup.add(jrbXDH);
 
         jlECCurveSet = new JLabel(res.getString("DGenerateKeyPair.jlECCurveSet.text"));
         jlECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jlECCurveSet.tooltip"));
@@ -196,7 +210,7 @@ public class DGenerateKeyPair extends JEscDialog {
         jlEdDSACurve = new JLabel(res.getString("DGenerateKeyPair.jlEdDSACurve.text"));
         jlEdDSACurve.setDisplayedMnemonic(res.getString("DGenerateKeyPair.jlEdDSACurve.mnemonic").charAt(0));
 
-        String[] edDsaCurveNames = Collections.list(EdDSACurves.getNames()).toArray(new String[0]);
+        String[] edDsaCurveNames = Collections.list(EdDSACurves.getNames()).toArray(String[]::new);
         for (int i = 0; i < edDsaCurveNames.length; i++) {
             KeyPairType type = KeyPairType.resolveJce(edDsaCurveNames[i]);
             edDsaCurveNames[i] = DialogHelper.formatNameWithSize(edDsaCurveNames[i], type.maxSize());
@@ -204,6 +218,18 @@ public class DGenerateKeyPair extends JEscDialog {
         jcbEdDSACurve = new JComboBox<>(edDsaCurveNames);
         jcbEdDSACurve.setToolTipText(res.getString("DGenerateKeyPair.jcbEdDSACurve.tooltip"));
         jlEdDSACurve.setLabelFor(jcbEdDSACurve);
+
+        jlXDHCurve = new JLabel(res.getString("DGenerateKeyPair.jlXDHCurve.text"));
+        jlXDHCurve.setDisplayedMnemonic(res.getString("DGenerateKeyPair.jlXDHCurve.mnemonic").charAt(0));
+
+        String[] xdhCurveNames = Collections.list(XDHCurves.getNames()).toArray(String[]::new);
+        for (int i = 0; i < xdhCurveNames.length; i++) {
+            KeyPairType type = KeyPairType.resolveJce(xdhCurveNames[i]);
+            xdhCurveNames[i] = DialogHelper.formatNameWithSize(xdhCurveNames[i], type.maxSize());
+        }
+        jcbXDHCurve = new JComboBox<>(xdhCurveNames);
+        jcbXDHCurve.setToolTipText(res.getString("DGenerateKeyPair.jcbXDHCurve.tooltip"));
+        jlXDHCurve.setLabelFor(jcbXDHCurve);
 
         jbCancel = new JButton(res.getString("DGenerateKeyPair.jbCancel.text"));
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -275,6 +301,11 @@ public class DGenerateKeyPair extends JEscDialog {
                 enableDisableElements();
             }
         });
+        jrbXDH.addItemListener(evt -> {
+            if (jrbXDH.isSelected()) {
+                enableDisableElements();
+            }
+        });
 
         enableDisableElements();
 
@@ -339,6 +370,12 @@ public class DGenerateKeyPair extends JEscDialog {
                     keyPairType == KeyPairType.ED25519 ? EdDSACurves.ED25519.jce() : EdDSACurves.ED448.jce(),
                     keyPairType.maxSize()));
             jtpAlgorithms.setSelectedIndex(1);
+        } else if (keyPairType == KeyPairType.X25519 || keyPairType == KeyPairType.X448) {
+            jrbXDH.setSelected(true);
+            jcbXDHCurve.setSelectedItem(DialogHelper.formatNameWithSize(
+                    keyPairType == KeyPairType.X25519 ? XDHCurves.X25519.jce() : XDHCurves.X448.jce(),
+                    keyPairType.maxSize()));
+            jtpAlgorithms.setSelectedIndex(1);
         } else if (KeyPairType.isMlDSA(keyPairType)) {
             mldsaKeySelector.setSelected(true);
             jtpAlgorithms.setSelectedIndex(2);
@@ -390,6 +427,9 @@ public class DGenerateKeyPair extends JEscDialog {
         jpEc.add(jrbEdDSA, "");
         jpEc.add(jlEdDSACurve, "");
         jpEc.add(jcbEdDSACurve, "growx, wrap");
+        jpEc.add(jrbXDH, "");
+        jpEc.add(jlXDHCurve, "");
+        jpEc.add(jcbXDHCurve, "growx, wrap");
 
         return jpEc;
     }
@@ -503,6 +543,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
         boolean isEcSelected = jrbEC.isSelected();
         boolean isEdDsaSelected = jrbEdDSA.isSelected();
+        boolean isXDHSelected = jrbXDH.isSelected();
 
         jlECCurve.setEnabled(isEcSelected);
         jcbECCurve.setEnabled(isEcSelected);
@@ -511,6 +552,9 @@ public class DGenerateKeyPair extends JEscDialog {
 
         jlEdDSACurve.setEnabled(isEdDsaSelected);
         jcbEdDSACurve.setEnabled(isEdDsaSelected);
+
+        jlXDHCurve.setEnabled(isXDHSelected);
+        jcbXDHCurve.setEnabled(isXDHSelected);
 
         // Selectors manage their own internal state
         mldsaKeySelector.enableDisableElements();
@@ -610,6 +654,8 @@ public class DGenerateKeyPair extends JEscDialog {
     public String getCurveName() {
         if (jrbEdDSA.isSelected()) {
             return DialogHelper.extractNameFromFormatted((String) jcbEdDSACurve.getModel().getSelectedItem());
+        } else if (jrbXDH.isSelected()) {
+            return DialogHelper.extractNameFromFormatted((String) jcbXDHCurve.getModel().getSelectedItem());
         }
         String selectedItem = (String) jcbECCurve.getModel().getSelectedItem();
         return extractCurveNameFromFormatted(selectedItem);
@@ -663,6 +709,16 @@ public class DGenerateKeyPair extends JEscDialog {
                 return KeyPairType.ED25519;
             } else {
                 return KeyPairType.ED448;
+            }
+        }
+
+        if (jrbXDH.isSelected()) {
+            String selectedCurve = DialogHelper
+                    .extractNameFromFormatted((String) jcbXDHCurve.getModel().getSelectedItem());
+            if (XDHCurves.X25519.jce().equals(selectedCurve)) {
+                return KeyPairType.X25519;
+            } else {
+                return KeyPairType.X448;
             }
         }
 

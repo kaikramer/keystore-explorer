@@ -38,6 +38,7 @@ import java.security.spec.EdECPrivateKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.NamedParameterSpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.XECPrivateKeySpec;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -52,9 +53,10 @@ import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.jcajce.interfaces.EdDSAKey;
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.XDHPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XDHPublicKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.openssl.PEMException;
@@ -120,8 +122,8 @@ public class JwkUtil {
             jwkExporter = new RSAKeyExporter(publicKey);
         } else if (publicKey instanceof ECPublicKey) {
             jwkExporter = new ECKeyExporter(publicKey);
-        } else if (publicKey instanceof EdDSAPublicKey) {
-            jwkExporter = new EdDSAKeyExporter(publicKey);
+        } else if (publicKey instanceof EdDSAPublicKey || publicKey instanceof XDHPublicKey) {
+            jwkExporter = new EdKeyExporter(publicKey);
         } else {
             // Don't bother to translate this exception. This condition will never be encountered
             // since DExportPrivateKeyType.isJwkSupported and JwkPublicKeyExporter.isPublicKeyTypeExportable
@@ -160,8 +162,8 @@ public class JwkUtil {
             jwkExporter = new RSAKeyExporter(privateKey);
         } else if (privateKey instanceof ECPrivateKey) {
             jwkExporter = new ECKeyExporter(privateKey);
-        } else if (privateKey instanceof EdDSAPrivateKey) {
-            jwkExporter = new EdDSAKeyExporter(privateKey);
+        } else if (privateKey instanceof EdDSAPrivateKey || privateKey instanceof XDHPrivateKey) {
+            jwkExporter = new EdKeyExporter(privateKey);
         } else {
             // Don't bother to translate this exception. This condition will never be encountered
             // since DExportPrivateKeyType.isJwkSupported and JwkPublicKeyExporter.isPublicKeyTypeExportable
@@ -332,10 +334,20 @@ public class JwkUtil {
                 OctetKeyPair okp = jwkKey.toOctetKeyPair();
                 if (okp.getD() != null) {
                     Curve curve = okp.getCurve();
-                    privateKey = KeyFactory.getInstance("EdDSA").generatePrivate(
-                            new EdECPrivateKeySpec(new NamedParameterSpec(curve.getStdName()), okp.getDecodedD()));
-                    // KSE uses the BC interfaces for EdDSA keys so convert BC
-                    privateKey = Pkcs8Util.convert(privateKey);
+                    if (Curve.Ed25519.equals(curve) || Curve.Ed448.equals(curve)) {
+                        privateKey = KeyFactory.getInstance("EdDSA").generatePrivate(
+                                new EdECPrivateKeySpec(new NamedParameterSpec(curve.getStdName()), okp.getDecodedD()));
+                        // KSE uses the BC interfaces for EdDSA keys so convert BC
+                        privateKey = Pkcs8Util.convert(privateKey);
+                    } else if (Curve.X25519.equals(curve) || Curve.X448.equals(curve)) {
+                        privateKey = KeyFactory.getInstance("XDH").generatePrivate(
+                                new XECPrivateKeySpec(new NamedParameterSpec(curve.getStdName()), okp.getDecodedD()));
+                        // KSE uses the BC interfaces for EdDSA keys so convert BC
+                        privateKey = Pkcs8Util.convert(privateKey);
+                    } else {
+                        throw new CryptoException(MessageFormat
+                                .format(res.getString("UnsupportedJwkKeyType.exception.message"), jwkKey.getKeyType()));
+                    }
                 } else {
                     privateKey = null;
                 }
@@ -388,6 +400,8 @@ public class JwkUtil {
             ASN1ObjectIdentifier curveIdentifier =
                     Curve.Ed25519.equals(crv) ? EdECObjectIdentifiers.id_Ed25519 :
                     Curve.Ed448.equals(crv)   ? EdECObjectIdentifiers.id_Ed448 :
+                    Curve.X25519.equals(crv)  ? EdECObjectIdentifiers.id_X25519 :
+                    Curve.X448.equals(crv)    ? EdECObjectIdentifiers.id_X448 :
                     null;
 
             if (curveIdentifier == null) {
@@ -413,6 +427,8 @@ public class JwkUtil {
             switch (KeyPairUtil.getKeyPairType(publicKey)) {
             case ED448:
             case ED25519:
+            case X25519:
+            case X448:
             case RSA:
                 return true;
             case EC:
@@ -461,33 +477,42 @@ public class JwkUtil {
         return null;
     }
 
-    private static class EdDSAKeyExporter implements JwkExporter {
+    private static class EdKeyExporter implements JwkExporter {
         protected static final Map<String, Curve> SUPPORTED_CURVES =
                 Map.of(
                         KeyPairType.ED25519.jce(), Curve.Ed25519,
-                        KeyPairType.ED448.jce(),   Curve.Ed448
+                        KeyPairType.ED448.jce(),   Curve.Ed448,
+                        KeyPairType.X25519.jce(),  Curve.X25519,
+                        KeyPairType.X448.jce(),    Curve.X448
                 );
 
-        private final EdDSAPrivateKey privateKey;
-        private final EdDSAPublicKey publicKey;
+        private final PrivateKey privateKey;
+        private final PublicKey publicKey;
 
-        private EdDSAKeyExporter(PrivateKey privateKey) {
-            this.privateKey = (EdDSAPrivateKey) privateKey;
-            this.publicKey = this.privateKey.getPublicKey();
+        private EdKeyExporter(PrivateKey privateKey) {
+            this.privateKey = privateKey;
+            if (privateKey instanceof EdDSAPrivateKey) {
+                publicKey = ((EdDSAPrivateKey) privateKey).getPublicKey();
+            } else if (privateKey instanceof XDHPrivateKey) {
+                publicKey = ((XDHPrivateKey) privateKey).getPublicKey();
+            } else {
+                // Should never get here, but in case, throw an exception
+                throw JwkExporterException.notSupported(privateKey.getAlgorithm(), null);
+            }
         }
 
-        private EdDSAKeyExporter(PublicKey publicKey) {
+        private EdKeyExporter(PublicKey publicKey) {
             this.privateKey = null;
-            this.publicKey = (EdDSAPublicKey) publicKey;
+            this.publicKey = publicKey;
         }
 
-        private Curve getCurve(EdDSAKey bcEdDSAPublicKey) {
-            return SUPPORTED_CURVES.get(bcEdDSAPublicKey.getAlgorithm());
+        private Curve getCurve() {
+            return SUPPORTED_CURVES.get(publicKey.getAlgorithm());
         }
 
         @Override
         public String export(String alias, X509Certificate[] chain) {
-            Curve curve = getCurve(publicKey);
+            Curve curve = getCurve();
             try {
                 SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(
                         publicKey.getEncoded());

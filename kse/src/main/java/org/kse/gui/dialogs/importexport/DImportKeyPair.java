@@ -895,8 +895,9 @@ public class DImportKeyPair extends JEscDialog {
         String certificatePath = jtfCertificatePath.getText().trim();
 
         if (certificatePath.isEmpty()) {
-            // ML-KEM certs cannot be self-signed -- so a cert cannot be generated
-            boolean isSelfSignPossible = privateKey != null && !KeyPairType.isMlKEM(KeyPairUtil.getKeyPairType(privateKey));
+            // ML-KEM and XDH certs cannot be self-signed -- so a cert cannot be generated
+            boolean isSelfSignPossible = privateKey != null && !KeyPairType.isMlKEM(KeyPairUtil.getKeyPairType(privateKey))
+                    && !KeyPairType.isXDH(KeyPairUtil.getKeyPairType(privateKey));
             if (!isSelfSignPossible) {
                 JOptionPane.showMessageDialog(this, res.getString("DImportKeyPair.CertificateRequired.message"),
                         getTitle(), JOptionPane.WARNING_MESSAGE);

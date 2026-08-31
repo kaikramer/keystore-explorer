@@ -55,6 +55,7 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XDHPrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,6 +82,12 @@ class JwkUtilTest {
                 case "Ed25519":
                     oid = EdECObjectIdentifiers.id_Ed25519;
                     break;
+                case "X448":
+                    oid = EdECObjectIdentifiers.id_X448;
+                    break;
+                case "X25519":
+                    oid = EdECObjectIdentifiers.id_X25519;
+                    break;
                 default:
                     throw new IllegalArgumentException(curve);
                 }
@@ -102,6 +109,14 @@ class JwkUtilTest {
             KeyFactory keyFactory = KeyFactory.getInstance(name, "BC");
 
             EdDSAPrivateKey privateKey = (EdDSAPrivateKey) keyFactory.generatePrivate(new PKCS8EncodedKeySpec(pkcs8EncodedKey));
+            return new KeyPair(privateKey.getPublicKey(), privateKey);
+        }
+        KeyPair createXDHPrivateKey(String name, byte[] d) throws Exception {
+            Security.addProvider(new BouncyCastleProvider());
+            byte[] pkcs8EncodedKey = encodePrivateKey(d, name);
+            KeyFactory keyFactory = KeyFactory.getInstance(name, "BC");
+
+            XDHPrivateKey privateKey = (XDHPrivateKey) keyFactory.generatePrivate(new PKCS8EncodedKeySpec(pkcs8EncodedKey));
             return new KeyPair(privateKey.getPublicKey(), privateKey);
         }
         @Nested
@@ -287,6 +302,130 @@ class JwkUtilTest {
                 assertArrayEquals(cert.getEncoded(), jwk.getParsedX509CertChain().get(0).getEncoded());
                 assertArrayEquals(keyPair.getPublic().getEncoded(),
                         jwk.getParsedX509CertChain().get(0).getPublicKey().getEncoded());
+            }
+            @Test
+            void shouldExportPublicWithProvidedAlias() throws Exception {
+                String actualJwk = JwkUtil.get(keyPair.getPublic(), "alias");
+                JSONAssert.assertEquals(expectedJwkPub, actualJwk, JSONCompareMode.STRICT);
+
+                JWK jwk = JwkUtil.load(actualJwk.getBytes());
+                PrivateKey actualPrivateKey = JwkUtil.toPrivateKey(jwk);
+                PublicKey actualPublicKey = JwkUtil.toPublicKey(jwk);
+                assertNull(actualPrivateKey);
+                assertArrayEquals(keyPair.getPublic().getEncoded(), actualPublicKey.getEncoded());
+                assertNull(jwk.getParsedX509CertChain());
+            }
+        }
+        @Nested
+        class ForX25519{
+            byte[] d = Hex.decode("DCAAACEADDAC99D31020B81795E1F64CA36D81701034EE598C161F2655368F76");
+            KeyPair keyPair = createXDHPrivateKey("X25519", d);
+
+            ForX25519() throws Exception {}
+
+            private final String expectedJwkPub =
+                    "{\n" +
+                            "  \"kty\": \"OKP\",\n" +
+                            "  \"kid\": \"alias\",\n" +
+                            "  \"crv\": \"X25519\",\n" +
+                            "  \"x\": \"P5xUKxUM0UlNnCpwxtOzJXdkwC4HHMsMTXcXxBmY3W4\"\n" +
+                            "}";
+            private final String expectedJwk =
+                    "{\n" +
+                            "  \"kty\": \"OKP\",\n" +
+                            "  \"kid\": \"alias\",\n" +
+                            "  \"crv\": \"X25519\",\n" +
+                            "  \"x\": \"P5xUKxUM0UlNnCpwxtOzJXdkwC4HHMsMTXcXxBmY3W4\",\n" +
+                            "  \"d\": \"3Kqs6t2smdMQILgXleH2TKNtgXAQNO5ZjBYfJlU2j3Y\"\n" +
+                            "}";
+            @Test
+            void shouldExportWithProvidedAlias() throws Exception {
+                String actualJwk = JwkUtil.get(keyPair.getPrivate(), "alias");
+                JSONAssert.assertEquals(expectedJwk, actualJwk, JSONCompareMode.STRICT);
+
+                JWK jwk = JwkUtil.load(actualJwk.getBytes());
+                PrivateKey actualPrivateKey = JwkUtil.toPrivateKey(jwk);
+                PublicKey actualPublicKey = JwkUtil.toPublicKey(jwk);
+                assertArrayEquals(keyPair.getPrivate().getEncoded(), actualPrivateKey.getEncoded());
+                assertArrayEquals(keyPair.getPublic().getEncoded(), actualPublicKey.getEncoded());
+                assertNull(jwk.getParsedX509CertChain());
+            }
+            @Test
+            void shouldExportAndGenerateAliasIfNotProvided() throws Exception {
+                String actualJwk = JwkUtil.get(keyPair.getPrivate(), null);
+                JSONAssert.assertEquals(
+                        expectedJwk.replace("alias", "k2iMCMk9Jm9rHmTkBlzk_0UpOmC3FhQsv5RBUjYBqBA"),
+                        actualJwk,
+                        JSONCompareMode.STRICT);
+
+                JWK jwk = JwkUtil.load(actualJwk.getBytes());
+                PrivateKey actualPrivateKey = JwkUtil.toPrivateKey(jwk);
+                PublicKey actualPublicKey = JwkUtil.toPublicKey(jwk);
+                assertArrayEquals(keyPair.getPrivate().getEncoded(), actualPrivateKey.getEncoded());
+                assertArrayEquals(keyPair.getPublic().getEncoded(), actualPublicKey.getEncoded());
+                assertNull(jwk.getParsedX509CertChain());
+            }
+            @Test
+            void shouldExportPublicWithProvidedAlias() throws Exception {
+                String actualJwk = JwkUtil.get(keyPair.getPublic(), "alias");
+                JSONAssert.assertEquals(expectedJwkPub, actualJwk, JSONCompareMode.STRICT);
+
+                JWK jwk = JwkUtil.load(actualJwk.getBytes());
+                PrivateKey actualPrivateKey = JwkUtil.toPrivateKey(jwk);
+                PublicKey actualPublicKey = JwkUtil.toPublicKey(jwk);
+                assertNull(actualPrivateKey);
+                assertArrayEquals(keyPair.getPublic().getEncoded(), actualPublicKey.getEncoded());
+                assertNull(jwk.getParsedX509CertChain());
+            }
+        }
+        @Nested
+        class ForX448{
+            byte[] d = Hex.decode("0DAAE3F2A4AC597FD67BEE8F46F50AE24CD67D53F846BE5DEB6ACE0CB67FD9EA95604FBDEF9F566A4245C9A5BAB81FD8DC0AF3179CE94C40");
+            KeyPair keyPair = createXDHPrivateKey("X448", d);
+
+            ForX448() throws Exception {}
+
+            private final String expectedJwkPub =
+                    "{\n" +
+                            "  \"kty\": \"OKP\",\n" +
+                            "  \"kid\": \"alias\",\n" +
+                            "  \"crv\": \"X448\",\n" +
+                            "  \"x\": \"c_Bns0IeTg2fax-1_NNzqKHHFE0WRordmvumcuD7-58gMAxNq2QGT59nRwc1a7VduRJF0JJ1vIc\"\n" +
+                            "}";
+            private final String expectedJwk =
+                    "{\n" +
+                            "  \"kty\": \"OKP\",\n" +
+                            "  \"kid\": \"alias\",\n" +
+                            "  \"crv\": \"X448\",\n" +
+                            "  \"x\": \"c_Bns0IeTg2fax-1_NNzqKHHFE0WRordmvumcuD7-58gMAxNq2QGT59nRwc1a7VduRJF0JJ1vIc\",\n" +
+                            "  \"d\": \"Darj8qSsWX_We-6PRvUK4kzWfVP4Rr5d62rODLZ_2eqVYE-9759WakJFyaW6uB_Y3ArzF5zpTEA\"\n" +
+                            "}";
+            @Test
+            void shouldExportWithProvidedAlias() throws Exception {
+                String actualJwk = JwkUtil.get(keyPair.getPrivate(), "alias");
+                JSONAssert.assertEquals(expectedJwk, actualJwk, JSONCompareMode.STRICT);
+
+                JWK jwk = JwkUtil.load(actualJwk.getBytes());
+                PrivateKey actualPrivateKey = JwkUtil.toPrivateKey(jwk);
+                PublicKey actualPublicKey = JwkUtil.toPublicKey(jwk);
+                assertArrayEquals(keyPair.getPrivate().getEncoded(), actualPrivateKey.getEncoded());
+                assertArrayEquals(keyPair.getPublic().getEncoded(), actualPublicKey.getEncoded());
+                assertNull(jwk.getParsedX509CertChain());
+            }
+            @Test
+            void shouldExportAndGenerateAliasIfNotProvided() throws Exception {
+                String actualJwk = JwkUtil.get(keyPair.getPrivate(), null);
+                JSONAssert.assertEquals(
+                        expectedJwk.replace("alias", "dClFYxfmFbJU4onZvadO2pgEMu5n4Q1r3A1lAPnBMa8"),
+                        actualJwk,
+                        JSONCompareMode.STRICT);
+
+                JWK jwk = JwkUtil.load(actualJwk.getBytes());
+                PrivateKey actualPrivateKey = JwkUtil.toPrivateKey(jwk);
+                PublicKey actualPublicKey = JwkUtil.toPublicKey(jwk);
+                assertArrayEquals(keyPair.getPrivate().getEncoded(), actualPrivateKey.getEncoded());
+                assertArrayEquals(keyPair.getPublic().getEncoded(), actualPublicKey.getEncoded());
+                assertNull(jwk.getParsedX509CertChain());
             }
             @Test
             void shouldExportPublicWithProvidedAlias() throws Exception {

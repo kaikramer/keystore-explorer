@@ -39,6 +39,8 @@ import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLKEMPublicKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.XDHPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XDHPublicKey;
 import org.junit.jupiter.api.BeforeAll;
 import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
@@ -60,6 +62,8 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
     protected static ECPublicKey gostPublicKey;
     protected static EdDSAPrivateKey eddsaPrivateKey;
     protected static EdDSAPublicKey eddsaPublicKey;
+    protected static XDHPrivateKey xdhPrivateKey;
+    protected static XDHPublicKey xdhPublicKey;
     protected static MLDSAPublicKey mldsaPublicKey;
     /**
      * MLDSA private keys come with different types of encoding, but for now only the combined form is
@@ -75,13 +79,13 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
 
 
     protected static List<PrivateKey> privateKeys() {
-        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey, gostPrivateKey, eddsaPrivateKey,
+        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey, gostPrivateKey, eddsaPrivateKey, xdhPrivateKey,
                 mldsaPrivateKeySeedAndExpanded, mlkemPrivateKey, slhDsaPrivateKey);
     }
 
     protected static List<PublicKey> publicKeys() {
-        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey, gostPublicKey, eddsaPublicKey, mldsaPublicKey,
-                mlkemPublicKey, slhDsaPublicKey);
+        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey, gostPublicKey, eddsaPublicKey, xdhPublicKey,
+                mldsaPublicKey, mlkemPublicKey, slhDsaPublicKey);
     }
 
     @BeforeAll
@@ -115,6 +119,12 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
             KeyPair eddsaKeyPair = KeyPairUtil.generateECKeyPair("Ed25519", KSE.BC);
             eddsaPrivateKey = (EdDSAPrivateKey) eddsaKeyPair.getPrivate();
             eddsaPublicKey = (EdDSAPublicKey) eddsaKeyPair.getPublic();
+        }
+
+        if (xdhPrivateKey == null) {
+            KeyPair eddsaKeyPair = KeyPairUtil.generateECKeyPair("X25519", KSE.BC);
+            xdhPrivateKey = (XDHPrivateKey) eddsaKeyPair.getPrivate();
+            xdhPublicKey = (XDHPublicKey) eddsaKeyPair.getPublic();
         }
 
         if (mldsaPublicKey == null) {
