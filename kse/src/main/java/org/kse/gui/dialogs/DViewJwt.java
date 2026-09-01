@@ -55,6 +55,8 @@ import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.publickey.OpenSslPubUtil;
+import org.kse.crypto.signing.BcEd25519Verifier;
+import org.kse.crypto.signing.BcEd448Verifier;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
@@ -69,13 +71,7 @@ import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
-import org.kse.crypto.signing.BcEd25519Verifier;
-import org.kse.crypto.signing.BcEd448Verifier;
-
 import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.Curve;
-import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
@@ -314,13 +310,9 @@ public class DViewJwt extends JEscDialog {
             // Works for Java 15+ since OpenSslPubUtil uses the BC provider for loading the key
             } else if (publicKey instanceof EdDSAPublicKey) {
                 if (EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm())) {
-                    OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed448,
-                            Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
-                    verifier = new BcEd448Verifier(okp);
+                    verifier = new BcEd448Verifier((EdDSAPublicKey) publicKey);
                 } else {
-                    OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
-                            Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
-                    verifier = new BcEd25519Verifier(okp);
+                    verifier = new BcEd25519Verifier((EdDSAPublicKey) publicKey);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),

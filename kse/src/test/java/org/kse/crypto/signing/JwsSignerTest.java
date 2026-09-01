@@ -27,9 +27,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
-import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
-import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,8 +45,6 @@ import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -110,20 +106,12 @@ public class JwsSignerTest extends CryptoTestsBase {
         return new ECDSAVerifier(ecKey);
     }
 
-    private static BcEd25519Verifier buildEd25519Verifier() throws Exception {
-        Ed25519PrivateKeyParameters params =
-                (Ed25519PrivateKeyParameters) PrivateKeyFactory.createKey(ed25519KeyPair.getPrivate().getEncoded());
-        Base64URL encodedPub = Base64URL.encode(params.generatePublicKey().getEncoded());
-        OctetKeyPair publicOkp = new OctetKeyPair.Builder(Curve.Ed25519, encodedPub).build();
-        return new BcEd25519Verifier(publicOkp);
+    private static BcEd25519Verifier buildEd25519Verifier() {
+        return new BcEd25519Verifier((EdDSAPublicKey) ed25519KeyPair.getPublic());
     }
 
-    private static BcEd448Verifier buildEd448Verifier() throws Exception {
-        Ed448PrivateKeyParameters params =
-                (Ed448PrivateKeyParameters) PrivateKeyFactory.createKey(ed448KeyPair.getPrivate().getEncoded());
-        Base64URL encodedPub = Base64URL.encode(params.generatePublicKey().getEncoded());
-        OctetKeyPair publicOkp = new OctetKeyPair.Builder(Curve.Ed448, encodedPub).build();
-        return new BcEd448Verifier(publicOkp);
+    private static BcEd448Verifier buildEd448Verifier() {
+        return new BcEd448Verifier((EdDSAPublicKey)  ed448KeyPair.getPublic());
     }
 
     /**

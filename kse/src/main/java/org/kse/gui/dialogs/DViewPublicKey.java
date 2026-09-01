@@ -310,9 +310,7 @@ public class DViewPublicKey extends JEscDialog {
         File exportFile = null;
 
         try {
-            boolean isKeyExportableAsJWK = JwkUtil.isPublicKeyTypeExportable(publicKey);
-
-            DExportPublicKey dExportPublicKey = new DExportPublicKey((Window) getParent(), alias, isKeyExportableAsJWK);
+            DExportPublicKey dExportPublicKey = new DExportPublicKey((Window) getParent(), alias, publicKey);
             dExportPublicKey.setLocationRelativeTo(this);
             dExportPublicKey.setVisible(true);
 

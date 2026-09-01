@@ -39,11 +39,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.CryptoException;
-import org.kse.crypto.KeyInfo;
 import org.kse.crypto.jwk.JwkUtil;
-import org.kse.crypto.keypair.KeyPairType;
-import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.gui.PlatformUtil;
@@ -72,7 +68,6 @@ public class DExportPrivateKeyType extends JEscDialog {
 
     private boolean exportTypeSelected = false;
 
-    private KeyPairType keyPairType;
     private PrivateKey privateKey;
 
     /**
@@ -80,34 +75,15 @@ public class DExportPrivateKeyType extends JEscDialog {
      *
      * @param parent The parent frame
      * @param privateKey The private key to export. Used to determine available export options.
-     * @throws CryptoException If an error occurs when determining EC curve support.
      */
-    public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) throws CryptoException {
+    public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
-        this.keyPairType = KeyPairUtil.getKeyPairType(privateKey);
         setTitle(res.getString("DExportPrivateKeyType.Title"));
         initComponents();
     }
 
-    private boolean isJwkSupported() throws CryptoException {
-        switch (keyPairType) {
-            case ED448:
-            case ED25519:
-            case X25519:
-            case X448:
-            case RSA:
-                return true;
-            case EC:
-                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-                String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
-                return JwkUtil.ECKeyExporter.supportsCurve(detailedAlgorithm);
-            default:
-                return false;
-        }
-    }
-
-    private void initComponents() throws CryptoException {
+    private void initComponents() {
         jlExportType = new JLabel(res.getString("DExportPrivateKeyType.jlExportType.text"));
 
         jrbPkcs8 = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPkcs8.text"), true);
@@ -127,7 +103,7 @@ public class DExportPrivateKeyType extends JEscDialog {
         jrbJwk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbJwk.text"));
         PlatformUtil.setMnemonic(jrbJwk, res.getString("DExportPrivateKeyType.jrbJwk.mnemonic").charAt(0));
         jrbJwk.setToolTipText(res.getString("DExportPrivateKeyType.jrbJwk.tooltip"));
-        jrbJwk.setEnabled(isJwkSupported());
+        jrbJwk.setEnabled(JwkUtil.isJwkSupported(privateKey));
 
         ButtonGroup keyStoreTypes = new ButtonGroup();
 

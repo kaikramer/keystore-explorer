@@ -422,7 +422,7 @@ public class JwkUtil {
      * @param publicKey The public key to export.
      * @return True if the public key can be exported to JWK.
      */
-    public static boolean isPublicKeyTypeExportable(PublicKey publicKey) {
+    public static boolean isJwkSupported(PublicKey publicKey) {
         try {
             switch (KeyPairUtil.getKeyPairType(publicKey)) {
             case ED448:
@@ -440,7 +440,44 @@ public class JwkUtil {
                 return false;
             }
         } catch (Exception e) {
-            throw JwkExporterException.notSupported(publicKey.getAlgorithm(), null);
+            // The goal of this method is to determine if a public key can be exported.
+            // Throwing an exception, while providing details for troubleshooting, does
+            // not help the user. It prevents them from using the OpenSSL format for
+            // export since an exception is thrown when checking for JWK support.
+            // Therefore, just return false so that the user is not blocked.
+            return false;
+        }
+    }
+
+    /**
+     * Determines if the private key is exportable to JWK.
+     *
+     * @param privateKey The private key to export.
+     * @return True if the private key can be exported to JWK.
+     */
+    public static boolean isJwkSupported(PrivateKey privateKey) {
+        try {
+            switch (KeyPairUtil.getKeyPairType(privateKey)) {
+            case ED448:
+            case ED25519:
+            case X25519:
+            case X448:
+            case RSA:
+                return true;
+            case EC:
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+                String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
+                return ECKeyExporter.supportsCurve(detailedAlgorithm);
+            default:
+                return false;
+            }
+        } catch (Exception e) {
+            // The goal of this method is to determine if a private key can be exported.
+            // Throwing an exception, while providing details for troubleshooting, does
+            // not help the user. It prevents them from using the PKCS #8 format for
+            // export since an exception is thrown when checking for JWK support.
+            // Therefore, just return false so that the user is not blocked.
+            return false;
         }
     }
 

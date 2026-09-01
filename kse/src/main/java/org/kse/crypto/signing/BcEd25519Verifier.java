@@ -23,12 +23,14 @@ import java.util.Set;
 
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.impl.BaseJWSProvider;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -41,9 +43,17 @@ public class BcEd25519Verifier extends BaseJWSProvider implements JWSVerifier {
 
     private final Ed25519PublicKeyParameters publicKeyParams;
 
-    public BcEd25519Verifier(OctetKeyPair publicKey) throws JOSEException {
+    /**
+     * Creates a new BcEd25519Verifier.
+     *
+     * @param publicKey The public key to use for verifying a signature.
+     */
+    public BcEd25519Verifier(EdDSAPublicKey publicKey) {
         super(SUPPORTED);
-        publicKeyParams = new Ed25519PublicKeyParameters(publicKey.getDecodedX(), 0);
+
+        OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed448,
+                Base64URL.encode(publicKey.getPointEncoding())).build();
+        publicKeyParams = new Ed25519PublicKeyParameters(okp.getDecodedX(), 0);
     }
 
     @Override

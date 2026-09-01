@@ -20,25 +20,17 @@
 
 package org.kse.crypto.signing;
 
-import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.interfaces.EdECPrivateKey;
 
-import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
-import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
-import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.kse.crypto.ecc.EdDSACurves;
 
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.jwk.Curve;
-import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -70,14 +62,14 @@ public class JwsSigner {
         } else if (JWSAlgorithm.Family.EC.contains(signatureAlgorithm)) {
             signer = new ECDSASigner(privateKey, curve);
         } else if (JWSAlgorithm.Ed25519 == signatureAlgorithm) {
-            signer = newEd25519Signer(privateKey);
+            signer = new BcEd25519Signer(privateKey);
         } else if (JWSAlgorithm.Ed448 == signatureAlgorithm) {
-            signer = newEd448Signer(privateKey);
+            signer = new BcEd448Signer(privateKey);
         } else if (JWSAlgorithm.EdDSA == signatureAlgorithm) {
             if (EdDSACurves.ED448.jce().equals(((EdECPrivateKey) privateKey).getParams().getName())) {
-                signer = newEd448Signer(privateKey);
+                signer = new BcEd448Signer(privateKey);
             } else {
-                signer = newEd25519Signer(privateKey);
+                signer = new BcEd25519Signer(privateKey);
             }
         }
 
@@ -89,29 +81,5 @@ public class JwsSigner {
         signedJWT.sign(signer);
 
         return signedJWT;
-    }
-
-    private static JWSSigner newEd25519Signer(PrivateKey privateKey) throws IOException, JOSEException {
-        var params = (Ed25519PrivateKeyParameters) PrivateKeyFactory.createKey(privateKey.getEncoded());
-        OctetKeyPair okp = buildOctectKeyAPair(params);
-        return new BcEd25519Signer(okp);
-    }
-
-    private static JWSSigner newEd448Signer(PrivateKey privateKey) throws IOException, JOSEException {
-        var params = (Ed448PrivateKeyParameters) PrivateKeyFactory.createKey(privateKey.getEncoded());
-        OctetKeyPair okp = buildOctectKeyAPair(params);
-        return new BcEd448Signer(okp);
-    }
-
-    private static OctetKeyPair buildOctectKeyAPair(Ed25519PrivateKeyParameters params) {
-        Base64URL base64EncodedPubKey = Base64URL.encode(params.generatePublicKey().getEncoded());
-        Base64URL base64EncodedParams = Base64URL.encode(params.getEncoded());
-        return new OctetKeyPair.Builder(Curve.Ed25519, base64EncodedPubKey).d(base64EncodedParams).build();
-    }
-
-    private static OctetKeyPair buildOctectKeyAPair(Ed448PrivateKeyParameters params) {
-        Base64URL base64EncodedPubKey = Base64URL.encode(params.generatePublicKey().getEncoded());
-        Base64URL base64EncodedParams = Base64URL.encode(params.getEncoded());
-        return new OctetKeyPair.Builder(Curve.Ed448, base64EncodedPubKey).d(base64EncodedParams).build();
     }
 }

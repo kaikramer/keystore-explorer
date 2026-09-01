@@ -19,16 +19,20 @@
  */
 package org.kse.crypto.signing;
 
+import java.io.IOException;
+import java.security.PrivateKey;
 import java.util.Set;
 
 import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
 import org.bouncycastle.crypto.signers.Ed448Signer;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.impl.BaseJWSProvider;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -42,12 +46,27 @@ public class BcEd448Signer extends BaseJWSProvider implements JWSSigner {
 
     private final Ed448PrivateKeyParameters privateKeyParams;
 
-    public BcEd448Signer(OctetKeyPair privateKey) throws JOSEException {
+    /**
+     * Creates a new BcEd448Signer.
+     *
+     * @param privateKey The private key for signing.
+     * @throws IOException
+     * @throws JOSEException
+     */
+    public BcEd448Signer(PrivateKey privateKey) throws IOException, JOSEException {
         super(SUPPORTED);
-        if (!privateKey.isPrivate()) {
+        var params = (Ed448PrivateKeyParameters) PrivateKeyFactory.createKey(privateKey.getEncoded());
+        OctetKeyPair okp = buildOctectKeyAPair(params);
+        if (!okp.isPrivate()) {
             throw new JOSEException("OctetKeyPair must contain a private key (d)");
         }
-        privateKeyParams = new Ed448PrivateKeyParameters(privateKey.getDecodedD(), 0);
+        privateKeyParams = new Ed448PrivateKeyParameters(okp.getDecodedD(), 0);
+    }
+
+    private OctetKeyPair buildOctectKeyAPair(Ed448PrivateKeyParameters params) {
+        Base64URL base64EncodedPubKey = Base64URL.encode(params.generatePublicKey().getEncoded());
+        Base64URL base64EncodedParams = Base64URL.encode(params.getEncoded());
+        return new OctetKeyPair.Builder(Curve.Ed448, base64EncodedPubKey).d(base64EncodedParams).build();
     }
 
     @Override

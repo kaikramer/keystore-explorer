@@ -19,18 +19,37 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import static org.kse.gui.FileChooserFactory.*;
+import static org.kse.gui.FileChooserFactory.JWK_EXT;
+import static org.kse.gui.FileChooserFactory.PEM_EXT;
+import static org.kse.gui.FileChooserFactory.PUBLIC_KEY_EXT;
+import static org.kse.gui.FileChooserFactory.getPublicKeyFileChooser;
 
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Window;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
+import org.kse.crypto.jwk.JwkUtil;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.PlatformUtil;
@@ -39,7 +58,6 @@ import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
 import com.formdev.flatlaf.util.SystemFileChooser;
-
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -52,7 +70,6 @@ public class DExportPublicKey extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
     private static final String FULL_PEM_FILE_EXT = "." + PUBLIC_KEY_EXT + "." + PEM_EXT;
-    private boolean isKeyExportableAsJWK;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -66,6 +83,7 @@ public class DExportPublicKey extends JEscDialog {
     private JButton jbExport;
     private JButton jbCancel;
 
+    private PublicKey publicKey;
     private String entryAlias;
     private boolean exportSelected = false;
     private File exportFile;
@@ -75,14 +93,14 @@ public class DExportPublicKey extends JEscDialog {
     /**
      * Creates a new DExportPublicKey dialog.
      *
-     * @param parent               The parent frame or dialog
-     * @param entryAlias           The KeyStore entry to export public key from
-     * @param isKeyExportableAsJWK The JWK support for the public key
+     * @param parent      The parent frame or dialog
+     * @param entryAlias  The KeyStore entry to export public key from
+     * @param publicKey   The public key to export. Used to determine available export options.
      */
-    public DExportPublicKey(Window parent, String entryAlias, boolean isKeyExportableAsJWK) {
+    public DExportPublicKey(Window parent, String entryAlias, PublicKey publicKey) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.entryAlias = entryAlias;
-        this.isKeyExportableAsJWK = isKeyExportableAsJWK;
+        this.publicKey = publicKey;
         initComponents();
     }
 
@@ -99,7 +117,7 @@ public class DExportPublicKey extends JEscDialog {
 
         jrbExportJwk = new JRadioButton(res.getString("DExportPublicKey.jrbExportJwk.text"));
         jrbExportJwk.setSelected(false);
-        jrbExportJwk.setEnabled(isKeyExportableAsJWK);
+        jrbExportJwk.setEnabled(JwkUtil.isJwkSupported(publicKey));
         jrbExportJwk.setName("jrbExportJwk");
         jrbExportJwk.setToolTipText(res.getString("DExportPublicKey.jrbExportJwk.tooltip"));
 
@@ -326,6 +344,7 @@ public class DExportPublicKey extends JEscDialog {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DExportPublicKey(new JFrame(), "alias", true));
+        PublicKey publicKey = KeyPairUtil.generateECKeyPair("P-256", null).getPublic();
+        DialogViewer.run(new DExportPublicKey(new JFrame(), "alias", publicKey));
     }
 }
