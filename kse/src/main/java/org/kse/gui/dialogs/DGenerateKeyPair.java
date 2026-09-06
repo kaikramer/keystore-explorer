@@ -175,7 +175,7 @@ public class DGenerateKeyPair extends JEscDialog {
         jrbEdDSA.setToolTipText(res.getString("DGenerateKeyPair.jrbEdDSA.tooltip"));
 
         jrbXDH = new JRadioButton(res.getString("DGenerateKeyPair.jrbXDH.text"), false);
-        PlatformUtil.setMnemonic(jrbEdDSA, res.getString("DGenerateKeyPair.jrbXDH.mnemonic").charAt(0));
+        PlatformUtil.setMnemonic(jrbXDH, res.getString("DGenerateKeyPair.jrbXDH.mnemonic").charAt(0));
         jrbXDH.setToolTipText(res.getString("DGenerateKeyPair.jrbXDH.tooltip"));
         if (isSelfSigned) {
             jrbXDH.setEnabled(false);
