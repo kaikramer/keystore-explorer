@@ -10,7 +10,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^7.1.6",
+    "astro": "^7.2.8",
     "bootstrap": "^5.3.8",
     "tocbot": "^4.36.8"
   },
