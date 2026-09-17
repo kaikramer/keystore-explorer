@@ -368,3 +368,10 @@ nav#toc {
   --pagefind-ui-border: #495057;
   --pagefind-ui-tag: #343a40;
 }
+
+/* Allow text-justify, especially for History page 
+   See: https://github.com/twbs/bootstrap/pull/29793 */
+.text-justify {
+    text-align: justify;
+    text-justify: inter-word;
+}
