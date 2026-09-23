@@ -26,7 +26,6 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -83,10 +82,8 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
      * @param parent              The parent frame
      * @param title               The dialog title
      * @param policyQualifierInfo Policy qualifier info
-     * @throws IOException If policy qualifier info could not be decoded
      */
-    public DPolicyQualifierInfoChooser(JFrame parent, String title, PolicyQualifierInfo policyQualifierInfo)
-            throws IOException {
+    public DPolicyQualifierInfoChooser(JFrame parent, String title, PolicyQualifierInfo policyQualifierInfo) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         initComponents(policyQualifierInfo);
     }
@@ -97,15 +94,13 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
      * @param parent              The parent dialog
      * @param title               The dialog title
      * @param policyQualifierInfo Policy qualifier info
-     * @throws IOException If policy qualifier info could not be decoded
      */
-    public DPolicyQualifierInfoChooser(JDialog parent, String title, PolicyQualifierInfo policyQualifierInfo)
-            throws IOException {
+    public DPolicyQualifierInfoChooser(JDialog parent, String title, PolicyQualifierInfo policyQualifierInfo) {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents(policyQualifierInfo);
     }
 
-    private void initComponents(PolicyQualifierInfo policyQualifierInfo) throws IOException {
+    private void initComponents(PolicyQualifierInfo policyQualifierInfo) {
         jlPolicyQualifierInfoType = new JLabel(
                 res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoType.text"));
 
@@ -183,7 +178,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
         pack();
     }
 
-    private void populate(PolicyQualifierInfo policyQualifierInfo) throws IOException {
+    private void populate(PolicyQualifierInfo policyQualifierInfo) {
         if (policyQualifierInfo == null) {
             jrbCps.setSelected(true);
         } else {

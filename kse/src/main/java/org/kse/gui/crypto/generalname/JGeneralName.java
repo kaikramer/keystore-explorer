@@ -61,6 +61,7 @@ public class JGeneralName extends JPanel {
         initComponents();
     }
 
+    // TODO JW - miglayout
     private void initComponents() {
         jtfGeneralName = new JTextField(40);
         jtfGeneralName.setEditable(false);

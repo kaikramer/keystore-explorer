@@ -19,20 +19,20 @@
  */
 package org.kse.gui.crypto.policyinformation;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.kse.crypto.x509.PolicyInformationUtil;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display policy qualifier info.
  */
-public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
+public class PolicyQualifierInfoTableModel extends ToolTipTableModel implements LoadableTableModel<PolicyQualifierInfo> {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
@@ -42,7 +42,7 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
     };
 
     private String[] columnNames;
-    private Object[][] data;
+    private List<PolicyQualifierInfo> data;
 
     /**
      * Construct a new PolicyQualifierInfoTableModel.
@@ -52,7 +52,7 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
         columnNames = new String[1];
         columnNames[0] = res.getString("PolicyQualifierInfoTableModel.PolicyQualifierInfoColumn");
 
-        data = new Object[0][0];
+        data = new ArrayList<>();
     }
 
     /**
@@ -60,18 +60,10 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
      *
      * @param policyQualifierInfo The policy qualifier info
      */
+    @Override
     public void load(List<PolicyQualifierInfo> policyQualifierInfo) {
-        PolicyQualifierInfo[] policyQualifierInfoArray = policyQualifierInfo.toArray(
-                PolicyQualifierInfo[]::new);
-        Arrays.sort(policyQualifierInfoArray, new PolicyQualifierInfoComparator());
-
-        data = new Object[policyQualifierInfoArray.length][1];
-
-        int i = 0;
-        for (PolicyQualifierInfo policyQualInfo : policyQualifierInfoArray) {
-            data[i][0] = policyQualInfo;
-            i++;
-        }
+        data = policyQualifierInfo;
+        data.sort(new PolicyQualifierInfoComparator());
 
         fireTableDataChanged();
     }
@@ -93,7 +85,7 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
      */
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     /**
@@ -116,7 +108,7 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+        return data.get(row);
     }
 
     /**
@@ -145,13 +137,8 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
     static class PolicyQualifierInfoComparator implements Comparator<PolicyQualifierInfo> {
         @Override
         public int compare(PolicyQualifierInfo policyQualifierInfo1, PolicyQualifierInfo policyQualifierInfo2) {
-            try {
-                return PolicyInformationUtil.toString(policyQualifierInfo1)
-                                            .compareToIgnoreCase(PolicyInformationUtil.toString(policyQualifierInfo2));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex); // We build this data so should
-                // not happen
-            }
+            return PolicyInformationUtil.toString(policyQualifierInfo1)
+                    .compareToIgnoreCase(PolicyInformationUtil.toString(policyQualifierInfo2));
         }
     }
 }

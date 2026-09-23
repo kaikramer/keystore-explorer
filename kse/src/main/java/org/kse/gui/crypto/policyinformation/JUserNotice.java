@@ -61,6 +61,7 @@ public class JUserNotice extends JPanel {
         initComponents();
     }
 
+    // TODO JW - miglayout
     private void initComponents() {
         jtfUserNotice = new JTextField(20);
         jtfUserNotice.setEditable(false);

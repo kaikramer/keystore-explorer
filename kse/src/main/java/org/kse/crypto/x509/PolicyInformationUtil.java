@@ -22,7 +22,6 @@ package org.kse.crypto.x509;
 import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
 import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -99,9 +98,8 @@ public class PolicyInformationUtil {
      *
      * @param policyInformation Policy information
      * @return String representation of policy information
-     * @throws IOException If policy information is invalid
      */
-    public static String toString(PolicyInformation policyInformation) throws IOException {
+    public static String toString(PolicyInformation policyInformation) {
         StringBuilder sbPolicyInformation = new StringBuilder();
 
         ASN1ObjectIdentifier policyIdentifier = policyInformation.getPolicyIdentifier();
@@ -139,9 +137,8 @@ public class PolicyInformationUtil {
      *
      * @param policyQualifierInfo Policy qualifier info
      * @return String representation of policy qualifier info
-     * @throws IOException If policy qualifier info is invalid
      */
-    public static String toString(PolicyQualifierInfo policyQualifierInfo) throws IOException {
+    public static String toString(PolicyQualifierInfo policyQualifierInfo) {
         StringBuilder sbPolicyQualifier = new StringBuilder();
 
         ASN1ObjectIdentifier policyQualifierId = policyQualifierInfo.getPolicyQualifierId();

@@ -73,6 +73,7 @@ public class JDateTime extends JPanel {
         initComponents();
     }
 
+    // TODO JW - miglayout
     private void initComponents() {
         jtfDateTime = new JTextField(18);
         jtfDateTime.setEditable(false);

@@ -24,7 +24,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -79,10 +78,8 @@ public class DPolicyInformationChooser extends JEscDialog {
      * @param parent            The parent frame
      * @param title             The dialog title
      * @param policyInformation Policy information
-     * @throws IOException If policy information could not be decoded
      */
-    public DPolicyInformationChooser(JFrame parent, String title, PolicyInformation policyInformation)
-            throws IOException {
+    public DPolicyInformationChooser(JFrame parent, String title, PolicyInformation policyInformation) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         initComponents(policyInformation);
     }
@@ -93,15 +90,13 @@ public class DPolicyInformationChooser extends JEscDialog {
      * @param parent            The parent dialog
      * @param title             The dialog title
      * @param policyInformation Policy information
-     * @throws IOException If policy information could not be decoded
      */
-    public DPolicyInformationChooser(JDialog parent, String title, PolicyInformation policyInformation)
-            throws IOException {
+    public DPolicyInformationChooser(JDialog parent, String title, PolicyInformation policyInformation) {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents(policyInformation);
     }
 
-    private void initComponents(PolicyInformation policyInformation) throws IOException {
+    private void initComponents(PolicyInformation policyInformation) {
         jlPolicyIdentifier = new JLabel(res.getString("DPolicyInformationChooser.jlPolicyIdentifier.text"));
 
         joiPolicyIdentifier = new JObjectId(res.getString("DPolicyInformationChooser.PolicyIdentifier.Text"));
@@ -149,7 +144,7 @@ public class DPolicyInformationChooser extends JEscDialog {
         pack();
     }
 
-    private void populate(PolicyInformation policyInformation) throws IOException {
+    private void populate(PolicyInformation policyInformation) {
         if (policyInformation != null) {
             joiPolicyIdentifier.setObjectId(policyInformation.getPolicyIdentifier());
 
@@ -164,7 +159,7 @@ public class DPolicyInformationChooser extends JEscDialog {
                     policyQualifierInfo.add(policyQualInfo);
                 }
 
-                jpqPolicyQualifiers.setPolicyQualifierInfo(policyQualifierInfo);
+                jpqPolicyQualifiers.setItems(policyQualifierInfo);
             }
         }
     }
@@ -188,7 +183,7 @@ public class DPolicyInformationChooser extends JEscDialog {
             return;
         }
 
-        List<PolicyQualifierInfo> policyQualifierInfo = jpqPolicyQualifiers.getPolicyQualifierInfo();
+        List<PolicyQualifierInfo> policyQualifierInfo = jpqPolicyQualifiers.getItems();
 
         if (!policyQualifierInfo.isEmpty()) {
             ASN1EncodableVector policyQualifiersVec = new ASN1EncodableVector();

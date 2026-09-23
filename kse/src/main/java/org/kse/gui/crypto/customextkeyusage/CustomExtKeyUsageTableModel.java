@@ -19,18 +19,19 @@
  */
 package org.kse.gui.crypto.customextkeyusage;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display Custom Extended Key Usage oids.
  */
-public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
+public class CustomExtKeyUsageTableModel extends ToolTipTableModel implements LoadableTableModel<ASN1ObjectIdentifier> {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/customextkeyusage/resources");
 
@@ -39,7 +40,7 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
     };
 
     private String[] columnNames;
-    private Object[][] data;
+    private List<ASN1ObjectIdentifier> data;
 
     /**
      * Construct a new CustomExtKeyUsageTableModel.
@@ -48,7 +49,7 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
         super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[1];
         columnNames[0] = res.getString("CustomExtKeyUsageTableTableModel.ObjectId");
-        data = new Object[0][0];
+        data = new ArrayList<>();
     }
 
     /**
@@ -56,18 +57,12 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
      *
      * @param objectIds The EKU oids
      */
-    public void load(Set<ASN1ObjectIdentifier> objectIds) {
-        ASN1ObjectIdentifier[] objectIdsArray = objectIds.toArray(ASN1ObjectIdentifier[]::new);
-        Arrays.sort(objectIdsArray, Comparator.comparing(ASN1ObjectIdentifier::getId,
-                                                         Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER)));
+    @Override
+    public void load(List<ASN1ObjectIdentifier> objectIds) {
 
-        data = new Object[objectIdsArray.length][2];
-
-        int i = 0;
-        for (ASN1ObjectIdentifier CustomExtKeyUsage : objectIdsArray) {
-            data[i][0] = CustomExtKeyUsage;
-            i++;
-        }
+        data = objectIds;
+        data.sort(Comparator.comparing(ASN1ObjectIdentifier::getId,
+                  Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER)));
 
         fireTableDataChanged();
     }
@@ -89,7 +84,7 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
      */
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     /**
@@ -112,7 +107,7 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+        return data.get(row);
     }
 
     /**

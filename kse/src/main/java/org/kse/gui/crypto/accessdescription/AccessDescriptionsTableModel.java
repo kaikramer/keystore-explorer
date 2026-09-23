@@ -19,20 +19,21 @@
  */
 package org.kse.gui.crypto.accessdescription;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.kse.crypto.x509.GeneralNameUtil;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 import org.kse.utilities.oid.ObjectIdComparator;
 
 /**
  * The table model used to display access descriptions.
  */
-public class AccessDescriptionsTableModel extends ToolTipTableModel {
+public class AccessDescriptionsTableModel extends ToolTipTableModel implements LoadableTableModel<AccessDescription> {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/accessdescription/resources");
     private static ObjectIdComparator objectIdComparator = new ObjectIdComparator();
@@ -43,7 +44,7 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
     };
 
     private String[] columnNames;
-    private Object[][] data;
+    private List<AccessDescription> data;
 
     /**
      * Construct a new AccessDescriptionsTableModel.
@@ -54,7 +55,7 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
         columnNames[0] = res.getString("AccessDescriptionsTableModel.AccessMethodColumn");
         columnNames[1] = res.getString("AccessDescriptionsTableModel.AccessLocationColumn");
 
-        data = new Object[0][0];
+        data = new ArrayList<>();
     }
 
     /**
@@ -62,19 +63,10 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
      *
      * @param accessDescriptions The access descriptions
      */
+    @Override
     public void load(List<AccessDescription> accessDescriptions) {
-        AccessDescription[] accessDescriptionsArray = accessDescriptions.toArray(
-                AccessDescription[]::new);
-        Arrays.sort(accessDescriptionsArray, new AccessDescriptionMethodComparator());
-
-        data = new Object[accessDescriptionsArray.length][2];
-
-        int i = 0;
-        for (AccessDescription accessDescription : accessDescriptionsArray) {
-            data[i][0] = accessDescription;
-            data[i][1] = accessDescription;
-            i++;
-        }
+        data = accessDescriptions;
+        data.sort(new AccessDescriptionMethodComparator());
 
         fireTableDataChanged();
     }
@@ -96,7 +88,7 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
      */
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     /**
@@ -119,7 +111,7 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+        return data.get(row);
     }
 
     /**

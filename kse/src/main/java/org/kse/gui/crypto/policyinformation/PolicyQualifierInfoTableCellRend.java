@@ -20,7 +20,6 @@
 package org.kse.gui.crypto.policyinformation;
 
 import java.awt.Component;
-import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -55,15 +54,9 @@ public class PolicyQualifierInfoTableCellRend extends DefaultTableCellRenderer {
 
         PolicyQualifierInfo policyQualifierInfo = (PolicyQualifierInfo) value;
 
-        try {
-            String policyQualifierInfoStr = PolicyInformationUtil.toString(policyQualifierInfo);
-            cell.setText(policyQualifierInfoStr);
-            cell.setToolTipText(policyQualifierInfoStr);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex); // We build this data so should not
-            // happen
-        }
-
+        String policyQualifierInfoStr = PolicyInformationUtil.toString(policyQualifierInfo);
+        cell.setText(policyQualifierInfoStr);
+        cell.setToolTipText(policyQualifierInfoStr);
         cell.setHorizontalAlignment(LEFT);
         cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 

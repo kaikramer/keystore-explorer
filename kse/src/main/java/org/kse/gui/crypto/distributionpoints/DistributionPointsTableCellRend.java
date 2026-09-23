@@ -50,6 +50,9 @@ public class DistributionPointsTableCellRend extends DefaultTableCellRenderer {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtDistributionPoints, value, isSelected, hasFocus,
                                                                    row, col);
 
+        // If the rendering of the distribution point changes such that
+        // distribution point content is used for the rendering then
+        // be sure to update the comparator in DistributionPointsTableModel.
         String distributionPointStr = "Distribution Point " + (row + 1);
         cell.setText(distributionPointStr);
         cell.setToolTipText(distributionPointStr);

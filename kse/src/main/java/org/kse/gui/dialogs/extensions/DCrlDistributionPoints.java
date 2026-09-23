@@ -27,6 +27,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -41,6 +43,7 @@ import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.distributionpoints.JDistributionPoints;
@@ -84,9 +87,8 @@ public class DCrlDistributionPoints extends DExtension {
      *
      * @param parent The parent dialog
      * @param value  CRL distribution points DER-encoded
-     * @throws IOException If value could not be decoded
      */
-    public DCrlDistributionPoints(JDialog parent, byte[] value) throws IOException {
+    public DCrlDistributionPoints(JDialog parent, byte[] value) {
         super(parent);
         setTitle(res.getString("DCrlDistributionPoints.Title"));
         initComponents();
@@ -140,17 +142,19 @@ public class DCrlDistributionPoints extends DExtension {
         pack();
     }
 
-    private void prepopulateWithValue(byte[] value) throws IOException {
+    private void prepopulateWithValue(byte[] value) {
 
         CRLDistPoint cRLDistPoint = CRLDistPoint.getInstance(value);
         if (cRLDistPoint != null) {
-            jdpDistributionPoints.setCRLDistPoint(cRLDistPoint);
+            DistributionPoint[] distributionPointArray = cRLDistPoint.getDistributionPoints();
+            jdpDistributionPoints.setItems(new ArrayList<>(Arrays.asList(distributionPointArray)));
         }
     }
 
     private void okPressed() {
 
-        CRLDistPoint cRLDistPoint = jdpDistributionPoints.getCRLDistPoint();
+        CRLDistPoint cRLDistPoint = new CRLDistPoint(
+                jdpDistributionPoints.getItems().toArray(DistributionPoint[]::new));
         if (cRLDistPoint.getDistributionPoints().length == 0) {
             JOptionPane.showMessageDialog(this, res.getString("DCrlDistributionPoints.ValueReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);

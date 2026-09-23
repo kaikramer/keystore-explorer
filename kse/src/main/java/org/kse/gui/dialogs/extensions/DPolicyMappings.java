@@ -78,9 +78,8 @@ public class DPolicyMappings extends DExtension {
      *
      * @param parent The parent dialog
      * @param value  Policy Mappings DER-encoded
-     * @throws IOException If value could not be decoded
      */
-    public DPolicyMappings(JDialog parent, byte[] value) throws IOException {
+    public DPolicyMappings(JDialog parent, byte[] value) {
         super(parent);
         setTitle(res.getString("DPolicyMappings.Title"));
         initComponents();
@@ -130,7 +129,7 @@ public class DPolicyMappings extends DExtension {
         pack();
     }
 
-    private void prepopulateWithValue(byte[] value) throws IOException {
+    private void prepopulateWithValue(byte[] value) {
         PolicyMappings policyMappings = PolicyMappings.getInstance(value);
 
         jpmPolicyMappings.setPolicyMappings(policyMappings);

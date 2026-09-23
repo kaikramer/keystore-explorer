@@ -20,7 +20,6 @@
 package org.kse.gui.crypto.policyinformation;
 
 import java.awt.Component;
-import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -55,15 +54,9 @@ public class PolicyInformationTableCellRend extends DefaultTableCellRenderer {
 
         PolicyInformation policyInformation = (PolicyInformation) value;
 
-        try {
-            String policyInformationStr = PolicyInformationUtil.toString(policyInformation);
-            cell.setText(policyInformationStr);
-            cell.setToolTipText(policyInformationStr);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex); // We build this data so should not
-            // happen
-        }
-
+        String policyInformationStr = PolicyInformationUtil.toString(policyInformation);
+        cell.setText(policyInformationStr);
+        cell.setToolTipText(policyInformationStr);
         cell.setHorizontalAlignment(LEFT);
         cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 

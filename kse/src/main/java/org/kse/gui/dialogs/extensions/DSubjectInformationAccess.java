@@ -25,6 +25,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -79,9 +80,8 @@ public class DSubjectInformationAccess extends DExtension {
      *
      * @param parent The parent dialog
      * @param value  Subject Information Access DER-encoded
-     * @throws IOException If value could not be decoded
      */
-    public DSubjectInformationAccess(JDialog parent, byte[] value) throws IOException {
+    public DSubjectInformationAccess(JDialog parent, byte[] value) {
         super(parent);
         setTitle(res.getString("DSubjectInformationAccess.Title"));
         initComponents();
@@ -132,14 +132,14 @@ public class DSubjectInformationAccess extends DExtension {
         pack();
     }
 
-    private void prepopulateWithValue(byte[] value) throws IOException {
+    private void prepopulateWithValue(byte[] value) {
         SubjectInfoAccess subjectInformationAccess = SubjectInfoAccess.getInstance(value);
 
-        jadAccessDescriptions.setAccessDescriptions(subjectInformationAccess.getAccessDescriptionList());
+        jadAccessDescriptions.setItems(new ArrayList<>(subjectInformationAccess.getAccessDescriptionList()));
     }
 
     private void okPressed() {
-        List<AccessDescription> accessDescriptions = jadAccessDescriptions.getAccessDescriptions();
+        List<AccessDescription> accessDescriptions = jadAccessDescriptions.getItems();
 
         if (accessDescriptions.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSubjectInformationAccess.ValueReq.message"), getTitle(),

@@ -122,11 +122,11 @@ public class DCustomExtKeyUsage extends JEscDialog {
 
     private void prepopulateWithOidList(Set<ASN1ObjectIdentifier> customExtKeyUsageOids) {
         Set<ASN1ObjectIdentifier> oids = new HashSet<>(customExtKeyUsageOids);
-        jCustomExtendedKeyUsage.setCustomExtKeyUsages(oids);
+        jCustomExtendedKeyUsage.setItems(oids);
     }
 
     private void okPressed() {
-        Set<ASN1ObjectIdentifier> objectIds = jCustomExtendedKeyUsage.getCustomExtKeyUsages();
+        Set<ASN1ObjectIdentifier> objectIds = jCustomExtendedKeyUsage.getItems();
         if (objectIds.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DCustomExtendedKeyUsage.ValueReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);

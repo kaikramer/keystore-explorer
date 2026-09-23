@@ -19,20 +19,20 @@
  */
 package org.kse.gui.crypto.policyinformation;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.kse.crypto.x509.PolicyInformationUtil;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display policy information.
  */
-public class PolicyInformationTableModel extends ToolTipTableModel {
+public class PolicyInformationTableModel extends ToolTipTableModel implements LoadableTableModel<PolicyInformation> {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
@@ -42,7 +42,7 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
     };
 
     private String[] columnNames;
-    private Object[][] data;
+    private List<PolicyInformation> data;
 
     /**
      * Construct a new PolicyInformationTableModel.
@@ -52,7 +52,7 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
         columnNames = new String[1];
         columnNames[0] = res.getString("PolicyInformationTableModel.PolicyInformationColumn");
 
-        data = new Object[0][0];
+        data = new ArrayList<>();
     }
 
     /**
@@ -60,18 +60,11 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
      *
      * @param policyInformation The policy information
      */
+    @Override
     public void load(List<PolicyInformation> policyInformation) {
-        PolicyInformation[] policyInformationArray = policyInformation.toArray(
-                PolicyInformation[]::new);
-        Arrays.sort(policyInformationArray, new PolicyInformationComparator());
 
-        data = new Object[policyInformation.size()][1];
-
-        int i = 0;
-        for (PolicyInformation policyInfo : policyInformationArray) {
-            data[i][0] = policyInfo;
-            i++;
-        }
+        data = policyInformation;
+        data.sort(new PolicyInformationComparator());
 
         fireTableDataChanged();
     }
@@ -93,7 +86,7 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
      */
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     /**
@@ -116,7 +109,7 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+        return data.get(row);
     }
 
     /**
@@ -145,13 +138,8 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
     static class PolicyInformationComparator implements Comparator<PolicyInformation> {
         @Override
         public int compare(PolicyInformation policyInformation1, PolicyInformation policyInformation2) {
-            try {
-                return PolicyInformationUtil.toString(policyInformation1)
-                                            .compareToIgnoreCase(PolicyInformationUtil.toString(policyInformation2));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex); // We build this data so should
-                // not happen
-            }
+            return PolicyInformationUtil.toString(policyInformation1)
+                    .compareToIgnoreCase(PolicyInformationUtil.toString(policyInformation2));
         }
     }
 }

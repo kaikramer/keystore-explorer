@@ -83,9 +83,8 @@ public class DCertificatePolicies extends DExtension {
      *
      * @param parent The parent dialog
      * @param value  Certificate Policies DER-encoded
-     * @throws IOException If value could not be decoded
      */
-    public DCertificatePolicies(JDialog parent, byte[] value) throws IOException {
+    public DCertificatePolicies(JDialog parent, byte[] value) {
         super(parent);
         setTitle(res.getString("DCertificatePolicies.Title"));
         initComponents();
@@ -136,17 +135,17 @@ public class DCertificatePolicies extends DExtension {
         pack();
     }
 
-    private void prepopulateWithValue(byte[] value) throws IOException {
+    private void prepopulateWithValue(byte[] value) {
         CertificatePolicies certificatePolicies = CertificatePolicies.getInstance(value);
 
-        List<PolicyInformation> accessDescriptionList = new ArrayList<>(
+        List<PolicyInformation> policyInformation = new ArrayList<>(
                 Arrays.asList(certificatePolicies.getPolicyInformation()));
 
-        jpiCertificatePolicies.setPolicyInformation(accessDescriptionList);
+        jpiCertificatePolicies.setItems(policyInformation);
     }
 
     private void okPressed() {
-        List<PolicyInformation> policyInformation = jpiCertificatePolicies.getPolicyInformation();
+        List<PolicyInformation> policyInformation = jpiCertificatePolicies.getItems();
 
         if (policyInformation.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DCertificatePolicies.ValueReq.message"), getTitle(),

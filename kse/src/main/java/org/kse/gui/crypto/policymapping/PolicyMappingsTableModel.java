@@ -19,21 +19,21 @@
  */
 package org.kse.gui.crypto.policymapping;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.kse.crypto.x509.PolicyMapping;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 import org.kse.utilities.oid.ObjectIdComparator;
 
 /**
  * The table model used to display policy mappings.
  */
-public class PolicyMappingsTableModel extends ToolTipTableModel {
+public class PolicyMappingsTableModel extends ToolTipTableModel implements LoadableTableModel<PolicyMapping> {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policymapping/resources");
     private static ObjectIdComparator objectIdComparator = new ObjectIdComparator();
@@ -44,7 +44,7 @@ public class PolicyMappingsTableModel extends ToolTipTableModel {
     };
 
     private String[] columnNames;
-    private Object[][] data;
+    private List<PolicyMapping> data;
 
     /**
      * Construct a new PolicyMappingsTableModel.
@@ -55,7 +55,7 @@ public class PolicyMappingsTableModel extends ToolTipTableModel {
         columnNames[0] = res.getString("PolicyMappingsTableModel.IssuerDomainPolicyColumn");
         columnNames[1] = res.getString("PolicyMappingsTableModel.SubjectDomainPolicyColumn");
 
-        data = new Object[0][0];
+        data = new ArrayList<>();
     }
 
     /**
@@ -63,26 +63,11 @@ public class PolicyMappingsTableModel extends ToolTipTableModel {
      *
      * @param policyMappings The policy mappings
      */
-    public void load(PolicyMappings policyMappings) {
+    @Override
+    public void load(List<PolicyMapping> policyMappings) {
 
-        ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
-
-        // convert and sort
-        ASN1Encodable[] asn1EncArray = policyMappingsSeq.toArray();
-        PolicyMapping[] policyMappingsArray = new PolicyMapping[asn1EncArray.length];
-        for (int i = 0; i < asn1EncArray.length; i++) {
-            policyMappingsArray[i] = PolicyMapping.getInstance(asn1EncArray[i]);
-        }
-        Arrays.sort(policyMappingsArray, new IssuerDomainPolicyComparator());
-
-        data = new Object[policyMappingsArray.length][2];
-
-        int i = 0;
-        for (PolicyMapping policyMapping : policyMappingsArray) {
-            data[i][0] = policyMapping;
-            data[i][1] = policyMapping;
-            i++;
-        }
+        data = policyMappings;
+        data.sort(new IssuerDomainPolicyComparator());
 
         fireTableDataChanged();
     }
@@ -104,7 +89,7 @@ public class PolicyMappingsTableModel extends ToolTipTableModel {
      */
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     /**
@@ -127,7 +112,7 @@ public class PolicyMappingsTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+        return data.get(row);
     }
 
     /**

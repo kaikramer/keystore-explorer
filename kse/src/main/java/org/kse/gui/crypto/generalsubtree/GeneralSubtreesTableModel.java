@@ -20,19 +20,20 @@
 package org.kse.gui.crypto.generalsubtree;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.GeneralSubtree;
 import org.kse.crypto.x509.GeneralNameUtil;
-import org.kse.crypto.x509.GeneralSubtrees;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display general subtrees.
  */
-public class GeneralSubtreesTableModel extends ToolTipTableModel {
+public class GeneralSubtreesTableModel extends ToolTipTableModel implements LoadableTableModel<GeneralSubtree> {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalsubtree/resources");
@@ -44,7 +45,7 @@ public class GeneralSubtreesTableModel extends ToolTipTableModel {
     };
 
     private String[] columnNames;
-    private Object[][] data;
+    private List<GeneralSubtree> data;
 
     /**
      * Construct a new GeneralSubtreesTableModel.
@@ -56,7 +57,7 @@ public class GeneralSubtreesTableModel extends ToolTipTableModel {
         columnNames[1] = res.getString("GeneralSubtreesTableModel.MinimumColumn");
         columnNames[2] = res.getString("GeneralSubtreesTableModel.MaximumColumn");
 
-        data = new Object[0][0];
+        data = new ArrayList<>();
     }
 
     /**
@@ -64,19 +65,10 @@ public class GeneralSubtreesTableModel extends ToolTipTableModel {
      *
      * @param generalSubtrees The general subtrees
      */
-    public void load(GeneralSubtrees generalSubtrees) {
-        List<GeneralSubtree> generalSubtreesList = generalSubtrees.getGeneralSubtrees();
-        generalSubtreesList.sort(new GeneralSubtreeBaseComparator());
-
-        data = new Object[generalSubtreesList.size()][3];
-
-        int i = 0;
-        for (GeneralSubtree generalSubtree : generalSubtreesList) {
-            data[i][0] = generalSubtree;
-            data[i][1] = generalSubtree;
-            data[i][2] = generalSubtree;
-            i++;
-        }
+    @Override
+    public void load(List<GeneralSubtree> generalSubtrees) {
+        data = generalSubtrees;
+        data.sort(new GeneralSubtreeBaseComparator());
 
         fireTableDataChanged();
     }
@@ -98,7 +90,7 @@ public class GeneralSubtreesTableModel extends ToolTipTableModel {
      */
     @Override
     public int getRowCount() {
-        return data.length;
+        return data.size();
     }
 
     /**
@@ -121,7 +113,7 @@ public class GeneralSubtreesTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+        return data.get(row);
     }
 
     /**

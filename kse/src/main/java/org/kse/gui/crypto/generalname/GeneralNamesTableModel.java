@@ -20,20 +20,19 @@
 package org.kse.gui.crypto.generalname;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
 import org.kse.crypto.x509.GeneralNameUtil;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display general names.
  */
-public class GeneralNamesTableModel extends ToolTipTableModel {
+public class GeneralNamesTableModel extends ToolTipTableModel implements LoadableTableModel<GeneralName> {
 
     private static final long serialVersionUID = 4224864830348756671L;
 
@@ -61,10 +60,11 @@ public class GeneralNamesTableModel extends ToolTipTableModel {
      *
      * @param generalNames The general names
      */
-    public void load(GeneralNames generalNames) {
-        GeneralName[] generalNamesArray = generalNames.getNames();
+    @Override
+    public void load(List<GeneralName> generalNames) {
 
-        data = new ArrayList<>(Arrays.asList(generalNamesArray));
+        this.data = generalNames;
+        data.sort(new GeneralNameComparator());
 
         fireTableDataChanged();
     }
@@ -133,49 +133,6 @@ public class GeneralNamesTableModel extends ToolTipTableModel {
     @Override
     public boolean isCellEditable(int row, int col) {
         return false;
-    }
-
-    /**
-     * Add a row
-     *
-     * @param generalName General name
-     */
-    public void addRow(GeneralName generalName) {
-        data.add(generalName);
-        fireTableDataChanged();
-    }
-
-    /**
-     * Remove a row
-     *
-     * @param row Row number
-     */
-    public void removeRow(int row) {
-        data.remove(row);
-        fireTableDataChanged();
-    }
-
-    /**
-     * Sets the value in the cell at <code>columnIndex</code> and
-     * <code>rowIndex</code> to <code>value</code>.
-     *
-     * @param value       the new value
-     * @param rowIndex    the row whose value is to be changed
-     * @param columnIndex the column whose value is to be changed
-     */
-    @Override
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        data.set(rowIndex, (GeneralName) value);
-        fireTableDataChanged();
-    }
-
-    /**
-     * Returns the table data
-     *
-     * @return List of general names as table data
-     */
-    public List<GeneralName> getData() {
-        return data;
     }
 
     static class GeneralNameComparator implements Comparator<GeneralName> {

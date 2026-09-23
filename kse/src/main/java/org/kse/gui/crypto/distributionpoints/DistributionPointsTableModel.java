@@ -21,20 +21,19 @@
 package org.kse.gui.crypto.distributionpoints;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display general names.
  */
-public class DistributionPointsTableModel extends ToolTipTableModel {
+public class DistributionPointsTableModel extends ToolTipTableModel implements LoadableTableModel<DistributionPoint> {
 
     private static final long serialVersionUID = 4224864830348756671L;
 
@@ -57,9 +56,9 @@ public class DistributionPointsTableModel extends ToolTipTableModel {
         data = new ArrayList<>();
     }
 
-    public void load(CRLDistPoint cRLDistPoint) {
-        DistributionPoint[] distributionPointArray = cRLDistPoint.getDistributionPoints();
-        data = new ArrayList<>(Arrays.asList(distributionPointArray));
+    @Override
+    public void load(List<DistributionPoint> data) {
+        this.data = data;
         data.sort(new DistributionPointComparator());
         fireTableDataChanged();
     }
@@ -130,38 +129,13 @@ public class DistributionPointsTableModel extends ToolTipTableModel {
         return false;
     }
 
-    /**
-     * Add a row
-     */
-    public void addRow(DistributionPoint distributionPoint) {
-        data.add(distributionPoint);
-        data.sort(new DistributionPointComparator());
-        fireTableDataChanged();
-    }
-
-    /**
-     * Remove a row
-     *
-     * @param row Row number
-     */
-    public void removeRow(int row) {
-        data.remove(row);
-        fireTableDataChanged();
-    }
-
-    /**
-     * Returns the table data
-     *
-     * @return List of general names as table data
-     */
-    public List<DistributionPoint> getData() {
-        return data;
-    }
-
     static class DistributionPointComparator implements Comparator<DistributionPoint> {
         @Override
         public int compare(DistributionPoint arg0, DistributionPoint arg1) {
-            return 0;//fix
+            // The DistributionPointsTableCellRend does not use the distribution
+            // point content for display. Sorting the list is irrelevant. The table
+            // cell renderer must be changed before enabling sorting.
+            return 0;
         }
     }
 }
