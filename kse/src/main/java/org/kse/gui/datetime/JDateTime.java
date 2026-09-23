@@ -20,9 +20,6 @@
 package org.kse.gui.datetime;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -35,6 +32,8 @@ import javax.swing.JTextField;
 
 import org.kse.gui.CursorUtil;
 import org.kse.utilities.StringUtils;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to edit a date/time value.
@@ -73,17 +72,9 @@ public class JDateTime extends JPanel {
         initComponents();
     }
 
-    // TODO JW - miglayout
     private void initComponents() {
         jtfDateTime = new JTextField(18);
         jtfDateTime.setEditable(false);
-
-        GridBagConstraints gbc_jtfDateTime = new GridBagConstraints();
-        gbc_jtfDateTime.gridwidth = 1;
-        gbc_jtfDateTime.gridheight = 1;
-        gbc_jtfDateTime.gridx = 0;
-        gbc_jtfDateTime.gridy = 0;
-        gbc_jtfDateTime.insets = new Insets(0, 0, 0, 5);
 
         ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_date_time.png"));
         jbEditDateTime = new JButton(editIcon);
@@ -97,39 +88,23 @@ public class JDateTime extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbEditDateTime = new GridBagConstraints();
-        gbc_jbEditDateTime.gridwidth = 1;
-        gbc_jbEditDateTime.gridheight = 1;
-        gbc_jbEditDateTime.gridx = 1;
-        gbc_jbEditDateTime.gridy = 0;
-        gbc_jbEditDateTime.insets = new Insets(0, 0, 0, 5);
+        ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_date_time.png"));
+        jbClearDateTime = new JButton(clearIcon);
+        jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
+        jbClearDateTime.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JDateTime.this);
+                clearDateTime();
+            } finally {
+                CursorUtil.setCursorFree(JDateTime.this);
+            }
+        });
+        jbClearDateTime.setVisible(showClearButton);
 
-        setLayout(new GridBagLayout());
-        add(jtfDateTime, gbc_jtfDateTime);
-        add(jbEditDateTime, gbc_jbEditDateTime);
-
-        if (showClearButton) {
-            ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_date_time.png"));
-            jbClearDateTime = new JButton(clearIcon);
-            jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
-            jbClearDateTime.addActionListener(evt -> {
-                try {
-                    CursorUtil.setCursorBusy(JDateTime.this);
-                    clearDateTime();
-                } finally {
-                    CursorUtil.setCursorFree(JDateTime.this);
-                }
-            });
-
-            GridBagConstraints gbc_jbClearDateTime = new GridBagConstraints();
-            gbc_jbClearDateTime.gridwidth = 1;
-            gbc_jbClearDateTime.gridheight = 1;
-            gbc_jbClearDateTime.gridx = 2;
-            gbc_jbClearDateTime.gridy = 0;
-            gbc_jbClearDateTime.insets = new Insets(0, 0, 0, 0);
-
-            add(jbClearDateTime, gbc_jbClearDateTime);
-        }
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add(jtfDateTime, "growx, pushx");
+        add(jbEditDateTime, "");
+        add(jbClearDateTime, "hidemode 3");
 
         populate();
     }
@@ -200,13 +175,11 @@ public class JDateTime extends JPanel {
 
         if (container instanceof JDialog) {
             dDateTimeChooser = new DDateTimeChooser((JDialog) container, title, date);
-            dDateTimeChooser.setLocationRelativeTo(container);
-            dDateTimeChooser.setVisible(true);
         } else {
             dDateTimeChooser = new DDateTimeChooser((JFrame) container, title, date);
-            dDateTimeChooser.setLocationRelativeTo(container);
-            dDateTimeChooser.setVisible(true);
         }
+        dDateTimeChooser.setLocationRelativeTo(container);
+        dDateTimeChooser.setVisible(true);
 
         Date newDate = dDateTimeChooser.getDate();
 

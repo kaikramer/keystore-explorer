@@ -20,9 +20,6 @@
 package org.kse.gui.crypto.generalname;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -35,6 +32,8 @@ import javax.swing.JTextField;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.kse.crypto.x509.GeneralNameUtil;
 import org.kse.gui.CursorUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to edit a general name.
@@ -61,17 +60,9 @@ public class JGeneralName extends JPanel {
         initComponents();
     }
 
-    // TODO JW - miglayout
     private void initComponents() {
         jtfGeneralName = new JTextField(40);
         jtfGeneralName.setEditable(false);
-
-        GridBagConstraints gbc_jtfGeneralName = new GridBagConstraints();
-        gbc_jtfGeneralName.gridwidth = 1;
-        gbc_jtfGeneralName.gridheight = 1;
-        gbc_jtfGeneralName.gridx = 0;
-        gbc_jtfGeneralName.gridy = 0;
-        gbc_jtfGeneralName.insets = new Insets(0, 0, 0, 5);
 
         ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_general_nm.png"));
         jbEditGeneralName = new JButton(editIcon);
@@ -85,13 +76,6 @@ public class JGeneralName extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbEditGeneralName = new GridBagConstraints();
-        gbc_jbEditGeneralName.gridwidth = 1;
-        gbc_jbEditGeneralName.gridheight = 1;
-        gbc_jbEditGeneralName.gridx = 1;
-        gbc_jbEditGeneralName.gridy = 0;
-        gbc_jbEditGeneralName.insets = new Insets(0, 0, 0, 5);
-
         ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_general_nm.png"));
         jbClearGeneralName = new JButton(clearIcon);
         jbClearGeneralName.setToolTipText(res.getString("JGeneralName.jbClearGeneralName.tooltip"));
@@ -104,17 +88,10 @@ public class JGeneralName extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbClearGeneralName = new GridBagConstraints();
-        gbc_jbClearGeneralName.gridwidth = 1;
-        gbc_jbClearGeneralName.gridheight = 1;
-        gbc_jbClearGeneralName.gridx = 2;
-        gbc_jbClearGeneralName.gridy = 0;
-        gbc_jbClearGeneralName.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jtfGeneralName, gbc_jtfGeneralName);
-        add(jbEditGeneralName, gbc_jbEditGeneralName);
-        add(jbClearGeneralName, gbc_jbClearGeneralName);
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add(jtfGeneralName, "growx, pushx");
+        add(jbEditGeneralName, "");
+        add(jbClearGeneralName, "");
 
         populate();
     }

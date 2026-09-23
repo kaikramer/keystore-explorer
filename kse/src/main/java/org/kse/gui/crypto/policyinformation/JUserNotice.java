@@ -20,9 +20,6 @@
 package org.kse.gui.crypto.policyinformation;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -35,6 +32,8 @@ import javax.swing.JTextField;
 import org.bouncycastle.asn1.x509.UserNotice;
 import org.kse.crypto.x509.PolicyInformationUtil;
 import org.kse.gui.CursorUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to edit a user notice.
@@ -61,17 +60,9 @@ public class JUserNotice extends JPanel {
         initComponents();
     }
 
-    // TODO JW - miglayout
     private void initComponents() {
         jtfUserNotice = new JTextField(20);
         jtfUserNotice.setEditable(false);
-
-        GridBagConstraints gbc_jtfUserNotice = new GridBagConstraints();
-        gbc_jtfUserNotice.gridwidth = 1;
-        gbc_jtfUserNotice.gridheight = 1;
-        gbc_jtfUserNotice.gridx = 0;
-        gbc_jtfUserNotice.gridy = 0;
-        gbc_jtfUserNotice.insets = new Insets(0, 0, 0, 5);
 
         ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_user_notice.png"));
         jbEditUserNotice = new JButton(editIcon);
@@ -85,13 +76,6 @@ public class JUserNotice extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbEditUserNotice = new GridBagConstraints();
-        gbc_jbEditUserNotice.gridwidth = 1;
-        gbc_jbEditUserNotice.gridheight = 1;
-        gbc_jbEditUserNotice.gridx = 1;
-        gbc_jbEditUserNotice.gridy = 0;
-        gbc_jbEditUserNotice.insets = new Insets(0, 0, 0, 5);
-
         ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_user_notice.png"));
         jbClearUserNotice = new JButton(clearIcon);
         jbClearUserNotice.setToolTipText(res.getString("JUserNotice.jbClearUserNotice.tooltip"));
@@ -104,17 +88,10 @@ public class JUserNotice extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbClearUserNotice = new GridBagConstraints();
-        gbc_jbClearUserNotice.gridwidth = 1;
-        gbc_jbClearUserNotice.gridheight = 1;
-        gbc_jbClearUserNotice.gridx = 2;
-        gbc_jbClearUserNotice.gridy = 0;
-        gbc_jbClearUserNotice.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jtfUserNotice, gbc_jtfUserNotice);
-        add(jbEditUserNotice, gbc_jbEditUserNotice);
-        add(jbClearUserNotice, gbc_jbClearUserNotice);
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add(jtfUserNotice, "growx, pushx");
+        add(jbEditUserNotice, "");
+        add(jbClearUserNotice, "");
 
         populate();
     }
