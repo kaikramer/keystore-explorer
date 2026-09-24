@@ -38,6 +38,8 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.crypto.x509.KseX500NameStyle;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Flexible DN chooser/viewer component.
  */
@@ -50,6 +52,13 @@ public class DistinguishedNameChooser extends JPanel {
     private String defaultName;
     private RdnPanelList listPanel;
 
+    /**
+     * Constructs a new DistinguishedNameChooser panel.
+     *
+     * @param dn        The distinguished name to display or edit. Use null for the default panel.
+     * @param editable  Boolean to indicate if the panel should be editable.
+     * @param defaultDN The default DN to use when dn is null. Use null for the default panel.
+     */
     public DistinguishedNameChooser(X500Name dn, boolean editable, String defaultDN) {
         this.editable = editable;
         if (dn == null || dn.getRDNs().length == 0) {
@@ -73,10 +82,14 @@ public class DistinguishedNameChooser extends JPanel {
         jScrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         jScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
-        setLayout(new BorderLayout());
-        add(jScrollPane, BorderLayout.CENTER);
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add(jScrollPane, "grow, push");
     }
 
+    /**
+     *
+     * @return The distinguished name without any empty RDNs.
+     */
     public X500Name getDN() {
         boolean noEmptyRdns = true;
         List<RDN> rdns = listPanel.getRdns(noEmptyRdns);
@@ -84,16 +97,27 @@ public class DistinguishedNameChooser extends JPanel {
         return new X500Name(rdns.toArray(RDN[]::new));
     }
 
+    /**
+     *
+     * @return The distinguished name including empty RDNs.
+     */
     public X500Name getDNWithEmptyRdns() {
         List<RDN> rdns = listPanel.getRdns(false);
         Collections.reverse(rdns);
         return new X500Name(rdns.toArray(RDN[]::new));
     }
 
+    /**
+     *
+     * @return The first RDN text field on the panel.
+     */
     public JTextField getFirstTextField() {
         return listPanel.getFirstTextField();
     }
 
+    /**
+     * Resets the panel to default.
+     */
     public void reset() {
         this.currentName = new X500Name(defaultName);
         removeAll();

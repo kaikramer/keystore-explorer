@@ -54,16 +54,22 @@ public class RdnPanelList extends JPanel {
 
     private static final String[] comboBoxEntries = OidDisplayNameMapping.getDisplayNames();
 
+    /**
+     * Constructs a new RdnPanelList panel.
+     *
+     * @param x500Name The X.500 name to display or edit.
+     * @param editable Boolean to indicate if the name should be editable.
+     */
     public RdnPanelList(X500Name x500Name, boolean editable) {
-        setLayout(new MigLayout("insets dialog, flowy", "[right]", "[]rel[]"));
+        setLayout(new MigLayout("insets 0, flowy", "[right]", "[]rel[]"));
         setFocusCycleRoot(true);
 
         // we have to reverse RDN order for dialog
         List<RDN> rdnsAsList = Arrays.asList(x500Name.getRDNs());
         Collections.reverse(rdnsAsList);
 
+        this.editable = editable;
         for (RDN rdn : rdnsAsList) {
-            this.editable = editable;
             for (AttributeTypeAndValue atav : rdn.getTypesAndValues()) {
                 String type = OidDisplayNameMapping.getDisplayNameForOid(atav.getType().getId());
                 String value = atav.getValue().toString();
@@ -113,6 +119,11 @@ public class RdnPanelList extends JPanel {
         }
     }
 
+    /**
+     * Clones an RdnPanel for adding to the list.
+     *
+     * @param entry The RdnPanel entry to clone.
+     */
     public void cloneEntry(RdnPanel entry) {
         Object selected = entry.getComboBox().getSelectedItem();
         RdnPanel clone = new RdnPanel(new JComboBox<>(comboBoxEntries), selected.toString(), "", this, editable);
@@ -157,6 +168,11 @@ public class RdnPanelList extends JPanel {
         refresh();
     }
 
+    /**
+     * Removes a RdnPanel from the list.
+     *
+     * @param entry The RdnPanel to remove.
+     */
     public void removeItem(RdnPanel entry) {
         entries.remove(entry);
         remove(entry);
@@ -164,6 +180,12 @@ public class RdnPanelList extends JPanel {
         refresh();
     }
 
+    /**
+     * Gets the RDNs.
+     *
+     * @param noEmptyRdns True, to strip out any empty RDNs. False, to include empty RDNs.
+     * @return The list of RDNs.
+     */
     public List<RDN> getRdns(boolean noEmptyRdns) {
         List<RDN> rdns = new ArrayList<>();
         for (RdnPanel rdnPanel : entries) {
@@ -177,6 +199,10 @@ public class RdnPanelList extends JPanel {
         return rdns;
     }
 
+    /**
+     *
+     * @return The first text field in the list.
+     */
     public JTextField getFirstTextField() {
         RdnPanel rdnPanel = entries.get(0);
         if (rdnPanel != null) {

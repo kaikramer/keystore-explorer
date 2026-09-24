@@ -19,7 +19,6 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -99,8 +98,6 @@ public class DGetAlias extends JEscDialog {
     }
 
     private void initComponents(final String alias) {
-        getContentPane().setLayout(new BorderLayout());
-
         jlAlias = new JLabel(res.getString("DGetAlias.jlAlias.text"));
         jtfAlias = new JTextField(15);
 

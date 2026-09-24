@@ -20,9 +20,6 @@
 package org.kse.gui.oid;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -37,6 +34,8 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.oid.InvalidObjectIdException;
 import org.kse.utilities.oid.ObjectIdUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to edit an object identifier.
@@ -67,13 +66,6 @@ public class JObjectId extends JPanel {
         jtfObjectId = new JTextField(25);
         jtfObjectId.setEditable(false);
 
-        GridBagConstraints gbc_jtfObjectId = new GridBagConstraints();
-        gbc_jtfObjectId.gridwidth = 1;
-        gbc_jtfObjectId.gridheight = 1;
-        gbc_jtfObjectId.gridx = 0;
-        gbc_jtfObjectId.gridy = 0;
-        gbc_jtfObjectId.insets = new Insets(0, 0, 0, 5);
-
         ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_object_id.png"));
         jbEditObjectId = new JButton(editIcon);
         jbEditObjectId.setToolTipText(res.getString("JObjectId.jbEditObjectId.tooltip"));
@@ -85,13 +77,6 @@ public class JObjectId extends JPanel {
                 CursorUtil.setCursorFree(JObjectId.this);
             }
         });
-
-        GridBagConstraints gbc_jbEditObjectId = new GridBagConstraints();
-        gbc_jbEditObjectId.gridwidth = 1;
-        gbc_jbEditObjectId.gridheight = 1;
-        gbc_jbEditObjectId.gridx = 1;
-        gbc_jbEditObjectId.gridy = 0;
-        gbc_jbEditObjectId.insets = new Insets(0, 0, 0, 5);
 
         ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_object_id.png"));
         jbClearObjectId = new JButton(clearIcon);
@@ -105,17 +90,10 @@ public class JObjectId extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbClearObjectId = new GridBagConstraints();
-        gbc_jbClearObjectId.gridwidth = 1;
-        gbc_jbClearObjectId.gridheight = 1;
-        gbc_jbClearObjectId.gridx = 2;
-        gbc_jbClearObjectId.gridy = 0;
-        gbc_jbClearObjectId.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jtfObjectId, gbc_jtfObjectId);
-        add(jbEditObjectId, gbc_jbEditObjectId);
-        add(jbClearObjectId, gbc_jbClearObjectId);
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add(jtfObjectId, "growx, pushx");
+        add(jbEditObjectId, "");
+        add(jbClearObjectId, "");
 
         populate();
     }
