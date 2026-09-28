@@ -21,7 +21,6 @@ package org.kse.gui.quickstart;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
@@ -31,8 +30,6 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.util.ResourceBundle;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -79,7 +76,6 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
     private JQuickStartButton jqsbOpenCaCertificatesKeyStore;
     private JQuickStartButton jqsbExamineCertificate;
     private JQuickStartButton jqsbHelp;
-    private JPanel jpNonResizeCenterHorizontally;
 
     /**
      * Construct Quick Start pane.
@@ -175,15 +171,8 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
         jpQuickStart.add(jqsbExamineCertificate);
         jpQuickStart.add(jqsbHelp);
 
-        // Put in panel to prevent resize of controls and center them horizontally
-        jpNonResizeCenterHorizontally = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        jpNonResizeCenterHorizontally.setOpaque(false);
-        jpNonResizeCenterHorizontally.add(jpQuickStart);
-
-        // Set pane's layout to center controls vertically
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(Box.createVerticalGlue());
-        add(jpNonResizeCenterHorizontally);
+        setLayout(new MigLayout("insets 0, fill", "[grow]", "[grow]"));
+        add(jpQuickStart, "align center");
     }
 
     @Override
