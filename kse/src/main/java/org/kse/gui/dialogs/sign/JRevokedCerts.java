@@ -20,7 +20,6 @@
 
 package org.kse.gui.dialogs.sign;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
@@ -48,11 +47,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import com.formdev.flatlaf.util.SystemFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -79,6 +75,9 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.table.ToolTipTable;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Component to show the list of certificates revoked
  */
@@ -91,7 +90,6 @@ public class JRevokedCerts extends JPanel {
     private JScrollPane jspRevokedCertsTable;
     private JTable jtRevokedCerts;
 
-    private JPanel jpRevokedButtons;
     private JButton jbRevCertFile;
     private JButton jbRevKeyStore;
     private JButton jbRevLoadCrl;
@@ -165,28 +163,21 @@ public class JRevokedCerts extends JPanel {
                                                              ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                              ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspRevokedCertsTable.getViewport().setBackground(jtRevokedCerts.getBackground());
-
-        jpRevokedButtons = new JPanel();
-        jpRevokedButtons.setLayout(new BoxLayout(jpRevokedButtons, BoxLayout.Y_AXIS));
-        jpRevokedButtons.add(Box.createVerticalGlue());
-        jpRevokedButtons.add(jbRevKeyStore);
-        jpRevokedButtons.add(Box.createVerticalStrut(3));
-        jpRevokedButtons.add(jbRevCertFile);
-        jpRevokedButtons.add(Box.createVerticalStrut(3));
-        jpRevokedButtons.add(jbRevLoadCrl);
-        jpRevokedButtons.add(Box.createVerticalGlue());
+        jspRevokedCertsTable.setPreferredSize(new Dimension(100, 200));
 
         jbRevCertFile.addActionListener(evt -> revCertFilePressed());
         jbRevKeyStore.addActionListener(evt -> revKeyStorePressed());
         jbRevLoadCrl.addActionListener(evt -> revLoadCrlPressed());
 
-        populate();
+        // layout
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add (jlRevokedCerts, "spanx, growx, wrap");
+        add(jspRevokedCertsTable, "grow, push");
+        add(jbRevKeyStore, "split 3, flowy");
+        add(jbRevCertFile);
+        add(jbRevLoadCrl, "wrap rel");
 
-        this.setLayout(new BorderLayout(5, 5));
-        this.setPreferredSize(new Dimension(100, 200));
-        this.add(jlRevokedCerts, BorderLayout.NORTH);
-        this.add(jspRevokedCertsTable, BorderLayout.CENTER);
-        this.add(jpRevokedButtons, BorderLayout.EAST);
+        populate();
     }
 
     private void populate() {

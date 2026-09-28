@@ -20,7 +20,6 @@
 
 package org.kse.gui.dialogs.sign;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
@@ -45,6 +44,8 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.table.TableUtil;
 import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.history.KeyStoreHistory;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to show the list of certificates of a keystore
@@ -89,10 +90,10 @@ public class JListCertificates extends JPanel {
         jspListCertsTable = PlatformUtil.createScrollPane(jtListCerts, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspListCertsTable.getViewport().setBackground(jtListCerts.getBackground());
+        jspListCertsTable.setPreferredSize(new Dimension(800, 300));
 
-        this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(800, 300));
-        this.add(jspListCertsTable, BorderLayout.CENTER);
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        add(jspListCertsTable);
     }
 
     /**
