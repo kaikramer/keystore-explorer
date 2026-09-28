@@ -133,8 +133,6 @@ public class DChangePassword extends JEscDialog {
     }
 
     private void initComponents() {
-        getContentPane().setLayout(new BorderLayout());
-
         jlOld = new JLabel(res.getString("DChangePassword.jlOld.text"));
 
         if (oldPassword != null) {
