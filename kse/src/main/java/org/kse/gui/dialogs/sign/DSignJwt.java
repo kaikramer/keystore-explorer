@@ -85,6 +85,7 @@ public class DSignJwt extends JEscDialog {
     private JTextField jtfAudience;
     private JLabel jlSignatureAlgorithm;
     private JComboBox<JWSAlgorithm> jcbSignatureAlgorithm;
+    private JLabel jlClaims;
     private JClaims jpClaims;
 
     private JButton jbOK;
@@ -174,6 +175,7 @@ public class DSignJwt extends JEscDialog {
         }
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
 
+        jlClaims = new JLabel(res.getString("JClaims.jlClaims.text"));
         jpClaims = new JClaims(parent);
 
         jbOK = new JButton(res.getString("DSignJwt.jbOK.text"));
@@ -187,7 +189,7 @@ public class DSignJwt extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 
         pane.add(jlId, "");
-        pane.add(jtfId, "");
+        pane.add(jtfId, "split 2");
         pane.add(jbGenId, "wrap");
 
         pane.add(jlIssuer, "");
@@ -216,6 +218,7 @@ public class DSignJwt extends JEscDialog {
         }
 
         pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jlClaims, "left, spanx, wrap rel");
         pane.add(jpClaims, "spanx, growx, wrap unrel");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jpButtons, "spanx, growx");
@@ -266,6 +269,10 @@ public class DSignJwt extends JEscDialog {
         dispose();
     }
 
+    /**
+     *
+     * @return The JWT issuer.
+     */
     public String getIssuer() {
         if (!jtfIssuer.getText().isEmpty()) {
             return jtfIssuer.getText();
@@ -274,6 +281,10 @@ public class DSignJwt extends JEscDialog {
         }
     }
 
+    /**
+     *
+     * @return The JWT id.
+     */
     public String getId() {
         if (!jtfId.getText().isEmpty()) {
             return jtfId.getText();
@@ -282,19 +293,35 @@ public class DSignJwt extends JEscDialog {
         }
     }
 
+    /**
+     *
+     * @return The JWT issued at date and time.
+     */
     public Date getIssuedAt() {
         return jdtIssuedAt.getDateTime();
     }
 
+    /**
+     *
+     * @return The JWT not before date and time.
+     */
     public Date getNotBefore() {
         return jdtNotBefore.getDateTime();
     }
 
+    /**
+     *
+     * @return The JWT expiration date and time.
+     */
     public Date getExpiration() {
         return jdtExpiration.getDateTime();
 
     }
 
+    /**
+     *
+     * @return The JWT subject.
+     */
     public String getSubject() {
         if (!jtfSubject.getText().isEmpty()) {
             return jtfSubject.getText();
@@ -303,6 +330,10 @@ public class DSignJwt extends JEscDialog {
         }
     }
 
+    /**
+     *
+     * @return The JWT audience.
+     */
     public String getAudience() {
         if (!jtfAudience.getText().isEmpty()) {
             return jtfAudience.getText();
@@ -311,14 +342,26 @@ public class DSignJwt extends JEscDialog {
         }
     }
 
+    /**
+     *
+     * @return A list of the JWT custom claims.
+     */
     public List<CustomClaim> getCustomClaims() {
-        return jpClaims.getCustomClaims();
+        return jpClaims.getItems();
     }
 
+    /**
+     *
+     * @return True if Ok is clicked. False if cancelled.
+     */
     public boolean isOk() {
         return isOk;
     }
 
+    /**
+     *
+     * @return The JWS signature algorithm.
+     */
     public JWSAlgorithm getAlgorithm() {
         if (KeyPairType.EC == signKeyPairType || KeyPairType.ECDSA == signKeyPairType) {
             // For EC the JWS algorithm is derived from the curve, not chosen by the user
@@ -339,6 +382,10 @@ public class DSignJwt extends JEscDialog {
         return (JWSAlgorithm) jcbSignatureAlgorithm.getSelectedItem();
     }
 
+    /**
+     *
+     * @return The JWS EC curve.
+     */
     public Curve getCurve() {
         if (KeyPairType.EC == signKeyPairType) {
             if (signPublicKey instanceof ECPublicKey) {
@@ -348,7 +395,7 @@ public class DSignJwt extends JEscDialog {
         return null;
     }
 
-    public static Date addOneDayCalendar(Date date) {
+    private Date addOneDayCalendar(Date date) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         c.add(Calendar.DATE, 1);
