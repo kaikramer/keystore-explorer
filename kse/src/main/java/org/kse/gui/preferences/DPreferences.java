@@ -22,8 +22,8 @@ package org.kse.gui.preferences;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.kse.gui.SwingUtil.fixScrolling;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -61,6 +61,8 @@ import org.kse.gui.preferences.data.PasswordManagerSettings;
 import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
 import org.kse.gui.preferences.data.RngTypeSetting;
 import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to allow the users to configure KeyStore Explorer's preferences.
@@ -111,12 +113,10 @@ public class DPreferences extends JEscDialog {
      * Create preference menu components for navigation and cardlayout
      */
     public void initComponents() {
-        getContentPane().setLayout(new BorderLayout(0, 0));
         JSplitPane jsPane = new JSplitPane();
         jsPane.setDividerSize(20);
         jsPane.setOneTouchExpandable(true);
         jsPane.setResizeWeight(0.2);
-        getContentPane().add(jsPane);
 
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root", true);
 
@@ -192,7 +192,11 @@ public class DPreferences extends JEscDialog {
 
         // set dialog pane buttons
         JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        pane.add(jsPane, "grow, push, wrap 0px"); // the button panel has insets for padding
+        pane.add(jpButtons, "spanx, growx");
 
         jbOK.addActionListener(e -> {
             try {
