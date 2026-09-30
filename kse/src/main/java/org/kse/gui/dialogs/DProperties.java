@@ -491,6 +491,19 @@ public class DProperties extends JResizableDialog {
 
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
+            // PKCS#11 and MSCAPI key store types do not provide access to the private key data
+            if (privateKey.getEncoded() == null) {
+                DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.PrivateKey"));
+                parentNode.add(privateKeyNode);
+
+                DefaultMutableTreeNode lockedNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.Protected"));
+                privateKeyNode.add(lockedNode);
+
+                return;
+            }
+
             createPrivateKeyNodes(parentNode, privateKey);
         } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
             throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
