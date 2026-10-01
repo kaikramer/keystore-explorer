@@ -39,7 +39,13 @@ public class ClaimsTableCellRend extends DefaultTableCellRenderer {
                                                    int row, int col) {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtClaims, value, isSelected, hasFocus, row, col);
 
-        cell.setText((String) value);
+        CustomClaim customClaim = (CustomClaim) value;
+
+        if (col == 0) {
+            cell.setText(customClaim.getName());
+        } else {
+            cell.setText(customClaim.getValue());
+        }
 
         cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 

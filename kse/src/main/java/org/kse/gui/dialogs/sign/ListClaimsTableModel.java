@@ -21,15 +21,17 @@
 package org.kse.gui.dialogs.sign;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.kse.gui.table.LoadableTableModel;
 import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display a list of custom claims
  */
-public class ListClaimsTableModel extends ToolTipTableModel {
+public class ListClaimsTableModel extends ToolTipTableModel implements LoadableTableModel<CustomClaim> {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
@@ -42,6 +44,9 @@ public class ListClaimsTableModel extends ToolTipTableModel {
     private String[] columnNames;
     List<CustomClaim> listClaims;
 
+    /**
+     * Construct a new ListClaimsTableModel.
+     */
     public ListClaimsTableModel() {
         super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[2];
@@ -91,12 +96,7 @@ public class ListClaimsTableModel extends ToolTipTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        CustomClaim customClaim = listClaims.get(row);
-        if (col == 0) {
-            return customClaim.getName();
-        } else {
-            return customClaim.getValue();
-        }
+        return listClaims.get(row);
     }
 
     /**
@@ -107,7 +107,7 @@ public class ListClaimsTableModel extends ToolTipTableModel {
      */
     @Override
     public Class<?> getColumnClass(int col) {
-        return String.class;
+        return CustomClaim.class;
     }
 
     /**
@@ -122,27 +122,25 @@ public class ListClaimsTableModel extends ToolTipTableModel {
         return false;
     }
 
-    public void removeRow(int selectedRow) {
-        listClaims.remove(selectedRow);
-        fireTableDataChanged();
-    }
-
+    @Override
     public void load(List<CustomClaim> listClaims) {
-        this.listClaims.addAll(listClaims);
+        this.listClaims = listClaims;
+        this.listClaims.sort(new CustomClaimNameComparator());
+
         fireTableDataChanged();
     }
 
-    public void addRow(CustomClaim customClaim) {
-        listClaims.add(customClaim);
-        fireTableDataChanged();
+    static class CustomClaimNameComparator implements Comparator<CustomClaim> {
+        @Override
+        public int compare(CustomClaim o1, CustomClaim o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
+        }
     }
 
-    public List<CustomClaim> getData() {
-        return listClaims;
-    }
-
-    public void updateRow(int selectedRow, CustomClaim customClaim) {
-        listClaims.set(selectedRow, customClaim);
-        fireTableDataChanged();
+    static class CustomClaimValueComparator implements Comparator<CustomClaim> {
+        @Override
+        public int compare(CustomClaim o1, CustomClaim o2) {
+            return o1.getValue().compareToIgnoreCase(o2.getValue());
+        }
     }
 }

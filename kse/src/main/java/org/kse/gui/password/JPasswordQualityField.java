@@ -20,11 +20,7 @@
 package org.kse.gui.password;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -33,6 +29,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Password field with quality meter.
@@ -82,30 +80,13 @@ public class JPasswordQualityField extends JPanel {
         jpfPassword = new JPasswordField(columns);
         jpfPassword.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
-        GridBagConstraints gbc_jpfPassword = new GridBagConstraints();
-        gbc_jpfPassword.gridwidth = 1;
-        gbc_jpfPassword.gridheight = 1;
-        gbc_jpfPassword.gridx = 0;
-        gbc_jpfPassword.gridy = 0;
-        gbc_jpfPassword.insets = new Insets(0, 0, 1, 0);
-        gbc_jpfPassword.fill = GridBagConstraints.HORIZONTAL;
-
         if (getMinPasswordQuality() >= 0) {
             jpqmQuality = new JPasswordQualityMeter(getMinPasswordQuality());
         } else {
             jpqmQuality = new JPasswordQualityMeter();
         }
-        jpqmQuality.setPreferredSize(new Dimension(0, 6));
 
         initQualityBar();
-
-        GridBagConstraints gbc_jpbQuality = new GridBagConstraints();
-        gbc_jpbQuality.gridwidth = 1;
-        gbc_jpbQuality.gridheight = 1;
-        gbc_jpbQuality.gridx = 0;
-        gbc_jpbQuality.gridy = 1;
-        gbc_jpbQuality.insets = new Insets(0, 0, 0, 0);
-        gbc_jpbQuality.fill = GridBagConstraints.HORIZONTAL;
 
         jpfPassword.addKeyListener(new KeyAdapter() {
             @Override
@@ -114,10 +95,9 @@ public class JPasswordQualityField extends JPanel {
             }
         });
 
-        setLayout(new GridBagLayout());
-
-        add(jpfPassword, gbc_jpfPassword);
-        add(jpqmQuality, gbc_jpbQuality);
+        setLayout(new MigLayout("insets 0, fill", "[]", "[]1px[]"));
+        add(jpfPassword, "growx, wrap");
+        add(jpqmQuality, "growx, h 6!");
     }
 
     /**
