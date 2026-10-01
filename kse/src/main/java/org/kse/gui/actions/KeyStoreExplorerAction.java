@@ -130,7 +130,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
         Password password = state.getEntryPassword(alias);
 
         if (password == null) {
-            if (!KeyStoreType.resolveJce(state.getKeyStore().getType()).hasEntryPasswords()) {
+            if (!state.getType().hasEntryPasswords()) {
                 password = new Password((char[]) null);
             } else {
                 password = unlockEntry(alias, state);

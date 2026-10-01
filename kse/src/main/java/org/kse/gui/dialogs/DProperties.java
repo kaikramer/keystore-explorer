@@ -19,6 +19,10 @@
  */
 package org.kse.gui.dialogs;
 
+import static org.kse.crypto.keypair.KeyPairType.EC;
+import static org.kse.crypto.keypair.KeyPairType.ECGOST3410;
+import static org.kse.crypto.keypair.KeyPairType.ECGOST3410_2012;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -28,6 +32,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -75,6 +80,7 @@ import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
+import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JResizableDialog;
 import org.kse.gui.passwordmanager.Password;
@@ -94,6 +100,7 @@ public class DProperties extends JResizableDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private static final String NEWLINE = "\n";
+    private static final IndentSequence INDENT = IndentSequence.FOUR_SPACES;
 
     private JPanel jpButtons;
     private JButton jbCopy;
@@ -102,19 +109,21 @@ public class DProperties extends JResizableDialog {
     private JScrollPane jspProperties;
     private KeyStoreHistory history;
     private KeyStoreState currentState;
-    private IndentSequence INDENT = IndentSequence.FOUR_SPACES;
+    private KseFrame kseFrame;
 
     /**
      * Creates a new DProperties dialog.
      *
-     * @param parent  Parent frame
-     * @param history KeyStore history
+     * @param parent   Parent frame
+     * @param history  KeyStore history
+     * @param kseFrame KseFrame
      * @throws CryptoException If a problem occurred while getting the properties
      */
-    public DProperties(JFrame parent, KeyStoreHistory history) throws CryptoException {
+    public DProperties(JFrame parent, KeyStoreHistory history, KseFrame kseFrame) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.history = history;
         this.currentState = history.getCurrentState();
+        this.kseFrame = kseFrame;
         initComponents();
     }
 
@@ -352,6 +361,11 @@ public class DProperties extends JResizableDialog {
                     MessageFormat.format(res.getString("DProperties.properties.KeySize"), "?")));
         }
 
+        if (isECKey(keyAlg)) {
+            publicKeyNode.add(new DefaultMutableTreeNode(MessageFormat
+                    .format(res.getString("DProperties.properties.ec.Curve"), keyInfo.getDetailedAlgorithm())));
+        }
+
         String keyFormat = publicKey.getFormat();
 
         publicKeyNode.add(new DefaultMutableTreeNode(
@@ -477,6 +491,19 @@ public class DProperties extends JResizableDialog {
 
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
+            // PKCS#11 and MSCAPI key store types do not provide access to the private key data
+            if (privateKey.getEncoded() == null) {
+                DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.PrivateKey"));
+                parentNode.add(privateKeyNode);
+
+                DefaultMutableTreeNode lockedNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.Protected"));
+                privateKeyNode.add(lockedNode);
+
+                return;
+            }
+
             createPrivateKeyNodes(parentNode, privateKey);
         } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
             throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
@@ -504,6 +531,11 @@ public class DProperties extends JResizableDialog {
         } else {
             privateKeyNode.add(new DefaultMutableTreeNode(
                     MessageFormat.format(res.getString("DProperties.properties.KeySize"), "?")));
+        }
+
+        if (isECKey(keyAlg)) {
+            privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat
+                    .format(res.getString("DProperties.properties.ec.Curve"), keyInfo.getDetailedAlgorithm())));
         }
 
         String keyFormat = privateKey.getFormat();
@@ -588,9 +620,42 @@ public class DProperties extends JResizableDialog {
 
     }
 
+    private boolean isECKey(String keyAlg) {
+        return EC.jce().equals(keyAlg) || ECGOST3410.jce().equalsIgnoreCase(keyAlg)
+                || ECGOST3410_2012.jce().equalsIgnoreCase(keyAlg);
+    }
+
     private Password getEntryPassword(String alias) {
 
-        return currentState.getEntryPassword(alias);
+        Password password = currentState.getEntryPassword(alias);
+        if (!currentState.getType().hasEntryPasswords()) {
+            password = new Password((char[]) null);
+        } else {
+            password = attemptSilentUnlock(alias);
+        }
+        return password;
+    }
+
+    private Password attemptSilentUnlock(String alias) {
+        Password password = null;
+
+        // for PKCS#12 keystores, the entry password is usually the same as the keystore password
+        if (currentState.getType().entrySameAsKeyStorePassword()) {
+            Password keystorePassword = currentState.getPassword();
+            if (keystorePassword != null) {
+                password = new Password(keystorePassword.toCharArray());
+                try {
+                    // test if password is correct
+                    currentState.getKeyStore().getKey(alias, password.toCharArray());
+                    currentState.setEntryPassword(alias, password);
+                    kseFrame.updateControls(true);
+                } catch (GeneralSecurityException ex) {
+                    password = null;
+                }
+            }
+        }
+
+        return password;
     }
 
     private void createKeysNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
