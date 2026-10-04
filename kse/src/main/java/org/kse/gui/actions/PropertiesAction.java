@@ -61,7 +61,7 @@ public class PropertiesAction extends KeyStoreExplorerAction {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-            DProperties dProperties = new DProperties(frame, history);
+            DProperties dProperties = new DProperties(frame, history, kseFrame);
             dProperties.setLocationRelativeTo(frame);
             dProperties.setVisible(true);
         } catch (Exception ex) {

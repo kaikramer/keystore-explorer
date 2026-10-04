@@ -316,10 +316,16 @@ public final class KeyPairUtil {
                 return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
             } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)
                     || ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
-                ECPrivateKey privk = (ECPrivateKey) privateKey;
-                ECParameterSpec spec = privk.getParams();
-                int size = spec.getOrder().bitLength();
-                return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(privateKey));
+                // PKCS#11 and MSCAPI providers don't implement the ECPrivateKey interface
+                if (privateKey instanceof ECPrivateKey) {
+                    ECPrivateKey privk = (ECPrivateKey) privateKey;
+                    ECParameterSpec spec = privk.getParams();
+                    int size = spec.getOrder().bitLength();
+                    return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(privateKey));
+                } else {
+                    // Cannot determine the key size or curve of a PKCS#11 or MSCAPI EC private key.
+                    return new KeyInfo(ASYMMETRIC, algorithm, null);
+                }
             } else if (ED25519.jce().equalsIgnoreCase(algorithm) || X25519.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm) || X448.jce().equalsIgnoreCase(algorithm)) {
