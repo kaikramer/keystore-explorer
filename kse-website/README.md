@@ -53,7 +53,7 @@ npm run preview
 ```
 
 The site is deployed automatically to GitHub Pages via the workflow in
-[.github/workflows/deploy.yml](.github/workflows/deploy.yml) whenever changes are pushed to `main`.
+[.github/workflows/deploy-pages.yml](https://github.com/kaikramer/keystore-explorer/blob/main/.github/workflows/deploy-pages.yml) whenever changes are pushed to `main`.
 
 ---
 See also: [main page about Contributing to the KeyStore Explorer Project](https://github.com/kaikramer/keystore-explorer/blob/main/CONTRIBUTING.md)
