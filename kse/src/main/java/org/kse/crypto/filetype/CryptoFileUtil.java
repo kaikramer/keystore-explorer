@@ -375,33 +375,20 @@ public class CryptoFileUtil {
 
             // Test for BKS and UBER
 
-            // Both start with a version number of 1 (UBER) or 2 (BKS)
+            // Version number 2 is BKS (V2), version 1 is UBER or the unsupported BKS-V1
             if (i1 == 1 || i1 == 2) {
-                /*
-                 * For BKS and UBER the last 20 bytes of the file are the SHA-1
-                 * Hash while the byte before that is a ASN1Null (0) indicating
-                 * the end of the store. UBER, however, encrypts the store
-                 * content making it highly unlikely that the ASN1Null end byte
-                 * will be preserved. Therefore if the 21st byte from the end of
-                 * the file is a ASN1Null then the KeyStore is BKS
-                 */
-
                 if (data.length < 26) {
                     // Insufficient bytes to be BKS or UBER
                     return null;
                 }
 
-                // Skip to 21st from last byte (file length minus 21 and the 4 bytes already read)
-                dis.skip(data.length - 25l);
-
-                // Read what may be the null byte
-                if (dis.readByte() == 0) {
-                    // Found null byte - BKS
+                if (i1 == 2) {
                     return BKS;
-                } else {
-                    // No null byte - UBER
-                    return UBER;
                 }
+
+                // BKS-V1 is not supported. It has the same layout as BKS-V2 but version 1, while UBER encrypts
+                // everything after the header, so a successful walk through the plaintext entries means BKS-V1.
+                return isBksEntryStructure(data) ? null : UBER;
             }
         }
 
@@ -455,6 +442,61 @@ public class CryptoFileUtil {
 
         // KeyStore type not recognised
         return null;
+    }
+
+    /**
+     * Walks the BKS layout: version, salt length, salt, iteration count, entries (type, alias, date, certificate
+     * chain, certificate or sealed key), a terminating 0 type byte and a 20 byte SHA-1 HMAC at the very end.
+     */
+    private static boolean isBksEntryStructure(byte[] data) {
+        final int bksCertificate = 1;
+        final int bksSealed = 4;
+
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
+            dis.readInt(); // version
+            dis.skipNBytes(dis.readInt()); // salt
+            dis.readInt(); // iteration count
+
+            while (true) {
+                int type = dis.readUnsignedByte();
+                if (type == 0) {
+                    return dis.available() == 20;
+                }
+
+                if (type != bksCertificate && type != bksSealed) {
+                    return false;
+                }
+
+                dis.readUTF(); // alias
+                dis.readLong(); // creation date
+
+                int chainLength = dis.readInt();
+                for (int i = 0; i < chainLength; i++) {
+                    skipBksCertificate(dis);
+                }
+
+                if (type == bksCertificate) {
+                    skipBksCertificate(dis);
+                } else {
+                    skipBksBytes(dis);
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static void skipBksCertificate(DataInputStream dis) throws IOException {
+        dis.readUTF(); // certificate type
+        skipBksBytes(dis);
+    }
+
+    private static void skipBksBytes(DataInputStream dis) throws IOException {
+        int length = dis.readInt();
+        if (length < 0 || length > dis.available()) {
+            throw new IOException("Invalid length");
+        }
+        dis.skipNBytes(length);
     }
 
     private static boolean isPemKeyStore(List<PemInfo> pemInfos) {
