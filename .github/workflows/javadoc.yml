@@ -1,0 +1,31 @@
+name: Generate KSE Javadoc (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: 'Set up JDK'
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 'Grant execute permission for gradlew'
+      run: chmod +x gradlew
+      working-directory: kse
+
+    - name: 'Generate Javadoc with Gradle'
+      run: ./gradlew javadoc
+      working-directory: kse
+
+    - name: 'Publish Javadoc'
+      uses: actions/upload-artifact@v6
+      with:
+        name: javadoc
+        path: kse/build/docs/javadoc
