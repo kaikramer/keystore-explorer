@@ -3262,9 +3262,8 @@ public final class KseFrame implements StatusBar {
         // Show default status bar display
         setDefaultStatusBarText();
 
-        // Per-entry passwords, and therefore unlocking and setting an entry password, are only relevant for
+        // Per-entry passwords, and therefore setting an entry password, are only relevant for
         // key stores that have entry passwords and whose entries do not share the key store password.
-        // (PKCS #12, PEM, KeyChain, KDB) - those entries cannot have an independent password.
         if (type.hasEntryPasswords() && !type.entrySameAsKeyStorePassword() || type == KeyStoreType.PKCS12) {
             setKeyPairPasswordAction.setEnabled(true);
             setKeyPasswordAction.setEnabled(true);
