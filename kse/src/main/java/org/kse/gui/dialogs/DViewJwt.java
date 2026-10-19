@@ -31,11 +31,14 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -198,8 +201,12 @@ public class DViewJwt extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog", "[]unrel[]", "[][]unrel[][]"));
         pane.add(jlHeader, "");
         pane.add(jlPayload, "wrap");
-        pane.add(jspHeader, "sgx cols, h 150lp!");
-        pane.add(jspPayload, "sgx cols, h 150lp!, wrap");
+        // header and payload scroll-pane are restricted to a little less than half the screen so they do not grow beyond screen size.
+        // (a little less than half to account for other margins and paddings within the dialog.)
+        // At time of writing the 100% width is required to keep the sizegroup/sgx working.
+        // (without it the longest line determines the width, irrespective of the intended same sizegroup/sgx width.)
+        pane.add(jspHeader, "sgx cols, h 150lp!, wmax 45sp, width 100%");
+        pane.add(jspPayload, "sgx cols, h 150lp!, wmax 45sp, width 100%, wrap");
         pane.add(jlEncoded, "");
         pane.add(jlPublicKey, "wrap");
         pane.add(jspEncoded, "sgx cols, h 200lp!");
@@ -351,7 +358,13 @@ public class DViewJwt extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
         JWT jwt = JWTParser.parse(
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+                """
+                        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW\
+                        4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwibG9yZW0iOiJpcHN1bSBkb2xvciBzaXQgYW1ldCwgY29uc2V0ZXR1ciBzYWRpc\
+                        HNjaW5nIGVsaXRyLCBzZWQgZGlhbSBub251bXkgZWlybW9kIHRlbXBvciBpbnZpZHVudCB1dCBsYWJvcmUgZXQgZG9sb3Jl\
+                        IG1hZ25hIGFsaXF1eWFtIGVyYXQsIHNlZCBkaWFtIHZvbHVwdHVhLiBBdCB2ZXJvIGVvcyBldCBhY2N1c2FtIGV0IGp1c3R\
+                        vIGR1byBkb2xvcmVzIGV0IGVhIHJlYnVtLiBTdGV0IGNsaXRhIGthc2QgZ3ViZXJncmVuLCBubyBzZWEgdGFraW1hdGEgc2\
+                        FuY3R1cyBlc3QuIn0.Sq8lk_ttByKnAGoISCgUg6eGnALTOKpHVWgMXp_4LoE""");
 
         DViewJwt dialog = new DViewJwt(new javax.swing.JFrame(), jwt);
         DialogViewer.run(dialog);
