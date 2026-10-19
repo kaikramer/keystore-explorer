@@ -149,7 +149,7 @@ public enum KeyStoreType {
     /**
      * Are key store entries using the same password as the key store?
      *
-     * For PKCS #12 key stores, the entry password is always going to be the same as the key store
+     * For PKCS #12 key stores, the entry password is usually going to be the same as the key store
      * password.
      * For KeyChainStore key stores, a password is needed by the provider, but the password
      * is not used.
@@ -161,7 +161,6 @@ public enum KeyStoreType {
      * @return True if so, false otherwise
      */
     public boolean entrySameAsKeyStorePassword() {
-        // FIXME PKCS#12 files CAN have per-entry passwords; check usages of this method
         return this == PKCS12 || this == KEYCHAIN || this == PEM || this == KDB;
     }
 
@@ -184,7 +183,8 @@ public enum KeyStoreType {
      * certificate is chain is built when loading the key store.
      * For all other key store types, the chain is stored with the private key entry.
      *
-     * @return
+     * @return True if the key store dynamically builds the certificate chain. False, if
+     *         the key store explicitly stores the certificate chain (e.g., JKS).
      */
     public boolean hasDynamicCertificateChains() {
         return this == PKCS12 || this == PEM;
