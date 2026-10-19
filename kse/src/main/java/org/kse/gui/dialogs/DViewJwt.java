@@ -198,8 +198,12 @@ public class DViewJwt extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog", "[]unrel[]", "[][]unrel[][]"));
         pane.add(jlHeader, "");
         pane.add(jlPayload, "wrap");
-        pane.add(jspHeader, "sgx cols, h 150lp!");
-        pane.add(jspPayload, "sgx cols, h 150lp!, wrap");
+        // header and payload scroll-pane are restricted to a little less than half the screen so they do not grow beyond screen size.
+        // (a little less than half to account for other margins and paddings within the dialog.)
+        // At time of writing the 100% width is required to keep the sizegroup/sgx working.
+        // (without it the longest line determines the width, irrespective of the intended same sizegroup/sgx width.)
+        pane.add(jspHeader, "sgx cols, h 150lp!, wmax 45sp, width 100%");
+        pane.add(jspPayload, "sgx cols, h 150lp!, wmax 45sp, width 100%, wrap");
         pane.add(jlEncoded, "");
         pane.add(jlPublicKey, "wrap");
         pane.add(jspEncoded, "sgx cols, h 200lp!");
