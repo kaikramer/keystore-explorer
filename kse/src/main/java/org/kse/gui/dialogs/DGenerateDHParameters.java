@@ -48,7 +48,7 @@ import org.kse.utilities.DialogViewer;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * <h1> DH Parameters selection</h1>
+ * <h2> DH Parameters selection</h2>
  * The DGenerateDHParameters class provides the user
  * with the key size selection of DH Parameters to be
  * generated.

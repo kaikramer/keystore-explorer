@@ -39,7 +39,7 @@ import org.kse.gui.error.DError;
 import org.kse.utilities.rng.RNG;
 
 /**
- * <h1>DH Parameters generation</h1> The class DGeneratingDHParameters initiates
+ * <h2>DH Parameters generation</h2> The class DGeneratingDHParameters initiates
  * DH Parameters generation. Bouncy Castle is the provider used to generate the
  * parameters.
  * <p>

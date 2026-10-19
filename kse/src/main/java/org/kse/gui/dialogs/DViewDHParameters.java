@@ -56,7 +56,7 @@ import com.formdev.flatlaf.util.SystemFileChooser;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * <h1>DH Parameters view</h1> The DViewDHParametersn class displays the results
+ * <h2>DH Parameters view</h2> The DViewDHParametersn class displays the results
  * of the generated DH Parameters.
  * <p>
  * The class provides the function to copy the content to the clip board and

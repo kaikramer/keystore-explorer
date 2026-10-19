@@ -185,7 +185,7 @@ public class PlatformUtil {
 
     /**
      * Create a scroll pane whose scroll bar policy conforms with the current
-     * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
+     * platform. i.e. on macOS l&amp;f if a scroll bar's policy states that it may
      * be shown as needed it should instead always be shown. For all other
      * platforms obey policy as provided.
      *
@@ -199,7 +199,7 @@ public class PlatformUtil {
 
     /**
      * Create a scroll pane whose scroll bar policy conforms with the current
-     * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
+     * platform. i.e. on macOS l&amp;f if a scroll bar's policy states that it may
      * be shown as needed it should instead always be shown. For all other
      * platforms obey policy as provided.
      *

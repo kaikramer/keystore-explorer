@@ -37,7 +37,7 @@ public class HexUtil {
     }
 
     /**
-     * Get hex string for the supplied big integer: "0x<hex string>" where hex
+     * Get hex string for the supplied big integer: {@code "0x<hex string>"} where hex
      * string is output in groups of exactly four characters subdivided by
      * spaces.
      *
@@ -49,7 +49,7 @@ public class HexUtil {
     }
 
     /**
-     * Get hex string for the supplied big integer: "<prefix><hex string>" where hex
+     * Get hex string for the supplied big integer: {@code "<prefix><hex string>"} where hex
      * string is optionally output in groups of n characters subdivided by
      * spaces.
      *
@@ -65,7 +65,7 @@ public class HexUtil {
     }
 
     /**
-     * Get hex string for the supplied byte array: "0x<hex string>" where hex
+     * Get hex string for the supplied byte array: {@code "0x<hex string>"} where hex
      * string is output in groups of exactly four characters subdivided by
      * spaces.
      *
@@ -77,7 +77,7 @@ public class HexUtil {
     }
 
     /**
-     * Get hex string for the supplied big integer: "<prefix><hex string>" where hex
+     * Get hex string for the supplied big integer: {@code "<prefix><hex string>"} where hex
      * string is optionally output in groups of n characters subdivided by
      * spaces.
      *

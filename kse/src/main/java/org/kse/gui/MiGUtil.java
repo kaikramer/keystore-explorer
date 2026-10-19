@@ -76,9 +76,9 @@ public class MiGUtil {
     }
 
     /**
-     * Creates a spacer that is the same size as an 16x16 icon button. Each L&F creates
+     * Creates a spacer that is the same size as an 16x16 icon button. Each L&amp;F creates
      * buttons of differing sizes so this method uses a hidden 16x16 icon based button
-     * spacer that works for all L&F.
+     * spacer that works for all L&amp;F.
      *
      * @return A spacer.
      */

@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
  *     <li>
  *         or SubjectInformationAccess (1.3.6.1.5.5.7.1.11).
  *     </li>
- * <ul>
+ * </ul>
  */
 public enum AccessMethodType {
     OCSP("1.3.6.1.5.5.7.48.1", "OcspAccessMethod"),

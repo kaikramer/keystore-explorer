@@ -60,7 +60,7 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
      * Get the complete set of trusted certificates for establishing trust during signature
      * verification.
      *
-     * @return Set<X509Certificate>
+     * @return a {@link Set} of {@link X509Certificate}
      * @throws CryptoException If there was a problem getting the trusted certificates.
      */
     protected Set<X509Certificate> getTrustedCertificates() throws CryptoException {

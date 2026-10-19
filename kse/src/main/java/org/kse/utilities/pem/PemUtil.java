@@ -58,7 +58,7 @@ public class PemUtil {
     /**
      * Simple detection of PEM format (does not check if format is correct, only if it claims to be PEM).
      *
-     * @param text data
+     * @param data String containing the data to check
      * @return True, if data starts with PEM header
      */
     public static boolean isPemFormat(String data) {
@@ -123,7 +123,7 @@ public class PemUtil {
      * Decode all PEM entries included in the supplied input stream.
      *
      * @param pemData PEM data containing one or more PEM entries as byte array
-     * @return List<PEM> information
+     * @return a {@link List} of {@link PemInfo} containing the decoded PEM entries
      * @throws IOException If an I/O problem occurs
      */
     public static List<PemInfo> decodeAll(byte[] pemData) throws IOException {

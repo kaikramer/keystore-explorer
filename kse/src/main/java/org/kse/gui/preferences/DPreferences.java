@@ -331,16 +331,16 @@ public class DPreferences extends JEscDialog {
     }
 
     /**
-     * Get the chosen look & feel information.
+     * Get the chosen look &amp; feel information.
      *
-     * @return The chosen look & feel information
+     * @return The chosen look &amp; feel information
      */
     public UIManager.LookAndFeelInfo getLookFeelInfo() {
         return panelUserInterface.getLookFeelInfo();
     }
 
     /**
-     * Get whether the look & feel should be used for window decoration.
+     * Get whether the look &amp; feel should be used for window decoration.
      *
      * @return True id it should, false otherwise.
      */

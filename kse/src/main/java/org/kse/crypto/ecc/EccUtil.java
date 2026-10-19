@@ -252,7 +252,8 @@ public final class EccUtil {
      *          }
      *      }
      * }
-     *
+     * </pre>
+     * 
      * @param ecPrivateKey An EC key
      * @return Object holding ASN1 ECPrivateKey structure
      * @throws IOException When ECPrivateKey structure in PrivateKeyInfo's PrivateKey field cannot be parsed
