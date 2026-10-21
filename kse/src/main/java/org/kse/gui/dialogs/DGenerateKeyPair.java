@@ -447,16 +447,7 @@ public class DGenerateKeyPair extends JEscDialog {
     }
 
     private void loadECCurveSets() {
-        String[] availableSets = CurveSet.getAvailableSetNames(keyStoreType);
-        List<String> filteredSets = new ArrayList<>();
-
-        for (String set : availableSets) {
-            if (!set.equals(CurveSet.ED.getVisibleName())) {
-                filteredSets.add(set);
-            }
-        }
-
-        jcbECCurveSet.setModel(new DefaultComboBoxModel<>(filteredSets.toArray(new String[0])));
+        jcbECCurveSet.setModel(new DefaultComboBoxModel<>(CurveSet.getAvailableSetNames(keyStoreType)));
         loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem(), keyPairCurveName);
     }
 
