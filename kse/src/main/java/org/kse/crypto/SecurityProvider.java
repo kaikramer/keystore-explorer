@@ -29,6 +29,11 @@ public enum SecurityProvider {
     SUN("SUN"),
 
     /**
+     * SunEC
+     */
+    SUN_EC("SunEC"),
+
+    /**
      * Bouncy Castle
      */
     BOUNCY_CASTLE("BC"),
