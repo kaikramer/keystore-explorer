@@ -39,7 +39,7 @@ import org.bouncycastle.asn1.DERSequence;
  *    subjectDomainPolicy     CertPolicyId }
  *
  * CertPolicyId ::= OBJECT IDENTIFIER
- * <pre>
+ * </pre>
  */
 public class PolicyMapping extends ASN1Object {
 

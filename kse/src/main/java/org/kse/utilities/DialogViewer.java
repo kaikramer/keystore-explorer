@@ -43,7 +43,7 @@ public class DialogViewer {
     }
 
     /**
-     * Add BC provider and set l&f (only required when BC is needed before calling the run() method)
+     * Add BC provider and set l&amp;f (only required when BC is needed before calling the run() method)
      */
     public static void prepare() throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new FlatDarkLaf());

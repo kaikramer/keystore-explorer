@@ -39,7 +39,7 @@ import org.kse.gui.dialogs.JWaitDialog;
 import org.kse.gui.error.DError;
 
 /**
- * <h1>Jar Signing</h1> The class initiates jar signing.
+ * <h2>Jar Signing</h2> The class initiates jar signing.
  * <p>
  * The user may cancel at any time by pressing the cancel button.
  */

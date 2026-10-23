@@ -348,7 +348,7 @@ public class DSignJar extends JEscDialog {
     /**
      * Get chosen output JAR file.
      *
-     * @return <b>List<File></b> output JAR file
+     * @return a {@link List} of output JAR {@link File}
      */
     public List<File> getOutputJar() {
         return outputJarFiles;

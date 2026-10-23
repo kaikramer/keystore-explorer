@@ -35,7 +35,7 @@ import org.kse.gui.error.DError;
 import org.kse.utilities.history.HistoryAction;
 
 /**
- * <h1> Dialogue control </h1>
+ * <h2> Dialogue control </h2>
  * The GenerateDHParametersAction class controls the flow
  * of the dialogue windows when generating the DH Parameters.
  * <p>

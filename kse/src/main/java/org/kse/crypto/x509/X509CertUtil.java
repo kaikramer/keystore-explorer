@@ -746,7 +746,7 @@ public final class X509CertUtil {
      * Extracts a list of X509Certificates from a KeyStore.
      *
      * @param keyStore The key store containing trusted certificates.
-     * @return List<X509Certificate>
+     * @return a {@link List} of {@link X509Certificate}
      * @throws CryptoException If there is a problem extracting the certificates.
      */
     public static List<X509Certificate> extractCertificates(KseKeyStore keyStore) throws CryptoException {

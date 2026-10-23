@@ -57,7 +57,7 @@ public class PemAttribute {
 
     /**
      * Get string representation of attribute suitable for inclusion in encoded
-     * PEM: "<name>: <value>".
+     * PEM: {@code "<name>: <value>"}.
      *
      * @return String representation
      */

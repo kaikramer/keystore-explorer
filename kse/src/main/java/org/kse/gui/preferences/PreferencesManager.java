@@ -36,18 +36,17 @@ import org.kse.utilities.os.OperatingSystem;
 import com.fasterxml.jackson.jr.annotationsupport.JacksonAnnotationExtension;
 import com.fasterxml.jackson.jr.ob.JSON;
 
+// TODO: verify the exact location of preferences on macOS
 /**
  * Load, provide access and store the application preferences and other config files of KSE like keystore passwords.
- * <p>
- *     The base directory for the config files is selected depending on the operating system:
- *     <ol>
- *     <li>On Windows %APPDATA% is used: <pre>c:\Users\<username>\AppData\Roaming\kse\</pre></li>
- *     <li>On Linux XDG_CONFIG_HOME or its default value is used: <pre>~/.config/kse</pre></li>
- *     <li>On MacOS "~/.config" is used for now, as other applications do this as well, but maybe switch later to
- *             ~/Library/Preferences or ~/Library/Application Support/</li> TODO
- *     </ol>
- * </p>
  *
+ * <p>The base directory for the config files is selected depending on the operating system:</p>
+ * <ol>
+ *     <li>On Windows %APPDATA% is used: <pre>{@code c:\Users\<username>\AppData\Roaming\kse\}</pre></li>
+ *     <li>On Linux XDG_CONFIG_HOME or its default value is used: <pre>{@code ~/.config/kse}</pre></li>
+ *     <li>On MacOS "~/.config" is used for now, as other applications do this as well, but maybe switch later to
+ *         ~/Library/Preferences or ~/Library/Application Support/</li>
+ * </ol>
  */
 public class PreferencesManager {
 
