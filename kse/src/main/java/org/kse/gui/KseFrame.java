@@ -2682,12 +2682,13 @@ public final class KseFrame implements StatusBar {
 
                 if (KeyStoreTableModel.EntryType.KEY_PAIR.equals(jtKeyStore.getValueAt(row, 0))) {
 
+                    boolean locked = false;
                     // For KeyStore types that support password protected entries...
                     if (type.hasEntryPasswords()) {
                         // Only allow unlocking from menu if entry is currently locked
-                        boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
-                        unlockKeyPairAction.setEnabled(locked);
+                        locked = (Boolean) jtKeyStore.getValueAt(row, 1);
                     }
+                    unlockKeyPairAction.setEnabled(locked);
 
                     PublicKey publicKey = null;
                     try {
@@ -2732,12 +2733,13 @@ public final class KseFrame implements StatusBar {
 
                 } else if (KeyStoreTableModel.EntryType.KEY.equals(jtKeyStore.getValueAt(row, 0))) {
 
+                    boolean locked = false;
                     // For KeyStore types that support password protected entries...
                     if (type.hasEntryPasswords()) {
                         // Only allow unlocking from menu if entry is currently locked
-                        boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
-                        unlockKeyAction.setEnabled(locked);
+                        locked = (Boolean) jtKeyStore.getValueAt(row, 1);
                     }
+                    unlockKeyAction.setEnabled(locked);
 
                     jpmKey.show(jtKeyStore, x, y);
                 }
@@ -3260,19 +3262,14 @@ public final class KseFrame implements StatusBar {
         // Show default status bar display
         setDefaultStatusBarText();
 
-        // Per-entry passwords, and therefore unlocking and setting an entry password, are not relevant for
-        // key stores that are not file-based, or whose entries always share the key store password
-        // (PKCS #12, PEM, KeyChain, KDB) - those entries cannot have an independent password.
-        if (!type.hasEntryPasswords() || !type.isFileBased() || type.entrySameAsKeyStorePassword()) {
-            unlockKeyPairAction.setEnabled(false);
-            setKeyPairPasswordAction.setEnabled(false);
-            unlockKeyAction.setEnabled(false);
-            setKeyPasswordAction.setEnabled(false);
-        } else {
-            unlockKeyPairAction.setEnabled(true);
+        // Per-entry passwords, and therefore setting an entry password, are only relevant for
+        // key stores that have entry passwords and whose entries do not share the key store password.
+        if (type.hasEntryPasswords() && !type.entrySameAsKeyStorePassword() || type == KeyStoreType.PKCS12) {
             setKeyPairPasswordAction.setEnabled(true);
-            unlockKeyAction.setEnabled(true);
             setKeyPasswordAction.setEnabled(true);
+        } else {
+            setKeyPairPasswordAction.setEnabled(false);
+            setKeyPasswordAction.setEnabled(false);
         }
 
         // Special restrictions for MSCAPI and PKCS#11 type
