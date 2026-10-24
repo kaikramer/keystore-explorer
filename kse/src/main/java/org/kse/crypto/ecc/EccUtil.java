@@ -19,6 +19,8 @@
  */
 package org.kse.crypto.ecc;
 
+import static org.kse.crypto.SecurityProvider.SUN_EC;
+
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.security.Key;
@@ -49,6 +51,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.kse.crypto.SecurityProvider;
 import org.kse.crypto.keystore.KeyStoreType;
 
 /**
@@ -62,7 +65,7 @@ public final class EccUtil {
 
     static {
         // read available curves provided by SunEC
-        Provider sunECProvider = Security.getProvider("SunEC");
+        Provider sunECProvider = Security.getProvider(SUN_EC.jce());
         if (sunECProvider != null) {
             availableSunCurves.addAll(Arrays.asList(sunECProvider.getProperty(PROVIDER_SUPPORTED_CURVES_KEY).split("\\|")));
         }

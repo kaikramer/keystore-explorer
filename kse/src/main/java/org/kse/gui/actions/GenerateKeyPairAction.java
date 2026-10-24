@@ -20,11 +20,13 @@
 package org.kse.gui.actions;
 
 import static org.kse.crypto.SecurityProvider.MS_CAPI;
+import static org.kse.crypto.SecurityProvider.SUN_EC;
 
 import java.awt.Toolkit;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
@@ -140,6 +142,16 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             defaults.setMLDSAParameterSet(keyPairType);
             defaults.setMLKEMParameterSet(keyPairType);
             defaults.setSlhDsaParameterSet(keyPairType);
+
+            // Edwards curves cannot be recovered from JCEKS key stores when the key pair
+            // is generated using the BouncyCastle provider. Trying to read the private key
+            // generates an UnrecoverableKeyException. It is likely due to BC using PKCS#8
+            // V2 structure (see Pkcs8Util.getEncryptionType for an example).
+            if (KeyStoreType.JCEKS == activeKeyStoreType
+                    && (KeyPairType.ED25519 == keyPairType || KeyPairType.ED448 == keyPairType
+                            || KeyPairType.X25519 == keyPairType || KeyPairType.X448 == keyPairType)) {
+                provider = Security.getProvider(SUN_EC.jce());
+            }
 
             KeyPair keyPair = generateKeyPair(
                     keyPairType,

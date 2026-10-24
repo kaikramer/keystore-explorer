@@ -264,7 +264,7 @@ public class DGenerateKeyPair extends JEscDialog {
                     jrbRSA.setSelected(true);
                 }
             } else if (index == 1) { // EC
-                if (!jrbEC.isSelected() && !jrbEdDSA.isSelected()) {
+                if (!jrbEC.isSelected() && !jrbEdDSA.isSelected() && !jrbXDH.isSelected()) {
                     jrbEC.setSelected(true);
                 }
             } else if (index == 2) { // PQC
@@ -370,7 +370,7 @@ public class DGenerateKeyPair extends JEscDialog {
                     keyPairType == KeyPairType.ED25519 ? EdDSACurves.ED25519.jce() : EdDSACurves.ED448.jce(),
                     keyPairType.maxSize()));
             jtpAlgorithms.setSelectedIndex(1);
-        } else if (keyPairType == KeyPairType.X25519 || keyPairType == KeyPairType.X448) {
+        } else if ((keyPairType == KeyPairType.X25519 || keyPairType == KeyPairType.X448) && !isSelfSigned) {
             jrbXDH.setSelected(true);
             jcbXDHCurve.setSelectedItem(DialogHelper.formatNameWithSize(
                     keyPairType == KeyPairType.X25519 ? XDHCurves.X25519.jce() : XDHCurves.X448.jce(),
