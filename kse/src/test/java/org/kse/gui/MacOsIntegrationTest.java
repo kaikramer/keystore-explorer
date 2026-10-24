@@ -21,6 +21,7 @@ package org.kse.gui;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import java.awt.desktop.OpenFilesEvent;
 import java.awt.desktop.OpenFilesHandler;
@@ -46,7 +47,7 @@ class MacOsIntegrationTest {
         SwingUtilities.invokeAndWait(() -> {
             try (MockedStatic<DroppedFileHandler> handler = mockStatic(DroppedFileHandler.class)) {
                 try {
-                    new MacOsIntegration(frame).invoke(null, method, new Object[] { new OpenFilesEvent(files, "") });
+                    new MacOsIntegration(frame).invoke(null, method, new Object[] { openFilesEvent(files) });
                 } catch (Throwable e) {
                     throw new AssertionError(e);
                 }
@@ -64,10 +65,17 @@ class MacOsIntegrationTest {
 
         SwingUtilities.invokeAndWait(() -> mockRef.set(mockStatic(DroppedFileHandler.class)));
         try {
-            new MacOsIntegration(frame).invoke(null, method, new Object[] { new OpenFilesEvent(files, "") });
+            new MacOsIntegration(frame).invoke(null, method, new Object[] { openFilesEvent(files) });
             SwingUtilities.invokeAndWait(() -> mockRef.get().verify(() -> DroppedFileHandler.openFiles(frame, files)));
         } finally {
             SwingUtilities.invokeAndWait(() -> mockRef.get().close());
         }
+    }
+
+    // OpenFilesEvent's constructor needs Desktop.getDesktop(), which fails on headless machines
+    private static OpenFilesEvent openFilesEvent(List<File> files) {
+        OpenFilesEvent event = mock(OpenFilesEvent.class);
+        when(event.getFiles()).thenReturn(files);
+        return event;
     }
 }
