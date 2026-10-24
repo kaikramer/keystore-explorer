@@ -42,15 +42,14 @@ public enum CurveSet {
     SEC("SEC", SECNamedCurves.getNames()),
     TELETRUST("Brainpool", TeleTrusTNamedCurves.getNames()),
     SM2("SM2", GMNamedCurves.getNames()),
-    ECGOST("ECGOST", ECGOST3410NamedCurves.getNames()),
-    ED("Edwards", EdDSACurves.getNames());
+    ECGOST("ECGOST", ECGOST3410NamedCurves.getNames());
 
     private final String visibleName;
     private final List<String> curveNames;
 
     CurveSet(String visibleName, Enumeration<String> curveNames) {
         this.visibleName = visibleName;
-        this.curveNames = Collections.list(curveNames);
+        this.curveNames = Collections.unmodifiableList(Collections.list(curveNames));
     }
 
     /**
@@ -64,7 +63,6 @@ public enum CurveSet {
         sets.add(ANSI_X9_62.visibleName);
         sets.add(NIST.visibleName);
         sets.add(SEC.visibleName);
-        sets.add(ED.visibleName);
         sets.add(ECGOST.visibleName);
         sets.add(TELETRUST.visibleName);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
@@ -84,7 +82,6 @@ public enum CurveSet {
         sets.add(ANSI_X9_62);
         sets.add(NIST);
         sets.add(SEC);
-        sets.add(ED);
         sets.add(ECGOST);
         sets.add(TELETRUST);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
@@ -102,7 +99,7 @@ public enum CurveSet {
     public List<String> getAvailableCurveNames(KeyStoreType keyStoreType) {
 
         // filter out unsupported curves
-        List<String> curveNames = getAllCurveNames();
+        List<String> curveNames = new ArrayList<>(getAllCurveNames());
         curveNames.removeIf(curveName -> !EccUtil.isCurveAvailable(curveName, keyStoreType));
 
         return curveNames;
@@ -136,8 +133,6 @@ public enum CurveSet {
             return ANSI_X9_62;
         } else if (curveSetName.equals(TELETRUST.visibleName)) {
             return TELETRUST;
-        } else if (curveSetName.equals(ED.visibleName)) {
-            return ED;
         } else if (curveSetName.equals(SM2.visibleName)) {
             return SM2;
         } else if (curveSetName.equals(ECGOST.visibleName)) {
