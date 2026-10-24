@@ -128,6 +128,11 @@ tasks.register("appbundler") {
                     "name" to "KeyStore",
                     "role" to "editor"
                 )
+                "bundledocument"(
+                    "extensions" to "cer,crt,der,pem,key,p8,p8e,pk8,pkcs8,pvk,privkey,pubkey,jwk,csr,p10,spkac,crl",
+                    "name" to "Certificate and Key Files",
+                    "role" to "viewer"
+                )
                 "option"("value" to "-Dapple.laf.useScreenMenuBar=true")
                 "option"("value" to "-Dcom.apple.macos.use-file-dialog-packages=true")
                 "option"("value" to "-Dcom.apple.macos.useScreenMenuBar=true")

@@ -27,10 +27,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.ExitAction;
-import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PreferencesAction;
+import org.kse.gui.dnd.DroppedFileHandler;
 
 /**
  * Integrate KSE with macOS. Handles call backs from macOS.
@@ -73,9 +75,11 @@ public class MacOsIntegration implements InvocationHandler {
             if (args[0] != null) {
                 Object files = args[0].getClass().getMethod("getFiles").invoke(args[0]);
                 if (files instanceof List) {
-                    OpenAction openAction = new OpenAction(kseFrame);
-                    for (File file : (List<File>) files) {
-                        openAction.openKeyStore(file);
+                    List<File> openFiles = (List<File>) files;
+                    if (SwingUtilities.isEventDispatchThread()) {
+                        DroppedFileHandler.openFiles(kseFrame, openFiles);
+                    } else {
+                        SwingUtilities.invokeLater(() -> DroppedFileHandler.openFiles(kseFrame, openFiles));
                     }
                 }
             }

@@ -80,8 +80,8 @@ public class KSE {
     }
 
     /**
-     * Start the KeyStore Explorer application. Takes one optional argument -
-     * the location of a KeyStore file to open upon startup.
+     * Start the KeyStore Explorer application. Accepts file paths to examine
+     * upon startup, including KeyStore files, certificates, and keys.
      *
      * @param args the command line arguments
      */
