@@ -182,15 +182,12 @@ public final class EccUtil {
     public static boolean isCurveAvailable(String curveName, KeyStoreType keyStoreType) {
 
         // BC provides all curves
-        // All KS types support EdDSA and all ECGOST curves
-        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || CurveSet.ED.getAllCurveNames().contains(curveName)
-                || CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
+        // All KS types support all ECGOST curves
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
             return true;
         }
 
         // is curve among SunEC curves?
-        // Amazon Corretto enables more curves than other distributions
-        // of OpenJDK so this list changes depending on the JDK being used.
         for (String curve : availableSunCurves) {
             if (curve.contains(curveName)) {
                 return true;
