@@ -24,17 +24,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.stream.Stream;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -55,6 +59,27 @@ import org.kse.gui.passwordmanager.Password;
  */
 public class KeyStoreUtilTest extends CryptoTestsBase {
     private static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
+
+    @Test
+    void loadBase64EncodedPkcs12FromClipboard() throws Exception {
+        KseKeyStore keyStore = KeyStoreUtil.create(KeyStoreType.PKCS12);
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair("P-256", KSE.BC);
+        X509Certificate cert = generateCert(keyPair, SignatureType.SHA256_ECDSA);
+        keyStore.setKeyEntry("alias", keyPair.getPrivate(), PASSWORD.toCharArray(), new Certificate[] {cert});
+
+        File keyStoreFile = File.createTempFile("clipboard", ".p12");
+        keyStoreFile.deleteOnExit();
+        KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
+
+        String clipboardText = Base64.getEncoder().encodeToString(Files.readAllBytes(keyStoreFile.toPath()));
+        byte[] decoded = CryptoFileUtil.decodeIfBase64sanitizeIfPem(
+                clipboardText.getBytes(StandardCharsets.US_ASCII));
+
+        assertThat(CryptoFileUtil.detectFileType(decoded)).isEqualTo(KeyStoreType.PKCS12.getCryptoFileType());
+        KseKeyStore openedKeyStore = KeyStoreUtil.loadFromClipboard(decoded, PASSWORD);
+        assertThat(openedKeyStore).isNotNull();
+        assertNotNull(openedKeyStore.getKey("alias", PASSWORD.toCharArray()));
+    }
 
     @ParameterizedTest
     // @formatter:off
