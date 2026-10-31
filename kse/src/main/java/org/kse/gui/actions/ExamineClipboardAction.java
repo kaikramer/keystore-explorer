@@ -187,12 +187,12 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 showJwt(data);
                 break;
             case PEM_KS:
+            case PKCS12_KS:
                 OpenAction openAction = new OpenAction(kseFrame);
                 openAction.openKeyStoreFromClipboard(dataAsBytes);
                 break;
             case JCEKS_KS:
             case JKS_KS:
-            case PKCS12_KS:
             case BKS_KS:
             case UBER_KS:
             case BCFKS_KS:
