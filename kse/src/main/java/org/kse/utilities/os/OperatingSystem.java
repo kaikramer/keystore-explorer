@@ -19,6 +19,10 @@
  */
 package org.kse.utilities.os;
 
+import java.io.IOException;
+import java.net.StandardProtocolFamily;
+import java.nio.channels.ServerSocketChannel;
+
 /**
  * Local operating system detection.
  */
@@ -142,5 +146,27 @@ public class OperatingSystem {
      */
     public static boolean isUnknown() {
         return !isWindows() && !isLinux() && !isMacOs() && !isUnix() && !isOs2();
+    }
+
+    /**
+     * Are UNIX domain sockets supported?
+     * Windows 10 and higher and Windows Server 2019 and higher support UNIX domain sockets.
+     * Windows 10 before 2017 and Windows Server 2016 do not.
+     *
+     * @return True if they are
+     */
+    public static boolean isSupportsUnixDomainSockets() {
+        if (isWindows10()) {
+            try {
+                ServerSocketChannel.open(StandardProtocolFamily.UNIX);
+                // Windows 10 and higher, Windows Server 2019 and higher
+                return true;
+            } catch (IOException | UnsupportedOperationException e) {
+                // Early versions of Windows 10 / Windows Server 2016
+                return false;
+            }
+        }
+
+        return isLinux() || isUnix() || isMacOs();
     }
 }

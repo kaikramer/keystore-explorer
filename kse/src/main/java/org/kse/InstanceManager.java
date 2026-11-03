@@ -88,6 +88,12 @@ public enum InstanceManager {
             return; // is primary instance
         } catch (IOException e) {
             // Bind failed - another instance is running or file is stale
+        } catch (UnsupportedOperationException e) {
+            // Windows Server 2016 does not support UNIX domain sockets. This preference
+            // setting is not enabled and hidden on Windows systems that do not support
+            // the socket family, but catch the exception in the case the configuration file
+            // is manually edited.
+            return;
         }
 
         if (canConnectToPrimary(socketPath)) {

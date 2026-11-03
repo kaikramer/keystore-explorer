@@ -40,10 +40,10 @@ import org.kse.gui.preferences.data.AutoUpdateCheckSettings;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.LanguageItem;
 import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
-
-import net.miginfocom.swing.MigLayout;
 import org.kse.gui.preferences.data.RngTypeSetting;
 import org.kse.utilities.os.OperatingSystem;
+
+import net.miginfocom.swing.MigLayout;
 
 class PanelUserInterface {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
@@ -208,7 +208,7 @@ class PanelUserInterface {
         jpUI.add(jlSnRandomBytesPostfix, "wrap unrel");
         MiGUtil.addSeparator(jpUI, jlKeyStores.getText());
         // macOS does not use this setting since it uses the MacOsIntegration open file support.
-        if (!OperatingSystem.isMacOs()) {
+        if (!OperatingSystem.isMacOs() && OperatingSystem.isSupportsUnixDomainSockets()) {
             jpUI.add(jcbEnableOpenWithExistingInstance, "gapx indent, wrap rel");
         }
         jpUI.add(jcbEnableAutomaticReload, "gapx indent, wrap rel");
