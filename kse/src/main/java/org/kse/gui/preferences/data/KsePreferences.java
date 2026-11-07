@@ -88,7 +88,7 @@ public class KsePreferences {
     private boolean automaticallyReload = false;
     private boolean silentlyReload = false;
     // Default to off for macOS since this features is not used.
-    private boolean openWithExistingInstance = !OperatingSystem.isMacOs();
+    private boolean openWithExistingInstance = !OperatingSystem.isMacOs() && OperatingSystem.isSupportsUnixDomainSockets();
     // TreeMap for storing the sizes in alphabetical order
     private Map<String, Dimension> dialogSizes = new TreeMap<>();
 
