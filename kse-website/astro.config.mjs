@@ -16,6 +16,7 @@ export default defineConfig({
   // static files only, so with no adapter installed this renders as a
   // client-side <meta http-equiv="refresh"> redirect page at contribute.html.
   redirects: {
+    '/releases.html': '/release57.html', // redirect to the latest release
     '/contribute': 'https://github.com/kaikramer/keystore-explorer/blob/main/CONTRIBUTING.md',
   },
   build: {

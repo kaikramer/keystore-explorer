@@ -217,6 +217,8 @@ jobs:
         run: |
           version=$(sed -n 's/^KSE\.Version[[:space:]]*=[[:space:]]*\([^[:space:]]*\).*/\1/p' kse/src/main/resources/org/kse/version.properties)
           echo "version=$version" >> $GITHUB_OUTPUT
+          manual_version_no_dot=$(grep "KSE.UserManual.Version=" kse/src/main/resources/org/kse/version.properties | cut -d'=' -f2 | tr -d '.')
+          echo "manual_version_no_dot=$manual_version_no_dot" >> $GITHUB_OUTPUT
       - uses: actions/download-artifact@v7
         with:
           merge-multiple: true
@@ -248,7 +250,7 @@ jobs:
         with:
           draft: true
           name: "KSE Release ${{ github.ref_name }}"
-          body: "Release Notes are available here: [Release Notes](https://keystore-explorer.org/releases.html)"
+          body: "Release Notes are available here: [Release Notes](https://keystore-explorer.org/release${{ steps.version.outputs.manual_version_no_dot }}.html)"
           fail_on_unmatched_files: true
           files: |
             artifacts/kse-*.zip
