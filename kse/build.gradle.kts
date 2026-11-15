@@ -116,6 +116,14 @@ tasks.withType<JavaCompile>().configureEach {
     options.release = 17
 }
 
+tasks.withType<AbstractArchiveTask>().configureEach {
+    // Revert reproducible archives to pre-Gradle 9 behavior, having all file timestamps set to 1980/02/01 is weird...
+    // (see https://docs.gradle.org/9.8.0/userguide/upgrading_major_version_9.html#reproducible_archives_by_default)
+    isReproducibleFileOrder = false
+    isPreserveFileTimestamps = true
+    useFileSystemPermissions()
+}
+
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 val appbundler by configurations.creating
