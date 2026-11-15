@@ -129,35 +129,35 @@ gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 val appbundler by configurations.creating
 
 dependencies {
-    implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.87")
     implementation("com.miglayout:miglayout-swing:11.4.2")
-    implementation("com.formdev:flatlaf:3.7:no-natives")
-    implementation("com.formdev:flatlaf:3.7:linux-x86_64@so")
-    implementation("com.formdev:flatlaf:3.7:macos-arm64@dylib")
-    implementation("com.formdev:flatlaf:3.7:macos-x86_64@dylib")
-    implementation("com.formdev:flatlaf:3.7:windows-x86_64@dll")
-    implementation("com.formdev:flatlaf:3.7:windows-x86@dll")
-    implementation("com.formdev:flatlaf:3.7:windows-arm64@dll")
-    implementation("com.formdev:flatlaf-extras:3.7") {
+    implementation("com.formdev:flatlaf:3.8:no-natives")
+    implementation("com.formdev:flatlaf:3.8:linux-x86_64@so")
+    implementation("com.formdev:flatlaf:3.8:macos-arm64@dylib")
+    implementation("com.formdev:flatlaf:3.8:macos-x86_64@dylib")
+    implementation("com.formdev:flatlaf:3.8:windows-x86_64@dll")
+    implementation("com.formdev:flatlaf:3.8:windows-x86@dll")
+    implementation("com.formdev:flatlaf:3.8:windows-arm64@dll")
+    implementation("com.formdev:flatlaf-extras:3.8") {
         exclude(group = "com.formdev", module = "flatlaf")
     }
-    implementation("com.nimbusds:nimbus-jose-jwt:10.8") {
+    implementation("com.nimbusds:nimbus-jose-jwt:10.9.1") {
         exclude(group = "com.google.crypto.tink", module = "tink")
     }
 
-    implementation("io.github.java-diff-utils:java-diff-utils:4.15")
-    implementation("org.mozilla:rhino:1.7.15")
-    implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.20.1")
-    implementation("com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.20.1")
+    implementation("io.github.java-diff-utils:java-diff-utils:4.18")
+    implementation("org.mozilla:rhino:1.9.2")
+    implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.22.4")
+    implementation("com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.22.4")
 
     appbundler("com.evolvedbinary.appbundler:appbundler:1.3.1")
 
     testImplementation("org.assertj:assertj-core:3.27.7")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.14.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.1.3")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
-    testImplementation("org.mockito:mockito-core:5.21.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.1")
+    testImplementation("org.mockito:mockito-core:5.24.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
