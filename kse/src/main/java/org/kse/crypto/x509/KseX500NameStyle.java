@@ -22,7 +22,11 @@ package org.kse.crypto.x509;
 
 import java.util.Hashtable;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -174,5 +178,27 @@ public class KseX500NameStyle extends BCStyle {
         }
 
         return buf.toString();
+    }
+
+    /*
+     * BC 1.85 adds additional checks that requires the country to be exactly 2 characters. This
+     * method overrides the changes with a copy of the method before 1.85 so that
+     * DistinguishedNameChooser can be initialized with an empty country code on the dialog.
+     */
+    @Override
+    protected ASN1Encodable encodeStringValue(ASN1ObjectIdentifier oid, String value) {
+        if (oid.equals(EmailAddress) || oid.equals(DC)) {
+
+            return new DERIA5String(value);
+        } else if (oid.equals(DATE_OF_BIRTH)) {  // accept time string as well as # (for compatibility)
+
+            return new ASN1GeneralizedTime(value);
+        } else if (oid.equals(C) || oid.equals(SERIALNUMBER) || oid.equals(DN_QUALIFIER)
+            || oid.equals(TELEPHONE_NUMBER) || oid.equals(JURISDICTION_C)) {
+
+            return new DERPrintableString(value);
+        }
+
+        return super.encodeStringValue(oid, value);
     }
 }
