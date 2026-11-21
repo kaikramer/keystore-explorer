@@ -21,11 +21,8 @@
 package org.kse;
 
 import java.awt.event.FocusEvent;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
@@ -37,7 +34,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,6 +44,8 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dnd.DroppedFileHandler;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.PreferencesManager;
+
+import com.fasterxml.jackson.jr.ob.JSON;
 
 /**
  * A Singleton for managing the existing instance infrastructure. The existing
@@ -63,6 +61,8 @@ public enum InstanceManager {
     INSTANCE;
 
     private static final String SOCKET_FILENAME = "kse-ipc.sock";
+
+    private static final int MAX_FILES = 100;
 
     private boolean isBound;
     private ServerSocketChannel serverChannel;
@@ -192,28 +192,15 @@ public enum InstanceManager {
     }
 
     private void writeParameterFiles(WritableByteChannel ch, List<File> files) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-
-        oos.writeObject(files.toArray(File[]::new));
-        oos.flush();
-
-        ByteBuffer buf = ByteBuffer.wrap(baos.toByteArray());
+        ByteBuffer buf = ByteBuffer.wrap(JSON.std.asBytes(files));
         while (buf.hasRemaining()) {
             ch.write(buf);
         }
     }
 
     private List<File> readParameterFiles(ReadableByteChannel ch) throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream(Channels.newInputStream(ch))) {
-            Object incomingObject = ois.readObject();
-            if (incomingObject instanceof File[]) {
-                return Arrays.asList((File[]) incomingObject);
-            }
-        } catch (ClassNotFoundException e) {
-            // Ignore. File[] is always be available.
-        }
-        return Collections.EMPTY_LIST;
+        List<File> files = JSON.std.listOfFrom(File.class, Channels.newInputStream(ch));
+        return files.size() > MAX_FILES ? Collections.emptyList() : files;
     }
 
     private Path getSocketPath() {
