@@ -1,7 +1,77 @@
 ---
 import Layout from '../layouts/Default.astro';
 ---
-<Layout title="KeyStore Explorer - Release Notes" active="releases" editPath="src/pages/releases.astro">
+<Layout title="KeyStore Explorer - Release Notes" active="releases" editPath="src/pages/release57.astro">
+
+<div class="page-header">
+    <h1>Release 5.7.1 <small class="text-muted">22 Nov 2026</small></h1>
+</div>
+<p>
+    This maintenance release includes the following improvements and bugfixes:
+</p>
+
+<h2 class="h3">Support for X25519 and X448 Key Exchange Algorithms</h2>
+<div class="row">
+    <div class="col-md-6">
+        <p>
+            KSE 5.7.1 adds support for the X25519 and X448 key exchange algorithms (XDH). They can be selected in the
+            "Elliptic Curve" tab of the key pair generation dialog and are fully supported for key pair generation,
+            import and export of keys, and viewing of key details.
+        </p>
+        <p>
+            As XDH keys are key agreement keys and cannot be used for signing, they cannot be used for self-signed
+            certificates.
+        </p>
+        <p>
+            This feature has been contributed by jonwltn.
+        </p>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Other Enhancements</h2>
+<div class="row">
+    <div class="col-md-6">
+        <ul>
+            <li>Improved the properties dialog for PKCS#11 and MSCAPI keystores: private keys in these keystores are no longer shown as locked, the curve of EC keys is displayed and key entries in PKCS#12 and PEM keystores are unlocked automatically if possible (contributed by jonwltn).</li>
+            <li>The "Examine Clipboard" action can now open Base64-encoded PKCS#12/PFX keystores (contributed by godzilla65536).</li>
+            <li>Improved the detection algorithm for BKS and UBER keystore files.</li>
+            <li>File timestamps in ZIP archives are now the release date again.</li>
+            <li>Updated third-party libraries, including Bouncy Castle 1.87 and FlatLaf 3.8.</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Security Fixes</h2>
+<div class="row">
+    <div class="col-md-6">
+        <ul>
+            <li>The JDK bundled with the distribution packages has been updated to a version that fixes the "java4Shell" vulnerability.</li>
+            <li>In single instance mode, the list of files passed to an already running KSE instance is now transferred as JSON instead of serialized Java objects, which prevents object deserialization attacks.</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
+
+<h2 class="h3">Bugfixes</h2>
+<div class="row">
+    <div class="col-md-6">
+        <ul>
+            <li>Fixed failure to start on Windows Server 2016, which does not support UNIX domain sockets (fixed by jonwltn).</li>
+            <li>Fixed the "Set Password" action being unavailable for PKCS#12 keystores (fixed by jonwltn).</li>
+            <li>Fixed several issues with Edwards and XDH curves, including an UnrecoverableKeyException when accessing Ed25519, Ed448, X25519 and X448 keys in JCEKS keystores (fixed by jonwltn).</li>
+            <li>Fixed available EC curves when switching between keystore types, which could temporarily prevent the use of twisted Brainpool curves (fixed by jonwltn).</li>
+            <li>Fixed the "View JWT" dialog becoming excessively wide when a JWT contains long claim values (fixed by Christoph Schulz).</li>
+            <li>Fixed opening files under macOS when they are passed to KSE by the operating system.</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>
 
 <div class="page-header">
     <h1>Release 5.7.0 <small class="text-muted">23 Aug 2026</small></h1>
@@ -43,13 +113,13 @@ import Layout from '../layouts/Default.astro';
         <p>
         The Java PKCS#12 implementation can only handle "trusted certificates", i.e. standalone certificates that are not associated with a key in the same file,
         when they are marked with a custom bag attribute. This works as long as the PKCS#12 file is created by Java software,
-        but not for PKCS#12 files created by other software that do not use this custom bag attribute. Then KSE  will not be able to read the 
+        but not for PKCS#12 files created by other software that do not use this custom bag attribute. Then KSE  will not be able to read the
         trusted certificates.
         </p>
         <p>
-        In KSE 5.7.0 this compatibility issue is solved. The PKCS#12 file is now read first with low level parsing, 
-        circumventing the Java PKCS#12 implementation, and then 
-        trusted certificates without the custom bag attribute are added explicitly with the Java keystore API. 
+        In KSE 5.7.0 this compatibility issue is solved. The PKCS#12 file is now read first with low level parsing,
+        circumventing the Java PKCS#12 implementation, and then
+        trusted certificates without the custom bag attribute are added explicitly with the Java keystore API.
         </p>
         <p>
             When saving a PKCS#12 file, KSE will use the Java PKCS#12 implementation just as before to ensure compatibility with Java software.
@@ -70,7 +140,7 @@ import Layout from '../layouts/Default.astro';
 <div class="row">
     <div class="col-md-6">
         <p>
-        KSE 5.7.0 continues to improve the support for JWT (JSON Web Token), JWS (JSON Web Signature) and JWK (JSON Web Key). 
+        KSE 5.7.0 continues to improve the support for JWT (JSON Web Token), JWS (JSON Web Signature) and JWK (JSON Web Key).
         </p>
         <p>
         The following improvements have been made:
@@ -84,8 +154,8 @@ import Layout from '../layouts/Default.astro';
             Previously, KSE used the algorithm name "Ed25519" for Ed25519 keys in JWS (JSON Web Signature) as specified in RFC 9864.
         </p>
         <p>
-            The older RFC 8037 defines "EdDSA" as the signature algorithm identifier, and therefore many JWT tools still expect "EdDSA" 
-            in the "alg" header parameter. However, the newer RFC 9864 specifies "Ed25519" and deprecates "EdDSA". 
+            The older RFC 8037 defines "EdDSA" as the signature algorithm identifier, and therefore many JWT tools still expect "EdDSA"
+            in the "alg" header parameter. However, the newer RFC 9864 specifies "Ed25519" and deprecates "EdDSA".
             Therefore, any automatically chosen algorithm name in KSE would be wrong for some tools and right for others.
         </p>
         <p>
@@ -121,10 +191,10 @@ import Layout from '../layouts/Default.astro';
     <div class="col-md-6">
         <h4 class="h5">JWK Export as JWE</h4>
         <p>
-            KSE now allows to export JWK (JSON Web Key) as JWE (JSON Web Encryption). 
+            KSE now allows to export JWK (JSON Web Key) as JWE (JSON Web Encryption).
         </p>
         <p>
-            The exported JWE files are encrypted with PBES2-HS512+A256KW when exported as key pair (both private and public key). 
+            The exported JWE files are encrypted with PBES2-HS512+A256KW when exported as key pair (both private and public key).
             When only the private key is exported, then the encryption algorithm can be selected in the export dialog between the following options:
             <ul>
                 <li>PBES2-HS256+A128KW</li>
@@ -146,8 +216,8 @@ import Layout from '../layouts/Default.astro';
     <div class="col-md-6">
         <h4 class="h5">JWK Import</h4>
         <p>
-            KSE now allows to import keys in JWK (JSON Web Key) format. Just use the "Import Key Pair" dialog to select a JWK file and either 
-            provide a certificate for the key or let KSE generate a self-signed certificate. 
+            KSE now allows to import keys in JWK (JSON Web Key) format. Just use the "Import Key Pair" dialog to select a JWK file and either
+            provide a certificate for the key or let KSE generate a self-signed certificate.
         </p>
         <p>
             This feature has been contributed by jonwltn.
@@ -173,7 +243,7 @@ import Layout from '../layouts/Default.astro';
             </ul>
         </p>
         <p>
-            The first two are file formats that can be created, saved and opened in KSE, while the latter two are system keystores 
+            The first two are file formats that can be created, saved and opened in KSE, while the latter two are system keystores
             that can be accessed via "File -> Open Special".
         </p>
     </div>
@@ -188,7 +258,7 @@ import Layout from '../layouts/Default.astro';
         <h4 class="h5">PEM KeyStore</h4>
         <p>
             A PEM keystore can contain several certificates and private keys in PEM format concatenated in one file. This keystore type does
-            not exist in Java, but it is not difficult to map PEM files to the KeyStore API. 
+            not exist in Java, but it is not difficult to map PEM files to the KeyStore API.
         </p>
         <p>
             KSE 5.7.0 can read and write such PEM files, and it can also convert them to other keystore types.
@@ -206,12 +276,12 @@ import Layout from '../layouts/Default.astro';
     <div class="col-md-6">
         <h4 class="h5">KDB KeyStore</h4>
         <p>
-            The IBM CMS keystore type ("KDB") is a proprietary keystore format used by IBM software. KSE 5.7.0 can read and write such KDB files, 
+            The IBM CMS keystore type ("KDB") is a proprietary keystore format used by IBM software. KSE 5.7.0 can read and write such KDB files,
             and it can also convert them to other keystore types. Supported are version 6 (HMAC-SHA384 header MACs) and the older version 4 (HMAC-SHA1).
         </p>
         <p>
-            KSE can write stash files (.sth) together with .kdb files for password recovery. When opening a KDB keystore, 
-            KSE will ask whether to use the stash file if it exists. 
+            KSE can write stash files (.sth) together with .kdb files for password recovery. When opening a KDB keystore,
+            KSE will ask whether to use the stash file if it exists.
             If the stash file is used, then the password for the KDB keystore does not need to be entered.
         </p>
         <p>
@@ -231,7 +301,7 @@ import Layout from '../layouts/Default.astro';
             KSE 5.7.0 can now access the Windows Root Certificate Store. This allows to view and export certificates from this system keystore.
         </p>
         <p>
-            The Windows Root Certificate Store is a system keystore that contains the trusted root certificates for the Windows operating system. 
+            The Windows Root Certificate Store is a system keystore that contains the trusted root certificates for the Windows operating system.
         </p>
         <p>
             Note that there are different Windows truststores for the current user and for the local machine. This feature is about the user truststore.
@@ -250,11 +320,11 @@ import Layout from '../layouts/Default.astro';
     <div class="col-md-6">
         <h4 class="h5">macOS KeyStore</h4>
         <p>
-           Similar to the Windows Certificate Store, the Apple Keychain is a system keystore that contains various types of credentials, 
+           Similar to the Windows Certificate Store, the Apple Keychain is a system keystore that contains various types of credentials,
            including certificates and private keys.
         </p>
         <p>
-            With KSE you can not only view and export certificates from the Keychain, but also create and import certificates and private keys 
+            With KSE you can not only view and export certificates from the Keychain, but also create and import certificates and private keys
             into the Keychain.
         </p>
         <p>
@@ -314,7 +384,7 @@ import Layout from '../layouts/Default.astro';
             <li>Added support for RFC 7093 key identifiers (contributed by jonwltn).</li>
             <li>Use PEM format for the public key in the generated JWT view and widened the text field to fit it.</li>
             <li>Improved Brainpool curve support (contributed by jonwltn).</li>
-            <li>Added global keyboard shortcuts: <kbd>Ctrl</kbd>+<kbd>Page Up</kbd> / <kbd>Ctrl</kbd>+<kbd>Page Down</kbd> to switch between open keystore tabs 
+            <li>Added global keyboard shortcuts: <kbd>Ctrl</kbd>+<kbd>Page Up</kbd> / <kbd>Ctrl</kbd>+<kbd>Page Down</kbd> to switch between open keystore tabs
                 and <kbd>Ctrl</kbd>+<kbd>F4</kbd> to close the active tab (contributed by Jairo Graterón).</li>
             <li>Added overlays for export and details to key and certificate icons.</li>
             <li>Migrated dialogs to a standardized layout (contributed by jonwltn).</li>

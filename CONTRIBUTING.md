@@ -173,6 +173,9 @@ Those who contributed code, documentation or translations are listed by name bel
 | DongHyeon | 5.7.0 | Migrated the "About" dialog to MigLayout. |
 | FreeBono | 5.7.0 | Migrated the "Environment Variables" dialog to MigLayout. |
 | Patrick Baumgartner | 5.7.0 | Build improvements. |
+| jonwltn | 5.7.1 | Support for X25519/X448 key exchange algorithms, improved properties dialog for PKCS#11/MSCAPI keystores, JWK refactoring, completed MiG layout migration, and many bugfixes (Windows Server 2016 startup, Set Password for PKCS#12, Edwards/XDH curves, EC curves when switching keystore types, DistinguishedNameChooser with BC 1.85). |
+| godzilla65536 | 5.7.1 | Open Base64-encoded PKCS#12/PFX keystores from clipboard. |
+| Christoph Schulz | 5.7.1 | Limited the width of the "View JWT" payload and header scroll-panes. |
 
 ### Documentation
 | Contributor | Date | Contribution |
@@ -196,6 +199,10 @@ Those who contributed code, documentation or translations are listed by name bel
 | The-Lum | 2025-11-16  | Replaced external links with internal links in news |
 | The-Lum | 2026-01-27  | Updated Tool Bar and Keyboard Shortcuts docs for v5.6.1 |
 | The-Lum | 2026-01-31  | Updated Shortcut page with `<kbd>` tags and icons|
+| The-Lum | 2026-09-22  | Improved documentation (centered images, text justification, spacing, images folder) |
+| The-Lum | 2026-10-18  | Added a manual GitHub Action to generate Javadoc; fixed the deploy-pages link and added a packaging status badge |
+| The-Lum | 2026-10-24  | Fixed all Javadoc errors |
+| The-Lum | 2026-11-15  | Improved version-specific handling on the release notes page and in release creation |
 
 
 ### Translations
