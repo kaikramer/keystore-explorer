@@ -48,7 +48,7 @@ This runs the unit tests and builds the following artifacts:
 You can then update an existing KSE installation by replacing its kse.jar (and if necessary the dependencies) with this one. 
 Or extract the content of the ZIP/TAR file and use the start scripts from the `bin` directory to run KSE. 
 
-The `build.gradle` file contains further instructions for building the platform specific distribution packages. 
+The `build.gradle.kts` file contains further instructions for building the platform specific distribution packages. 
 Especially what the requirements are for executing the build commands.
 
 For the release ZIP package execute the following command (command works only under Windows because it generates kse.exe):

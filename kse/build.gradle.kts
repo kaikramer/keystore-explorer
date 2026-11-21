@@ -26,9 +26,10 @@ import java.util.*
 Notes:
 ======
 - Task 'innosetup' requires an installation of InnoSetup 6 and ISCC.exe added to the PATH.
-- Tasks 'signapp' and 'dmg' work only under macOS.
+- Tasks 'signapp' and 'dmg' work only under macOS and must be executed with the latest LTS JDK.
+- Task 'appbundler' must be executed with the latest LTS JDK.
 - Tasks 'prepareExe', 'zip' and 'innosetup' require an installation of Resource Hacker (http://www.angusj.com/resourcehacker/)
-- Task 'buildAppImage' requires appimagetool on PATH and must run on Linux with a Java 25 JDK.
+- Task 'buildAppImage' requires appimagetool on PATH and must run on Linux with the latest LTS JDK.
 */
 
 plugins {
