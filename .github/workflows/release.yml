@@ -36,6 +36,7 @@ jobs:
         id: upload-unsigned-artifact
         uses: actions/upload-artifact@v6
         with:
+          name: kse-launcher-unsigned
           path: kse/res/kse.exe
           if-no-files-found: error
       - name: Sign executable
@@ -221,6 +222,8 @@ jobs:
           echo "manual_version_no_dot=$manual_version_no_dot" >> $GITHUB_OUTPUT
       - uses: actions/download-artifact@v7
         with:
+          # exclude kse-launcher-unsigned, its kse.exe would collide with the signed one
+          pattern: '{kse-launcher,windows-artifacts,linux-artifacts,windows-with-jre-artifact,macos-artifact,macos-arm-artifact}'
           merge-multiple: true
           path: artifacts
       - name: Upload setup files for signing
